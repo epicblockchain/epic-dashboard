@@ -15,7 +15,11 @@ class Worker{
     }
 
     display(){
-        console.log(JSON.stringify(this));
+        if ( $('#worker-id-'+this.index).length ){
+            $('#worker-id-'+this.index).replaceWith(this.workerHTML());
+        } else {
+            $('#worker-div').append(this.workerHTML());
+        }
     }
 
     update(workerResponse){
@@ -26,6 +30,10 @@ class Worker{
         this.outputCurrent.push(workerResponse["Output Current"]);
         this.inputVoltage.push(workerResponse["Input Voltage"]);
         this.outputVoltage.push(workerResponse["Output Voltage"]);
+    }
+
+    workerHTML(){
+        return '<div id="worker-id-' + this.index + '" class="card col-12 mr-1 mt-1">worker: ' + this.index + '</div>';
     }
 
 }
