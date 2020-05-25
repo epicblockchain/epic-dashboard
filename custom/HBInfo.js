@@ -5,6 +5,7 @@ class HBInfo {
     settings;
     response;
     cm; //later can be changed into json object if we want more charts
+    workers = [];
 
     constructor(){
         this.loadSettings();
@@ -19,10 +20,14 @@ class HBInfo {
         $.get(this.settings.apiEndpoint, function( data ) {
             this.response = data;
             this.cm.pushDatum({
-                x: data.Session["Last Work Timestamp"],
+                x: new Date(), //now
                 y: data.Session["Average MHs"]
             });
             this.updateHTML();
+            if (this.workers.length == 0){
+                this.loadWorkers();
+            }
+            this.updateWorkers();
         }.bind(this));
 
     }
@@ -35,7 +40,9 @@ class HBInfo {
       
         var seconds = this.settings.requestInterval;
         this.fetchFromServer();
-        // setInterval(fetchFromServer, this.settings.requestInterval); //maybe move to new function
+        setInterval(function(){
+            this.fetchFromServer();
+        }.bind(this), this.settings.requestInterval);
 
     }
 
@@ -46,14 +53,28 @@ class HBInfo {
         }
     }
 
-
     updateHTML(){
         if (!this.settings.production) console.log("updating html");
         $("#effective-hashrate").text(this.response.Session["Average MHs"] + 'MH/s'); //TODO put the actual average here and parse to the appropriate metric exponent
         $("#shares").text(this.response.Session.Accepted + '/' + this.response.Session.Rejected);
         $("#active-boards").text(this.response.Session["Active HBs"]);
-        //update chart
-        
+    }
+
+    loadWorkers(){
+        this.response.HBs.forEach(function(hb){
+            this.workers.push(new Worker(hb.Index));
+        }.bind(this));
     }
     
+    updateWorkers(){
+        this.workers.forEach(function(worker){
+            worker.update(this.response.HBs[worker.index]);
+        }.bind(this));
+
+        this.workers.forEach(function(worker){
+            worker.display();
+        });
+
+    }
+
 }

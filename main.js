@@ -7,7 +7,7 @@ function createWindow () {
 
   const win = new BrowserWindow({
     width: screenArea.width*0.7,
-    height: screenArea.height*0.7,
+    height: screenArea.width*0.3,
     webPreferences: {
       nodeIntegration: true
     }

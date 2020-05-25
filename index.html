@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>ePIC Dashboard</title>
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -46,7 +46,11 @@
           <canvas id="effective-hashrate-chart" width="100%" height="50%">Loading...</canvas>
         </div>        
       </div>
-  </div>
+      <!-- worker template, we remove and add to jquery -->
+      <div id="worker-div" class="row mt-1">
+
+      </div>
+    </div>
 
 
   <script>
@@ -56,6 +60,7 @@
   <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="node_modules/chart.js/dist/Chart.min.js"></script>
   <!-- These should probably be put into modules -->
+  <script src="custom/Worker.js"></script>
   <script src="custom/ChartManager.js"></script>
   <script src="custom/HBInfo.js"></script>
   <script>
