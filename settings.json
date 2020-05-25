@@ -1,0 +1,5 @@
+{
+    "production": false,
+    "requestInterval": 300,
+    "apiEndpoint": "http://10.10.0.253:4028/summary"
+}

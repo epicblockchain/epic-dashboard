@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/chart.js/dist/Chart.min.css">
+  </head>
+  <body class="bg-secondary">
+    <h1 class="text-center">ePIC Blockchain Dashboard</h1>
+    <!-- <img class="center" src="img/epic-logo.jpg"> --->
+    <div class="container">
+     <div class="row">
+       <!-- cards with most high level info-->
+        <div class="card col mr-1">
+          <h5 class="card-title">
+            <!-- maybe hover to explain what this is-->
+            Hashrate (Effective?)
+          </h5>
+          <p id="effective-hashrate" class="">
+            Loading...
+          </p>
+        </div>
+        <div class="card col mr-1">
+          <h5 class="card-title ">
+            <!-- maybe hover to explain what this is-->
+            Shares
+          </h5>
+          <p id="shares" class="">
+            Loading...
+          </p>
+        </div>
+        <div class="card col mr-1">
+          <h5 class="card-title ">
+            <!-- maybe hover to explain what this is-->
+            Boards active
+          </h5>
+          <p id="active-boards" class="">
+            Loading...
+          </p>
+        </div>
+     </div>
+      <div class="row mt-1">
+        <div class="col card mr-1">
+          <canvas id="effective-hashrate-chart" width="100%" height="50%">Loading...</canvas>
+        </div>        
+      </div>
+  </div>
+
+
+  <script>
+    window.jQuery = window.$ = require('jquery'); //jquery needs to be init like this because of node environment
+  </script>
+  <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+  <!-- These should probably be put into modules -->
+  <script src="custom/ChartManager.js"></script>
+  <script src="custom/HBInfo.js"></script>
+  <script>
+    //to init the info and charts
+    var HB = new HBInfo();
+  </script>
+  </body>
+</html>

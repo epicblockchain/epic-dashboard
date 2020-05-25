@@ -1,0 +1,60 @@
+{
+  "Software": "epic-miner v0.1.0",
+  "Mining": {
+    "Coin": "Sia",
+    "Algorithm": "Blake2b"
+  },
+  "Stratum": {
+    "Current Pool": "sc-us.luxor.tech:3333",
+    "Current User": "dee90ad0e68bf8f59ebef3b9a194d95e09221136915d7fbfd4312a2abf7c83dc070ecc5e7f9e.fpgarig",
+    "Average Latency": 0.0
+  },
+  "Session": {
+    "Startup Timestamp": 1589469929,
+    "Startup String": "Thu, 14 May 2020 15:25:29 +0000",
+    "Uptime": 432756,
+    "Last Work Timestamp": 1589902657,
+    "WorkReceived": 14789,
+    "Active HBs": 3,
+    "Average MHs": 1958400.0,
+    "Accepted": 112851,
+    "Rejected": 226,
+    "Submitted": 113077,
+    "Last Accepted Share Timestamp": 1589902685
+  },
+  "HBs": [
+    {
+      "Index": 0,
+      "Input Voltage": 12.109,
+      "Output Voltage": 0.66,
+      "Input Current": 27.25,
+      "Output Current": 410.0,
+      "Input Power": 330.0,
+      "Output Power": 270.5,
+      "Temperature": 67,
+      "Core Clock": 425.0
+    },
+    {
+      "Index": 1,
+      "Input Voltage": 12.062,
+      "Output Voltage": 0.66,
+      "Input Current": 28.625,
+      "Output Current": 418.0,
+      "Input Power": 342.0,
+      "Output Power": 274.0,
+      "Temperature": 67,
+      "Core Clock": 425.0
+    },
+    {
+      "Index": 2,
+      "Input Voltage": 12.062,
+      "Output Voltage": 0.66,
+      "Input Current": 28.25,
+      "Output Current": 407.0,
+      "Input Power": 340.0,
+      "Output Power": 272.5,
+      "Temperature": 66,
+      "Core Clock": 425.0
+    }
+  ]
+}

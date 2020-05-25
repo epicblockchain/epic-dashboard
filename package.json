@@ -1,0 +1,19 @@
+{
+  "name": "epic-dash-electron",
+  "version": "0.1.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Dan Nicolau",
+  "devDependencies": {
+    "electron": "^8.3.0"
+  },
+  "dependencies": {
+    "bootstrap": "^4.5.0",
+    "chart.js": "^2.9.3",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1"
+  }
+}
