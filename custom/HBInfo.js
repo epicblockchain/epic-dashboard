@@ -21,7 +21,7 @@ class HBInfo {
             this.response = data;
             this.cm.pushDatum({
                 x: new Date(), //now
-                y: data.Session["Average MHs"]
+                y: data.Session["Average MHs"]/1000
             });
             this.updateHTML();
             if (this.workers.length == 0){
@@ -33,7 +33,7 @@ class HBInfo {
     }
 
     loadChart(){
-        this.cm = new ChartManager('Effective??? Hashrate', 'effective-hashrate-chart');
+        this.cm = new ChartManager('Hashrate (GH/s)', 'effective-hashrate-chart');
     }
 
     startFetchingHBSummary(){ //if settings changed at run time the update rate needs to be updated
@@ -55,8 +55,8 @@ class HBInfo {
 
     updateHTML(){
         if (!this.settings.production) console.log("updating html");
-        $("#effective-hashrate").text(this.response.Session["Average MHs"] + 'MH/s'); //TODO put the actual average here and parse to the appropriate metric exponent
-        $("#shares").text(this.response.Session.Accepted + '/' + this.response.Session.Rejected);
+        $("#effective-hashrate").text(this.response.Session["Average MHs"]/1000 + 'GH/s'); //TODO put the actual average here and parse to the appropriate metric exponent
+        $("#shares").text('Accepted: ' + this.response.Session.Accepted + '| Rejected: ' + this.response.Session.Rejected);
         $("#active-boards").text(this.response.Session["Active HBs"]);
     }
 

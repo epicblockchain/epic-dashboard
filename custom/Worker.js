@@ -33,7 +33,7 @@ class Worker{
     }
 
     workerHTML(){
-        return '<div id="worker-id-' + this.index + '" class="card col-12 mr-1 mt-1">worker: ' + this.index + '</div>';
+        return '<div id="worker-id-' + this.index + '" class="card col-12 mr-1 mt-1">worker: ' + JSON.stringify(this) + '</div>';
     }
 
 }
