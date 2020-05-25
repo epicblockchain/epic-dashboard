@@ -1,6 +1,8 @@
 class Worker{
 
     index;
+
+    times = [];
     clock = [];
     inputPower = [];
     outputPower = [];
@@ -23,6 +25,8 @@ class Worker{
     }
 
     update(workerResponse){
+        var d = new Date();
+        this.times.push(d.getMilliseconds())
         this.clock.push(workerResponse["Core Clock"]);
         this.inputPower.push(workerResponse["Input Power"]);
         this.outputPower.push(workerResponse["Output Power"]);
@@ -33,7 +37,7 @@ class Worker{
     }
 
     workerHTML(){
-        return '<div id="worker-id-' + this.index + '" class="card col-12 mr-1 mt-1">worker: ' + JSON.stringify(this) + '</div>';
+        return '<div id="worker-id-' + this.index + '" class="card col-12 mx-1 mb-1">worker: ' + JSON.stringify(this) + '</div>';
     }
 
 }

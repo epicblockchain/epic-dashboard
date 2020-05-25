@@ -6,10 +6,10 @@ class HBInfo {
     response;
     cm; //later can be changed into json object if we want more charts
     workers = [];
+    totalWorkerHR = [];
 
     constructor(){
         this.loadSettings();
-        this.loadChart();
         this.startFetchingHBSummary();
     }
 
@@ -19,22 +19,16 @@ class HBInfo {
         }
         $.get(this.settings.apiEndpoint, function( data ) {
             this.response = data;
-            this.cm.pushDatum({
-                x: new Date(), //now
-                y: data.Session["Average MHs"]/1000
-            });
-            this.updateHTML();
             if (this.workers.length == 0){
                 this.loadWorkers();
             }
+            this.updateTotalWorkerHR();
             this.updateWorkers();
+            this.updateHTML();
+
         }.bind(this));
-
     }
 
-    loadChart(){
-        this.cm = new ChartManager('Hashrate (GH/s)', 'effective-hashrate-chart');
-    }
 
     startFetchingHBSummary(){ //if settings changed at run time the update rate needs to be updated
       
@@ -54,10 +48,13 @@ class HBInfo {
     }
 
     updateHTML(){
+        //workers
         if (!this.settings.production) console.log("updating html");
-        $("#effective-hashrate").text(this.response.Session["Average MHs"]/1000 + 'GH/s'); //TODO put the actual average here and parse to the appropriate metric exponent
-        $("#shares").text('Accepted: ' + this.response.Session.Accepted + '| Rejected: ' + this.response.Session.Rejected);
+        $("#effective-hashrate").text(this.response.Session["Average MHs"] + 'MH/s'); //TODO put the actual average here and parse to the appropriate metric exponent
+        $("#shares").text('Accepted: ' + this.response.Session.Accepted + ' | Rejected: ' + this.response.Session.Rejected);
         $("#active-boards").text(this.response.Session["Active HBs"]);
+
+        $("#total-worker-hr-chart").html(JSON.stringify(this.totalWorkerHR));
     }
 
     loadWorkers(){
@@ -74,7 +71,11 @@ class HBInfo {
         this.workers.forEach(function(worker){
             worker.display();
         });
+    }
 
+    updateTotalWorkerHR(){
+        var d = new Date();
+        this.totalWorkerHR.push({t: d.getMilliseconds(), y: this.response.Session["Average MHs"]});
     }
 
 }

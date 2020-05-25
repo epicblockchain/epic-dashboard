@@ -5,37 +5,38 @@
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="node_modules/chart.js/dist/Chart.min.css">
   </head>
   <body class="bg-dark">
     <!-- <h1 class="text-center">ePIC Blockchain Dashboard</h1> -->
     
-    <img src="img/epic-logo.png"> -
+    <img style="margin: 10px;" src="img/epic-logo.png"> -
 
-    <div class="container">
+    <div class="side-nav">
+
+    </div>
+
+    <div class="container-fluid">
      <div class="row">
        <!-- cards with most high level info-->
-        <div class="card col mr-1">
+        <div class="card col mx-1">
           <h5 class="card-title">
-            <!-- maybe hover to explain what this is-->
+            <!-- maybe hover to explain what this is if this accounts for shares rejected-->
             Hashrate
           </h5>
           <p id="effective-hashrate" class="">
             Loading...
           </p>
         </div>
-        <div class="card col mr-1">
+        <div class="card col mx-1">
           <h5 class="card-title ">
-            <!-- maybe hover to explain what this is-->
             Shares
           </h5>
           <p id="shares" class="">
             Loading...
           </p>
         </div>
-        <div class="card col mr-1">
+        <div class="card col mx-1">
           <h5 class="card-title ">
-            <!-- maybe hover to explain what this is-->
             Boards active
           </h5>
           <p id="active-boards" class="">
@@ -44,12 +45,15 @@
         </div>
      </div>
       <div class="row mt-1">
-        <div class="col card mr-1">
-          <canvas id="effective-hashrate-chart" width="100%" height="50%">Loading...</canvas>
+        <div class="col card mx-1">
+          <div id="total-worker-hr-chart">
+            Loading...
+          </div>
+          <!-- <canvas id="effective-hashrate-chart" width="100%" height="50%">Loading...</canvas> -->
         </div>        
       </div>
       <!-- worker div, we remove and add with jquery -->
-      <div id="worker-div" class="row mt-1">
+      <div id="worker-div" class="row my-1">
 
       </div>
     </div>
@@ -60,8 +64,7 @@
   </script>
   <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
   <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script src="node_modules/chart.js/dist/Chart.min.js"></script>
-  <!-- These should probably be put into modules -->
+  <!-- Closest approximation to a module without making a node module -->
   <script src="custom/Worker.js"></script>
   <script src="custom/ChartManager.js"></script>
   <script src="custom/HBInfo.js"></script>
