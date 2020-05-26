@@ -1,4 +1,5 @@
 const { app, BrowserWindow, screen } = require('electron')
+const fs = require('fs');
 
 function createWindow () {
   // Create the browser window.
@@ -17,7 +18,8 @@ function createWindow () {
   win.loadFile('index.html')
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  var settings = JSON.parse(fs.readFileSync('settings.json'));
+  if (!settings.production) win.webContents.openDevTools();
 
   //hide the janky top menu for now, since I dont think it will be useful
   win.removeMenu(); //this may not work on mac
