@@ -6,11 +6,17 @@ class HBInfo {
     response;
     cm; //later can be changed into json object if we want more charts
     workers = [];
-    totalWorkerHR = [];
+    // totalWorkerHR = [];
 
     constructor(){
         this.loadSettings();
+        this.loadChartManager();
         this.startFetchingHBSummary();
+    }
+
+    loadChartManager(){
+        this.cm = new ChartManager('total-worker-hr-chart', this.settings.requestInterval);
+        this.cm.pushData(0);
     }
 
     fetchFromServer(){
@@ -54,7 +60,7 @@ class HBInfo {
         $("#shares").text('Accepted: ' + this.response.Session.Accepted + ' | Rejected: ' + this.response.Session.Rejected);
         $("#active-boards").text(this.response.Session["Active HBs"]);
 
-        $("#total-worker-hr-chart").html(JSON.stringify(this.totalWorkerHR));
+        // $("#total-worker-hr-chart").html(JSON.stringify(this.totalWorkerHR));
     }
 
     loadWorkers(){
@@ -74,8 +80,8 @@ class HBInfo {
     }
 
     updateTotalWorkerHR(){
-        var d = new Date();
-        this.totalWorkerHR.push({t: d.getMilliseconds(), y: this.response.Session["Average MHs"]});
+        if (!this.settings.production) this.cm.pushData(this.response.Session["Average MHs"]/1000 + Math.random()*1000);
+        else this.cm.pushData(this.response.Session["Average MHs"]/1000);
     }
 
 }

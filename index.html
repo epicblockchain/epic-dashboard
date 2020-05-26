@@ -46,10 +46,7 @@
      </div>
       <div class="row mt-1">
         <div class="col card mx-1">
-          <div id="total-worker-hr-chart">
-            Loading...
-          </div>
-          <!-- <canvas id="effective-hashrate-chart" width="100%" height="50%">Loading...</canvas> -->
+          <canvas id="total-worker-hr-chart" width="100%" height="200">Loading...</canvas>
         </div>        
       </div>
       <!-- worker div, we remove and add with jquery -->
@@ -64,6 +61,7 @@
   </script>
   <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
   <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="node_modules/smoothie/smoothie.js"></script>
   <!-- Closest approximation to a module without making a node module -->
   <script src="custom/Worker.js"></script>
   <script src="custom/ChartManager.js"></script>
