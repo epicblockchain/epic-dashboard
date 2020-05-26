@@ -39,7 +39,7 @@ class Worker{
     }
 
     workerHTML(){
-        return '<div id="worker-id-' + this.index + '" class="card col-12 mx-1 mb-1"><div class="row"><div class="col">ID: ' + this.index
+        return '<div id="worker-id-' + this.index + '" class="card col-12 mb-1"><div class="row"><div class="col">ID: ' + this.index
             + ' </div><div class="col">CLK: ' + this.clock[this.clock.length-1] 
             + ' </div><div class="col">TEMP: ' + this.temperature[this.temperature.length-1] 
             + ' </div><div class="col">P(IN/OUT): '+ this.inputPower[this.inputPower.length-1] +'/'+ this.outputPower[this.outputPower.length-1]

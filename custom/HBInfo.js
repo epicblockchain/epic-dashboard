@@ -56,9 +56,10 @@ class HBInfo {
     updateHTML(){
         //workers
         if (!this.settings.production) console.log("updating html");
-        $("#effective-hashrate").text(this.response.Session["Average MHs"] + 'MH/s'); //TODO put the actual average here and parse to the appropriate metric exponent
+        $("#total-worker-hr").text(this.response.Session["Average MHs"] + 'MH/s'); //TODO put the actual average here and parse to the appropriate metric exponent
         $("#shares").text('Accepted: ' + this.response.Session.Accepted + ' | Rejected: ' + this.response.Session.Rejected);
         $("#active-boards").text(this.response.Session["Active HBs"]);
+        $('#uptime').text(this.response.Session["Uptime"]);
 
         // $("#total-worker-hr-chart").html(JSON.stringify(this.totalWorkerHR));
     }
