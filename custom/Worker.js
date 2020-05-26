@@ -10,6 +10,7 @@ class Worker{
     outputCurrent = [];
     inputVoltage = [];
     outputVoltage = [];
+    temperature = [];
     //chart?
 
     constructor(index){
@@ -34,10 +35,17 @@ class Worker{
         this.outputCurrent.push(workerResponse["Output Current"]);
         this.inputVoltage.push(workerResponse["Input Voltage"]);
         this.outputVoltage.push(workerResponse["Output Voltage"]);
+        this.temperature.push(workerResponse["Temperature"]);
     }
 
     workerHTML(){
-        return '<div id="worker-id-' + this.index + '" class="card col-12 mx-1 mb-1">worker: ' + JSON.stringify(this) + '</div>';
+        return '<div id="worker-id-' + this.index + '" class="card col-12 mx-1 mb-1"><div class="row"><div class="col">ID: ' + this.index
+            + ' </div><div class="col">CLK: ' + this.clock[this.clock.length-1] 
+            + ' </div><div class="col">TEMP: ' + this.temperature[this.temperature.length-1] 
+            + ' </div><div class="col">P(IN/OUT): '+ this.inputPower[this.inputPower.length-1] +'/'+ this.outputPower[this.outputPower.length-1]
+            + ' </div><div class="col">V(IN/OUT): '+ this.inputVoltage[this.inputVoltage.length-1] +'/'+ this.outputVoltage[this.outputVoltage.length-1] 
+            + ' </div><div class="col">I(IN/OUT): '+ this.inputCurrent[this.inputCurrent.length-1] +'/'+ this.outputCurrent[this.outputCurrent.length-1]
+            + '</div></div></div></div>';
     }
 
 }
