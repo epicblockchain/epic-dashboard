@@ -11,8 +11,8 @@
     "electron": "^8.3.0"
   },
   "dependencies": {
-    "bootstrap": "^4.5.0",
     "jquery": "^3.5.1",
+    "materialize-css": "^1.0.0-rc.2",
     "smoothie": "^1.35.0"
   }
 }
