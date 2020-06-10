@@ -62,6 +62,13 @@ app.on('activate', () => {
 // code. You can also put them in separate files and require them here.
 
 const browser = dnssd.Browser(dnssd.tcp('epicminer'))
-  .on('serviceUp', service => console.log("Device up: ", service))
-  .on('serviceDown', service => console.log("Device down: ", service))
+  .on('serviceUp',function(service){
+    var ip = service.addresses[0];
+    var port = service.port;
+    var settings = JSON.parse(fs.readFileSync('settings.json'));
+    settings.apiIP = ip;
+    settings.apiPort = port;
+    fs.writeFileSync('settings.json', settings);
+  })
+  .on('serviceDown', service => console.log("Device down: ", service))//use this maybe?
   .start();
