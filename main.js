@@ -61,12 +61,17 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
+var settings = JSON.parse(fs.readFileSync('settings.json'));
+settings.apiIP = [];
+fs.writeFileSync('settings.json', JSON.stringify(settings));
+
+
 const browser = dnssd.Browser(dnssd.tcp('epicminer'))
   .on('serviceUp',function(service){
     var ip = service.addresses[0];
     var port = service.port;
     var settings = JSON.parse(fs.readFileSync('settings.json'));
-    settings.apiIP = ip;
+    settings.apiIP.push(ip);
     settings.apiPort = port;
     fs.writeFileSync('settings.json', JSON.stringify(settings));
   })

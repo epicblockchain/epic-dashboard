@@ -1,5 +1,1 @@
-{
-    "production": false,
-    "requestInterval": 3000,
-    "apiEndpoint": "http://10.10.0.41:4028/summary"
-}
+{"production":false,"requestInterval":3000,"apiEndpoint":"summary","apiIP":["10.10.0.106","10.10.0.112"],"apiPort":4028}
