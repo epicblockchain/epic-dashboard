@@ -2,7 +2,10 @@ const { app, BrowserWindow, screen } = require('electron')
 // var mdns = require('multicast-dns')()
 const fs = require('fs');
 const dnssd = require('dnssd2');
- 
+
+if (!fs.existsSync('settings.json')){
+  fs.writeFileSync('settings.json', fs.readFileSync('settingsDefault.json'));
+}
 
 
 function createWindow () {
@@ -31,8 +34,6 @@ function createWindow () {
   // const template = [];
   // const menu = Menu.buildFromTemplate(template);
   // Menu.setApplicationMenu(menu);
-
-  
 
 }
 
