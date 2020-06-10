@@ -1,5 +1,9 @@
 const { app, BrowserWindow, screen } = require('electron')
+// var mdns = require('multicast-dns')()
 const fs = require('fs');
+const dnssd = require('dnssd2');
+ 
+
 
 function createWindow () {
   // Create the browser window.
@@ -56,3 +60,8 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+const browser = dnssd.Browser(dnssd.tcp('epicminer'))
+  .on('serviceUp', service => console.log("Device up: ", service))
+  .on('serviceDown', service => console.log("Device down: ", service))
+  .start();
