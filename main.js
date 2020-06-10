@@ -68,7 +68,7 @@ const browser = dnssd.Browser(dnssd.tcp('epicminer'))
     var settings = JSON.parse(fs.readFileSync('settings.json'));
     settings.apiIP = ip;
     settings.apiPort = port;
-    fs.writeFileSync('settings.json', settings);
+    fs.writeFileSync('settings.json', JSON.stringify(settings));
   })
   .on('serviceDown', service => console.log("Device down: ", service))//use this maybe?
   .start();
