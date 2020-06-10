@@ -4,70 +4,29 @@
     <title>ePIC Dashboard</title>
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css">
   </head>
-  <body class="bg-dark">
-    <!-- <h1 class="text-center">ePIC Blockchain Dashboard</h1> -->
-    
-    <img style="margin: 10px;" src="img/epic-logo.png"> -
-
-    <div class="side-nav">
-
-    </div>
-
-    <div class="container-fluid">
-     <div class="row">
-       <!-- cards with most high level info-->
-        <div class="card col mx-1">
-          <h5 class="card-title">
-            <!-- maybe hover to explain what this is if this accounts for shares rejected-->
-            Hashrate
-          </h5>
-          <p id="total-worker-hr" class="">
-            Loading...
-          </p>
-        </div>
-        <div class="card col mx-1">
-          <h5 class="card-title ">
-            Shares
-          </h5>
-          <p id="shares" class="">
-            Loading...
-          </p>
-        </div>
-        <div class="card col mx-1">
-          <h5 class="card-title ">
-            Boards active
-          </h5>
-          <p id="active-boards" class="">
-            Loading...
-          </p>
-        </div>
-        <div class="card col mx-1">
-          <h5>Uptime</h5>
-          <p id='uptime'>
-            Loading...
-          </p>
-        </div>
-     </div>
-      <div class="row mt-1">
-        <div class="col card mx-1 px-1">
-          <h4>Total Worker HR (GH/s)</h4>
-          <canvas id="total-worker-hr-chart" width="100%" height="200">Loading...</canvas>
-        </div>        
-      </div>
-      <!-- worker div, we remove and add with jquery -->
-      <div id="worker-div" class="row my-1 mx-1">
-
-      </div>
-    </div>
-
+  
+  <!-- sidenav -->
+  <ul id="nav" class="sidenav sidenav-fixed">
+    <li>
+      <div class="container">
+        epic logo
+      </div>  
+    </li>
+    <li><div class="divider"></div></li>
+    <li><a class="waves-effect">Dashboard</a></li>
+    <li><a class="waves-effect">Charts</a></li>
+    <li><a class="waves-effect">Settings</a></li>
+  </ul>
+  <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        
 
   <script>
     window.jQuery = window.$ = require('jquery'); //jquery needs to be init like this because of node environment
   </script>
-  <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
-  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script src="node_modules/smoothie/smoothie.js"></script>
+  <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
+  <!-- <script src="node_modules/smoothie/smoothie.js"></script> -->
   <!-- Closest approximation to a module without making a node module -->
   <script src="custom/Worker.js"></script>
   <script src="custom/ChartManager.js"></script>
@@ -75,6 +34,16 @@
   <script>
     //to init the info and charts
     var HB = new HBInfo();
+
+    //materializecss inits
+    //sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+      var instances = M.Sidenav.init();//elems, options
+    });
+    $(document).ready(function(){
+      $('.sidenav').sidenav();
+    });
+
   </script>
   </body>
 </html>

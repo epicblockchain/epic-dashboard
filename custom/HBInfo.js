@@ -15,7 +15,7 @@ class HBInfo {
     }
 
     loadChartManager(){
-        this.cm = new ChartManager('total-worker-hr-chart', this.settings.requestInterval);
+        // this.cm = new ChartManager('total-worker-hr-chart', this.settings.requestInterval);
         // this.cm.pushData(0);
     }
 
