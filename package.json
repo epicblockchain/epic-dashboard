@@ -11,8 +11,9 @@
     "electron": "^8.3.0"
   },
   "dependencies": {
+    "chart.js": "^2.9.3",
+    "chartjs-plugin-streaming": "^1.8.0",
     "jquery": "^3.5.1",
-    "materialize-css": "^1.0.0-rc.2",
-    "smoothie": "^1.35.0"
+    "materialize-css": "^1.0.0-rc.2"
   }
 }
