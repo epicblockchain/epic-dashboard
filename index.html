@@ -19,7 +19,7 @@
       <li><div class="divider"></div></li>
       <li id="nav-dashboard" class="nav-selector grey lighten-2"><a class="waves-effect">Dashboard</a></li>
       <li id="nav-charts" class="nav-selector"><a class="waves-effect">Charts</a></li>
-      <li id="nav-market" class="nav-selector"><a class="waves-effect">Market</a></li>
+      <!-- <li id="nav-workers" class="nav-selector"><a class="waves-effect">Market</a></li> -->
       <li id="nav-pools" class="nav-selector"><a class="waves-effect">Pools</a></li>
       <li id="nav-settings" class="nav-selector"><a class="waves-effect">Settings</a></li>
     </ul>
@@ -32,8 +32,8 @@
         <div class="card blue">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span class="card-title">Loading...</span>
-              <p>Pool hashrate</p>
+              <span id="total-hashrate" class="card-title">Loading...</span>
+              <p>Total Hashrate</p>
             </div>
           </div>
         </div>
@@ -42,8 +42,8 @@
         <div class="card red">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span class="card-title">Loading...</span>
-              <p>s</p>
+              <span id="rejected-share-percentage" class="card-title">Loading...</span>
+              <p>Rejected Share %</p>
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@
         <div class="card green">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span class="card-title">Loading...</span>
+              <span id="uptime" class="card-title">Loading...</span>
               <p>Uptime</p>
             </div>
           </div>
@@ -62,8 +62,8 @@
         <div class="card orange">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span class="card-title">Loading...</span>
-              <p>s</p>
+              <span id="current-pool" class="card-title">Loading...</span>
+              <p>Current Pool</p>
             </div>
           </div>
         </div>
@@ -72,8 +72,8 @@
         <div class="card purple">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span class="card-title">Loading...</span>
-              <p>s.</p>
+              <span id="difficulty" class="card-title">Loading...</span>
+              <p>Difficulty</p>
             </div>
           </div>
         </div>
@@ -82,8 +82,8 @@
         <div class="card yellow">
           <div class="card-content">
             <div class="card-content">
-              <span class="card-title">Loading...</span>
-              <p>I am a.</p>
+              <span id="last-accepted-share-time" class="card-title">Loading...</span>
+              <p>Last Accepted Share Time</p>
             </div>
           </div>
         </div>
@@ -94,7 +94,7 @@
   <!-- charts page -->
   <div id="page-charts" class="container hide page">
     <div>
-      <canvas id="someChart"></canvas>
+      <canvas id="hashrate-chart" width="100%" height="100%"></canvas>
     </div>
   </div>
 
@@ -109,7 +109,6 @@
   <script src="custom/HBInfo.js"></script> -->
   <script>
     //to init the info and charts
-    // var HB = new HBInfo();
 
     //materializecss inits
     //sidebar
@@ -131,7 +130,6 @@
       $("#page-"+selector_id.substr(4)).removeClass('hide');
     });
 
-    //chart js
     
 
   </script>

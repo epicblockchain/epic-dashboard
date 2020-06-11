@@ -1,1 +1,1 @@
-{"production":false,"requestInterval":3000,"apiEndpoint":"summary","apiIP":["10.10.0.112","10.10.0.106"],"apiPort":4028}
+{"production":false,"requestInterval":3000,"apiEndpoint":"summary"}

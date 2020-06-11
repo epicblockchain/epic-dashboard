@@ -63,18 +63,23 @@ app.on('activate', () => {
 // code. You can also put them in separate files and require them here.
 
 var settings = JSON.parse(fs.readFileSync('settings.json'));
-settings.apiIP = [];
 fs.writeFileSync('settings.json', JSON.stringify(settings));
 
+//api access logic entry
+var minerinfo = require('./custom/MinerInfo');
+var miners = []; //this will also hold inactive miners
 
 const browser = dnssd.Browser(dnssd.tcp('epicminer'))
   .on('serviceUp',function(service){
     var ip = service.addresses[0];
     var port = service.port;
-    var settings = JSON.parse(fs.readFileSync('settings.json'));
-    settings.apiIP.push(ip);
-    settings.apiPort = port;
-    fs.writeFileSync('settings.json', JSON.stringify(settings));
+    m = new minerinfo.MinerInfo(ip, port);
+    m.startPolling();
+    miners.push(m);
+    if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
+
   })
-  .on('serviceDown', service => console.log("Device down: ", service))//use this maybe?
+  .on('serviceDown', service => console.log("Device down: ", service))//TODO: use this maybe?
   .start();
+
+
