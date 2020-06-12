@@ -1,19 +1,14 @@
-const fs = require('fs');
 const got = require('got');
 
 class MinerInfo {
-    rawResponses = [];
     alive;
     ip;
     port;
-    timerID;
-    requestInterval;
     apiEndpoint;
+    response;
 
-    constructor(ip, port){
-        var settings = JSON.parse(fs.readFileSync('settings.json'));
-        this.requestInterval = settings.requestInterval;
-        this.apiEndpoint = settings.apiEndpoint;
+    constructor(ip, port, apiEndpoint){
+        this.apiEndpoint = apiEndpoint;
         this.ip = ip;
         this.port = port;
     }
@@ -25,26 +20,17 @@ class MinerInfo {
             try {
                 const response = await got('http://' + this.ip + ':' + this.port + '/' + this.apiEndpoint);
                 this.alive = true;
-                console.log(response.body);
+                this.response = JSON.parse(response.body);
+                console.log(this.response); //TODO remove
             } catch (error) {
-                console.log('Could not reach miner at ' + this.ip + ':' + this.port);
+                console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.apiEndpoint);
                 this.alive = false;
-                this.stopPolling();
+                this.response = null;
             }
         })();
 
     }
 
-    startPolling(){
-        this.timerID = setInterval(function(){
-            this.fetch();
-        }.bind(this), this.requestInterval);
-    }
-
-    stopPolling(){
-        clearInterval(this.timerID);
-        this.timerID = null;
-    }
 }
 
 module.exports = {

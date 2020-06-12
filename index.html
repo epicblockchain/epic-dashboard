@@ -19,12 +19,11 @@
       <li><div class="divider"></div></li>
       <li id="nav-dashboard" class="nav-selector grey lighten-2"><a class="waves-effect">Dashboard</a></li>
       <li id="nav-charts" class="nav-selector"><a class="waves-effect">Charts</a></li>
-      <!-- <li id="nav-workers" class="nav-selector"><a class="waves-effect">Market</a></li> -->
+      <li id="nav-miners" class="nav-selector"><a class="waves-effect">Miners</a></li>
       <li id="nav-pools" class="nav-selector"><a class="waves-effect">Pools</a></li>
       <li id="nav-settings" class="nav-selector"><a class="waves-effect">Settings</a></li>
     </ul>
   </div>
-       
   <!-- dashboard page -->
   <div id="page-dashboard" class="container page">
     <div class="row">
@@ -42,8 +41,8 @@
         <div class="card red">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span id="rejected-share-percentage" class="card-title">Loading...</span>
-              <p>Rejected Share %</p>
+              <span id="accepted-rejected-shares" class="card-title">Loading...</span>
+              <p>Accepted / Rejected Shares</p>
             </div>
           </div>
         </div>
@@ -52,8 +51,8 @@
         <div class="card green">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span id="uptime" class="card-title">Loading...</span>
-              <p>Uptime</p>
+              <span id="active-miners" class="card-title">Loading...</span>
+              <p>Active Miners</p>
             </div>
           </div>
         </div>
@@ -72,8 +71,8 @@
         <div class="card purple">
           <div class="card-content white-text">
             <div class="card-content white-text">
-              <span id="difficulty" class="card-title">Loading...</span>
-              <p>Difficulty</p>
+              <span id="avg-difficulty" class="card-title">Loading...</span>
+              <p>Average Difficulty</p>
             </div>
           </div>
         </div>
@@ -130,7 +129,34 @@
       $("#page-"+selector_id.substr(4)).removeClass('hide');
     });
 
-    
+    var e = require('electron');
+    //dashboard
+    e.ipcRenderer.on('dashboard-channel', (event, message) => {
+      console.log(message);
+      for (var id in message) {
+        $('#'+id).html(message[id]);
+      }
+    });
+
+    //chart
+    e.ipcRenderer.on('chart-channel', (event, message) => {
+      console.log(message);
+    });
+
+    //miners
+    e.ipcRenderer.on('miners-channel', (event, message) => {
+      console.log(message);
+    });
+
+    //pools
+    e.ipcRenderer.on('pools-channel', (event, message) => {
+      console.log(message);
+    });
+
+    //settings
+    e.ipcRenderer.on('settings-channel', (event, message) => {
+      console.log(message);
+    });
 
   </script>
   </body>

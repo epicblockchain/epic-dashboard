@@ -8,6 +8,7 @@ if (!fs.existsSync('settings.json')){
 }
 
 
+
 function createWindow () {
   // Create the browser window.
 
@@ -34,6 +35,8 @@ function createWindow () {
   // const template = [];
   // const menu = Menu.buildFromTemplate(template);
   // Menu.setApplicationMenu(menu);
+
+  startLoop(win);
 
 }
 
@@ -69,17 +72,93 @@ fs.writeFileSync('settings.json', JSON.stringify(settings));
 var minerinfo = require('./custom/MinerInfo');
 var miners = []; //this will also hold inactive miners
 
+if (!settings.production) console.log('searching for miners on mdns');
+
 const browser = dnssd.Browser(dnssd.tcp('epicminer'))
   .on('serviceUp',function(service){
     var ip = service.addresses[0];
     var port = service.port;
-    m = new minerinfo.MinerInfo(ip, port);
-    m.startPolling();
+    m = new minerinfo.MinerInfo(ip, port, settings.apiEndpoint);
     miners.push(m);
     if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
-
   })
-  .on('serviceDown', service => console.log("Device down: ", service))//TODO: use this maybe?
+  .on('serviceDown', service => console.log("Device down: ", service))//TODO: does this have any use case?
   .start();
 
+if (!settings.production) console.log('done searching for miners');
+
+//returns the timerid if we want to clearInterval();
+function startLoop(win){
+
+  //this runs immediately and also after every request interval
+  return setInterval(function immediate(){
+    miners.forEach(m => {
+      m.fetch();
+    });
+
+    //dashboard
+    win.webContents.send('dashboard-channel', generateDashboardData(miners));
+  
+    //chart
+    win.webContents.send('chart-channel;', []);
+  
+    //miners
+    win.webContents.send('miners-channel;', []); 
+  
+    //pools
+    win.webContents.send('pools-channel;', []); 
+  
+    //settings
+    win.webContents.send('settings-channel;', []); 
+  
+    return immediate;
+  }(), settings.requestInterval);
+}
+
+function generateDashboardData(miners){
+  var totalHashrate = 0;
+  var acceptedShares = 0;
+  var rejectedShares = 0;
+  var activeMiners = 0;
+  var pool; //this cannot be an aggregate
+  var totalDifficulty = 0; //this can be averaged, but do we want it to?
+  var lastAcceptedShareTime = null; //this can be found but is it useful
+
+  miners.forEach(miner => {
+    if (miner.alive) {
+      totalHashrate += miner.response["Session"]["Average MHs"];
+      acceptedShares += miner.response["Session"]["Accepted"];
+      rejectedShares += miner.response["Session"]["Rejected"];
+      pool = miner.response["Stratum"]["Current Pool"];
+      activeMiners++;
+      totalDifficulty += miner.response["Session"]["Difficulty"];
+      if (lastAcceptedShareTime < miner.response["Session"]["Last Accepted Share Timestamp"]){
+        lastAcceptedShareTime = miner.response["Session"]["Last Accepted Share Timestamp"];
+      }
+    }
+  });
+
+  var avgDifficulty = totalDifficulty / activeMiners;
+
+  var totalHashrateString;
+  if (totalHashrate < 1000) totalHashrateString = totalHashrate + " MH/s";
+  else if (totalHashrate > 1000 && totalHashrate <= 1000000) totalHashrateString = totalHashrate/1000 + " GH/s";
+  else if (totalHashrate > 1000000 && totalHashrate <= 1000000000) totalHashrateString = totalHashrate/1000000 + " TH/s";
+  else totalHashrateString = totalHashrate/1000000000 + " PH/s";
+
+  var shareString = acceptedShares + " / " + rejectedShares;
+  var activeMinerString = activeMiners;
+  var currentPoolString = pool || "Disconnected";
+  var avgDifficultyString = avgDifficulty || "N/A";
+  var lastAcceptedShareString = lastAcceptedShareTime || "Disconnected";
+
+  return {
+    "total-hashrate": totalHashrateString,
+    "accepted-rejected-shares": shareString,
+    "active-miners": activeMinerString,
+    "current-pool": currentPoolString,
+    "avg-difficulty": avgDifficultyString,
+    "last-accepted-share-time": lastAcceptedShareString
+  };
+}
 
