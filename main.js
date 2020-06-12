@@ -96,7 +96,7 @@ function startLoop(win){
     win.webContents.send('dashboard-channel', generateDashboardData(miners));
   
     //chart
-    // win.webContents.send('chart-channel', []);
+    win.webContents.send('chart-channel', generateChartData(miners));
   
     //miners
     win.webContents.send('miners-channel', generateMinerData(miners)); 
@@ -204,6 +204,7 @@ function generateMinerData(miners){
         m.response["Session"]["Submitted"] || "N/A",
         new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000) || "N/A",
         m.response["Session"]["Difficulty"] || "N/A",
+        'todo',
         // m.response["Fans"]["Fans Speed"] || "N/A",
         (m.response["HBs"][0]["Temperature"] || "N/A") + ' / ' 
           + (m.response["HBs"][1]["Temperature"] || "N/A") + ' / '
@@ -218,4 +219,8 @@ function generateMinerData(miners){
 
   return {"headers": headers,
     "data": data};
+}
+
+function generateChartData(miners){
+
 }

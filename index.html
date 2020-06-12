@@ -26,7 +26,7 @@
   </div>
 
   <!-- pages -->
-  <div style="padding-left: 200px;">
+  <div style="margin-left: 125px;">
     <!-- dashboard page -->
     <div id="page-dashboard" class="container page">
       <div class="row">
@@ -102,14 +102,14 @@
 
     <!-- miners page -->
     <div id="page-miners" class="hide page">
-      <table>
+      <table class="centered" style="margin-left: 200px;">
         <thead>
           <tr id="miner-headers">
             <!-- gets auto filled -->
           </tr>
         </thead>
         <tbody id="miner-table-body">
-          <!-- gets autofilled -->
+          <!-- gets auto filled -->
         </tbody>
       </table>
     </div>
@@ -119,10 +119,9 @@
   <script>
     window.jQuery = window.$ = require('jquery'); //jquery needs to be init like this because of node environment
   </script>
-  <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>  
-  <!-- <script src="custom/Worker.js"></script>
-  <script src="custom/ChartManager.js"></script>
-  <script src="custom/HBInfo.js"></script> -->
+  <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
+  <script src="node_modules/chart.js/dist/Chart.bundle.min.js"></script>
+  <script src="node_modules/chartjs-plugin-streaming/dist/chartjs-plugin-streaming.min.js"></script> -->
   <script>
     //to init the info and charts
 
@@ -149,22 +148,49 @@
     var e = require('electron');
     //dashboard
     e.ipcRenderer.on('dashboard-channel', (event, message) => {
-      console.log('received data on dashboard channel');
-      console.log(message);
       for (var id in message) {
         $('#'+id).html(message[id]);
       }
     });
 
-    //chart
+    //chart see https://github.com/nagix/chartjs-plugin-streaming if lowering cpu usage is needed
+    //also see https://github.com/chartjs/chartjs-plugin-zoom for zoom
+    
+    var ctx = document.getElementById('hashrate-chart').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets: [{
+          data: []
+        }, {
+          data: []
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'realtime',
+            realtime: {
+              onRefresh: function(chart) {
+                chart.data.datasets.forEach(function(dataset) {
+                  dataset.data.push({
+                    x: Date.now(),
+                    y: Math.random()
+                  });
+                });
+              }
+            }
+          }]
+        }
+      }
+      });
+
     e.ipcRenderer.on('chart-channel', (event, message) => {
-      console.log(message);
+      console.log('chart data received: ' + message);
     });
 
     //miners
     e.ipcRenderer.on('miners-channel', (event, message) => {
-      console.log('received data on miners channel');
-      console.log(message.data);
       $("#miner-headers").empty();
       message.headers.forEach(h => {
         $('#miner-headers').append('<th>'+h+'</th>');
@@ -173,9 +199,10 @@
       message.data.forEach(d => {
         var datumString = '<tr>';
         d.forEach(el => {
-          datumString+='<td>'+el+'</td>';
+          if (el == "Disconnected") datumString+='<td colspan="'+message.headers.length+'">Disconnected</td>';
+          else datumString+='<td style="max-width: 150px; word-wrap: break-word">'+el+'</td>';
         });
-        datumString = '</tr>'
+        datumString += '</tr>'
         $("#miner-table-body").append(datumString);
       });
     });
