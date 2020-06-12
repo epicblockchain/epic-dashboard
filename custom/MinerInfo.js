@@ -1,7 +1,7 @@
 const got = require('got');
 
 class MinerInfo {
-    alive;
+    active;
     ip;
     port;
     apiEndpoint;
@@ -19,12 +19,12 @@ class MinerInfo {
         (async () => {
             try {
                 const response = await got('http://' + this.ip + ':' + this.port + '/' + this.apiEndpoint);
-                this.alive = true;
+                this.active = true;
                 this.response = JSON.parse(response.body);
-                console.log(this.response); //TODO remove
+                // console.log(this.response); //TODO remove
             } catch (error) {
                 console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.apiEndpoint);
-                this.alive = false;
+                this.active = false;
                 this.response = null;
             }
         })();

@@ -72,8 +72,6 @@ fs.writeFileSync('settings.json', JSON.stringify(settings));
 var minerinfo = require('./custom/MinerInfo');
 var miners = []; //this will also hold inactive miners
 
-if (!settings.production) console.log('searching for miners on mdns');
-
 const browser = dnssd.Browser(dnssd.tcp('epicminer'))
   .on('serviceUp',function(service){
     var ip = service.addresses[0];
@@ -84,8 +82,6 @@ const browser = dnssd.Browser(dnssd.tcp('epicminer'))
   })
   .on('serviceDown', service => console.log("Device down: ", service))//TODO: does this have any use case?
   .start();
-
-if (!settings.production) console.log('done searching for miners');
 
 //returns the timerid if we want to clearInterval();
 function startLoop(win){
@@ -100,16 +96,16 @@ function startLoop(win){
     win.webContents.send('dashboard-channel', generateDashboardData(miners));
   
     //chart
-    win.webContents.send('chart-channel;', []);
+    // win.webContents.send('chart-channel', []);
   
     //miners
-    win.webContents.send('miners-channel;', []); 
+    win.webContents.send('miners-channel', generateMinerData(miners)); 
   
     //pools
-    win.webContents.send('pools-channel;', []); 
+    // win.webContents.send('pools-channel', []); 
   
     //settings
-    win.webContents.send('settings-channel;', []); 
+    // win.webContents.send('settings-channel', []); 
   
     return immediate;
   }(), settings.requestInterval);
@@ -125,7 +121,7 @@ function generateDashboardData(miners){
   var lastAcceptedShareTime = null; //this can be found but is it useful
 
   miners.forEach(miner => {
-    if (miner.alive) {
+    if (miner.active) {
       totalHashrate += miner.response["Session"]["Average MHs"];
       acceptedShares += miner.response["Session"]["Accepted"];
       rejectedShares += miner.response["Session"]["Rejected"];
@@ -140,17 +136,13 @@ function generateDashboardData(miners){
 
   var avgDifficulty = totalDifficulty / activeMiners;
 
-  var totalHashrateString;
-  if (totalHashrate < 1000) totalHashrateString = totalHashrate + " MH/s";
-  else if (totalHashrate > 1000 && totalHashrate <= 1000000) totalHashrateString = totalHashrate/1000 + " GH/s";
-  else if (totalHashrate > 1000000 && totalHashrate <= 1000000000) totalHashrateString = totalHashrate/1000000 + " TH/s";
-  else totalHashrateString = totalHashrate/1000000000 + " PH/s";
+  var totalHashrateString = MHToHRString(totalHashrate);
 
   var shareString = acceptedShares + " / " + rejectedShares;
   var activeMinerString = activeMiners;
   var currentPoolString = pool || "Disconnected";
   var avgDifficultyString = avgDifficulty || "N/A";
-  var lastAcceptedShareString = lastAcceptedShareTime || "Disconnected";
+  var lastAcceptedShareString = new Date(lastAcceptedShareTime*1000) || "Disconnected";
 
   return {
     "total-hashrate": totalHashrateString,
@@ -162,3 +154,68 @@ function generateDashboardData(miners){
   };
 }
 
+function MHToHRString(totalHashrate){
+  if (totalHashrate < 1000) totalHashrateString = totalHashrate + " MH/s";
+  else if (totalHashrate > 1000 && totalHashrate <= 1000000) totalHashrateString = totalHashrate/1000 + " GH/s";
+  else if (totalHashrate > 1000000 && totalHashrate <= 1000000000) totalHashrateString = totalHashrate/1000000 + " TH/s";
+  else totalHashrateString = totalHashrate/1000000000 + " PH/s";
+  return totalHashrateString
+}
+
+function generateMinerData(miners){
+  var headers = ['Name', 
+    'Software', 
+    'Coin', 
+    'Algorithm', 
+    'Pool',
+    'User', 
+    'Started', 
+    'Last Work', 
+    'Uptime', 
+    'Work Received', 
+    'Active HBs', 
+    'Hashrate', 
+    'Accepted', 
+    'Rejected', 
+    'Submitted',
+    'Last Accepted Share',
+    'Difficulty',
+    'Fan Speed',
+    'Temperatures (C)'];
+
+  var data = [];
+  
+  miners.forEach(m => {
+    if (m.active) {
+      var datum = ['John Lee',
+        m.response["Software"] || "N/A",
+        m.response["Mining"]["Coin"] || "N/A",
+        m.response["Mining"]["Algorithm"] || "N/A",
+        m.response["Stratum"]["Current Pool"] || "N/A",
+        m.response["Stratum"]["Current User"] || "N/A",
+        new Date(m.response["Session"]["Startup Timestamp"]*1000) || "N/A",
+        new Date(m.response["Session"]["Last Work Timestamp"]*1000) || "N/A",
+        m.response["Session"]["Uptime"] || "N/A",
+        m.response["Session"]["WorkReceived"] || "N/A",
+        m.response["Session"]["Active HBs"] || "N/A",
+        MHToHRString(m.response["Session"]["Average MHs"]) || "N/A",
+        m.response["Session"]["Accepted"] || "N/A",
+        m.response["Session"]["Rejected"] || "N/A",
+        m.response["Session"]["Submitted"] || "N/A",
+        new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000) || "N/A",
+        m.response["Session"]["Difficulty"] || "N/A",
+        // m.response["Fans"]["Fans Speed"] || "N/A",
+        (m.response["HBs"][0]["Temperature"] || "N/A") + ' / ' 
+          + (m.response["HBs"][1]["Temperature"] || "N/A") + ' / '
+          + (m.response["HBs"][2]["Temperature"] || "N/A")];
+        data.push(datum);
+
+    } else {
+
+      data.push(['Disconnected']);
+    }
+  });
+
+  return {"headers": headers,
+    "data": data};
+}

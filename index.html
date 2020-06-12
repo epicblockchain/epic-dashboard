@@ -9,7 +9,7 @@
   
   <!-- sidenav -->
   <!-- todo fix this disappearing on very small screens -->
-  <div class="container">
+  <div>
     <ul id="nav" class="sidenav sidenav-fixed">
       <li>
         <div class="container">
@@ -24,79 +24,96 @@
       <li id="nav-settings" class="nav-selector"><a class="waves-effect">Settings</a></li>
     </ul>
   </div>
-  <!-- dashboard page -->
-  <div id="page-dashboard" class="container page">
-    <div class="row">
-      <div class="col s4">
-        <div class="card blue">
-          <div class="card-content white-text">
+
+  <!-- pages -->
+  <div style="padding-left: 200px;">
+    <!-- dashboard page -->
+    <div id="page-dashboard" class="container page">
+      <div class="row">
+        <div class="col s4">
+          <div class="card blue">
             <div class="card-content white-text">
-              <span id="total-hashrate" class="card-title">Loading...</span>
-              <p>Total Hashrate</p>
+              <div class="card-content white-text">
+                <span id="total-hashrate" class="card-title">Loading...</span>
+                <p>Total Hashrate</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col s4">
+          <div class="card red">
+            <div class="card-content white-text">
+              <div class="card-content white-text">
+                <span id="accepted-rejected-shares" class="card-title">Loading...</span>
+                <p>Accepted / Rejected Shares</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col s4">
+          <div class="card green">
+            <div class="card-content white-text">
+              <div class="card-content white-text">
+                <span id="active-miners" class="card-title">Loading...</span>
+                <p>Active Miners</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col s4">
-        <div class="card red">
-          <div class="card-content white-text">
+      <div class="row">
+        <div class="col s4">
+          <div class="card orange">
             <div class="card-content white-text">
-              <span id="accepted-rejected-shares" class="card-title">Loading...</span>
-              <p>Accepted / Rejected Shares</p>
+              <div class="card-content white-text">
+                <span id="current-pool" class="card-title">Loading...</span>
+                <p>Current Pool</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col s4">
-        <div class="card green">
-          <div class="card-content white-text">
+        <div class="col s4">
+          <div class="card purple">
             <div class="card-content white-text">
-              <span id="active-miners" class="card-title">Loading...</span>
-              <p>Active Miners</p>
+              <div class="card-content white-text">
+                <span id="avg-difficulty" class="card-title">Loading...</span>
+                <p>Average Difficulty</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col s4">
-        <div class="card orange">
-          <div class="card-content white-text">
-            <div class="card-content white-text">
-              <span id="current-pool" class="card-title">Loading...</span>
-              <p>Current Pool</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col s4">
-        <div class="card purple">
-          <div class="card-content white-text">
-            <div class="card-content white-text">
-              <span id="avg-difficulty" class="card-title">Loading...</span>
-              <p>Average Difficulty</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col s4">
-        <div class="card yellow">
-          <div class="card-content">
+        <div class="col s4">
+          <div class="card yellow">
             <div class="card-content">
-              <span id="last-accepted-share-time" class="card-title">Loading...</span>
-              <p>Last Accepted Share Time</p>
+              <div class="card-content">
+                <span id="last-accepted-share-time" class="card-title">Loading...</span>
+                <p>Last Accepted Share Time</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- charts page -->
-  <div id="page-charts" class="container hide page">
-    <div>
-      <canvas id="hashrate-chart" width="100%" height="100%"></canvas>
+    <!-- charts page -->
+    <div id="page-charts" class="container hide page">
+        <canvas id="hashrate-chart" width="100%" height="100%"></canvas>
+    </div>
+
+    <!-- miners page -->
+    <div id="page-miners" class="hide page">
+      <table>
+        <thead>
+          <tr id="miner-headers">
+            <!-- gets auto filled -->
+          </tr>
+        </thead>
+        <tbody id="miner-table-body">
+          <!-- gets autofilled -->
+        </tbody>
+      </table>
     </div>
   </div>
-
 
   <!-- js stuff -->
   <script>
@@ -132,6 +149,7 @@
     var e = require('electron');
     //dashboard
     e.ipcRenderer.on('dashboard-channel', (event, message) => {
+      console.log('received data on dashboard channel');
       console.log(message);
       for (var id in message) {
         $('#'+id).html(message[id]);
@@ -145,7 +163,21 @@
 
     //miners
     e.ipcRenderer.on('miners-channel', (event, message) => {
-      console.log(message);
+      console.log('received data on miners channel');
+      console.log(message.data);
+      $("#miner-headers").empty();
+      message.headers.forEach(h => {
+        $('#miner-headers').append('<th>'+h+'</th>');
+      });
+      $("#miner-table-body").empty();
+      message.data.forEach(d => {
+        var datumString = '<tr>';
+        d.forEach(el => {
+          datumString+='<td>'+el+'</td>';
+        });
+        datumString = '</tr>'
+        $("#miner-table-body").append(datumString);
+      });
     });
 
     //pools
