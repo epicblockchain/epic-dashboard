@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen } = require('electron')
+const { app, BrowserWindow, screen, ipcMain } = require('electron')
 // var mdns = require('multicast-dns')()
 const fs = require('fs');
 const dnssd = require('dnssd2');
@@ -72,16 +72,26 @@ fs.writeFileSync('settings.json', JSON.stringify(settings));
 var minerinfo = require('./custom/MinerInfo');
 var miners = []; //this will also hold inactive miners
 
-var browser = dnssd.Browser(dnssd.tcp('epicminer'))
-  .on('serviceUp',function(service){
-    var ip = service.addresses[0];
-    var port = service.port;
-    m = new minerinfo.MinerInfo(ip, port, settings.apiEndpoint);
-    miners.push(m);
-    if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
-  })
-  .on('serviceDown', service => console.log("Device down: ", service))//TODO: does this have any use case?
-  .start();
+var browser = searchForMiners();
+
+function searchForMiners(){
+  miners = [];
+  dnssd.Browser(dnssd.tcp('epicminer'))
+    .on('serviceUp',function(service){
+      var ip = service.addresses[0];
+      var port = service.port;
+      m = new minerinfo.MinerInfo(ip, port, settings.apiEndpoint);
+      miners.push(m);
+      if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
+    })
+    .on('serviceDown', service => console.log("Device down: ", service))//TODO: does this have any use case?
+    .start();
+}
+
+ipcMain.on('refresh', (event, arg) => {
+  browser = searchForMiners();
+  event.reply('refresh-reply', 'Refreshed!');
+})
 
 //returns the timerid if we want to clearInterval();
 function startLoop(win){

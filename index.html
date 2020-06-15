@@ -5,6 +5,7 @@
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css">
+    <link rel="stylesheet" href="node_modules/material-icons/iconfont/material-icons.css">
   </head>
   
   <!-- sidenav -->
@@ -23,6 +24,10 @@
       <li id="nav-pools" class="nav-selector"><a class="waves-effect">Pools</a></li>
       <li id="nav-settings" class="nav-selector"><a class="waves-effect">Settings</a></li>
     </ul>
+  </div>
+
+  <div>
+    <a id="btn-refresh" class="waves-effect waves-light btn right indigo darken-4 tooltipped" data-position="left" data-tooltip="Search for miners on network" style="margin: 20px;" href="#"><i class="material-icons">refresh</i></a>
   </div>
 
   <!-- pages -->
@@ -140,9 +145,22 @@
   <script src="node_modules/chart.js/dist/Chart.bundle.min.js"></script>
   <script src="node_modules/chartjs-plugin-streaming/dist/chartjs-plugin-streaming.js"></script> -->
   <script>
+    //electron
+    var e = require('electron');
     //to init the info and charts
 
     //materializecss inits
+    //button
+    $(document).ready(function(){
+      $('.tooltipped').tooltip();
+    });
+    //research for miners
+    $('#btn-refresh').click(function(){
+      e.ipcRenderer.send('refresh');
+    });
+    e.ipcRenderer.on('refresh-reply', (event, arg) => {
+      M.toast({html: 'Refreshed!'});
+    })
     //sidebar
     document.addEventListener('DOMContentLoaded', function() {
       var instances = M.Sidenav.init();//elems, options
@@ -162,7 +180,6 @@
       $("#page-"+selector_id.substr(4)).removeClass('hide');
     });
 
-    var e = require('electron');
     //dashboard
     e.ipcRenderer.on('dashboard-channel', (event, message) => {
       for (var id in message) {
