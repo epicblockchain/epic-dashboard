@@ -84,7 +84,7 @@ function searchForMiners(){
       miners.push(m);
       if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
     })
-    .on('serviceDown', service => console.log("Device down: ", service))//TODO: does this have any use case?
+    .on('serviceDown', service => console.log("Device down: ", service))//TODO: does this have any use case? our code still pings and sets to inactive
     .start();
 }
 
@@ -154,6 +154,8 @@ function generateDashboardData(miners){
   var avgDifficultyString = avgDifficulty || "N/A";
   var lastAcceptedShareString = new Date(lastAcceptedShareTime*1000).toString() || "Disconnected";
 
+  if (lastAcceptedShareTime == null) lastAcceptedShareString = '    Disconnected';
+
   return {
     "total-hashrate": totalHashrateString,
     "accepted-rejected-shares": shareString,
@@ -191,7 +193,7 @@ function generateMinerData(miners){
     // 'Submitted',
     'Difficulty',
     // 'Fan Speed',
-    'Temperature (C)'];
+    'Temperature (&degC)'];
 
   var data = [];
   
@@ -202,7 +204,7 @@ function generateMinerData(miners){
         // m.response["Mining"]["Coin"] || "N/A",
         // m.response["Mining"]["Algorithm"] || "N/A",
         m.response["Stratum"]["Current Pool"] || "N/A",
-        m.response["Stratum"]["Current User"].substr(0, 8) + '...' + m.response["Stratum"]["Current User"].substr(-8, 8) || "N/A",
+        m.response["Stratum"]["Current User"].substr(0, 8) + ' ... ' + m.response["Stratum"]["Current User"].substr(-18, 18) || "N/A",
         new Date(m.response["Session"]["Startup Timestamp"]*1000).toString().substr(4, 20) || "N/A",
         // new Date(m.response["Session"]["Last Work Timestamp"]*1000) || "N/A",
         new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000).toString().substr(4, 20) || "N/A",
@@ -236,7 +238,7 @@ function generateChartData(miners){
   var power = 0;
   miners.forEach(m => {
     if (m.active) {
-      hr += m.response["Session"]["Average MHs"]/1000;
+      hr += m.response["Session"]["Average MHs"]/1000000;
       for (var i = 0; i < m.response["Session"]["Active HBs"]; i++){
         power += m.response["HBs"][i]["Input Power"];
       }

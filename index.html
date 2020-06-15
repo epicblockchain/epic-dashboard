@@ -14,15 +14,15 @@
     <ul id="nav" class="sidenav sidenav-fixed">
       <li>
         <div class="container">
-          <img width="100%" src="img/EpicLogo-Vertical.png">
+          <img width="100%" style="margin-top: 5px;" src="img/EpicLogo-Vertical.png">
         </div>  
       </li>
       <li><div class="divider"></div></li>
       <li id="nav-dashboard" class="nav-selector grey lighten-2"><a class="waves-effect">Dashboard</a></li>
       <li id="nav-charts" class="nav-selector"><a class="waves-effect">Charts</a></li>
       <li id="nav-miners" class="nav-selector"><a class="waves-effect">Miners</a></li>
-      <li id="nav-pools" class="nav-selector"><a class="waves-effect">Pools</a></li>
-      <li id="nav-settings" class="nav-selector"><a class="waves-effect">Settings</a></li>
+      <li id="nav-pools" class="nav-selector hide"><a class="waves-effect">Pools</a></li>
+      <li id="nav-settings" class="nav-selector hide"><a class="waves-effect">Settings</a></li>
     </ul>
   </div>
 
@@ -103,7 +103,7 @@
     <!-- charts page -->
     
     <div id="page-charts" class="container hide page">
-      <div class="row">
+      <div class="row" style="margin-top: 10px;">
         <div class="col s12">
           <ul class="tabs indigo darken-4">
             <li id="tab-15m" class="tab col s3"><a  class="white-text" href="#">15 min</a></li>
@@ -159,7 +159,7 @@
       e.ipcRenderer.send('refresh');
     });
     e.ipcRenderer.on('refresh-reply', (event, arg) => {
-      M.toast({html: 'Refreshed!'});
+      M.toast({html: 'Refreshing!'});
     })
     //sidebar
     document.addEventListener('DOMContentLoaded', function() {
