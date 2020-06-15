@@ -96,7 +96,18 @@
     </div>
 
     <!-- charts page -->
+    
     <div id="page-charts" class="container hide page">
+      <div class="row">
+        <div class="col s12">
+          <ul class="tabs blue lighten-4">
+            <li id="tab-15m" class="tab col s3"><a  class="black-text" href="#">15 min</a></li>
+            <li id="tab-2hr" class="tab col s3"><a  class="black-text" href="#">2 hr</a></li>
+            <li id="tab-8hr" class="tab col s3"><a  class="black-text" href="#">8 hr</a></li>
+            <li id="tab-24hr" class="tab col s3"><a class="black-text" href="#">24 hr</a></li>
+          </ul>
+        </div>
+      </div>
         <canvas id="hashrate-chart" height="100%"></canvas>
     </div>
 
@@ -155,7 +166,6 @@
 
     //chart see https://github.com/nagix/chartjs-plugin-streaming if lowering cpu usage is needed
     //also see https://github.com/chartjs/chartjs-plugin-zoom for zoom
-    
     var ctx = document.getElementById('hashrate-chart').getContext('2d');
     var fs = require('fs');
     var requestInterval = JSON.parse(fs.readFileSync('settings.json')).requestInterval;
@@ -171,11 +181,17 @@
         }]
       },
       options: {
+        elements: {
+          line: {
+            tension: 0
+          }
+        },
         scales: {
           xAxes: [{
             type: 'realtime',
             realtime: {
-              delay: requestInterval*1.5
+              delay: requestInterval*1.5,
+              duration: 900000
             }
           }],
           yAxes: [{
@@ -187,6 +203,19 @@
       }
       });
 
+    $('.tab').click(function(){
+      var id = $(this).attr('id');
+      if (id == 'tab-24hr'){
+        chart.options.scales.xAxes[0].realtime.duration = 43200000; //this is 24 hr in millis
+      } else if (id == 'tab-8hr'){
+        chart.options.scales.xAxes[0].realtime.duration = 14400000;
+      } else if (id == 'tab-2hr'){
+        chart.options.scales.xAxes[0].realtime.duration = 3600000;
+      } else {
+        chart.options.scales.xAxes[0].realtime.duration = 900000;
+      }
+    });
+    
     e.ipcRenderer.on('chart-channel', (event, message) => {
       console.log('chart data received: ' + JSON.stringify(message));
       chart.data.datasets[0].data = message;
