@@ -139,10 +139,10 @@ function generateDashboardData(miners){
   var totalHashrateString = MHToHRString(totalHashrate);
 
   var shareString = acceptedShares + " / " + rejectedShares;
-  var activeMinerString = activeMiners;
+  var activeMinerString = activeMiners.toString() + " / " + miners.length;
   var currentPoolString = pool || "Disconnected";
   var avgDifficultyString = avgDifficulty || "N/A";
-  var lastAcceptedShareString = new Date(lastAcceptedShareTime*1000) || "Disconnected";
+  var lastAcceptedShareString = new Date(lastAcceptedShareTime*1000).toString() || "Disconnected";
 
   return {
     "total-hashrate": totalHashrateString,
@@ -150,7 +150,7 @@ function generateDashboardData(miners){
     "active-miners": activeMinerString,
     "current-pool": currentPoolString,
     "avg-difficulty": avgDifficultyString,
-    "last-accepted-share-time": lastAcceptedShareString
+    "last-accepted-share-time": lastAcceptedShareString.substr(0, 24)
   };
 }
 
@@ -236,6 +236,8 @@ function generateChartData(miners){
   });
   data.push({x: Date.now(), y: hr});
   pdata.push({x: Date.now(), y: power});
-  return {"hr-chart": data,
-          "p-chart": data};
+  return {
+    "hr-chart": data,
+    "p-chart": pdata
+  };
 }

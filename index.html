@@ -31,7 +31,7 @@
     <div id="page-dashboard" class="container page">
       <div class="row">
         <div class="col s4">
-          <div class="card blue">
+          <div class="card indigo darken-4">
             <div class="card-content white-text">
               <div class="card-content white-text">
                 <span id="total-hashrate" class="card-title">Loading...</span>
@@ -41,9 +41,9 @@
           </div>
         </div>
         <div class="col s4">
-          <div class="card red">
-            <div class="card-content white-text">
-              <div class="card-content white-text">
+          <div class="card yellow accent-4">
+            <div class="card-content">
+              <div class="card-content">
                 <span id="accepted-rejected-shares" class="card-title">Loading...</span>
                 <p>Accepted / Rejected Shares</p>
               </div>
@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="col s4">
-          <div class="card green">
+          <div class="card indigo darken-4">
             <div class="card-content white-text">
               <div class="card-content white-text">
                 <span id="active-miners" class="card-title">Loading...</span>
@@ -63,9 +63,9 @@
       </div>
       <div class="row">
         <div class="col s4">
-          <div class="card orange">
-            <div class="card-content white-text">
-              <div class="card-content white-text">
+          <div class="card yellow accent-4">
+            <div class="card-content">
+              <div class="card-content">
                 <span id="current-pool" class="card-title">Loading...</span>
                 <p>Current Pool</p>
               </div>
@@ -73,7 +73,7 @@
           </div>
         </div>
         <div class="col s4">
-          <div class="card purple">
+          <div class="card indigo darken-4">
             <div class="card-content white-text">
               <div class="card-content white-text">
                 <span id="avg-difficulty" class="card-title">Loading...</span>
@@ -83,7 +83,7 @@
           </div>
         </div>
         <div class="col s4">
-          <div class="card yellow">
+          <div class="card yellow accent-4">
             <div class="card-content">
               <div class="card-content">
                 <span id="last-accepted-share-time" class="card-title">Loading...</span>
@@ -100,11 +100,11 @@
     <div id="page-charts" class="container hide page">
       <div class="row">
         <div class="col s12">
-          <ul class="tabs blue lighten-4">
-            <li id="tab-15m" class="tab col s3"><a  class="black-text" href="#">15 min</a></li>
-            <li id="tab-2hr" class="tab col s3"><a  class="black-text" href="#">2 hr</a></li>
-            <li id="tab-8hr" class="tab col s3"><a  class="black-text" href="#">8 hr</a></li>
-            <li id="tab-24hr" class="tab col s3"><a class="black-text" href="#">24 hr</a></li>
+          <ul class="tabs indigo darken-4">
+            <li id="tab-15m" class="tab col s3"><a  class="white-text" href="#">15 min</a></li>
+            <li id="tab-2hr" class="tab col s3"><a  class="white-text" href="#">2 hr</a></li>
+            <li id="tab-8hr" class="tab col s3"><a  class="white-text" href="#">8 hr</a></li>
+            <li id="tab-24hr" class="tab col s3"><a class="white-text" href="#">24 hr</a></li>
           </ul>
         </div>
       </div>
@@ -183,8 +183,8 @@
         datasets: [{
           data: [],
           label: 'Hashrate (TH/s)',
-          borderColor: 'rgb(54,162,235)',
-          backgroundColor: 'rgba(54, 162, 235, 0.5)'
+          borderColor: 'rgb(0, 0, 128)',
+          backgroundColor: 'rgba(0, 0, 128, 0.5)'
         }]
       },
       options: {
@@ -216,8 +216,8 @@
         datasets: [{
           data: [],
           label: 'Power (W)',
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+          borderColor: 'rgb(255, 204, 0)',
+          backgroundColor: 'rgba(255, 204, 0, 0.5)'
         }]
       },
       options: {
@@ -284,15 +284,15 @@
       });
     });
 
-    //pools
-    e.ipcRenderer.on('pools-channel', (event, message) => {
-      console.log(message);
-    });
+    // //pools
+    // e.ipcRenderer.on('pools-channel', (event, message) => {
+    //   console.log(message);
+    // });
 
-    //settings
-    e.ipcRenderer.on('settings-channel', (event, message) => {
-      console.log(message);
-    });
+    // //settings
+    // e.ipcRenderer.on('settings-channel', (event, message) => {
+    //   console.log(message);
+    // });
 
   </script>
   </body>
