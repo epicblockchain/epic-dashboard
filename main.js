@@ -222,13 +222,20 @@ function generateMinerData(miners){
 }
 
 var data = [];
+var pdata = []
 function generateChartData(miners){
-  var avgHashrate = 0;
+  var hr = 0;
+  var power = 0;
   miners.forEach(m => {
     if (m.active) {
-      avgHashrate += m.response["Session"]["Average MHs"]/1000;
+      hr += m.response["Session"]["Average MHs"]/1000;
+      for (var i = 0; i < m.response["Session"]["Active HBs"]; i++){
+        power += m.response["HBs"][i]["Input Power"];
+      }
     }
   });
-  data.push({x: Date.now(), y: avgHashrate});
-  return data;
+  data.push({x: Date.now(), y: hr});
+  pdata.push({x: Date.now(), y: power});
+  return {"hr-chart": data,
+          "p-chart": data};
 }

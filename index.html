@@ -109,6 +109,7 @@
         </div>
       </div>
         <canvas id="hashrate-chart" height="100%"></canvas>
+        <canvas id="power-chart" height="100%"></canvas>
     </div>
 
     <!-- miners page -->
@@ -124,6 +125,11 @@
         </tbody>
       </table>
     </div>
+
+    <!-- pools page -->
+
+    <!-- settings page -->
+
   </div>
 
   <!-- js stuff -->
@@ -132,7 +138,7 @@
   </script>
   <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
   <script src="node_modules/chart.js/dist/Chart.bundle.min.js"></script>
-  <script src="node_modules/chartjs-plugin-streaming/dist/chartjs-plugin-streaming.min.js"></script> -->
+  <script src="node_modules/chartjs-plugin-streaming/dist/chartjs-plugin-streaming.js"></script> -->
   <script>
     //to init the info and charts
 
@@ -167,6 +173,7 @@
     //chart see https://github.com/nagix/chartjs-plugin-streaming if lowering cpu usage is needed
     //also see https://github.com/chartjs/chartjs-plugin-zoom for zoom
     var ctx = document.getElementById('hashrate-chart').getContext('2d');
+    var pctx = document.getElementById('power-chart').getContext('2d');
     var fs = require('fs');
     var requestInterval = JSON.parse(fs.readFileSync('settings.json')).requestInterval;
 
@@ -203,22 +210,60 @@
       }
       });
 
+    var pchart = new Chart(pctx, {
+      type: 'line',
+      data: {
+        datasets: [{
+          data: [],
+          label: 'Power (W)',
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        }]
+      },
+      options: {
+        elements: {
+          line: {
+            tension: 0
+          }
+        },
+        scales: {
+          xAxes: [{
+            type: 'realtime',
+            realtime: {
+              delay: requestInterval*1.5,
+              duration: 900000
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              min: 0
+            }
+          }]
+        }
+      }
+      });
+
+
     $('.tab').click(function(){
       var id = $(this).attr('id');
       if (id == 'tab-24hr'){
         chart.options.scales.xAxes[0].realtime.duration = 43200000; //this is 24 hr in millis
+        pchart.options.scales.xAxes[0].realtime.duration = 43200000; //this is 24 hr in millis
       } else if (id == 'tab-8hr'){
         chart.options.scales.xAxes[0].realtime.duration = 14400000;
+        pchart.options.scales.xAxes[0].realtime.duration = 14400000;
       } else if (id == 'tab-2hr'){
         chart.options.scales.xAxes[0].realtime.duration = 3600000;
+        pchart.options.scales.xAxes[0].realtime.duration = 3600000;
       } else {
         chart.options.scales.xAxes[0].realtime.duration = 900000;
+        pchart.options.scales.xAxes[0].realtime.duration = 900000;
       }
     });
     
     e.ipcRenderer.on('chart-channel', (event, message) => {
-      console.log('chart data received: ' + JSON.stringify(message));
-      chart.data.datasets[0].data = message;
+      chart.data.datasets[0].data = message["hr-chart"];
+      pchart.data.datasets[0].data = message["p-chart"];
     });
 
     //miners
