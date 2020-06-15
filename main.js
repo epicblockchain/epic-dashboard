@@ -150,7 +150,7 @@ function generateDashboardData(miners){
     "active-miners": activeMinerString,
     "current-pool": currentPoolString,
     "avg-difficulty": avgDifficultyString,
-    "last-accepted-share-time": lastAcceptedShareString.substr(0, 24)
+    "last-accepted-share-time": lastAcceptedShareString.substr(4, 20)
   };
 }
 
@@ -165,23 +165,23 @@ function MHToHRString(totalHashrate){
 function generateMinerData(miners){
   var headers = ['Name', 
     'Software', 
-    'Coin', 
-    'Algorithm', 
+    // 'Coin', 
+    // 'Algorithm', 
     'Pool',
     'User', 
     'Started', 
-    'Last Work', 
+    // 'Last Work', 
+    'Last Accepted Share',
     'Uptime', 
     'Work Received', 
     'Active HBs', 
     'Hashrate', 
     'Accepted', 
     'Rejected', 
-    'Submitted',
-    'Last Accepted Share',
+    // 'Submitted',
     'Difficulty',
-    'Fan Speed',
-    'Temperatures (C)'];
+    // 'Fan Speed',
+    'Temperature (C)'];
 
   var data = [];
   
@@ -189,26 +189,24 @@ function generateMinerData(miners){
     if (m.active) {
       var datum = ['John Lee',
         m.response["Software"] || "N/A",
-        m.response["Mining"]["Coin"] || "N/A",
-        m.response["Mining"]["Algorithm"] || "N/A",
+        // m.response["Mining"]["Coin"] || "N/A",
+        // m.response["Mining"]["Algorithm"] || "N/A",
         m.response["Stratum"]["Current Pool"] || "N/A",
-        m.response["Stratum"]["Current User"] || "N/A",
-        new Date(m.response["Session"]["Startup Timestamp"]*1000) || "N/A",
-        new Date(m.response["Session"]["Last Work Timestamp"]*1000) || "N/A",
+        m.response["Stratum"]["Current User"].substr(0, 8) + '...' + m.response["Stratum"]["Current User"].substr(-8, 8) || "N/A",
+        new Date(m.response["Session"]["Startup Timestamp"]*1000).toString().substr(4, 20) || "N/A",
+        // new Date(m.response["Session"]["Last Work Timestamp"]*1000) || "N/A",
+        new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000).toString().substr(4, 20) || "N/A",
         m.response["Session"]["Uptime"] || "N/A",
         m.response["Session"]["WorkReceived"] || "N/A",
         m.response["Session"]["Active HBs"] || "N/A",
         MHToHRString(m.response["Session"]["Average MHs"]) || "N/A",
         m.response["Session"]["Accepted"] || "N/A",
         m.response["Session"]["Rejected"] || "N/A",
-        m.response["Session"]["Submitted"] || "N/A",
-        new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000) || "N/A",
+        // m.response["Session"]["Submitted"] || "N/A",
         m.response["Session"]["Difficulty"] || "N/A",
-        'todo',
+        // 'fan speed string todo',
         // m.response["Fans"]["Fans Speed"] || "N/A",
-        (m.response["HBs"][0]["Temperature"] || "N/A") + ' / ' 
-          + (m.response["HBs"][1]["Temperature"] || "N/A") + ' / '
-          + (m.response["HBs"][2]["Temperature"] || "N/A")];
+        Math.max(m.response["HBs"][0]["Temperature"], m.response["HBs"][1]["Temperature"], m.response["HBs"][2]["Temperature"])];
         data.push(datum);
 
     } else {
