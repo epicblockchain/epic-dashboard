@@ -72,7 +72,7 @@ fs.writeFileSync('settings.json', JSON.stringify(settings));
 var minerinfo = require('./custom/MinerInfo');
 var miners = []; //this will also hold inactive miners
 
-const browser = dnssd.Browser(dnssd.tcp('epicminer'))
+var browser = dnssd.Browser(dnssd.tcp('epicminer'))
   .on('serviceUp',function(service){
     var ip = service.addresses[0];
     var port = service.port;
@@ -221,6 +221,14 @@ function generateMinerData(miners){
     "data": data};
 }
 
+var data = [];
 function generateChartData(miners){
-
+  var avgHashrate = 0;
+  miners.forEach(m => {
+    if (m.active) {
+      avgHashrate += m.response["Session"]["Average MHs"]/1000;
+    }
+  });
+  data.push({x: Date.now(), y: avgHashrate});
+  return data;
 }

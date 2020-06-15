@@ -14,7 +14,6 @@ class MinerInfo {
     }
 
     fetch(){
-        console.log('fetching');
         
         (async () => {
             try {
