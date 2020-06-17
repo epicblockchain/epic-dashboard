@@ -197,7 +197,8 @@ function generateMinerData(miners){
     // 'Submitted',
     'Difficulty',
     // 'Fan Speed',
-    'Temperature (&degC)'];
+    'Temperature (&degC)',
+    'IP Address'];
 
   var data = [];
   
@@ -222,7 +223,8 @@ function generateMinerData(miners){
         m.response["Session"]["Difficulty"] || "N/A",
         // 'fan speed string todo',
         // m.response["Fans"]["Fans Speed"] || "N/A",
-        Math.max(m.response["HBs"][0]["Temperature"], m.response["HBs"][1]["Temperature"], m.response["HBs"][2]["Temperature"])];
+        Math.max(m.response["HBs"][0]["Temperature"], m.response["HBs"][1]["Temperature"], m.response["HBs"][2]["Temperature"]),
+        m.ip];
         data.push(datum);
 
     } else {

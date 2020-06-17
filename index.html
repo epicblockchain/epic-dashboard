@@ -145,6 +145,9 @@
     <div id="page-miners" class="container hide page">
       <table class="centered">
         <thead>
+          <div id="table-loading-bar" class="progress yellow accent-4">
+            <div class="indeterminate indigo darken-4"></div>
+          </div>
           <tr id="miner-headers">
             <!-- gets auto filled -->
           </tr>
@@ -158,6 +161,9 @@
 
     <!-- settings page -->
     <div id="page-settings" class="container hide page">
+      <div id="settings-loading-bar" class="progress yellow accent-4 hide">
+        <div class="indeterminate indigo darken-4"></div>
+      </div>
       <div class="row">
         <div class="input-field col s12">
           <input id="input-pool" type="text" class="validate">
@@ -185,6 +191,7 @@
         <a id="swupdate-apply" class="waves-effect waves-light btn white-text indigo darken-4">Update Firmware</a>
       </div>
     </div>
+
 
   </div>
 
@@ -336,6 +343,7 @@
 
     //miners
     e.ipcRenderer.on('miners-channel', (event, message) => {
+      $("#table-loading-bar").hide();
       $("#miner-headers").empty();
       message.headers.forEach(h => {
         $('#miner-headers').append('<th>'+h+'</th>');
@@ -358,15 +366,26 @@
     // });
 
     $('#settings-apply').click(function(){
-      var formData = {
-            "pool": $('#input-pool').val()
-          };
-      e.ipcRenderer.send('post-settings',formData);
+      var p = $('#input-pool').val();
+      if (p){
+        $('#settings-loading-bar').removeClass('hide');
+        var formData = {
+              "pool": $('#input-pool').val()
+            };
+        e.ipcRenderer.send('post-settings',formData);
+      } else {
+        M.toast({html: 'Need to specify pool...'});
+      }
     });
 
     $('#swupdate-apply').click(function(){
       var swupdateFilepath = $('#swupdate-file').val();
-      console.log(swupdateFilepath);
+      if (swupdateFilepath) {
+        console.log(swupdateFilepath);
+        $('#settings-loading-bar').removeClass('hide');
+      } else {
+        M.toast({html: 'No file selected...'});
+      }
     })
 
     // //template if we want more
@@ -374,6 +393,13 @@
     // e.ipcRenderer.on('settings-channel', (event, message) => {
     //   console.log(message);
     // 
+    
+    //auth
+
+    //returns t/f
+    function auth(){
+
+    }
 
   </script>
   </body>
