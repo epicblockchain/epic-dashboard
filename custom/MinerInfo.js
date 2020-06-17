@@ -30,17 +30,19 @@ class MinerInfo {
 
     }
 
-    postUpdate(poolString){
+    post(poolJSON){
         (async () => {
-            const {body} = await got.post('https://' + this.ip + ':' + '/', {
-                json: {
-                    "Pool": poolString
-                },
-                responseType: 'json'
-            });
-         
-            console.log("post update");
-            console.log(body.data);
+            try{
+                const {body} = await got.post('https://' + this.ip + ':' + '/', {
+                    json: JSON.stringify(poolJSON),
+                    responseType: 'json'
+                });
+                console.log("post update");
+                console.log(body.data);
+            } catch (error) {
+                console.log(error);
+                console.log('post failed: todo notify user');
+            }
         })();
     }
 

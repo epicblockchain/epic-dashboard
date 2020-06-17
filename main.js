@@ -93,9 +93,7 @@ ipcMain.on('refresh', (event, arg) => {
 
 ipcMain.on('post-settings', (event, arg) => {
   miners.forEach(m => {
-    console.log("arg: ");
-    console.log(arg);
-    // m.postUpdate()
+    m.post()
   });
 })
 

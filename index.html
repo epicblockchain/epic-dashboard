@@ -136,9 +136,12 @@
     <div id="page-settings" class="container hide page">
       <div class="row">
         <div class="input-field col s12">
-          <input id="pool" type="text" class="validate">
+          <input id="input-pool" type="text" class="validate">
           <label for="pool">Pool</label>
-        </div>  
+        </div>
+        <div class="col s2 offset-s5">
+          <a id="settings-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+        </div>
       </div>
     </div>
 
@@ -314,7 +317,10 @@
     // });
 
     $('#settings-apply').click(function(){
-      e.ipcRenderer.send('post',formData);
+      formData = {
+            "pool": $('#input-pool').val()
+          };
+      e.ipcRenderer.send('post-settings',formData);
     });
 
     // //template if we want more
