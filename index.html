@@ -139,9 +139,26 @@
           <input id="input-pool" type="text" class="validate">
           <label for="pool">Pool</label>
         </div>
+      </div>
+      <div class="row">
         <div class="col s2 offset-s5">
           <a id="settings-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+        </div>            
+      </div>
+    <div class="row">
+      <div class="col s10">
+        <div class="file-field input-field">
+          <div class="btn indigo darken-4">
+            <span>File</span>
+            <input type="file">
+          </div>
+          <div class="file-path-wrapper">
+            <input id="swupdate-file" class="file-path validate" type="text">
+          </div>
         </div>
+      </div>
+      <div class="col s2">
+        <a id="swupdate-apply" class="waves-effect waves-light btn white-text indigo darken-4">Update Firmware</a>
       </div>
     </div>
 
@@ -317,11 +334,16 @@
     // });
 
     $('#settings-apply').click(function(){
-      formData = {
+      var formData = {
             "pool": $('#input-pool').val()
           };
       e.ipcRenderer.send('post-settings',formData);
     });
+
+    $('#swupdate-apply').click(function(){
+      var swupdateFilepath = $('#swupdate-file').val();
+      console.log(swupdateFilepath);
+    })
 
     // //template if we want more
     //settings
