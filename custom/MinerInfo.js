@@ -30,6 +30,20 @@ class MinerInfo {
 
     }
 
+    postUpdate(poolString){
+        (async () => {
+            const {body} = await got.post('https://' + this.ip + ':' + '/', {
+                json: {
+                    "Pool": poolString
+                },
+                responseType: 'json'
+            });
+         
+            console.log("post update");
+            console.log(body.data);
+        })();
+    }
+
 }
 
 module.exports = {

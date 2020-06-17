@@ -7,8 +7,6 @@ if (!fs.existsSync('settings.json')){
   fs.writeFileSync('settings.json', fs.readFileSync('settingsDefault.json'));
 }
 
-
-
 function createWindow () {
   // Create the browser window.
 
@@ -91,6 +89,14 @@ function searchForMiners(){
 ipcMain.on('refresh', (event, arg) => {
   browser = searchForMiners();
   event.reply('refresh-reply', 'Refreshed!');
+});
+
+ipcMain.on('post-settings', (event, arg) => {
+  miners.forEach(m => {
+    console.log("arg: ");
+    console.log(arg);
+    // m.postUpdate()
+  });
 })
 
 //returns the timerid if we want to clearInterval();

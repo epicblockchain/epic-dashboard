@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css">
     <link rel="stylesheet" href="node_modules/material-icons/iconfont/material-icons.css">
+    <link rel="stylesheet" href="custom/forms.css">
   </head>
   
   <!-- sidenav -->
@@ -21,8 +22,7 @@
       <li id="nav-dashboard" class="nav-selector grey lighten-2"><a class="waves-effect">Dashboard</a></li>
       <li id="nav-charts" class="nav-selector"><a class="waves-effect">Charts</a></li>
       <li id="nav-miners" class="nav-selector"><a class="waves-effect">Miners</a></li>
-      <li id="nav-pools" class="nav-selector hide"><a class="waves-effect">Pools</a></li>
-      <li id="nav-settings" class="nav-selector hide"><a class="waves-effect">Settings</a></li>
+      <li id="nav-settings" class="nav-selector "><a class="waves-effect">Settings</a></li>
     </ul>
   </div>
 
@@ -131,9 +131,16 @@
       </table>
     </div>
 
-    <!-- pools page -->
 
     <!-- settings page -->
+    <div id="page-settings" class="container hide page">
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="pool" type="text" class="validate">
+          <label for="pool">Pool</label>
+        </div>  
+      </div>
+    </div>
 
   </div>
 
@@ -160,7 +167,7 @@
     });
     e.ipcRenderer.on('refresh-reply', (event, arg) => {
       M.toast({html: 'Refreshing!'});
-    })
+    });
     //sidebar
     document.addEventListener('DOMContentLoaded', function() {
       var instances = M.Sidenav.init();//elems, options
@@ -301,15 +308,20 @@
       });
     });
 
-    // //pools
-    // e.ipcRenderer.on('pools-channel', (event, message) => {
-    //   console.log(message);
-    // });
-
     // //settings
     // e.ipcRenderer.on('settings-channel', (event, message) => {
     //   console.log(message);
     // });
+
+    $('#settings-apply').click(function(){
+      e.ipcRenderer.send('post',formData);
+    });
+
+    // //template if we want more
+    //settings
+    // e.ipcRenderer.on('settings-channel', (event, message) => {
+    //   console.log(message);
+    // 
 
   </script>
   </body>
