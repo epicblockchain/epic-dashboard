@@ -1,5 +1,7 @@
 # How to Get Started
 
+install node js globally or in working dir
+
 after cloning repo 
 
 ```
@@ -10,6 +12,10 @@ npm start
 ```
 
 a window should open with the app running
+
+# Testing post requests
+
+go to settings, type something in the pool, then click apply
 
 # High level structure explanation
 

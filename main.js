@@ -93,7 +93,7 @@ ipcMain.on('refresh', (event, arg) => {
 
 ipcMain.on('post-settings', (event, arg) => {
   miners.forEach(m => {
-    m.post()
+    if (m.active) m.post();
   });
 })
 
