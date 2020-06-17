@@ -17,7 +17,11 @@ class MinerInfo {
         
         (async () => {
             try {
-                const response = await got('http://' + this.ip + ':' + this.port + '/' + this.apiEndpoint);
+                const response = await got('http://' + this.ip + ':' + this.port + '/' + this.apiEndpoint,{
+                    https: {
+                        rejectUnauthorized: false
+                    }
+                });
                 this.active = true;
                 this.response = JSON.parse(response.body);
                 // console.log(this.response); //TODO remove
@@ -34,6 +38,9 @@ class MinerInfo {
         (async () => {
             try{
                 const {body} = await got.post('https://' + this.ip + ':' + '/', {
+                    https: {
+                        rejectUnauthorized: false
+                    },
                     json: JSON.stringify(poolJSON),
                     responseType: 'json'
                 });
