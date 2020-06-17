@@ -37,7 +37,7 @@ class MinerInfo {
     post(poolJSON){
         (async () => {
             try{
-                const {body} = await got.post('https://' + this.ip + ':' + '/', {
+                const {body} = await got.post('http://' + this.ip + ':' + '/', {
                     https: {
                         rejectUnauthorized: false
                     },
