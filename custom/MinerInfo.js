@@ -38,16 +38,23 @@ class MinerInfo {
 
     post(poolJSON){
         (async () => {
-            const {body} = await got.post('https://httpbin.org/anything', {
-                json: {
-                    hello: 'world'
+            console.log('http://' + this.ip + ':' + this.port + '/' + this.summaryEndpoint + '?!?!?!?!?');
+            
+            const {body} = await got.post(('http://' + this.ip + ':' + this.port + '/' + this.summaryEndpoint), {
+                https: {
+                    rejectUnauthorized: false
                 },
-                responseType: 'json'
+                json: {
+                    "hello": "world"
+                },
+                responseType: 'json',
+                json: true
             });
-         
             console.log(body.data);
             //=> '{"hello":"world"}'
-        })();
+        })().catch(function(error){
+            console.log(error);
+        });
     }
 
 }
