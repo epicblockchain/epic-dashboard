@@ -78,7 +78,7 @@ function searchForMiners(){
     .on('serviceUp',function(service){
       var ip = service.addresses[0];
       var port = service.port;
-      m = new minerinfo.MinerInfo(ip, port, settings.apiEndpoint);
+      m = new minerinfo.MinerInfo(ip, port, settings.summaryEndpoint, settings.poolEndpoint);
       miners.push(m);
       if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
     })

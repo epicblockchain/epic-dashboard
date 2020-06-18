@@ -4,20 +4,22 @@ class MinerInfo {
     active;
     ip;
     port;
-    apiEndpoint;
+    summaryEndpoint;
     response;
+    changePoolEndpoint;
 
-    constructor(ip, port, apiEndpoint){
-        this.apiEndpoint = apiEndpoint;
+    constructor(ip, port, summaryEndpoint, changePoolEndpoint){
+        this.summaryEndpoint = summaryEndpoint;
         this.ip = ip;
         this.port = port;
+        this.changePoolEndpoint = changePoolEndpoint;
     }
 
     fetch(){
         
         (async () => {
             try {
-                const response = await got('http://' + this.ip + ':' + this.port + '/' + this.apiEndpoint,{
+                const response = await got('http://' + this.ip + ':' + this.port + '/' + this.summaryEndpoint,{
                     https: {
                         rejectUnauthorized: false
                     }
@@ -26,7 +28,7 @@ class MinerInfo {
                 this.response = JSON.parse(response.body);
                 // console.log(this.response); //TODO remove
             } catch (error) {
-                console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.apiEndpoint);
+                console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.summaryEndpoint);
                 this.active = false;
                 this.response = null;
             }
@@ -36,20 +38,15 @@ class MinerInfo {
 
     post(poolJSON){
         (async () => {
-            try{
-                const {body} = await got.post('http://' + this.ip + ':' + '/', {
-                    https: {
-                        rejectUnauthorized: false
-                    },
-                    json: JSON.stringify(poolJSON),
-                    responseType: 'json'
-                });
-                console.log("post update");
-                console.log(body.data);
-            } catch (error) {
-                console.log(error);
-                console.log('post failed: todo notify user');
-            }
+            const {body} = await got.post('https://httpbin.org/anything', {
+                json: {
+                    hello: 'world'
+                },
+                responseType: 'json'
+            });
+         
+            console.log(body.data);
+            //=> '{"hello":"world"}'
         })();
     }
 
