@@ -60,7 +60,7 @@ class MinerInfo {
             const form = newFormData();
             form.append('swupdate.swu', fs.createReadStream(filepath));
             console.log('form:');
-            console.log(form.data);
+            console.log(form);
             got.post('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint, {
                 body: form
             }).catch(function(error){
