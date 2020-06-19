@@ -93,8 +93,14 @@ ipcMain.on('refresh', (event, arg) => {
 
 ipcMain.on('post-settings', (event, arg) => {
   miners.forEach(m => {
-    if (m.active) m.post();
+    if (m.active) console.log(arg); m.postPool(arg);
   });
+});
+
+ipcMain.on('post-swupdate', (event, arg) => {
+  miners.forEach(m => {
+    if (m.active) console.log(arg); m.postPool(arg);
+  })
 })
 
 //returns the timerid if we want to clearInterval();

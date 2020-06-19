@@ -1,4 +1,7 @@
 const got = require('got');
+const fs = require('fs');
+const { icpMain } = require('electron');
+const FormData = require('form-data');
 
 class MinerInfo {
     active;
@@ -36,7 +39,7 @@ class MinerInfo {
 
     }
 
-    post(poolJSON){
+    postPool(poolJSON){
         (async () => {
             console.log('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint + '?!?!?!?!?');
             
@@ -44,11 +47,8 @@ class MinerInfo {
                 https: {
                     rejectUnauthorized: false
                 },
-                json: {
-                    hello: "world"
-                },
-                responseType: 'json',
-                json: true
+                json: poolJSON,
+                responseType: 'json'
             });
             console.log(body.data);
             //=> '{"hello":"world"}'
@@ -57,6 +57,20 @@ class MinerInfo {
         });
     }
 
+    postSWUpdate(filepath) {
+        (async () => {
+            const form = newFormData();
+            form.append('swupdate.swu', fs.createReadStream(filepath));
+
+            got.post('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint, {
+                body: form
+            }).catch(function(error){
+                console.log(error);
+            });
+
+        })
+    }
+    
 }
 
 module.exports = {
