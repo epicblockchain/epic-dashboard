@@ -38,14 +38,14 @@ class MinerInfo {
 
     post(poolJSON){
         (async () => {
-            console.log('http://' + this.ip + ':' + this.port + '/' + this.summaryEndpoint + '?!?!?!?!?');
+            console.log('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint + '?!?!?!?!?');
             
-            const {body} = await got.post(('http://' + this.ip + ':' + this.port + '/' + this.summaryEndpoint), {
+            const {body} = await got.post(('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint), {
                 https: {
                     rejectUnauthorized: false
                 },
                 json: {
-                    "hello": "world"
+                    hello: "world"
                 },
                 responseType: 'json',
                 json: true
