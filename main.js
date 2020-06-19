@@ -93,13 +93,20 @@ ipcMain.on('refresh', (event, arg) => {
 
 ipcMain.on('post-settings', (event, arg) => {
   miners.forEach(m => {
-    if (m.active) console.log(arg); m.postPool(arg);
+    if (m.active){
+      console.log('posting...');
+      console.log(arg);
+      m.postPool(arg);}
   });
 });
 
 ipcMain.on('post-swupdate', (event, arg) => {
   miners.forEach(m => {
-    if (m.active) console.log(arg); m.postPool(arg);
+    if (m.active){
+      console.log('posting...');
+      console.log(arg);
+      m.postPool(arg);
+    } 
   })
 })
 

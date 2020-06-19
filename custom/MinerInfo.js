@@ -41,8 +41,6 @@ class MinerInfo {
 
     postPool(poolJSON){
         (async () => {
-            console.log('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint + '?!?!?!?!?');
-            
             const {body} = await got.post(('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint), {
                 https: {
                     rejectUnauthorized: false
@@ -61,7 +59,8 @@ class MinerInfo {
         (async () => {
             const form = newFormData();
             form.append('swupdate.swu', fs.createReadStream(filepath));
-
+            console.log('form:');
+            console.log(form.data);
             got.post('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint, {
                 body: form
             }).catch(function(error){
