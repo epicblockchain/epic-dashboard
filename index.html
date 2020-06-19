@@ -383,6 +383,7 @@
       if (swupdateFilepath) {
         console.log(swupdateFilepath);
         $('#settings-loading-bar').removeClass('hide');
+        e.ipcRenderer.send('post-swupdate', swupdateFilepath);
       } else {
         M.toast({html: 'No file selected...'});
       }
