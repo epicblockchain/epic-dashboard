@@ -236,7 +236,9 @@ function generateMinerData(miners){
         m.response["Session"]["Difficulty"] || "N/A",
         // 'fan speed string todo',
         // m.response["Fans"]["Fans Speed"] || "N/A",
-        Math.max(m.response["HBs"][0]["Temperature"], m.response["HBs"][1]["Temperature"], m.response["HBs"][2]["Temperature"]),
+        Math.max((m.response["HBs"][0]["Temperature"] === undefined) ? 0 : m.response["HBs"][0]["Temperature"],
+          (m.response["HBs"][1]["Temperature"] === undefined) ? 0 : m.response["HBs"][0]["Temperature"],
+          (m.response["HBs"][2]["Temperature"] === undefined) ? 0 : m.response["HBs"][0]["Temperature"]),
         m.ip];
         data.push(datum);
 
