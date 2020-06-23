@@ -214,6 +214,15 @@ function generateMinerData(miners){
     'IP Address'];
 
   var data = [];
+
+  var temps = [];
+  miners.forEach(m => {
+    if (m.active){
+      m.response["HBs"].forEach(hb => {
+        temps.push(hb["Temperature"]);
+      });
+    }
+  });
   
   miners.forEach(m => {
     if (m.active) {
@@ -236,9 +245,7 @@ function generateMinerData(miners){
         m.response["Session"]["Difficulty"] || "N/A",
         // 'fan speed string todo',
         // m.response["Fans"]["Fans Speed"] || "N/A",
-        Math.max((m.response["HBs"][0]["Temperature"] === undefined) ? 0 : m.response["HBs"][0]["Temperature"],
-          (m.response["HBs"][1]["Temperature"] === undefined) ? 0 : m.response["HBs"][0]["Temperature"],
-          (m.response["HBs"][2]["Temperature"] === undefined) ? 0 : m.response["HBs"][0]["Temperature"]),
+        Math.max(temps),
         m.ip];
         data.push(datum);
 
