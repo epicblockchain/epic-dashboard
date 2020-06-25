@@ -1,0 +1,40 @@
+html *
+    {
+        font-family: 'Fira Sans Condensed', sans-serif;
+    }
+    
+    .jpback
+    {
+        background-color: #1B1D4D !important;
+    }
+    .jpback2
+    {
+        background-color: #ffc107 !important;
+    }
+     .progress.is-epic::-webkit-progress-value {
+        background-color: #ffc107
+      }
+    
+      .progress.is-epic::-moz-progress-bar {
+        background-color: #ffc107
+      }
+    
+      .progress.is-epic::-ms-fill {
+        background-color: #ffc107
+      }
+    
+      .progress.is-epic:indeterminate {
+        background-color: #ffc107
+      }
+    .epicyellow
+    {
+        color: #ffc107 !important;
+    }
+    .epicblue
+    {
+        color: #1b1d4d !important;
+    }
+    .epicbluebg
+    {
+        background-color: #1b1d4d !important;
+    }
