@@ -285,60 +285,21 @@
       }
       });
 
-    var pchart = new Chart(pctx, {
-      type: 'line',
-      data: {
-        datasets: [{
-          data: [],
-          label: 'Power (W)',
-          borderColor: 'rgb(240, 190, 0)',
-          backgroundColor: 'rgba(255, 204, 0, 0.5)'
-        }]
-      },
-      options: {
-        elements: {
-          line: {
-            tension: 0
-          }
-        },
-        scales: {
-          xAxes: [{
-            type: 'realtime',
-            realtime: {
-              delay: requestInterval*1.5,
-              duration: 900000
-            }
-          }],
-          yAxes: [{
-            ticks: {
-              min: 0
-            }
-          }]
-        }
-      }
-      });
-
-
     $('.tab').click(function(){
       var id = $(this).attr('id');
       if (id == 'tab-24hr'){
         chart.options.scales.xAxes[0].realtime.duration = 43200000; //this is 24 hr in millis
-        pchart.options.scales.xAxes[0].realtime.duration = 43200000; //this is 24 hr in millis
       } else if (id == 'tab-8hr'){
         chart.options.scales.xAxes[0].realtime.duration = 14400000;
-        pchart.options.scales.xAxes[0].realtime.duration = 14400000;
       } else if (id == 'tab-2hr'){
         chart.options.scales.xAxes[0].realtime.duration = 3600000;
-        pchart.options.scales.xAxes[0].realtime.duration = 3600000;
       } else {
         chart.options.scales.xAxes[0].realtime.duration = 900000;
-        pchart.options.scales.xAxes[0].realtime.duration = 900000;
       }
     });
     
     e.ipcRenderer.on('chart-channel', (event, message) => {
       chart.data.datasets[0].data = message["hr-chart"];
-      pchart.data.datasets[0].data = message["p-chart"];
     });
 
     //miners

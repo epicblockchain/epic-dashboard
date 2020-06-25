@@ -260,22 +260,15 @@ function generateMinerData(miners){
 }
 
 var data = [];
-var pdata = []
 function generateChartData(miners){
   var hr = 0;
-  var power = 0;
   miners.forEach(m => {
     if (m.active) {
       hr += m.response["Session"]["Average MHs"]/1000000;
-      for (var i = 0; i < m.response["Session"]["Active HBs"]; i++){
-        power += m.response["HBs"][i]["Input Power"];
-      }
     }
   });
   data.push({x: Date.now(), y: hr});
-  pdata.push({x: Date.now(), y: power});
   return {
     "hr-chart": data,
-    "p-chart": pdata
   };
 }
