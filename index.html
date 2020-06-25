@@ -1,361 +1,401 @@
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>ePIC Dashboard</title>
-    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css">
-    <link rel="stylesheet" href="node_modules/material-icons/iconfont/material-icons.css">
-    <link rel="stylesheet" href="custom/forms.css">
-  </head>
+
+<head>
+  <meta charset="UTF-8">
+  <title>ePIC Dashboard</title>
+  <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css">
+  <link rel="stylesheet" href="node_modules/material-icons/iconfont/material-icons.css">
+  <link rel="stylesheet" href="node_modules/bulma/css/bulma.min.css">
+  <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/fontawesome.css">
+  <script src="node_modules/@fortawesome/fontawesome-free/js/all.js"></script>
   
-  <!-- sidenav -->
-  <!-- todo fix this disappearing on very small screens -->
-  <div>
-    <ul id="nav" class="sidenav sidenav-fixed">
-      <li>
-        <div class="container">
-          <img width="100%" style="margin-top: 5px;" src="img/EpicLogo-Vertical.png">
-        </div>  
-      </li>
-      <li><div class="divider"></div></li>
-      <li id="nav-dashboard" class="nav-selector grey lighten-2"><a class="waves-effect">Dashboard</a></li>
-      <li id="nav-charts" class="nav-selector"><a class="waves-effect">Charts</a></li>
-      <li id="nav-miners" class="nav-selector"><a class="waves-effect">Miners</a></li>
-      <li id="nav-settings" class="nav-selector "><a class="waves-effect">Settings</a></li>
-    </ul>
-  </div>
+  <link rel="stylesheet" href="custom/forms.css">
 
-  <div>
-    <a id="btn-refresh" class="waves-effect waves-light btn right indigo darken-4 tooltipped" data-position="left" data-tooltip="Search for miners on network" style="margin: 20px;" href="#"><i class="material-icons">refresh</i></a>
-  </div>
 
-  <!-- pages -->
-  <div style="margin-left: 125px;">
-    <!-- dashboard page -->
-    <div id="page-dashboard" class="container page">
-      <div class="row">
-        <div class="col s4">
-          <div class="card indigo darken-4">
-            <div class="card-content white-text">
-              <div class="card-content white-text">
-                <span id="total-hashrate" class="card-title">
-                  <div class="progress indigo darken-4">
-                    <div class="indeterminate yellow accent-4"></div>
-                  </div>
-                </span>
-                <p>Total Hashrate</p>
-              </div>
+  <style>
+    html *
+    {
+        font-family: 'Fira Sans Condensed', sans-serif;
+    }
+    
+    .jpback
+    {
+        background-color: #1B1D4D !important;
+    }
+    .jpback2
+    {
+        background-color: #ffc107 !important;
+    }
+     .progress.is-epic::-webkit-progress-value {
+        background-color: #ffc107
+      }
+    
+      .progress.is-epic::-moz-progress-bar {
+        background-color: #ffc107
+      }
+    
+      .progress.is-epic::-ms-fill {
+        background-color: #ffc107
+      }
+    
+      .progress.is-epic:indeterminate {
+        background-color: #ffc107
+      }
+    .epicyellow
+    {
+        color: #ffc107 !important;
+    }
+    .epicblue
+    {
+        color: #1b1d4d !important;
+    }
+    .epicbluebg
+    {
+        background-color: #1b1d4d !important;
+    }
+            </style>
+</head>
+
+<!-- sidenav -->
+<!-- todo fix this disappearing on very small screens -->
+<div>
+  <ul id="nav" class="sidenav sidenav-fixed">
+    <div>
+      <a id="btn-refresh" class="waves-effect waves-light btn right epicyellow darken-4 tooltipped epicbluebg" data-position="left"
+        data-tooltip="Search for miners on network" style="margin: 20px;" href="#"><i class="material-icons">refresh</i></a>
+    </div>
+    <li>
+      <div class="container">
+        <img width="100%" style="margin-top: 5px;" src="img/EpicLogo-Vertical.png">
+      
+      </div>
+    </li>
+    <li>
+       <div class="divider"></div>
+    </li>
+    <li id="nav-dashboard" class="nav-selector grey lighten-2"><a class="waves-effect">Dashboard</a></li>
+    <li id="nav-charts" class="nav-selector"><a class="waves-effect">Charts</a></li>
+    <li id="nav-miners" class="nav-selector"><a class="waves-effect">Miners</a></li>
+    <li id="nav-settings" class="nav-selector "><a class="waves-effect">Settings</a></li>
+  </ul>
+</div>
+
+
+
+<!-- pages -->
+<div style="margin-left: 300px;">
+  <!-- dashboard page -->
+  <div id="page-dashboard" class="container page">
+    <div class="row">
+      <div class="container">
+        <div class="tile is-ancestor box notification">
+          <div class="tile is-parent">
+            <div class="tile jpback is-child box notification is-primary">
+              </i><div class="subtitle"><i class="epicyellow fas fa-tachometer-alt"></i> Hashrate</div>
+              <div id="total-hashrate" class="title is-warning level-item"></div>
+              
+      
             </div>
           </div>
-        </div>
-        <div class="col s4">
-          <div class="card yellow accent-4">
-            <div class="card-content">
-              <div class="card-content">
-                <span id="accepted-rejected-shares" class="card-title">
-                  <div class="progress yellow accent-4">
-                    <div class="indeterminate indigo darken-4"></div>
-                  </div>
-                </span>
-                <p>Accepted / Rejected Shares</p>
-              </div>
+          <div class="tile is-parent">
+            <div class="tile jpback is-child box notification is-primary">
+              <div class="subtitle"><i class="epicyellow far fa-check-circle"></i> Accepted / Rejected</div>
+              <div id="accepted-rejected-shares" class="title is-warning level-item"></div>
+              
+      
             </div>
           </div>
-        </div>
-        <div class="col s4">
-          <div class="card indigo darken-4">
-            <div class="card-content white-text">
-              <div class="card-content white-text">
-                <span id="active-miners" class="card-title">
-                  <div class="progress indigo darken-4">
-                    <div class="indeterminate yellow accent-4"></div>
-                  </div>
-                </span>
-                <p>Active Miners</p>
-              </div>
+          <div class="tile is-parent">
+            <div class="tile jpback is-child box notification is-primary">
+              <div class=" subtitle"><i class="epicyellow fas fa-microchip"></i> Active Miners</div>
+              <div id="active-miners" class="title is-warning level-item"></div>
+              
+      
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col s4">
-          <div class="card yellow accent-4">
-            <div class="card-content">
-              <div class="card-content">
-                <span id="current-pool" class="card-title">
-                  <div class="progress yellow accent-4">
-                    <div class="indeterminate indigo darken-4"></div>
-                  </div>
-                </span>
-                <p>Current Pool</p>
-              </div>
-            </div>
+   </div>
+   <div class="row">
+    <div class="container">
+      <div class="tile is-ancestor box notification">
+        <div class="tile is-parent">
+          <div class="tile jpback is-child box notification is-primary">
+            <div class=" subtitle">Pool</div>
+            <div id="current-pool" class="title is-warning level-item"></div>
+            
+    
           </div>
         </div>
-        <div class="col s4">
-          <div class="card indigo darken-4">
-            <div class="card-content white-text">
-              <div class="card-content white-text">
-                <span id="avg-difficulty" class="card-title">
-                  <div class="progress indigo darken-4">
-                    <div class="indeterminate yellow accent-4"></div>
-                  </div>
-                </span>
-                <p>Average Difficulty</p>
-              </div>
-            </div>
+        <div class="tile is-parent">
+          <div class="tile jpback is-child box notification is-primary">
+            <div class=" subtitle">Difficulty</div>
+            <div id="avg-difficulty" class="title is-warning level-item"></div>
+            
+    
           </div>
         </div>
-        <div class="col s4">
-          <div class="card yellow accent-4">
-            <div class="card-content">
-              <div class="card-content">
-                <span id="last-accepted-share-time" class="card-title">
-                  <div class="progress yellow accent-4">
-                    <div class="indeterminate indigo darken-4"></div>
-                  </div>
-                </span>
-                <p>Last Accepted Share Time</p>
-              </div>
-            </div>
+        <div class="tile is-parent">
+          <div class="tile jpback is-child box notification is-primary">
+            <div class=" subtitle"><i class="epicyellow far fa-clock"></i> Last Accepted Share</div>
+            <div id="last-accepted-share-time" class="title is-warning level-item"></div>
+            
+    
           </div>
         </div>
       </div>
     </div>
+ </div>
+ </div>
 
-    <!-- charts page -->
-    
-    <div id="page-charts" class="container hide page">
-      <div class="row" style="margin-top: 10px;">
-        <div class="col s12">
-          <ul class="tabs indigo darken-4">
-            <li id="tab-15m" class="tab col s3"><a  class="white-text" href="#">15 min</a></li>
-            <li id="tab-2hr" class="tab col s3"><a  class="white-text" href="#">2 hr</a></li>
-            <li id="tab-8hr" class="tab col s3"><a  class="white-text" href="#">8 hr</a></li>
-            <li id="tab-24hr" class="tab col s3"><a class="white-text" href="#">24 hr</a></li>
-          </ul>
+
+
+
+        
+
+      <!-- charts page -->
+
+      <div id="page-charts" class="container hide page">
+        <div class="row" style="margin-top: 10px;">
+          <div class="col s12">
+            <ul class="tabs epicbluebg">
+              <li id="tab-15m" class="tab col s3"><a class="white-text" href="#">15 min</a></li>
+              <li id="tab-2hr" class="tab col s3"><a class="white-text" href="#">2 hr</a></li>
+              <li id="tab-8hr" class="tab col s3"><a class="white-text" href="#">8 hr</a></li>
+              <li id="tab-24hr" class="tab col s3"><a class="white-text" href="#">24 hr</a></li>
+            </ul>
+          </div>
         </div>
-      </div>
         <canvas id="hashrate-chart" height="100%"></canvas>
         <canvas id="power-chart" height="100%"></canvas>
-    </div>
+      </div>
 
-    <!-- miners page -->
-    <div id="page-miners" class="container hide page">
-      <table class="centered">
-        <thead>
-          <div id="table-loading-bar" class="progress yellow accent-4">
-            <div class="indeterminate indigo darken-4"></div>
-          </div>
-          <tr id="miner-headers">
+      <!-- miners page -->
+      <div id="page-miners" class="container hide page">
+        <table class="centered">
+          <thead>
+            <div id="table-loading-bar" class="progress yellow accent-4">
+              <div class="indeterminate indigo darken-4"></div>
+            </div>
+            <tr id="miner-headers">
+              <!-- gets auto filled -->
+            </tr>
+          </thead>
+          <tbody id="miner-table-body">
             <!-- gets auto filled -->
-          </tr>
-        </thead>
-        <tbody id="miner-table-body">
-          <!-- gets auto filled -->
-        </tbody>
-      </table>
-    </div>
-
-
-    <!-- settings page -->
-    <div id="page-settings" class="container hide page">
-      <div id="settings-loading-bar" class="progress yellow accent-4 hide">
-        <div class="indeterminate indigo darken-4"></div>
+          </tbody>
+        </table>
       </div>
-      <div class="row">
-        <div class="input-field col s12">
-          <input id="input-pool" type="text" class="validate">
-          <label for="pool">Pool</label>
+
+
+      <!-- settings page -->
+      <div id="page-settings" class="container hide page">
+        <div id="settings-loading-bar" class="progress yellow accent-4 hide">
+          <div class="indeterminate indigo darken-4"></div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col s2 offset-s5">
-          <a id="settings-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
-        </div>            
-      </div>
-    <div class="row">
-      <div class="col s10">
-        <div class="file-field input-field">
-          <div class="btn indigo darken-4">
-            <span>File</span>
-            <input type="file">
-          </div>
-          <div class="file-path-wrapper">
-            <input id="swupdate-file" class="file-path validate" type="text">
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="input-pool" type="text" class="validate">
+            <label for="pool">Pool</label>
           </div>
         </div>
-      </div>
-      <div class="col s2">
-        <a id="swupdate-apply" class="waves-effect waves-light btn white-text indigo darken-4">Update Firmware</a>
+        <div class="row">
+          <div class="col s2 offset-s5">
+            <a id="settings-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s10">
+            <div class="file-field input-field">
+              <div class="btn indigo darken-4">
+                <span>File</span>
+                <input type="file">
+              </div>
+              <div class="file-path-wrapper">
+                <input id="swupdate-file" class="file-path validate" type="text">
+              </div>
+            </div>
+          </div>
+          <div class="col s2">
+            <a id="swupdate-apply" class="waves-effect waves-light btn white-text indigo darken-4">Update Firmware</a>
+          </div>
+        </div>
+
+
       </div>
     </div>
 
+      <!-- js stuff -->
+      <script>
+        window.jQuery = window.$ = require('jquery'); //jquery needs to be init like this because of node environment
+      </script>
+      <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
+      <script src="node_modules/chart.js/dist/Chart.bundle.min.js"></script>
+      <script src="node_modules/chartjs-plugin-streaming/dist/chartjs-plugin-streaming.js"></script> -->
+      <script>
+        //electron
+        var e = require('electron');
+        //to init the info and charts
 
-  </div>
-
-  <!-- js stuff -->
-  <script>
-    window.jQuery = window.$ = require('jquery'); //jquery needs to be init like this because of node environment
-  </script>
-  <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
-  <script src="node_modules/chart.js/dist/Chart.bundle.min.js"></script>
-  <script src="node_modules/chartjs-plugin-streaming/dist/chartjs-plugin-streaming.js"></script> -->
-  <script>
-    //electron
-    var e = require('electron');
-    //to init the info and charts
-
-    //materializecss inits
-    //button
-    $(document).ready(function(){
-      $('.tooltipped').tooltip();
-    });
-    //research for miners
-    $('#btn-refresh').click(function(){
-      e.ipcRenderer.send('refresh');
-    });
-    e.ipcRenderer.on('refresh-reply', (event, arg) => {
-      M.toast({html: 'Refreshing!'});
-    });
-    //sidebar
-    document.addEventListener('DOMContentLoaded', function() {
-      var instances = M.Sidenav.init();//elems, options
-    });
-    $(document).ready(function(){
-      $('.sidenav').sidenav();
-    });
-
-    //nav logic to highlight nav selector and show/hide page elements
-    $('.nav-selector').click(function(event){
-      //navbar highlighting
-      var selector_id = $(this)[0].id;
-      $(".nav-selector").removeClass("grey lighten-2");
-      $(this).addClass("grey lighten-2");
-      //page hiding / showing
-      $(".page").addClass('hide'); //make sure this doesnt add the same class twice
-      $("#page-"+selector_id.substr(4)).removeClass('hide');
-    });
-
-    //dashboard
-    e.ipcRenderer.on('dashboard-channel', (event, message) => {
-      for (var id in message) {
-        $('#'+id).html(message[id]);
-      }
-    });
-
-    //chart see https://github.com/nagix/chartjs-plugin-streaming if lowering cpu usage is needed
-    //also see https://github.com/chartjs/chartjs-plugin-zoom for zoom
-    var ctx = document.getElementById('hashrate-chart').getContext('2d');
-    var pctx = document.getElementById('power-chart').getContext('2d');
-    var fs = require('fs');
-    var requestInterval = JSON.parse(fs.readFileSync('settings.json')).requestInterval;
-
-    var chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        datasets: [{
-          data: [],
-          label: 'Hashrate (TH/s)',
-          borderColor: 'rgb(0, 0, 128)',
-          backgroundColor: 'rgba(0, 0, 128, 0.5)'
-        }]
-      },
-      options: {
-        elements: {
-          line: {
-            tension: 0
-          }
-        },
-        scales: {
-          xAxes: [{
-            type: 'realtime',
-            realtime: {
-              delay: requestInterval*1.5,
-              duration: 900000
-            }
-          }],
-          yAxes: [{
-            ticks: {
-              min: 0
-            }
-          }]
-        }
-      }
-      });
-
-    $('.tab').click(function(){
-      var id = $(this).attr('id');
-      if (id == 'tab-24hr'){
-        chart.options.scales.xAxes[0].realtime.duration = 86400000; //this is 24 hr in millis
-      } else if (id == 'tab-8hr'){
-        chart.options.scales.xAxes[0].realtime.duration = 28800000;
-      } else if (id == 'tab-2hr'){
-        chart.options.scales.xAxes[0].realtime.duration = 7200000;
-      } else {
-        chart.options.scales.xAxes[0].realtime.duration = 900000;
-      }
-    });
-    
-    e.ipcRenderer.on('chart-channel', (event, message) => {
-      chart.data.datasets[0].data = message["hr-chart"];
-    });
-
-    //miners
-    e.ipcRenderer.on('miners-channel', (event, message) => {
-      $("#table-loading-bar").hide();
-      $("#miner-headers").empty();
-      message.headers.forEach(h => {
-        $('#miner-headers').append('<th>'+h+'</th>');
-      });
-      $("#miner-table-body").empty();
-      message.data.forEach(d => {
-        var datumString = '<tr>';
-        d.forEach(el => {
-          if (el == "Disconnected") datumString+='<td colspan="'+message.headers.length+'">Disconnected</td>';
-          else datumString+='<td style="max-width: 150px; word-wrap: break-word">'+el+'</td>';
+        //materializecss inits
+        //button
+        $(document).ready(function () {
+          $('.tooltipped').tooltip();
         });
-        datumString += '</tr>'
-        $("#miner-table-body").append(datumString);
-      });
-    });
+        //research for miners
+        $('#btn-refresh').click(function () {
+          e.ipcRenderer.send('refresh');
+        });
+        e.ipcRenderer.on('refresh-reply', (event, arg) => {
+          M.toast({ html: 'Refreshing!' });
+        });
+        //sidebar
+        document.addEventListener('DOMContentLoaded', function () {
+          var instances = M.Sidenav.init();//elems, options
+        });
+        $(document).ready(function () {
+          $('.sidenav').sidenav();
+        });
 
-    // //settings
-    // e.ipcRenderer.on('settings-channel', (event, message) => {
-    //   console.log(message);
-    // });
+        //nav logic to highlight nav selector and show/hide page elements
+        $('.nav-selector').click(function (event) {
+          //navbar highlighting
+          var selector_id = $(this)[0].id;
+          $(".nav-selector").removeClass("grey lighten-2");
+          $(this).addClass("grey lighten-2");
+          //page hiding / showing
+          $(".page").addClass('hide'); //make sure this doesnt add the same class twice
+          $("#page-" + selector_id.substr(4)).removeClass('hide');
+        });
 
-    $('#settings-apply').click(function(){
-      var p = $('#input-pool').val();
-      if (p){
-        $('#settings-loading-bar').removeClass('hide');
-        var formData = {
+        //dashboard
+        e.ipcRenderer.on('dashboard-channel', (event, message) => {
+          for (var id in message) {
+            $('#' + id).html(message[id]);
+          }
+        });
+
+        //chart see https://github.com/nagix/chartjs-plugin-streaming if lowering cpu usage is needed
+        //also see https://github.com/chartjs/chartjs-plugin-zoom for zoom
+        var ctx = document.getElementById('hashrate-chart').getContext('2d');
+        var pctx = document.getElementById('power-chart').getContext('2d');
+        var fs = require('fs');
+        var requestInterval = JSON.parse(fs.readFileSync('settings.json')).requestInterval;
+
+        var chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            datasets: [{
+              data: [],
+              label: 'Hashrate (TH/s)',
+              borderColor: 'rgb(27, 29, 77)',
+              backgroundColor: 'rgb(27,29,77,0.6)'
+            }]
+          },
+          options: {
+            elements: {
+              line: {
+                tension: 0
+              }
+            },
+            scales: {
+              xAxes: [{
+                type: 'realtime',
+                realtime: {
+                  delay: requestInterval * 1.5,
+                  duration: 900000
+                }
+              }],
+              yAxes: [{
+                ticks: {
+                  min: 0
+                }
+              }]
+            }
+          }
+        });
+
+        $('.tab').click(function () {
+          var id = $(this).attr('id');
+          if (id == 'tab-24hr') {
+            chart.options.scales.xAxes[0].realtime.duration = 43200000; //this is 24 hr in millis
+          } else if (id == 'tab-8hr') {
+            chart.options.scales.xAxes[0].realtime.duration = 14400000;
+          } else if (id == 'tab-2hr') {
+            chart.options.scales.xAxes[0].realtime.duration = 3600000;
+          } else {
+            chart.options.scales.xAxes[0].realtime.duration = 900000;
+          }
+        });
+
+        e.ipcRenderer.on('chart-channel', (event, message) => {
+          chart.data.datasets[0].data = message["hr-chart"];
+        });
+
+        //miners
+        e.ipcRenderer.on('miners-channel', (event, message) => {
+          $("#table-loading-bar").hide();
+          $("#miner-headers").empty();
+          message.headers.forEach(h => {
+            $('#miner-headers').append('<th>' + h + '</th>');
+          });
+          $("#miner-table-body").empty();
+          message.data.forEach(d => {
+            var datumString = '<tr>';
+            d.forEach(el => {
+              if (el == "Disconnected") datumString += '<td colspan="' + message.headers.length + '">Disconnected</td>';
+              else datumString += '<td style="max-width: 150px; word-wrap: break-word">' + el + '</td>';
+            });
+            datumString += '</tr>'
+            $("#miner-table-body").append(datumString);
+          });
+        });
+
+        // //settings
+        // e.ipcRenderer.on('settings-channel', (event, message) => {
+        //   console.log(message);
+        // });
+
+        $('#settings-apply').click(function () {
+          var p = $('#input-pool').val();
+          if (p) {
+            $('#settings-loading-bar').removeClass('hide');
+            var formData = {
               "pool": $('#input-pool').val()
             };
-        e.ipcRenderer.send('post-settings',formData);
-      } else {
-        M.toast({html: 'Need to specify pool...'});
-      }
-    });
+            e.ipcRenderer.send('post-settings', formData);
+          } else {
+            M.toast({ html: 'Need to specify pool...' });
+          }
+        });
 
-    $('#swupdate-apply').click(function(){
-      var swupdateFilepath = $('#swupdate-file').val();
-      if (swupdateFilepath) {
-        console.log(swupdateFilepath);
-        $('#settings-loading-bar').removeClass('hide');
-        e.ipcRenderer.send('post-swupdate', swupdateFilepath);
-      } else {
-        M.toast({html: 'No file selected...'});
-      }
-    })
+        $('#swupdate-apply').click(function () {
+          var swupdateFilepath = $('#swupdate-file').val();
+          if (swupdateFilepath) {
+            console.log(swupdateFilepath);
+            $('#settings-loading-bar').removeClass('hide');
+            e.ipcRenderer.send('post-swupdate', swupdateFilepath);
+          } else {
+            M.toast({ html: 'No file selected...' });
+          }
+        })
 
-    // //template if we want more
-    //settings
-    // e.ipcRenderer.on('settings-channel', (event, message) => {
-    //   console.log(message);
-    // 
+        // //template if we want more
+        //settings
+        // e.ipcRenderer.on('settings-channel', (event, message) => {
+        //   console.log(message);
+        // 
 
-  </script>
-  </body>
+        //auth
+
+        //returns t/f
+        function auth() {
+
+        }
+
+      </script>
+      </body>
+
 </html>

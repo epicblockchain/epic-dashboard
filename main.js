@@ -2,6 +2,7 @@ const { app, BrowserWindow, screen, ipcMain } = require('electron')
 // var mdns = require('multicast-dns')()
 const fs = require('fs');
 const dnssd = require('dnssd2');
+const roundTo = require('round-to');
 
 if (!fs.existsSync('settings.json')){
   fs.writeFileSync('settings.json', fs.readFileSync('settingsDefault.json'));
@@ -13,8 +14,8 @@ function createWindow () {
   const screenArea = screen.getPrimaryDisplay().workAreaSize;
 
   const win = new BrowserWindow({
-    width: screenArea.width*0.7,
-    height: screenArea.width*0.3,
+    width: 1280,
+    height: 720,
     webPreferences: {
       nodeIntegration: true
     }
@@ -184,10 +185,10 @@ function generateDashboardData(miners){
 }
 
 function MHToHRString(totalHashrate){
-  if (totalHashrate < 1000) totalHashrateString = totalHashrate + " MH/s";
-  else if (totalHashrate > 1000 && totalHashrate <= 1000000) totalHashrateString = totalHashrate/1000 + " GH/s";
-  else if (totalHashrate > 1000000 && totalHashrate <= 1000000000) totalHashrateString = totalHashrate/1000000 + " TH/s";
-  else totalHashrateString = totalHashrate/1000000000 + " PH/s";
+  if (totalHashrate < 1000) totalHashrateString = roundTo(totalHashrate,2) + " MH/s";
+  else if (totalHashrate > 1000 && totalHashrate <= 1000000) totalHashrateString = roundTo(totalHashrate/1000,2) + " GH/s";
+  else if (totalHashrate > 1000000 && totalHashrate <= 1000000000) totalHashrateString = roundTo(totalHashrate/1000000,2) + " TH/s";
+  else totalHashrateString = roundTo(totalHashrate/1000000000,2) + " PH/s";
   return totalHashrateString
 }
 

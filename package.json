@@ -11,6 +11,8 @@
     "electron": "^8.3.0"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.1",
+    "bulma": "^0.9.0",
     "chart.js": "^2.8.0",
     "chartjs-plugin-streaming": "^1.8.0",
     "dnssd2": "^1.0.0",
@@ -18,6 +20,7 @@
     "got": "^11.3.0",
     "jquery": "^3.5.1",
     "material-icons": "^0.3.1",
-    "materialize-css": "^1.0.0-rc.2"
+    "materialize-css": "^1.0.0-rc.2",
+    "round-to": "^4.1.0"
   }
 }
