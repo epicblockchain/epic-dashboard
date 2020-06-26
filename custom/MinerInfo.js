@@ -1,6 +1,5 @@
 const got = require('got');
 const fs = require('fs');
-const { icpMain } = require('electron');
 const FormData = require('form-data');
 
 class MinerInfo {

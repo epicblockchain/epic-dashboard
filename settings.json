@@ -1,1 +1,1 @@
-{"production":false,"requestInterval":3000,"summaryEndpoint":"summary","poolEndpoint":"changePool"}
+{"production":false,"requestInterval":3000,"searchTime":3000,"summaryEndpoint":"summary","poolEndpoint":"changePool","historyEndpoint":"history"}

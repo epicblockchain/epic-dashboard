@@ -42,7 +42,7 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow)
+app.whenReady().then(epicInit).then(createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -64,27 +64,39 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-var settings = JSON.parse(fs.readFileSync('settings.json'));
-fs.writeFileSync('settings.json', JSON.stringify(settings));
-
 //api access logic entry
 var minerinfo = require('./custom/MinerInfo');
 var miners = []; //this will also hold inactive miners
+var settings = JSON.parse(fs.readFileSync('settings.json'));
+var timer;
+fs.writeFileSync('settings.json', JSON.stringify(settings));  
 
-var browser = searchForMiners();
-
-function searchForMiners(){
+function epicInit(){
+  console.log('initializing miners');
   miners = [];
-  dnssd.Browser(dnssd.tcp('epicminer'))
-    .on('serviceUp',function(service){
-      var ip = service.addresses[0];
-      var port = service.port;
-      m = new minerinfo.MinerInfo(ip, port, settings.summaryEndpoint, settings.poolEndpoint);
-      miners.push(m);
-      if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
-    })
-    .on('serviceDown', service => console.log("Device down: ", service))//TODO: does this have any use case? our code still pings and sets to inactive
-    .start();
+  console.log('searching for miners')
+  const browser = dnssd.Browser(dnssd.tcp('epicminer'))
+  .on('serviceUp',function(service){
+    var ip = service.addresses[0];
+    var port = service.port;
+    m = new minerinfo.MinerInfo(ip, port, settings.summaryEndpoint, settings.poolEndpoint);
+    miners.push(m);
+    if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
+  })
+  .start();
+  
+  setTimeout(function(){
+    browser.stop();
+    console.log('done searching for miners');
+    timer = setInterval(() => {
+      epicLoop();
+    }, settings.requestInterval);
+  }, settings.searchTime);
+};
+
+//this functions loop is managed by init
+function epicLoop() {
+  console.log(loop);
 }
 
 ipcMain.on('refresh', (event, arg) => {
