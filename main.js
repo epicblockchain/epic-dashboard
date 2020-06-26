@@ -185,6 +185,7 @@ function generateDashboardData(miners){
 }
 
 function MHToHRString(totalHashrate){
+  if (totalHashrate === null || totalHashrate === undefined) return "0 H/s";
   if (totalHashrate < 1000) totalHashrateString = roundTo(totalHashrate,2) + " MH/s";
   else if (totalHashrate > 1000 && totalHashrate <= 1000000) totalHashrateString = roundTo(totalHashrate/1000,2) + " GH/s";
   else if (totalHashrate > 1000000 && totalHashrate <= 1000000000) totalHashrateString = roundTo(totalHashrate/1000000,2) + " TH/s";
