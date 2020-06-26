@@ -142,9 +142,6 @@
 
       <!-- settings page -->
       <div id="page-settings" class="container hide page">
-        <div id="settings-loading-bar" class="progress yellow accent-4 hide">
-          <div class="indeterminate indigo darken-4"></div>
-        </div>
         <div class="row">
           <div class="input-field col s12">
             <input id="input-pool" type="text" class="validate">
@@ -313,7 +310,6 @@
         $('#settings-apply').click(function () {
           var p = $('#input-pool').val();
           if (p) {
-            $('#settings-loading-bar').removeClass('hide');
             var formData = {
               "method": "change_pool_addr",
               "param": $('#input-pool').val(),
@@ -329,7 +325,6 @@
           var swupdateFilepath = $('#swupdate-file').val();
           if (swupdateFilepath) {
             console.log(swupdateFilepath);
-            $('#settings-loading-bar').removeClass('hide');
             e.ipcRenderer.send('post-swupdate', swupdateFilepath);
           } else {
             M.toast({ html: 'No file selected...' });
