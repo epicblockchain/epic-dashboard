@@ -2,18 +2,18 @@ const { app, BrowserWindow, screen, ipcMain } = require('electron')
 // var mdns = require('multicast-dns')()
 const fs = require('fs');
 const dnssd = require('dnssd2');
-const roundTo = require('round-to');
 
 if (!fs.existsSync('settings.json')){
   fs.writeFileSync('settings.json', fs.readFileSync('settingsDefault.json'));
 }
 
+var win;
 function createWindow () {
   // Create the browser window.
 
   const screenArea = screen.getPrimaryDisplay().workAreaSize;
 
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1280,
     height: 720,
     webPreferences: {
@@ -34,9 +34,6 @@ function createWindow () {
   // const template = [];
   // const menu = Menu.buildFromTemplate(template);
   // Menu.setApplicationMenu(menu);
-
-  startLoop(win);
-
 }
 
 // This method will be called when Electron has finished
@@ -66,12 +63,17 @@ app.on('activate', () => {
 
 //api access logic entry
 var minerinfo = require('./custom/MinerInfo');
-var miners = []; //this will also hold inactive miners
+var datamassager = require('./custom/EpicMinerDataMassager');
+
 var settings = JSON.parse(fs.readFileSync('settings.json'));
+var miners = []; //this will also hold inactive miners
 var timer;
 fs.writeFileSync('settings.json', JSON.stringify(settings));  
 
+var chartData = [];
+
 function epicInit(){
+  if (timer) clearInterval(timer); //if for some reason we re init in the future, get rid of the current interval
   console.log('initializing miners');
   miners = [];
   console.log('searching for miners')
@@ -84,11 +86,15 @@ function epicInit(){
     if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
   })
   .start();
-  
+
   setTimeout(function(){
     browser.stop();
     console.log('done searching for miners');
+    initViewToModelChannels();
+    //run once immediately after done searching for miners
+    epicLoop();
     timer = setInterval(() => {
+      //run every request interval
       epicLoop();
     }, settings.requestInterval);
   }, settings.searchTime);
@@ -96,193 +102,49 @@ function epicInit(){
 
 //this functions loop is managed by init
 function epicLoop() {
-  console.log(loop);
+  miners.forEach(m => {
+    m.fetch();
+  });
+
+  //dashboard
+  win.webContents.send('dashboard-channel', datamassager.generateDashboardData(miners));
+
+  //chart
+  win.webContents.send('chart-channel', datamassager.generateChartData(miners, chartData));
+
+  //miners
+  win.webContents.send('miners-channel', datamassager.generateMinerData(miners)); 
+
+  //pools
+  // win.webContents.send('pools-channel', []); 
+
+  //settings
+  // win.webContents.send('settings-channel', []); 
 }
 
-ipcMain.on('refresh', (event, arg) => {
-  browser = searchForMiners();
-  event.reply('refresh-reply', 'Refreshed!');
-});
-
-ipcMain.on('post-settings', (event, arg) => {
-  miners.forEach(m => {
-    if (m.active){
-      console.log('posting...');
-      console.log(arg);
-      m.postPool(arg);}
+function initViewToModelChannels(){
+  ipcMain.on('refresh', (event, arg) => {
+    browser = searchForMiners();
+    event.reply('refresh-reply', 'Refreshed!');
   });
-});
-
-ipcMain.on('post-swupdate', (event, arg) => {
-  miners.forEach(m => {
-    if (m.active){
-      console.log('posting...');
-      console.log(arg);
-      m.postPool(arg);
-    } 
-  })
-})
-
-//returns the timerid if we want to clearInterval();
-function startLoop(win){
-
-  //this runs immediately and also after every request interval
-  return setInterval(function immediate(){
+  
+  ipcMain.on('post-settings', (event, arg) => {
     miners.forEach(m => {
-      m.fetch();
+      if (m.active){
+        console.log('posting...');
+        console.log(arg);
+        m.postPool(arg);}
     });
-
-    //dashboard
-    win.webContents.send('dashboard-channel', generateDashboardData(miners));
-  
-    //chart
-    win.webContents.send('chart-channel', generateChartData(miners));
-  
-    //miners
-    win.webContents.send('miners-channel', generateMinerData(miners)); 
-  
-    //pools
-    // win.webContents.send('pools-channel', []); 
-  
-    //settings
-    // win.webContents.send('settings-channel', []); 
-  
-    return immediate;
-  }(), settings.requestInterval);
-}
-
-function generateDashboardData(miners){
-  var totalHashrate = 0;
-  var acceptedShares = 0;
-  var rejectedShares = 0;
-  var activeMiners = 0;
-  var pool; //this cannot be an aggregate
-  var totalDifficulty = 0; //this can be averaged, but do we want it to?
-  var lastAcceptedShareTime = null; //this can be found but is it useful
-
-  miners.forEach(miner => {
-    if (miner.active) {
-      totalHashrate += miner.response["Session"]["Average MHs"];
-      acceptedShares += miner.response["Session"]["Accepted"];
-      rejectedShares += miner.response["Session"]["Rejected"];
-      pool = miner.response["Stratum"]["Current Pool"];
-      activeMiners++;
-      totalDifficulty += miner.response["Session"]["Difficulty"];
-      if (lastAcceptedShareTime < miner.response["Session"]["Last Accepted Share Timestamp"]){
-        lastAcceptedShareTime = miner.response["Session"]["Last Accepted Share Timestamp"];
-      }
-    }
-  });
-
-  var avgDifficulty = totalDifficulty / activeMiners;
-
-  var totalHashrateString = MHToHRString(totalHashrate);
-
-  var shareString = acceptedShares + " / " + rejectedShares;
-  var activeMinerString = activeMiners.toString() + " / " + miners.length;
-  var currentPoolString = pool || "Disconnected";
-  var avgDifficultyString = avgDifficulty || "N/A";
-  var lastAcceptedShareString = new Date(lastAcceptedShareTime*1000).toString() || "Disconnected";
-
-  if (lastAcceptedShareTime == null) lastAcceptedShareString = '    Disconnected';
-
-  return {
-    "total-hashrate": totalHashrateString,
-    "accepted-rejected-shares": shareString,
-    "active-miners": activeMinerString,
-    "current-pool": currentPoolString,
-    "avg-difficulty": avgDifficultyString,
-    "last-accepted-share-time": lastAcceptedShareString.substr(4, 20)
-  };
-}
-
-function MHToHRString(totalHashrate){
-  if (totalHashrate === null || totalHashrate === undefined) return "0 H/s";
-  if (totalHashrate < 1000) totalHashrateString = roundTo(totalHashrate,2) + " MH/s";
-  else if (totalHashrate > 1000 && totalHashrate <= 1000000) totalHashrateString = roundTo(totalHashrate/1000,2) + " GH/s";
-  else if (totalHashrate > 1000000 && totalHashrate <= 1000000000) totalHashrateString = roundTo(totalHashrate/1000000,2) + " TH/s";
-  else totalHashrateString = roundTo(totalHashrate/1000000000,2) + " PH/s";
-  return totalHashrateString
-}
-
-function generateMinerData(miners){
-  var headers = ['Name', 
-    'Software', 
-    // 'Coin', 
-    // 'Algorithm', 
-    'Pool',
-    'User', 
-    'Started', 
-    // 'Last Work', 
-    'Last Accepted Share',
-    'Uptime', 
-    'Work Received', 
-    'Active HBs', 
-    'Hashrate', 
-    'Accepted', 
-    'Rejected', 
-    // 'Submitted',
-    'Difficulty',
-    // 'Fan Speed',
-    'Temperature (&degC)',
-    'IP Address'];
-
-  var data = [];
-
-  var temps = [];
-  miners.forEach(m => {
-    if (m.active){
-      m.response["HBs"].forEach(hb => {
-        temps.push(hb["Temperature"]);
-      });
-    }
   });
   
-  miners.forEach(m => {
-    if (m.active) {
-      var datum = ['John Lee',
-        m.response["Software"] || "N/A",
-        // m.response["Mining"]["Coin"] || "N/A",
-        // m.response["Mining"]["Algorithm"] || "N/A",
-        m.response["Stratum"]["Current Pool"] || "N/A",
-        m.response["Stratum"]["Current User"].substr(0, 8) + ' ... ' + m.response["Stratum"]["Current User"].substr(-18, 18) || "N/A",
-        new Date(m.response["Session"]["Startup Timestamp"]*1000).toString().substr(4, 20) || "N/A",
-        // new Date(m.response["Session"]["Last Work Timestamp"]*1000) || "N/A",
-        new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000).toString().substr(4, 20) || "N/A",
-        m.response["Session"]["Uptime"] || "N/A",
-        m.response["Session"]["WorkReceived"] || "N/A",
-        m.response["Session"]["Active HBs"] || "N/A",
-        MHToHRString(m.response["Session"]["Average MHs"]) || "N/A",
-        m.response["Session"]["Accepted"] || "N/A",
-        m.response["Session"]["Rejected"] || "N/A",
-        // m.response["Session"]["Submitted"] || "N/A",
-        m.response["Session"]["Difficulty"] || "N/A",
-        // 'fan speed string todo',
-        // m.response["Fans"]["Fans Speed"] || "N/A",
-        Math.max(temps),
-        m.ip];
-        data.push(datum);
-
-    } else {
-
-      data.push(['Disconnected']);
-    }
+  ipcMain.on('post-swupdate', (event, arg) => {
+    miners.forEach(m => {
+      if (m.active){
+        console.log('posting...');
+        console.log(arg);
+        m.postPool(arg);
+      } 
+    })
   });
-
-  return {"headers": headers,
-    "data": data};
 }
 
-var data = [];
-function generateChartData(miners){
-  var hr = 0;
-  miners.forEach(m => {
-    if (m.active) {
-      hr += m.response["Session"]["Average MHs"]/1000000;
-    }
-  });
-  data.push({x: Date.now(), y: hr});
-  return {
-    "hr-chart": data,
-  };
-}
