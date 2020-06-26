@@ -8,17 +8,37 @@ class MinerInfo {
     port;
     summaryEndpoint;
     response;
+    historyEndpoint;
+    history;
     changePoolEndpoint;
 
-    constructor(ip, port, summaryEndpoint, changePoolEndpoint){
+    constructor(ip, port, summaryEndpoint, changePoolEndpoint, historyEndpoint){
         this.summaryEndpoint = summaryEndpoint;
         this.ip = ip;
         this.port = port;
         this.changePoolEndpoint = changePoolEndpoint;
+        this.historyEndpoint = historyEndpoint;
     }
 
-    fetch(){
-        
+    fetchHistory(){
+        (async () => {
+            try {
+                const response = await got('http://' + this.ip + ':' + this.port + '/' + this.historyEndpoint,{
+                    https: {
+                        rejectUnauthorized: false
+                    }
+                });
+                this.active = true;
+                this.history = JSON.parse(response.body);
+            } catch (error) {
+                console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.historyEndpoint);
+                this.active = false;
+                this.history = null;
+            }
+        })();
+    }
+    
+    fetchSummary(){
         (async () => {
             try {
                 const response = await got('http://' + this.ip + ':' + this.port + '/' + this.summaryEndpoint,{
@@ -26,16 +46,13 @@ class MinerInfo {
                         rejectUnauthorized: false
                     }
                 });
-                this.active = true;
                 this.response = JSON.parse(response.body);
                 // console.log(this.response); //TODO remove
             } catch (error) {
                 console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.summaryEndpoint);
-                this.active = false;
                 this.response = null;
             }
         })();
-
     }
 
     postPool(poolJSON){

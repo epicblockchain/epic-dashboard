@@ -1,5 +1,11 @@
 const roundTo = require('round-to');
 
+function loadHistoryChart(miners){
+    miners.forEach(m => {
+        console.log(m.history);
+    });
+}
+
 function generateDashboardData(miners){
     var totalHashrate = 0;
     var acceptedShares = 0;
@@ -140,5 +146,6 @@ module.exports = {
     generateDashboardData:generateDashboardData,
     MHToHRString: MHToHRString,
     generateMinerData: generateMinerData,
-    generateChartData: generateChartData
+    generateChartData: generateChartData,
+    loadHistoryChart: loadHistoryChart
 }

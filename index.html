@@ -315,7 +315,9 @@
           if (p) {
             $('#settings-loading-bar').removeClass('hide');
             var formData = {
-              "pool": $('#input-pool').val()
+              "method": "change_pool_addr",
+              "param": $('#input-pool').val(),
+              "password": "x"
             };
             e.ipcRenderer.send('post-settings', formData);
           } else {

@@ -39,7 +39,9 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(epicInit).then(createWindow);
+app.whenReady()
+  .then(epicInit)
+  .then(createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -73,7 +75,7 @@ fs.writeFileSync('settings.json', JSON.stringify(settings));
 var chartData = [];
 
 function epicInit(){
-  if (timer) clearInterval(timer); //if for some reason we re init in the future, get rid of the current interval
+  if (timer) clearInterval(timer); //if for some reason we re-init in the future, get rid of the current loop
   console.log('initializing miners');
   miners = [];
   console.log('searching for miners')
@@ -81,7 +83,13 @@ function epicInit(){
   .on('serviceUp',function(service){
     var ip = service.addresses[0];
     var port = service.port;
-    m = new minerinfo.MinerInfo(ip, port, settings.summaryEndpoint, settings.poolEndpoint);
+    m = new minerinfo.MinerInfo(
+        ip,
+        port,
+        settings.summaryEndpoint,
+        settings.poolEndpoint,
+        settings.historyEndpoint
+      );
     miners.push(m);
     if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
   })
@@ -92,6 +100,9 @@ function epicInit(){
     console.log('done searching for miners');
     initViewToModelChannels();
     //run once immediately after done searching for miners
+    miners.forEach(m => {
+      m.fetchHistory();
+    });
     epicLoop();
     timer = setInterval(() => {
       //run every request interval
@@ -103,7 +114,7 @@ function epicInit(){
 //this functions loop is managed by init
 function epicLoop() {
   miners.forEach(m => {
-    m.fetch();
+    m.fetchSummary();
   });
 
   //dashboard
@@ -124,7 +135,7 @@ function epicLoop() {
 
 function initViewToModelChannels(){
   ipcMain.on('refresh', (event, arg) => {
-    browser = searchForMiners();
+    epicInit();
     event.reply('refresh-reply', 'Refreshed!');
   });
   
