@@ -126,9 +126,6 @@ function epicLoop() {
   //miners
   win.webContents.send('miners-channel', datamassager.generateMinerData(miners)); 
 
-  //pools
-  // win.webContents.send('pools-channel', []); 
-
   //settings
   // win.webContents.send('settings-channel', []); 
 }
