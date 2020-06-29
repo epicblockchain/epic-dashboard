@@ -147,46 +147,52 @@
             <label for="input-pool" class="active">Pool</label>
           </div>
           <div class="col s1">
-            <a id="pool-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+            <a id="pool-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
         </div>
         <div class="row valign-wrapper">
           <div class="input-field col s11">
             <input id="input-address" type="text" class="validate">
-            <label for="address" class="active">Address</label>
+            <label for="input-address" class="active">Address</label>
           </div>
           <div class="col s1">
-            <a id="address-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+            <a id="address-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
         </div>
         <div class="row valign-wrapper">
           <div class="input-field col s11">
             <input id="input-mode" type="text" class="validate">
-            <label for="mode" class="active">Mode</label>
+            <label for="input-mode" class="active">Mode</label>
           </div>
           <div class="col s1">
-            <a id="mode-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+            <a id="mode-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
         </div>
 
-        <div class="row">
-          <div class="col s10">
-            <div class="file-field input-field">
-              <div class="btn indigo darken-4">
-                <span>File</span>
-                <input type="file">
-              </div>
-              <div class="file-path-wrapper">
-                <input id="swupdate-file" class="file-path validate" type="text">
-              </div>
-            </div>
+        <div class="row valign-wrapper">
+          <div class="col s4">
+            <a id="swupdate-browse" class="waves-effect waves-light btn white-text jpback">Browse</a>
           </div>
-          <div class="col s2">
-            <a id="swupdate-apply" class="waves-effect waves-light btn white-text indigo darken-4">Update Firmware</a>
+          <div class="col s4">
+            <p id="swupdate-filepath">Click browse to search for a firmware update file</p>
+          </div>
+          <div class="col s4">
+            <a id="swupdate-apply" class="waves-effect waves-light btn white-text jpback right">Update Firmware</a>
           </div>
         </div>
 
+      </div>
 
+      <div id="page-password" class="container hide page">
+        <div class="row valign-wrapper">
+          <div class="input-field col s11">
+            <input id="input-password" type="password" class="validate">
+            <label for="input-password" class="active">Password</label>
+          </div>
+          <div class="col s1">
+            <a id="password-apply" class="waves-effect waves-light btn white-text jpback">Submit</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -200,6 +206,7 @@
       <script src="node_modules/@fortawesome/fontawesome-free/js/all.js"></script>
 
       <script>
+
         //electron
         var e = require('electron');
         //to init the info and charts
@@ -327,35 +334,65 @@
         //   console.log(message);
         // });
 
-        $('#settings-apply').click(function () {
-          var p = $('#input-pool').val();
-          if (p) {
-            var formData = {
-              "method": "change_pool_addr",
-              "param": $('#input-pool').val(),
-              "password": "x"
-            };
-            e.ipcRenderer.send('post-settings', formData);
-          } else {
-            M.toast({ html: 'Need to specify pool...' });
-          }
+        var pw = '';
+        var param = '';
+        var method = '';
+        function passwordPage(){
+          $(".page").addClass('hide'); //make sure this doesnt add the same class twice
+          $("#page-password").removeClass('hide');
+        }
+        $('#password-apply').click(function() {
+          pw = $('#input-password').val();
+          e.ipcRenderer.send('post-settings', {
+            "method": method,
+            "param": param,
+            "password": pw
+          });
+          $('#input-password').val('');
+          $(".page").addClass('hide'); //make sure this doesnt add the same class twice
+          $("#page-settings").removeClass('hide');
+        })
+
+        $('#pool-apply').click(function () {
+          var pool = $('#input-pool').val();
+          method = 'pool';
+          passwordPage();
+          param = pool;
         });
 
-        $('#swupdate-apply').click(function () {
-          var swupdateFilepath = $('#swupdate-file').val();
-          if (swupdateFilepath) {
-            console.log(swupdateFilepath);
-            e.ipcRenderer.send('post-swupdate', swupdateFilepath);
-          } else {
-            M.toast({ html: 'No file selected...' });
-          }
+        $('#address-apply').click(function () {
+          var address = $('#input-address').val();
+          method = 'address';
+          passwordPage();
+          param = address;
+        });
+
+        $('#mode-apply').click(function () {
+          var mode = $('#input-mode').val();
+          method = 'mode';
+          passwordPage();
+          param = mode;
+        });
+
+        $('#swupdate-browse').click(function(){
+          e.ipcRenderer.send('swupdate-browse');
+        });
+        e.ipcRenderer.on('swupdate-browse-reply', (event, message) => {
+          $('#swupdate-filepath').text(message[0]);
         })
+
+        $('#swupdate-apply').click(function () {
+          method = 'update';
+          passwordPage();
+          param = null;
+        });
 
         // //template if we want more
         //settings
         // e.ipcRenderer.on('settings-channel', (event, message) => {
         //   console.log(message);
         // 
+
 
 
       </script>

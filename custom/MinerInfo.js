@@ -52,8 +52,8 @@ class MinerInfo {
                 // console.log(this.response); //TODO remove
             } catch (error) {
                 console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.summaryEndpoint);
-                this.response = null;
                 this.active = false;
+                this.response = null;
             }
         })();
     }
@@ -74,7 +74,7 @@ class MinerInfo {
     }
 
     postSWUpdate(filepath) {
-        
+
     }
     
 }

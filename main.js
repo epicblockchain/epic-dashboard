@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen, ipcMain } = require('electron')
+const { app, BrowserWindow, screen, ipcMain, dialog } = require('electron')
 // var mdns = require('multicast-dns')()
 const fs = require('fs');
 const dnssd = require('dnssd2');
@@ -135,6 +135,7 @@ function epicLoop() {
   // win.webContents.send('settings-channel', []); 
 }
 
+var swupdate_filepath = '';
 function initViewToModelChannels(){
   ipcMain.on('refresh', (event, arg) => {
     epicInit();
@@ -142,22 +143,31 @@ function initViewToModelChannels(){
   });
   
   ipcMain.on('post-settings', (event, arg) => {
-    miners.forEach(m => {
-      if (m.active){
-        console.log('posting...');
-        console.log(arg);
-        m.postPool(arg);}
+    if (arg.method === 'pool') {
+      console.log(arg.method);
+    } else if (arg.method === 'address') {
+      console.log(arg.method);
+    } else if (arg.method === 'mode') {
+      console.log(arg.method);
+    } else if (arg.method === 'update') {
+      console.log(arg.method);
+    }
+
+    console.log(arg);
+  });
+
+  ipcMain.on('swupdate-browse', (event, arg) => {
+    dialog.showOpenDialog({
+      properties: ['openFile']
+    }).then(result => {
+      if (!result.canceled){
+        swupdate_filepath = result.filePaths[0];
+        event.reply('swupdate-browse-reply', result.filePaths);
+      }
+    }).catch(err => {
+      console.log(err);
     });
   });
   
-  ipcMain.on('post-swupdate', (event, arg) => {
-    miners.forEach(m => {
-      if (m.active){
-        console.log('posting...');
-        console.log(arg);
-        m.postSWUpdate(arg);
-      } 
-    })
-  });
 }
 
