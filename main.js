@@ -86,10 +86,7 @@ function epicInit(){
     var port = service.port;
     m = new minerinfo.MinerInfo(
         ip,
-        port,
-        settings.summaryEndpoint,
-        settings.poolEndpoint,
-        settings.historyEndpoint
+        port
       );
     miners.push(m);
     if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
@@ -158,7 +155,7 @@ function initViewToModelChannels(){
       if (m.active){
         console.log('posting...');
         console.log(arg);
-        m.postPool(arg);
+        m.postSWUpdate(arg);
       } 
     })
   });

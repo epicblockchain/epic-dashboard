@@ -127,9 +127,6 @@
       <div id="page-miners" class="container hide page">
         <table class="centered">
           <thead>
-            <div id="table-loading-bar" class="progress yellow accent-4">
-              <div class="indeterminate indigo darken-4"></div>
-            </div>
             <tr id="miner-headers">
               <!-- gets auto filled -->
             </tr>
@@ -143,17 +140,35 @@
 
       <!-- settings page -->
       <div id="page-settings" class="container hide page">
-        <div class="row">
-          <div class="input-field col s12">
+
+        <div class="row valign-wrapper">
+          <div class="input-field col s11">
             <input id="input-pool" type="text" class="validate">
-            <label for="pool">Pool</label>
+            <label for="input-pool" class="active">Pool</label>
+          </div>
+          <div class="col s1">
+            <a id="pool-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
           </div>
         </div>
-        <div class="row">
-          <div class="col s2 offset-s5">
-            <a id="settings-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+        <div class="row valign-wrapper">
+          <div class="input-field col s11">
+            <input id="input-address" type="text" class="validate">
+            <label for="address" class="active">Address</label>
+          </div>
+          <div class="col s1">
+            <a id="address-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
           </div>
         </div>
+        <div class="row valign-wrapper">
+          <div class="input-field col s11">
+            <input id="input-mode" type="text" class="validate">
+            <label for="mode" class="active">Mode</label>
+          </div>
+          <div class="col s1">
+            <a id="mode-apply" class="waves-effect waves-light btn white-text indigo darken-4">Apply</a>
+          </div>
+        </div>
+
         <div class="row">
           <div class="col s10">
             <div class="file-field input-field">

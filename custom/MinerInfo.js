@@ -1,6 +1,7 @@
 const got = require('got');
 const fs = require('fs');
 const FormData = require('form-data');
+const gzip = require('node-gzip');
 
 class MinerInfo {
     active;
@@ -12,12 +13,12 @@ class MinerInfo {
     history;
     changePoolEndpoint;
 
-    constructor(ip, port, summaryEndpoint, changePoolEndpoint, historyEndpoint){
-        this.summaryEndpoint = summaryEndpoint;
+    constructor(ip, port){
         this.ip = ip;
         this.port = port;
-        this.changePoolEndpoint = changePoolEndpoint;
-        this.historyEndpoint = historyEndpoint;
+        this.summaryEndpoint = "summary";
+        this.changePoolEndpoint = "pool";
+        this.historyEndpoint = "history";
     }
 
     fetchHistory(){
@@ -67,25 +68,13 @@ class MinerInfo {
                 responseType: 'json'
             });
             console.log(body.data);
-            //=> '{"hello":"world"}'
         })().catch(function(error){
             console.log(error);
         });
     }
 
     postSWUpdate(filepath) {
-        (async () => {
-            const form = newFormData();
-            form.append('swupdate.swu', fs.createReadStream(filepath));
-            console.log('form:');
-            console.log(form);
-            got.post('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint, {
-                body: form
-            }).catch(function(error){
-                console.log(error);
-            });
-
-        })
+        
     }
     
 }
