@@ -11,13 +11,11 @@ class MinerInfo {
     response;
     historyEndpoint;
     history;
-    changePoolEndpoint;
 
     constructor(ip, port){
         this.ip = ip;
         this.port = port;
         this.summaryEndpoint = "summary";
-        this.changePoolEndpoint = "pool";
         this.historyEndpoint = "history";
     }
 
@@ -58,23 +56,55 @@ class MinerInfo {
         })();
     }
 
-    postPool(poolJSON){
-        (async () => {
-            const {body} = await got.post(('http://' + this.ip + ':' + this.port + '/' + this.changePoolEndpoint), {
-                https: {
-                    rejectUnauthorized: false
-                },
-                json: poolJSON,
-                responseType: 'json'
-            });
-            console.log(body.data);
-        })().catch(function(error){
-            console.log(error);
-        });
-    }
-
-    postSWUpdate(filepath) {
-
+    post(arg){
+        if (arg.method === 'pool'){
+            (async () => {
+                try{
+                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/pool', {
+                        json: {
+                            "pool": arg.param,
+                            "password": arg.password
+                        },
+                        responseType: 'json'
+                    });
+                    console.log(body.data);
+                } catch (error) {
+                    console.log(error);
+                }
+            })();
+        } else if (arg.method === 'address') {
+            (async () => {
+                try {
+                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/login', {
+                        json: {
+                            "login": arg.param,
+                            "password": arg.password
+                        },
+                        responseType: 'json'
+                    });
+                    console.log(body.data);
+                } catch (error) {
+                    console.log(error);
+                }
+            })();
+        } else if (arg.method === 'mode') {
+            (async () => {
+                try {
+                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/mode', {
+                        json: {
+                            "mode": arg.param,
+                            "password": arg.password
+                        },
+                        responseType: 'json'
+                    });
+                    console.log(body.data);
+                } catch (error) {
+                    console.log(error);
+                }
+            })();
+        } else if (arg.method === 'update') {
+            //todo
+        }
     }
     
 }

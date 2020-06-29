@@ -143,17 +143,11 @@ function initViewToModelChannels(){
   });
   
   ipcMain.on('post-settings', (event, arg) => {
-    if (arg.method === 'pool') {
-      console.log(arg.method);
-    } else if (arg.method === 'address') {
-      console.log(arg.method);
-    } else if (arg.method === 'mode') {
-      console.log(arg.method);
-    } else if (arg.method === 'update') {
-      console.log(arg.method);
-    }
-
-    console.log(arg);
+    miners.forEach(m => {
+      if (m.active) {
+        m.post(arg);
+      }
+    });
   });
 
   ipcMain.on('swupdate-browse', (event, arg) => {
