@@ -1,6 +1,5 @@
 const got = require('got');
 const fs = require('fs');
-const gzip = require('node-gzip');
 
 class MinerInfo {
     active;
@@ -56,67 +55,20 @@ class MinerInfo {
     }
 
     post(arg){
-        if (arg.method === 'pool'){
-            (async () => {
-                try{
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/pool', {
-                        json: {
-                            "pool": arg.param,
-                            "password": arg.password
-                        },
-                        // responseType: 'json'
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })();
-        } else if (arg.method === 'address') {
-            (async () => {
-                try {
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/login', {
-                        json: {
-                            "login": arg.param,
-                            "password": arg.password
-                        },
-                        // responseType: 'json'
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })();
-        } else if (arg.method === 'mode') {
-            (async () => {
-                try {
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/mode', {
-                        json: {
-                            "mode": arg.param,
-                            "password": arg.password
-                        },
-                        // responseType: 'json'
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })();
-        } else if (arg.method === 'update') {
-            (async () => {
-                try {
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/mode', {
-                        json: {
-                            "file": "todo: put a compressed file here",
-                            "password": arg.password
-                        },
-                        // responseType: 'json'
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })
-        }
+        (async () => {
+            try {
+                const {body} = await got.post('http://' + this.ip + ':' + this.port + '/' + arg.method, {
+                    json: {
+                        "param": arg.param,
+                        "password": arg.password
+                    },
+                    // responseType: 'json'
+                });
+                console.log(body);
+            } catch (error) {
+                console.log(error);
+            }
+        })
     }
     
 }
