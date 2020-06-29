@@ -168,6 +168,24 @@
             <a id="mode-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
         </div>
+        <div class="row valign-wrapper">
+          <div class="input-field col s11">
+            <input id="input-reboot" type="text" class="validate">
+            <label for="input-reboot" class="active">Reboot in seconds (enter 0 for instant)</label>
+          </div>
+          <div class="col s1">
+            <a id="reboot-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
+          </div>
+        </div>
+        <div class="row valign-wrapper">
+          <div class="input-field col s11">
+            <input id="input-newpw" type="password" class="validate">
+            <label for="input-newpw" class="active">New Password</label>
+          </div>
+          <div class="col s1">
+            <a id="newpw-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
+          </div>
+        </div>
 
         <div class="row valign-wrapper">
           <div class="col s4">
@@ -209,6 +227,7 @@
 
         //electron
         var e = require('electron');
+        var fs = require('fs');
         //to init the info and charts
 
         //materializecss inits
@@ -374,6 +393,20 @@
           param = mode;
         });
 
+        $('#reboot-apply').click(function(){
+          var reboot_time = $('#input-reboot').val();
+          method = 'reboot';
+          passwordPage();
+          param = reboot_time;
+        });
+
+        $('#newpw-apply').click(function(){
+          var reboot_time = $('#input-newpw').val();
+          method = 'password';
+          passwordPage();
+          param = reboot_time;
+        })
+
         $('#swupdate-browse').click(function(){
           e.ipcRenderer.send('swupdate-browse');
         });
@@ -384,7 +417,7 @@
         $('#swupdate-apply').click(function () {
           method = 'update';
           passwordPage();
-          param = null;
+          param = fs.readFileSync($('#swupdate-filepath').text());
         });
 
         // //template if we want more
