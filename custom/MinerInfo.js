@@ -56,7 +56,6 @@ class MinerInfo {
     }
 
     post(arg){
-        console.log(arg);
             (async () => {
                 try{
                     const {body} = await got.post('http://' + this.ip + ':' + this.port + '/' + arg.method, { //us-east.siamining.com:3333
@@ -64,7 +63,7 @@ class MinerInfo {
                             "param": arg.param,
                             "password": arg.password
                         },
-                        // responseType: 'json'
+                        responseType: 'json'
                     });
                     console.log(body);
                 } catch (error) {
