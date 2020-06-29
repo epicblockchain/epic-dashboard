@@ -56,10 +56,10 @@ class MinerInfo {
     }
 
     post(arg){
-        if (arg.method === 'pool'){
+        console.log(arg);
             (async () => {
                 try{
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/pool', {
+                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/' + arg.method, { //us-east.siamining.com:3333
                         json: {
                             "param": arg.param,
                             "password": arg.password
@@ -68,55 +68,9 @@ class MinerInfo {
                     });
                     console.log(body);
                 } catch (error) {
-                    console.log(error);
+                    // console.log(error);
                 }
             })();
-        } else if (arg.method === 'address') {
-            (async () => {
-                try {
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/login', {
-                        json: {
-                            "param": arg.param,
-                            "password": arg.password
-                        },
-                        // responseType: 'json'
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })();
-        } else if (arg.method === 'mode') {
-            (async () => {
-                try {
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/mode', {
-                        json: {
-                            "param": arg.param,
-                            "password": arg.password
-                        },
-                        // responseType: 'json'
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })();
-        } else if (arg.method === 'update') {
-            (async () => {
-                try {
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/mode', {
-                        json: {
-                            "file": "todo: put a compressed file here",
-                            "password": arg.password
-                        },
-                        // responseType: 'json'
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })
-        }
     }
     
 }

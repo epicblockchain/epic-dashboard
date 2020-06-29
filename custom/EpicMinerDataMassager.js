@@ -141,8 +141,9 @@ function loadHistoryChartData(miners){
     var chartData = [];
     
     //put the data in an easy to manipulate way
+    if (miners === null || miners === undefined) return [];
     miners.forEach(m => {
-        if (m.active) {
+        if (m.active && m.history) {
             m.history.forEach(p => {
                 var t = p.Timestamp;
                 if (data.hasOwnProperty(t)){
