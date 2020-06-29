@@ -29,7 +29,7 @@ class MinerInfo {
                     }
                 });
                 this.active = true;
-                this.history = JSON.parse(response.body);
+                this.history = JSON.parse(response.body).History;
             } catch (error) {
                 console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.historyEndpoint);
                 this.active = false;
@@ -46,11 +46,13 @@ class MinerInfo {
                         rejectUnauthorized: false
                     }
                 });
+                this.active = true;
                 this.response = JSON.parse(response.body);
                 // console.log(this.response); //TODO remove
             } catch (error) {
                 console.log('Could not reach miner at http://' + this.ip + ':' + this.port+ '/' + this.summaryEndpoint);
                 this.response = null;
+                this.active = false;
             }
         })();
     }

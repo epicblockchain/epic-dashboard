@@ -65,19 +65,20 @@ app.on('activate', () => {
 
 //api access logic entry
 var minerinfo = require('./custom/MinerInfo');
-var datamassager = require('./custom/EpicMinerDataMassager');
+var dm = require('./custom/EpicMinerDataMassager');
 
 var settings = JSON.parse(fs.readFileSync('settings.json'));
 var miners = []; //this will also hold inactive miners
 var timer;
 fs.writeFileSync('settings.json', JSON.stringify(settings));  
 
-var chartData = [];
+var chartData;
 
 function epicInit(){
+  chartData = [];
+  miners = [];
   if (timer) clearInterval(timer); //if for some reason we re-init in the future, get rid of the current loop
   console.log('initializing miners');
-  miners = [];
   console.log('searching for miners')
   const browser = dnssd.Browser(dnssd.tcp('epicminer'))
   .on('serviceUp',function(service){
@@ -95,6 +96,7 @@ function epicInit(){
   })
   .start();
 
+  //send the first https requests
   setTimeout(function(){
     browser.stop();
     console.log('done searching for miners');
@@ -102,13 +104,19 @@ function epicInit(){
     //run once immediately after done searching for miners
     miners.forEach(m => {
       m.fetchHistory();
+      m.fetchSummary();
     });
+  }, settings.searchTime);
+
+  //actually use the http requests
+  setTimeout(function(){
+    chartData = dm.loadHistoryChartData(miners);
     epicLoop();
     timer = setInterval(() => {
       //run every request interval
       epicLoop();
     }, settings.requestInterval);
-  }, settings.searchTime);
+  }, settings.searchTime + settings.httpDelay);
 };
 
 //this functions loop is managed by init
@@ -118,13 +126,13 @@ function epicLoop() {
   });
 
   //dashboard
-  win.webContents.send('dashboard-channel', datamassager.generateDashboardData(miners));
+  win.webContents.send('dashboard-channel', dm.generateDashboardData(miners));
 
   //chart
-  win.webContents.send('chart-channel', datamassager.generateChartData(miners, chartData));
+  win.webContents.send('chart-channel', dm.generateChartData(miners, chartData));
 
   //miners
-  win.webContents.send('miners-channel', datamassager.generateMinerData(miners)); 
+  win.webContents.send('miners-channel', dm.generateMinerData(miners)); 
 
   //settings
   // win.webContents.send('settings-channel', []); 

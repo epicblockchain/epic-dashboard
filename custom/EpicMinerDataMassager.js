@@ -1,11 +1,5 @@
 const roundTo = require('round-to');
 
-function loadHistoryChart(miners){
-    miners.forEach(m => {
-        console.log(m.history);
-    });
-}
-
 function generateDashboardData(miners){
     var totalHashrate = 0;
     var acceptedShares = 0;
@@ -142,10 +136,52 @@ function generateChartData(miners, data){
     };
 }
 
+function loadHistoryChartData(miners){
+    var data = {};
+    var chartData = [];
+    
+    //put the data in an easy to manipulate way
+    miners.forEach(m => {
+        if (m.active) {
+            m.history.forEach(p => {
+                var t = p.Timestamp;
+                if (data.hasOwnProperty(t)){
+                    data[t].push(p.Hashrate);
+                } else {
+                    data[t] = [p.Hashrate];
+                }
+            });
+        }
+    });
+
+    //aggregate
+    //uses in place operations, maybe you can get better by using a new var to hold your stuff
+    Object.keys(data).forEach(d => {
+        var sum = 0;
+        var count = 0;
+        data[d].forEach(hr => {
+            sum += hr;
+            count++;
+        });
+        sum /= count;
+        data[d] = sum;
+    });
+
+    //put in chartjs compatible format
+    Object.keys(data).forEach(d => {
+        chartData.push({
+            x: new Date(d*1000),
+            y: data[d]/1000000
+        });
+    });
+    
+    return chartData;
+}
+
 module.exports = {
     generateDashboardData:generateDashboardData,
     MHToHRString: MHToHRString,
     generateMinerData: generateMinerData,
     generateChartData: generateChartData,
-    loadHistoryChart: loadHistoryChart
+    loadHistoryChartData: loadHistoryChartData
 }
