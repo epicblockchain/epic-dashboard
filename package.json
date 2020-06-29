@@ -16,7 +16,6 @@
     "chart.js": "^2.8.0",
     "chartjs-plugin-streaming": "^1.8.0",
     "dnssd2": "^1.0.0",
-    "form-data": "^3.0.0",
     "got": "^11.3.0",
     "jquery": "^3.5.1",
     "material-icons": "^0.3.1",

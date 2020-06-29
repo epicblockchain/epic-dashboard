@@ -1,6 +1,5 @@
 const got = require('got');
 const fs = require('fs');
-const FormData = require('form-data');
 const gzip = require('node-gzip');
 
 class MinerInfo {
@@ -65,9 +64,9 @@ class MinerInfo {
                             "pool": arg.param,
                             "password": arg.password
                         },
-                        responseType: 'json'
+                        // responseType: 'json'
                     });
-                    console.log(body.data);
+                    console.log(body);
                 } catch (error) {
                     console.log(error);
                 }
@@ -80,9 +79,9 @@ class MinerInfo {
                             "login": arg.param,
                             "password": arg.password
                         },
-                        responseType: 'json'
+                        // responseType: 'json'
                     });
-                    console.log(body.data);
+                    console.log(body);
                 } catch (error) {
                     console.log(error);
                 }
@@ -95,15 +94,28 @@ class MinerInfo {
                             "mode": arg.param,
                             "password": arg.password
                         },
-                        responseType: 'json'
+                        // responseType: 'json'
                     });
-                    console.log(body.data);
+                    console.log(body);
                 } catch (error) {
                     console.log(error);
                 }
             })();
         } else if (arg.method === 'update') {
-            //todo
+            (async () => {
+                try {
+                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/mode', {
+                        json: {
+                            "file": "todo: put a compressed file here",
+                            "password": arg.password
+                        },
+                        // responseType: 'json'
+                    });
+                    console.log(body);
+                } catch (error) {
+                    console.log(error);
+                }
+            })
         }
     }
     

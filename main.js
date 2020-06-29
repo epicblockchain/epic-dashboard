@@ -14,8 +14,8 @@ function createWindow () {
   const screenArea = screen.getPrimaryDisplay().workAreaSize;
 
   win = new BrowserWindow({
-    width: 1280,
-    height: 720,
+    width: 1920, //i will make this smaller for release
+    height: 1080,
     webPreferences: {
       nodeIntegration: true
     }
