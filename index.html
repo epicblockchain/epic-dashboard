@@ -140,51 +140,82 @@
 
       <!-- settings page -->
       <div id="page-settings" class="container hide page">
-
+        <div class="row">
+          <div class="col s6">
+            <table class="centered">
+              <thead>
+                <th width="75%">IP Address</th>
+                <th>Apply to</th>
+              </thead>
+              <tbody id="settings-miner-ips">
+                <tr>
+                  <td>00.00.00.00</td>
+                  <td>
+                    <p>
+                      <label>
+                        <input type="checkbox" class="filled-in"/>
+                        <span></span>
+                      </label>
+                    </p>    
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col s6">
         <div class="row valign-wrapper">
-          <div class="input-field col s11">
+          <div class="input-field col s10">
             <input id="input-pool" type="text" class="validate">
             <label for="input-pool" class="active">Pool</label>
           </div>
           <div class="col s1">
             <a id="pool-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
+          <div class="col s1"></div>
         </div>
+
         <div class="row valign-wrapper">
-          <div class="input-field col s11">
+          <div class="input-field col s10">
             <input id="input-address" type="text" class="validate">
             <label for="input-address" class="active">Address</label>
           </div>
           <div class="col s1">
             <a id="address-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
+         <div class="col s1"></div>
         </div>
+
         <div class="row valign-wrapper">
-          <div class="input-field col s11">
+          <div class="input-field col s10">
             <input id="input-mode" type="text" class="validate">
             <label for="input-mode" class="active">Mode</label>
           </div>
           <div class="col s1">
             <a id="mode-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
+         <div class="col s1"></div>
         </div>
+
         <div class="row valign-wrapper">
-          <div class="input-field col s11">
+          <div class="input-field col s10">
             <input id="input-reboot" type="text" class="validate">
             <label for="input-reboot" class="active">Reboot in seconds (enter 0 for instant)</label>
           </div>
           <div class="col s1">
             <a id="reboot-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
+          <div class="col s1"></div>
         </div>
+
         <div class="row valign-wrapper">
-          <div class="input-field col s11">
+          <div class="input-field col s10">
             <input id="input-newpw" type="password" class="validate">
             <label for="input-newpw" class="active">New Password</label>
           </div>
           <div class="col s1">
             <a id="newpw-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
+          <div class="col s1"></div>
         </div>
 
         <div class="row valign-wrapper">
@@ -198,7 +229,8 @@
             <a id="swupdate-apply" class="waves-effect waves-light btn white-text jpback right">Update Firmware</a>
           </div>
         </div>
-
+      </div>
+      </div>
       </div>
 
       <div id="page-password" class="container hide page">

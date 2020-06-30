@@ -14,8 +14,8 @@ function createWindow () {
   const screenArea = screen.getPrimaryDisplay().workAreaSize;
 
   win = new BrowserWindow({
-    width: 1920, //i will make this smaller for release
-    height: 1080,
+    width: 1280, //i will make this smaller for release
+    height: 720,
     webPreferences: {
       nodeIntegration: true
     }
@@ -119,7 +119,7 @@ function epicInit(){
 //this functions loop is managed by init
 function epicLoop() {
   miners.forEach(m => {
-    m.fetchSummary();
+    if (m.alive) m.fetchSummary();
   });
 
   //dashboard
