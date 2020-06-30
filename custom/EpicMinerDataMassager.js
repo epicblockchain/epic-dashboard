@@ -179,10 +179,23 @@ function loadHistoryChartData(miners){
     return chartData;
 }
 
+function generateSettingsMinerList(miners){
+    var list = [];
+    miners.forEach(m => {
+        if (m.active) {
+            list.push({
+                "name": m.ip + ':' + m.port
+            });
+        }
+    });
+    return list;
+}
+
 module.exports = {
     generateDashboardData:generateDashboardData,
     MHToHRString: MHToHRString,
     generateMinerData: generateMinerData,
     generateChartData: generateChartData,
-    loadHistoryChartData: loadHistoryChartData
+    loadHistoryChartData: loadHistoryChartData,
+    generateSettingsMinerList: generateSettingsMinerList
 }

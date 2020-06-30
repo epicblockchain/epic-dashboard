@@ -148,17 +148,6 @@
                 <th>Apply to</th>
               </thead>
               <tbody id="settings-miner-ips">
-                <tr>
-                  <td>00.00.00.00</td>
-                  <td>
-                    <p>
-                      <label>
-                        <input type="checkbox" class="filled-in"/>
-                        <span></span>
-                      </label>
-                    </p>    
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
@@ -451,6 +440,15 @@
           passwordPage();
           param = fs.readFileSync($('#swupdate-filepath').text());
         });
+
+        //settings
+        e.ipcRenderer.on('settings-miner-list', (event, message) => {
+          $('#settings-miner-ips').empty();
+          message.forEach(m => {
+            $('#settings-miner-ips').append('<td>'+m.name+'</td><td><label><input type="checkbox" class="filled-in" checked="checked" /><span></span></label></td>');            
+          });
+
+        })
 
         // //template if we want more
         //settings

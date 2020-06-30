@@ -129,9 +129,11 @@ function epicLoop() {
   win.webContents.send('chart-channel', dm.generateChartData(miners, chartData));
 
   //miners
-  win.webContents.send('miners-channel', dm.generateMinerData(miners)); 
+  win.webContents.send('miners-channel', dm.generateMinerData(miners));
 
   //settings
+  win.webContents.send('settings-miner-list', dm.generateSettingsMinerList(miners));
+
   // win.webContents.send('settings-channel', []); 
 }
 
