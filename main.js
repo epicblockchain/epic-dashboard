@@ -1,11 +1,6 @@
 const { app, BrowserWindow, screen, ipcMain, dialog } = require('electron')
 // var mdns = require('multicast-dns')()
-const fs = require('fs');
 const dnssd = require('dnssd2');
-
-if (!fs.existsSync('settings.json')){
-  fs.writeFileSync('settings.json', fs.readFileSync('settingsDefault.json'));
-}
 
 var win;
 function createWindow () {
@@ -25,8 +20,8 @@ function createWindow () {
   win.loadFile('index.html')
 
   // Open the DevTools.
-  var settings = JSON.parse(fs.readFileSync('settings.json'));
-  if (!settings.production) win.webContents.openDevTools();
+
+  // win.webContents.openDevTools();
 
   //hide the janky top menu for now, since I dont think it will be useful
   win.removeMenu(); //this may not work on mac
@@ -67,10 +62,8 @@ app.on('activate', () => {
 var minerinfo = require('./custom/MinerInfo');
 var dm = require('./custom/EpicMinerDataMassager');
 
-var settings = JSON.parse(fs.readFileSync('settings.json'));
 var miners = []; //this will also hold inactive miners
 var timer;
-fs.writeFileSync('settings.json', JSON.stringify(settings));  
 
 var chartData;
 
@@ -89,7 +82,7 @@ function epicInit(){
         port
       );
     miners.push(m);
-    if (!settings.production) console.log('found miner at: ' + ip + ':' + port);
+    console.log('found miner at: ' + ip + ':' + port);
   })
   .start();
 
@@ -103,7 +96,7 @@ function epicInit(){
       m.fetchHistory();
       m.fetchSummary();
     });
-  }, settings.searchTime);
+  }, 3000);
 
   //actually use the http requests
   setTimeout(function(){
@@ -112,8 +105,8 @@ function epicInit(){
     timer = setInterval(() => {
       //run every request interval
       epicLoop();
-    }, settings.requestInterval);
-  }, settings.searchTime + settings.httpDelay);
+    }, 3000);
+  }, 6000);
 };
 
 //this functions loop is managed by init

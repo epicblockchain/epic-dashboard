@@ -305,7 +305,7 @@
         //also see https://github.com/chartjs/chartjs-plugin-zoom for zoom
         var ctx = document.getElementById('hashrate-chart').getContext('2d');
         var fs = require('fs');
-        var requestInterval = JSON.parse(fs.readFileSync('settings.json')).requestInterval;
+        var requestInterval = 300000;
 
         var chart = new Chart(ctx, {
           type: 'line',

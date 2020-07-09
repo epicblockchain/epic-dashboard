@@ -1,5 +1,4 @@
 const got = require('got');
-const fs = require('fs');
 const gzip = require('node-gzip');
 
 class MinerInfo {
