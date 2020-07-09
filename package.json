@@ -1,7 +1,7 @@
 {
-  "name": "epic-dash-electron",
-  "version": "0.1.0",
-  "description": "",
+  "name": "epic-dashboard",
+  "version": "1.0.0",
+  "description": "dashboard for the sc200 miner",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -22,5 +22,10 @@
     "materialize-css": "^1.0.0-rc.2",
     "node-gzip": "^1.1.2",
     "round-to": "^4.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://lucania.epic:9080/dnicolau/epic-dash-electron.git"
+  },
+  "license": "GPL-3.0"
 }
