@@ -8,8 +8,7 @@
   },
   "author": "Dan Nicolau",
   "devDependencies": {
-    "electron": "^8.3.0",
-    "electron-builder": "^22.7.0"
+    "electron": "^8.3.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.1",
