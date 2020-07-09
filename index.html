@@ -164,9 +164,13 @@
         </div>
 
         <div class="row valign-wrapper">
-          <div class="input-field col s10">
+          <div class="input-field col s7">
             <input id="input-address" type="text" class="validate">
             <label for="input-address" class="active">Address</label>
+          </div>
+          <div class="input-field col s3">
+            <input id="input-address-pw" type="text" class="validate" value="x">
+            <label for="input-address-pw" class="active">Password</label>
           </div>
           <div class="col s1">
             <a id="address-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
@@ -421,9 +425,13 @@
 
         $('#address-apply').click(function () {
           var address = $('#input-address').val();
+          var addrPw = $('#input-address-pw').val();
           method = 'login';
           passwordPage();
-          param = address;
+          param = {
+            "login": address,
+            "password": addrPw
+          };
         });
 
         $('#mode-apply').click(function () {

@@ -148,7 +148,11 @@ function initViewToModelChannels(){
     miners.forEach(m => {
       if (m.active) {
         if (arg.applyTo[m.ip+':'+m.port]){
-          m.post(arg);
+          m.post({
+            "method": arg.method,
+            "param": arg.param,
+            "password": arg.password
+          });
         };
       }
     });

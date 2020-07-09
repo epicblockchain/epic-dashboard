@@ -57,21 +57,22 @@ class MinerInfo {
     }
 
     post(arg){
+        console.log('\t\tnot posting right now');
         console.log(arg);
-            (async () => {
-                try{
-                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/' + arg.method, { //us-east.siamining.com:3333
-                        json: {
-                            "param": arg.param,
-                            "password": arg.password
-                        }
-                        // responseType: 'json' //this is only when all the sw is up to date
-                    });
-                    console.log(body);
-                } catch (error) {
-                    console.log(error);
-                }
-            })();
+            // (async () => {
+            //     try{
+            //         const {body} = await got.post('http://' + this.ip + ':' + this.port + '/' + arg.method, { //us-east.siamining.com:3333
+            //             json: {
+            //                 "param": arg.param,
+            //                 "password": arg.password
+            //             }
+            //             // responseType: 'json' //this is only when all the sw is up to date
+            //         });
+            //         console.log(body);
+            //     } catch (error) {
+            //         console.log(error);
+            //     }
+            // })();
     }
     
 }
