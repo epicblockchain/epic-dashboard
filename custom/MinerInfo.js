@@ -6,6 +6,7 @@ class MinerInfo {
     active;
     ip;
     port;
+    maxTemp;
     summaryEndpoint;
     response;
     historyEndpoint;

@@ -147,7 +147,9 @@ function initViewToModelChannels(){
   ipcMain.on('post-settings', (event, arg) => {
     miners.forEach(m => {
       if (m.active) {
-        m.post(arg);
+        if (arg.applyTo[m.ip+':'+m.port]){
+          m.post(arg);
+        };
       }
     });
   });

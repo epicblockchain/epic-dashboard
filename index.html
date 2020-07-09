@@ -381,17 +381,36 @@
           $(".page").addClass('hide'); //make sure this doesnt add the same class twice
           $("#page-password").removeClass('hide');
         }
+
+        //chose to do this this way incase there are other apply-to parameters that we want to send per miner
+        function getIPList(){
+            vals = {};
+            $('.apply-box').each(function(el){
+              if($(this).is(':checked')) {
+                vals[$(this).parents().eq(1).prev().text()] = true;
+                // vals[$(this).parent('td').prev().text()] = true;
+              } else {
+                console.log('not checked');
+                vals[$(this).parents().eq(1).prev().text()] = false;
+
+                // vals[$(this).parent('td').prev().text()] = false;
+              }
+            });
+            return vals;
+        }
+
         $('#password-apply').click(function() {
           pw = $('#input-password').val();
           e.ipcRenderer.send('post-settings', {
             "method": method,
             "param": param,
-            "password": pw
+            "password": pw,
+            "applyTo": getIPList()
           });
           $('#input-password').val('');
           $(".page").addClass('hide'); //make sure this doesnt add the same class twice
           $("#page-settings").removeClass('hide');
-        })
+        });
 
         $('#pool-apply').click(function () {
           var pool = $('#input-pool').val();
@@ -443,9 +462,14 @@
 
         //settings
         e.ipcRenderer.on('settings-miner-list', (event, message) => {
-          $('#settings-miner-ips').empty();
           message.forEach(m => {
-            $('#settings-miner-ips').append('<td>'+m.name+'</td><td><label><input type="checkbox" class="filled-in" checked="checked" /><span></span></label></td>');            
+            var found = false;
+            $('.minerlist-td').each(function (el) {
+              if ($(this).attr('id') == 'minerip-'+m.name) {
+                found = true;
+              }
+            });
+            if (!found) $('#settings-miner-ips').append('<tr><td id="minerip-'+m.name+'" class="minerlist-td">'+m.name+'</td>\n<td><label><input type="checkbox" class="filled-in apply-box" checked="checked" /><span></span></label></td></tr>');            
           });
 
         })

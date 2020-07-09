@@ -77,17 +77,20 @@ function generateMinerData(miners){
       'Temperature (&degC)',
       'IP Address'];
   
-    var data = [];
-  
-    var temps = [];
+    var data = [];  
+
     miners.forEach(m => {
       if (m.active){
+        var maxTemp = -1;
         m.response["HBs"].forEach(hb => {
-          temps.push(hb["Temperature"]);
+          if (maxTemp < hb["Temperature"]) {
+            m.maxTemp = hb["Temperature"];
+            maxTemp = hb["Temperature"];
+          }
         });
       }
     });
-    
+  
     miners.forEach(m => {
       if (m.active) {
         var datum = ['John Lee',
@@ -109,7 +112,7 @@ function generateMinerData(miners){
           m.response["Session"]["Difficulty"] || "N/A",
           // 'fan speed string todo',
           // m.response["Fans"]["Fans Speed"] || "N/A",
-          Math.max(temps),
+          m.maxTemp,
           m.ip];
           data.push(datum);
   
