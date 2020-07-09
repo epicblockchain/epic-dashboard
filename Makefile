@@ -13,9 +13,21 @@ zip:		## Compress generated binaries into zip files
 	zip -r mas.zip ePIC-Dashboard-mas-x64
 	zip -r win32.zip ePIC-Dashboard-win32-x64
 
+sha256:		## Generates sha256 checksum
+	@echo "generating sha256 checksums..."
+	@$(eval DARWIN=$(shell sha256sum darwin.zip))
+	@$(eval LINUX=$(shell sha256sum linux.zip))
+	@$(eval MAS=$(shell sha256sum mas.zip))
+	@$(eval WIN=$(shell sha256sum win32.zip))
+	$(file > checksums.txt, $(DARWIN))
+	$(file >> checksums.txt, $(LINUX))
+	$(file >> checksums.txt, $(MAS))
+	$(file >> checksums.txt, $(WIN))
+
 clean:		## Remove generated binaries and zip files
 	@echo "cleaning up..."
 	@rm -rf ./ePIC-Dashboard-*
 	@rm -f *.zip
+	@rm -f checksums.txt
 
-all: release zip ## Generate Releases and zip
+all: release zip sha256## Generate Releases and zip
