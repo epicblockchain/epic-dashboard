@@ -180,8 +180,12 @@
 
         <div class="row valign-wrapper">
           <div class="input-field col s10">
-            <input id="input-mode" type="text" class="validate">
-            <label for="input-mode" class="active">Mode</label>
+            <select id="input-mode">
+              <option value="" disabled selected>Operating mode</option>
+              <option value="standard">Standard</option>
+              <option value="eco">Eco</option>
+            </select>
+            <label>Operating mode</label>
           </div>
           <div class="col s1">
             <a id="mode-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
@@ -192,7 +196,7 @@
         <div class="row valign-wrapper">
           <div class="input-field col s10">
             <input id="input-reboot" type="text" class="validate">
-            <label for="input-reboot" class="active">Reboot in seconds (enter 0 for instant)</label>
+            <label for="input-reboot" class="active">Reboot in seconds (enter 0 or nothing for instant)</label>
           </div>
           <div class="col s1">
             <a id="reboot-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
@@ -259,6 +263,10 @@
         //button
         $(document).ready(function () {
           $('.tooltipped').tooltip();
+        });
+        //select
+        $(document).ready(function(){
+          $('select').formSelect();
         });
         //research for miners
         $('#btn-refresh').click(function () {
@@ -418,31 +426,44 @@
 
         $('#pool-apply').click(function () {
           var pool = $('#input-pool').val();
-          method = 'pool';
-          passwordPage();
-          param = pool;
+          if (!pool) {
+            M.toast({html: 'Please select a pool'});
+          } else {
+            method = 'pool';
+            passwordPage();
+            param = pool;
+          }
         });
 
         $('#address-apply').click(function () {
           var address = $('#input-address').val();
           var addrPw = $('#input-address-pw').val();
-          method = 'login';
-          passwordPage();
-          param = {
-            "login": address,
-            "password": addrPw
-          };
+          if (!address) {
+            M.toast({html: 'Please select a mining address'});
+          } else {
+            method = 'login';
+            passwordPage();
+            param = {
+              "login": address,
+              "password": addrPw
+            };
+          }
         });
 
         $('#mode-apply').click(function () {
           var mode = $('#input-mode').val();
-          method = 'mode';
-          passwordPage();
-          param = mode;
+          if (!mode) {
+            M.toast({html: 'Please select a mode'});
+          } else {
+            method = 'mode';
+            passwordPage();
+            param = mode;
+          }
         });
 
         $('#reboot-apply').click(function(){
           var reboot_time = $('#input-reboot').val();
+          if (!reboot_time) reboot_time = 0;
           method = 'reboot';
           passwordPage();
           param = reboot_time;

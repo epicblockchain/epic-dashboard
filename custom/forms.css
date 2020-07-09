@@ -35,3 +35,6 @@
   .input-field .prefix.active {
     color: #1B1D4D !important;
   }
+  .dropdown-content li > a, .dropdown-content li > span {
+    color: #1B1D4D !important;
+  }
