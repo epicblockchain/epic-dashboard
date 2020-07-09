@@ -56,7 +56,7 @@ function MHToHRString(totalHashrate){
 }
   
 function generateMinerData(miners){
-    var headers = ['Name', 
+    var headers = [//'Name', 
       'Software', 
       // 'Coin', 
       // 'Algorithm', 
@@ -64,9 +64,9 @@ function generateMinerData(miners){
       'User', 
       'Started', 
       // 'Last Work', 
-      'Last Accepted Share',
-      'Uptime', 
-      'Work Received', 
+      // 'Last Accepted Share',
+      // 'Uptime', 
+      // 'Work Received', 
       'Active HBs', 
       'Hashrate', 
       'Accepted', 
@@ -93,7 +93,7 @@ function generateMinerData(miners){
   
     miners.forEach(m => {
       if (m.active) {
-        var datum = ['John Lee',
+        var datum = [//'John Lee',
           m.response["Software"] || "N/A",
           // m.response["Mining"]["Coin"] || "N/A",
           // m.response["Mining"]["Algorithm"] || "N/A",
@@ -101,9 +101,9 @@ function generateMinerData(miners){
           m.response["Stratum"]["Current User"].substr(0, 8) + ' ... ' + m.response["Stratum"]["Current User"].substr(-18, 18) || "N/A",
           new Date(m.response["Session"]["Startup Timestamp"]*1000).toString().substr(4, 20) || "N/A",
           // new Date(m.response["Session"]["Last Work Timestamp"]*1000) || "N/A",
-          new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000).toString().substr(4, 20) || "N/A",
-          m.response["Session"]["Uptime"] || "N/A",
-          m.response["Session"]["WorkReceived"] || "N/A",
+          // new Date(m.response["Session"]["Last Accepted Share Timestamp"]*1000).toString().substr(4, 20) || "N/A",
+          // m.response["Session"]["Uptime"] || "N/A",
+          // m.response["Session"]["WorkReceived"] || "N/A",
           m.response["Session"]["Active HBs"] || "N/A",
           MHToHRString(m.response["Session"]["Average MHs"]) || "N/A",
           m.response["Session"]["Accepted"] || "N/A",
