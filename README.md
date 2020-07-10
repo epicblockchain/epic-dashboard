@@ -1,23 +1,24 @@
 # How to Get Started
 
-install node js globally or in working dir
+Please read COPYING and EULA before proceeding.
 
-after cloning repo 
+## Getting started from a binary
 
+Download the appropriate zip file for the OS you would like to run the program on. Be sure to check the checksums.
+
+## Getting started from source
+
+Clone this repo
 ```
-cd epic-dash-electron
-npm install --save-dev electron
-npm install
+git clone <this repo>
 npm start
 ```
+A window should open with the app running
 
-a window should open with the app running
+## API
 
-# Testing post requests
 
-go to settings, type something in the pool, then click apply
 
-# High level structure explanation
+### GET
 
-there is a settings file which I eventually aim on integrating with a page or modal ui to edit the server address, request interval etc.
-I was inspired to include a production value so that important logging information can just be left lying around and not be annoying. also used to remove dev tools
+### POST
