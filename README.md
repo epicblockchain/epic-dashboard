@@ -107,7 +107,7 @@ POST requests expect json data in the body, except for file uploads.
 Response should look like the following if the provided password was accepted:
 ```json
 {
-	success: true
+	"success": true
 }
 ```
 Success will be false if the password was not accepted
@@ -116,8 +116,8 @@ Changes the mining pool of the miner.
 Format of request body:
 ```json
 {
-	param: "<string>",
-	password: "<string>"
+	"param": "<string>",
+	"password": "<string>"
 }
 ```
 **/reboot**
@@ -125,8 +125,8 @@ Provide unsigned integer in param to specify a delay in seconds before the reboo
 Format of request body:
 ```json
 {
-	param: <uint>,
-	password: "<string>"
+	"param": <uint>,
+	"password": "<string>"
 }
 ```
 **/login**
@@ -135,11 +135,11 @@ param.password typically contains "x". Note that this is not the password to you
 Format of request body:
 ```json
 {
-	param: {
-		login: "<string.string>",
-		password: "<string>"
+	"param": {
+		"login": "<string.string>",
+		"password": "<string>"
 	},
-	password: "<string>"
+	"password": "<string>"
 }
 ```
 **/mode**
@@ -147,8 +147,8 @@ Set the miner to run in normal or efficiency mode. Provide the exact string "nor
 Format of request body:
 ```json
 {
-	param: "{normal|efficiency}",
-	password: "<string>"
+	"param": "{normal|efficiency}",
+	"password": "<string>"
 }
 ```
 **/password**
@@ -156,8 +156,8 @@ Set a new password for the miner. param contains the new password. password cont
 Format of request body:
 ```json
 {
-	param: "<string>",
-	password: "<string>"
+	"param": "<string>",
+	"password": "<string>"
 }
 ```
 **/hwconfig**
@@ -166,8 +166,8 @@ param should be set to true.
 Format of request body:
 ```json
 {
-	param: true,
-	password: "<string>"
+	"param": true,
+	"password": "<string>"
 }
 ```
 **/id**
@@ -175,8 +175,8 @@ Have each miner add a unique identifier to its worker name. This will change how
 Format of request body:
 ```json
 {
-	param: true,
-	password: "<string>"
+	"param": true,
+	"password": "<string>"
 }
 ```
 **/update**
