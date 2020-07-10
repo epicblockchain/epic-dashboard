@@ -1,7 +1,7 @@
 const { app, BrowserWindow, screen, ipcMain, dialog } = require('electron')
 // var mdns = require('multicast-dns')()
 const dnssd = require('dnssd2');
-
+const fs = require("fs");
 var win;
 function createWindow () {
   // Create the browser window.
@@ -92,6 +92,35 @@ function epicInit(){
     console.log('done searching for miners');
     initViewToModelChannels();
     //run once immediately after done searching for miners
+
+    //check for ipaddr file
+    try {
+      if (fs.existsSync('ipaddr.txt')) {
+        console.log("Found epic addresses file.");
+        var ipaddr = fs.readFileSync('ipaddr.txt');
+        ipaddr = ipaddr.toString().split('\n');
+        ipaddr.forEach(el => {
+          var found = 0;
+          var pair = el.split(':');
+          miners.forEach(m => {
+            if (m.ip === el.split(':')[0]) {
+              found = 1;
+            }
+          });
+          if (found == 0) {
+            miners.push(new minerinfo.MinerInfo(
+              pair[0],
+              pair[1]
+            ));
+          }   
+        });
+      } else {
+        console.log("No epic addresses file found.");
+      }
+    } catch(err) {
+      console.error(err)
+    }
+
     miners.forEach(m => {
       m.fetchHistory();
       m.fetchSummary();
