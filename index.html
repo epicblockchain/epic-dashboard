@@ -515,7 +515,7 @@
         $('#swupdate-apply').click(function () {
           method = 'update';
           passwordPage();
-          param = fs.readFileSync($('#swupdate-filepath').text());
+          param = $('#swupdate-filepath').text();
         });
 
         //settings
