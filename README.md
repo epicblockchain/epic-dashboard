@@ -181,5 +181,5 @@ Format of request body:
 }
 ```
 **/update**
-TODO
-
+Endpoint for receiving .swu file to update the firmware. Accepts multipart/form-data encoding in the body.
+Note this is not receiving a json.
