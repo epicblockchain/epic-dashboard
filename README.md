@@ -111,6 +111,7 @@ Response should look like the following if the provided password was accepted:
 }
 ```
 Success will be false if the password was not accepted.
+
 **/pool**
 Changes the mining pool of the miner.
 Format of request body:
