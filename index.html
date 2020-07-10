@@ -164,16 +164,13 @@
         </div>
 
         <div class="row valign-wrapper">
-          <div class="input-field col s6">
+          <div class="input-field col s7">
             <input id="input-address" type="text" class="validate">
             <label for="input-address" class="active">Address</label>
           </div>
           <div class="input-field col s3">
             <input id="input-address-pw" type="text" class="validate" value="x">
             <label for="input-address-pw" class="active">Password</label>
-          </div>
-          <div>
-            <label><input type="checkbox" class="filled-in apply-box checkbox-epic" checked="checked" /><span class="black-text">Append a UID</span></label>
           </div>
           <div class="col s1">
             <a id="address-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
@@ -182,7 +179,27 @@
         </div>
 
         <div class="row valign-wrapper">
-          <div class="input-field col s10">
+          <div class="col s11">
+            <p>Append a Unique ID to worker names</p>
+          </div>
+          <div class="col s1">
+            <a id="uid-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
+          </div>
+         <div class="col s1"></div>
+        </div>
+
+        <div class="row valign-wrapper">
+          <div class="col s11">
+            <p>Reset hardware config</p>
+          </div>
+          <div class="col s1">
+            <a id="hwconfig-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
+          </div>
+         <div class="col s1"></div>
+        </div>
+
+        <div class="row valign-wrapper">
+          <div class="input-field col s10 valign-wrapper">
             <select id="input-mode">
               <option value="" disabled selected>Operating mode</option>
               <option value="normal">Normal</option>
@@ -403,12 +420,9 @@
             $('.apply-box').each(function(el){
               if($(this).is(':checked')) {
                 vals[$(this).parents().eq(1).prev().text()] = true;
-                // vals[$(this).parent('td').prev().text()] = true;
               } else {
                 console.log('not checked');
                 vals[$(this).parents().eq(1).prev().text()] = false;
-
-                // vals[$(this).parent('td').prev().text()] = false;
               }
             });
             return vals;
@@ -470,6 +484,18 @@
           method = 'reboot';
           passwordPage();
           param = reboot_time;
+        });
+
+        $('#uid-apply').click(function(){
+          method = 'id';
+          passwordPage();
+          param = true;
+        });
+
+        $('#hwconfig-apply').click(function(){
+          method = 'hwconfig';
+          passwordPage();
+          param = true;
         });
 
         $('#newpw-apply').click(function(){

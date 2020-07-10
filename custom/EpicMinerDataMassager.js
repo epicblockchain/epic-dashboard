@@ -56,7 +56,7 @@ function MHToHRString(totalHashrate){
 }
   
 function generateMinerData(miners){
-    var headers = [//'Name', 
+    var headers = ['Name', 
       'Software', 
       // 'Coin', 
       // 'Algorithm', 
@@ -93,7 +93,7 @@ function generateMinerData(miners){
   
     miners.forEach(m => {
       if (m.active) {
-        var datum = [//'John Lee',
+        var datum = [m.response["Hostname"],
           m.response["Software"] || "N/A",
           // m.response["Mining"]["Coin"] || "N/A",
           // m.response["Mining"]["Algorithm"] || "N/A",
