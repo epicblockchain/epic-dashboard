@@ -30,4 +30,4 @@ clean:		## Remove generated binaries and zip files
 	@rm -f *.zip
 	@rm -f checksums.txt
 
-all: release zip sha256## Generate Releases and zip
+all: release zip sha256##
