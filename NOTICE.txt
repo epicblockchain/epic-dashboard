@@ -1,0 +1,36 @@
+ePIC Mining Dashboard Credits
+
+This application uses Open Source components. You can find the source code of their open source projects along with license information inside of the node_modules folder as well as below. We acknowledge and are grateful to these developers for their contributions to open source.
+
+Font Awesome
+https://github.com/FortAwesome/Font-Awesome
+
+Bulma
+https://github.com/jgthms/bulma
+
+Chart.js
+https://github.com/jgthms/bulma
+
+dnssd2
+https://github.com/tkurki/dnssd.js#readme
+
+Electron
+https://www.electronjs.org/
+
+Form-Data
+https://github.com/form-data/form-data
+
+got
+https://github.com/sindresorhus/got
+
+jQuery
+https://jquery.com/
+
+Materialize
+https://materializecss.com/
+
+node-gzip
+https://github.com/Rebsos/node-gzip#readme
+
+round-to
+https://github.com/sindresorhus/round-to#readme
