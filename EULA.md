@@ -1,9 +1,9 @@
-# **ePIC Blockchain Technologies Inc. - License Agreement**  
+# **ePIC Blockchain Technologies Inc. - ePIC Mining Dashboard License Agreement**  
 ##### **Copyright (c) 2020 ePIC Blockchain Technologies Inc.**
 
 ---
 
-#### **Please read this End-User License Agreement (the "Agreement") carefully before downloading, installing, or using ePIC Boost (the "Application").** By clicking “I Agree”or by downloadingthe Application,you are indicating that you have read and understand this Agreement and accept its terms and conditions.
+#### **Please read this End-User License Agreement (the "Agreement") carefully before downloading, installing, or using ePIC Mining Dashboard (the "Application").** By clicking “I Agree”or by downloadingthe Application,you are indicating that you have read and understand this Agreement and accept its terms and conditions.
 
 #### **This Agreement is a legal agreement between you (either an individual or a single entity) and ePIC Blockchain Technologies Inc., and it governs your use of the Application made available to you by ePIC Blockchain Technologies.**
 

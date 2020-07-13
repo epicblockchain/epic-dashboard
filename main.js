@@ -96,7 +96,7 @@ function epicInit(){
     //check for ipaddr file
     try {
       if (fs.existsSync('ipaddr.txt')) {
-        console.log("Found epic addresses file.");
+        console.log("Found ipaddr.txt file.");
         var ipaddr = fs.readFileSync('ipaddr.txt');
         ipaddr = ipaddr.toString().split('\n');
         ipaddr.forEach(el => {
@@ -115,7 +115,7 @@ function epicInit(){
           }   
         });
       } else {
-        console.log("No epic addresses file found.");
+        console.log("No ipaddr.txt file found.");
       }
     } catch(err) {
       console.error(err)
