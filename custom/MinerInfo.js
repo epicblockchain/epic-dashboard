@@ -58,31 +58,32 @@ class MinerInfo {
     }
 
     post(arg){
-        console.log('\t\tnot posting right now');
+        console.log(this.ip);
+        // console.log('\t\tnot posting right now');
         if (arg.method == 'update') {
             console.log('reading file: '+arg.param);
             const form = new FormData();
             form.append('swupdate.swu', fs.createReadStream(arg.method));
-            console.log(form);
-            // got.post('http://' + this.ip + ':' + this.port + '/update', {
-            //    body: form
-            // });
+            // console.log(form);
+            got.post('http://' + this.ip + ':' + this.port + '/update', {
+               body: form
+            });
         } else {
             console.log(arg);
-            // (async () => {
-            //     try{
-            //         const {body} = await got.post('http://' + this.ip + ':' + this.port + '/' + arg.method, { //us-east.siamining.com:3333
-            //             json: {
-            //                 "param": arg.param,
-            //                 "password": arg.password
-            //             }
-            //             // responseType: 'json' //this is only when all the sw is up to date
-            //         });
-            //         console.log(body);
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // })();
+            (async () => {
+                try{
+                    const {body} = await got.post('http://' + this.ip + ':' + this.port + '/' + arg.method, { //us-east.siamining.com:3333
+                        json: {
+                            "param": arg.param,
+                            "password": arg.password
+                        }
+                        // responseType: 'json' //this is only when all the sw is up to date
+                    });
+                    console.log(body);
+                } catch (error) {
+                    console.log(error);
+                }
+            })();
         }
     }
     
