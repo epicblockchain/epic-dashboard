@@ -180,8 +180,14 @@
 
         <div class="row valign-wrapper">
           <div class="col s11">
-            <p>Append a Unique ID to worker names</p>
-          </div>
+            <div class="switch">
+              <label class="black-text">
+                No UID
+                <input id="miner-uid" type="checkbox">
+                <span class="lever"></span>
+                Append UID
+              </label>
+            </div>          </div>
           <div class="col s1">
             <a id="uid-apply" class="waves-effect waves-light btn white-text jpback">Apply</a>
           </div>
@@ -489,7 +495,8 @@
         $('#uid-apply').click(function(){
           method = 'id';
           passwordPage();
-          param = true;
+          param = $('#miner-uid').prop('checked');
+          console.log(param);
         });
 
         $('#hwconfig-apply').click(function(){

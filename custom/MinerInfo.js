@@ -63,7 +63,7 @@ class MinerInfo {
         if (arg.method == 'update') {
             console.log('reading file: '+arg.param);
             const form = new FormData();
-            form.append('swupdate.swu', fs.createReadStream(arg.method));
+            form.append('swupdate.swu', fs.createReadStream(arg.param));
             // console.log(form);
             got.post('http://' + this.ip + ':' + this.port + '/update', {
                body: form
