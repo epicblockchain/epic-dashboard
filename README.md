@@ -104,10 +104,11 @@ Sample response:
 ### POST
 All POST requests will respond the same way.
 POST requests expect json data in the body, except for file uploads.
-Response should look like the following if the provided password was accepted:
+Response should look like the following if the provided password was accepted, (an error may be provided in any case):
 ```json
 {
-	"success": true
+	"result": true
+	"error": <string or null>
 }
 ```
 Success will be false if the password was not accepted.
