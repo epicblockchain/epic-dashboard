@@ -112,7 +112,7 @@ Format of request body:
 param.login contains the mining updated mining address. Seperate the worker name from the miner with a period as is common.
 param.password typically contains "x". Note that this is not the password to your miner. 
 Format of request body:
-```json
+```
 {
 	"param": {
 		"login": <string.string>,
@@ -124,7 +124,7 @@ Format of request body:
 **/mode**
 Set the miner to run in normal or efficiency mode. Provide the exact string "normal" or "efficiency".
 Format of request body:
-```json
+```
 {
 	"param": "{normal|efficiency}",
 	"password": <string>
@@ -133,7 +133,7 @@ Format of request body:
 **/password**
 Set a new password for the miner. param contains the new password. password contains the old one.
 Format of request body:
-```json
+```
 {
 	"param": <string>,
 	"password": <string>
@@ -143,7 +143,7 @@ Format of request body:
 Reinitialize the hardware config.
 param should be set to true.
 Format of request body:
-```json
+```
 {
 	"param": bool,
 	"password": <string>
@@ -152,7 +152,7 @@ Format of request body:
 **/id**
 Have each miner add a unique identifier to its worker name. This will change how it shows up on mining pools.
 Format of request body:
-```json
+```
 {
 	"param": bool,
 	"password": <string>
