@@ -57,7 +57,7 @@ class MinerInfo {
         })();
     }
 
-    post(arg){
+    post(arg, win){
         console.log(this.ip);
         // console.log('\t\tnot posting right now');
         if (arg.method == 'update') {
@@ -79,7 +79,11 @@ class MinerInfo {
                         }
                         // responseType: 'json' //this is only when all the sw is up to date
                     });
-                    console.log(body);
+                    var b = JSON.parse(body);
+                    console.log(b);
+                    if (b["result"] === false) {
+                        win.webContents.send('request-alert', 'Something went wrong!!<br>'+b["error"]);
+                    }
                 } catch (error) {
                     console.log(error);
                 }

@@ -301,6 +301,9 @@
         e.ipcRenderer.on('refresh-reply', (event, arg) => {
           M.toast({ html: 'Refreshing!' });
         });
+        e.ipcRenderer.on('request-alert', (event, arg) => {
+          M.toast({ html: arg});
+        });
         //sidebar
         document.addEventListener('DOMContentLoaded', function () {
           var instances = M.Sidenav.init();//elems, options
@@ -496,7 +499,6 @@
           method = 'id';
           passwordPage();
           param = $('#miner-uid').prop('checked');
-          console.log(param);
         });
 
         $('#hwconfig-apply').click(function(){
@@ -527,6 +529,7 @@
 
         //settings
         e.ipcRenderer.on('settings-miner-list', (event, message) => {
+          console.log(message);
           message.forEach(m => {
             var found = false;
             $('.minerlist-td').each(function (el) {

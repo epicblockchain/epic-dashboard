@@ -180,7 +180,9 @@ function initViewToModelChannels(){
             "method": arg.method,
             "param": arg.param,
             "password": arg.password
-          });
+          },
+          win
+          );
         };
       }
     });
