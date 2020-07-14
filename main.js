@@ -21,7 +21,7 @@ function createWindow () {
 
   // Open the DevTools.
 
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   //hide the janky top menu for now, since I dont think it will be useful
   win.removeMenu(); //this may not work on mac
@@ -67,10 +67,14 @@ var timer;
 
 var chartData;
 
+var first = true;
+
 function epicInit(){
   chartData = [];
   miners = [];
-  if (timer) clearInterval(timer); //if for some reason we re-init in the future, get rid of the current loop
+  if (timer) {
+    clearInterval(timer); //if for some reason we re-init in the future, get rid of the current loop
+  }
   console.log('initializing miners');
   console.log('searching for miners')
   const browser = dnssd.Browser(dnssd.tcp('epicminer'))
@@ -90,7 +94,9 @@ function epicInit(){
   setTimeout(function(){
     browser.stop();
     console.log('done searching for miners');
-    initViewToModelChannels();
+    if (first){
+      initViewToModelChannels(); first = false;
+    } 
     //run once immediately after done searching for miners
 
     //check for ipaddr file
