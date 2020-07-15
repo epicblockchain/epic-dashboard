@@ -529,7 +529,6 @@
 
         //settings
         e.ipcRenderer.on('settings-miner-list', (event, message) => {
-          console.log(message);
           message.forEach(m => {
             var found = false;
             $('.minerlist-td').each(function (el) {

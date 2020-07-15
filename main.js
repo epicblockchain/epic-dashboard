@@ -21,7 +21,7 @@ function createWindow () {
 
   // Open the DevTools.
 
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   //hide the janky top menu for now, since I dont think it will be useful
   win.removeMenu(); //this may not work on mac
