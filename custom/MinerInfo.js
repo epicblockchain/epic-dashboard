@@ -69,9 +69,11 @@ class MinerInfo {
             form.append('swupdate.swu', fs.createReadStream(arg.param));
             console.log('sending...');
 			console.log(form);
-            got.post('http://' + this.ip + ':' + this.port + '/update', {
+            const response = got.post('http://' + this.ip + ':' + this.port + '/update', {
                body: form
             });
+			console.log("server sent back:");
+			console.log(response.body); //todo: parse this if its a json and provide the user with some feedback if something went wrong...
         } else {
             console.log(arg);
             (async () => {
