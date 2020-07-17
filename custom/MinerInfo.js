@@ -2,6 +2,7 @@ const got = require('got');
 var fs = require('fs');
 var FormData = require('form-data');
 const gzip = require('node-gzip');
+const sha256 = require('sha256-file');
 
 class MinerInfo {
     active;
@@ -63,8 +64,11 @@ class MinerInfo {
         if (arg.method == 'update') {
             console.log('reading file: '+arg.param);
             const form = new FormData();
+			form.append('password', arg.password);
+			form.append('checksum', sha256(arg.param));
             form.append('swupdate.swu', fs.createReadStream(arg.param));
-            // console.log(form);
+            console.log('sending...');
+			console.log(form);
             got.post('http://' + this.ip + ':' + this.port + '/update', {
                body: form
             });
