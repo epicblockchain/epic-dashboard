@@ -161,6 +161,8 @@ Format of request body:
 **/update**
 Endpoint for receiving .swu file to update the firmware. Accepts multipart/form-data encoding in the body.
 Note this is not receiving a json.
+The form keys are "password", "checksum", and "swupdate.swu".
+The form values are described by their keys.
 
 ## Specific addresses
 
