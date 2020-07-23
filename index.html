@@ -18,14 +18,15 @@
 <div>
   <ul id="nav" class="sidenav sidenav-fixed">
     <div>
-      <a id="btn-refresh" class="waves-effect waves-light btn right epicyellow darken-4 tooltipped epicbluebg" data-position="right"
-        data-tooltip="Search for miners on network" style="margin: 20px;" href="#"><i class="material-icons">refresh</i></a>
+      <a id="btn-refresh" class="waves-effect waves-light btn left epicyellow darken-4 tooltipped epicbluebg" data-position="right"
+        data-tooltip="Search for miners on network" style="margin: 2px;" href="#"><i class="material-icons">refresh</i></a>
     </div>
     <li>
-      <div class="container">
-        <img width="100%" style="margin-top: 5px;" src="img/EpicLogo-Vertical.png">
+     
+      <figure class="image mx-4">
+        <img src="img/EpicLogo-Vertical.png">
+      </figure>
       
-      </div>
     </li>
     <li>
        <div class="divider"></div>
@@ -78,7 +79,7 @@
       <div class="tile is-ancestor box notification">
         <div class="tile is-parent">
           <div class="tile jpback is-child box notification is-primary">
-            <div class=" subtitle">Pool</div>
+            <div class=" subtitle"><i class="epicyellow fas fa-project-diagram"></i> Pool</div>
             <div id="current-pool" class="title is-warning level-item"></div>
             
     
@@ -86,7 +87,7 @@
         </div>
         <div class="tile is-parent">
           <div class="tile jpback is-child box notification is-primary">
-            <div class=" subtitle">Average Difficulty</div>
+            <div class=" subtitle"><i class="epicyellow far fa-chart-bar"></i> Average Difficulty</div>
             <div id="avg-difficulty" class="title is-warning level-item"></div>
             
     
@@ -125,7 +126,7 @@
 
       <!-- miners page -->
       <div id="page-miners" class="container hide page">
-        <table class="centered">
+        <table class="centered table is-hoverable is-narrow is-striped">
           <thead>
             <tr id="miner-headers">
               <!-- gets auto filled -->
@@ -142,7 +143,7 @@
       <div id="page-settings" class="container hide page">
         <div class="row">
           <div class="col s6">
-            <table class="centered">
+            <table class="centered table">
               <thead>
                 <th width="75%">IP Address</th>
                 <th>Apply to</th>
