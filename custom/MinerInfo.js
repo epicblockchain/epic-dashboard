@@ -62,11 +62,13 @@ class MinerInfo {
         console.log(this.ip);
         // console.log('\t\tnot posting right now');
         if (arg.method == 'update') {
-            console.log('reading file: '+arg.param);
+            arg.param = JSON.parse(arg.param);
+            console.log('reading file: '+arg.param.filepath);
             const form = new FormData();
 			form.append('password', arg.password);
-			form.append('checksum', sha256(arg.param));
-            form.append('swupdate.swu', fs.createReadStream(arg.param));
+			form.append('checksum', sha256(arg.param.filepath));
+            form.append('keep_settings', arg.param.keepSettings)
+            form.append('swupdate.swu', fs.createReadStream(arg.param.filepath));
             console.log('sending...');
 			console.log(form);
             const response = got.post('http://' + this.ip + ':' + this.port + '/update', {

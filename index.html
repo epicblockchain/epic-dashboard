@@ -243,8 +243,17 @@
         </div>
 
         <div class="row valign-wrapper">
-          <div class="col s4">
+          <div class="col s2">
             <a id="swupdate-browse" class="waves-effect waves-light btn white-text jpback">Browse</a>
+          </div>
+          <div class="col s2">
+            <div class="switch">
+              <label class="black-text">
+                Keep Settings
+                <input id="miner-keep-settings" type="checkbox">
+                <span class="lever"></span>
+              </label>
+            </div>
           </div>
           <div class="col s4">
             <p id="swupdate-filepath">Click browse to search for a firmware update file</p>
@@ -525,7 +534,10 @@
         $('#swupdate-apply').click(function () {
           method = 'update';
           passwordPage();
-          param = $('#swupdate-filepath').text();
+          param = JSON.stringify({
+                        "filepath": $('#swupdate-filepath').text(),
+                        "keepSettings": $('#miner-keep-settings').is(":checked")
+                    });
         });
 
         //settings
