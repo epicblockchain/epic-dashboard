@@ -6,6 +6,7 @@ Download the appropriate zip file for the OS you would like to run the program o
 Clone this repo
 ```
 git clone <this repo>
+npm install
 npm start
 ```
 A window should open with the app running
