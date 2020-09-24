@@ -1,33 +1,55 @@
 {
   "name": "epic-dashboard",
-  "version": "1.0.0",
-  "description": "dashboard for the sc200 miner",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "author": "Dan Nicolau",
-  "devDependencies": {
-    "electron": "^8.3.0"
-  },
+  "version": "1.0.3",
+  "private": true,
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.1",
-    "bulma": "^0.9.0",
-    "chart.js": "^2.8.0",
-    "chartjs-plugin-streaming": "^1.8.0",
+    "@blueprintjs/core": "^3.31.0",
+    "@blueprintjs/table": "^3.8.15",
+    "@reduxjs/toolkit": "^1.4.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "axios": "^0.20.0",
+    "concurrently": "^5.3.0",
     "dnssd2": "^1.0.0",
-    "form-data": "^3.0.0",
-    "got": "^11.3.0",
-    "jquery": "^3.5.1",
-    "material-icons": "^0.3.1",
-    "materialize-css": "^1.0.0-rc.2",
-    "node-gzip": "^1.1.2",
-    "round-to": "^4.1.0",
-    "sha256-file": "^1.0.0"
+    "electron": "^10.1.2",
+    "electron-builder": "^22.8.1",
+    "electron-is-dev": "^1.2.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-redux": "^7.2.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.3",
+    "react-sidebar": "^3.0.2",
+    "redux": "^4.0.5",
+    "wait-on": "^5.2.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://lucania.epic:9080/dnicolau/epic-dash-electron.git"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "ebuild": "npm run build && node_modules/.bin/build",
+    "dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "license": "GPL-3.0"
+  "homepage": "./",
+  "main": "./electron/main.js",
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^4.0.3"
+  }
 }

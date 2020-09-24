@@ -1,0 +1,12 @@
+#epicSidebarLogo {
+    width: 160px;
+}
+
+.minimizeSidebarButton {
+  float: right;
+}
+
+.maximizeSidebarButton {
+    margin: 20px;
+    position: absolute;
+}

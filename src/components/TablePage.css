@@ -1,0 +1,6 @@
+.settingsTableContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 10px;
+    justify-content: center;
+}

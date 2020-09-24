@@ -1,0 +1,17 @@
+.dashboardCardContainer {
+    display: flex;
+    margin: 15%;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.dashboardRowContainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.dashboardRowContainer * {
+    margin: 10px;
+    justify-content: center;
+}
