@@ -30,7 +30,7 @@ const App = (props) => {
 
     const dispatch = useDispatch()
     const onInit = function(){ //nice thread @react-devs
-        electron.ipcRenderer.on('update-miner-ips', (event, message) => {
+        electron.ipcRenderer.on('update-miner-ips', (event, message) => { //todo, does this belong in a thunk? or elsewhere?
             const newMiners = message;
             dispatch(
                 minersAdded(newMiners)

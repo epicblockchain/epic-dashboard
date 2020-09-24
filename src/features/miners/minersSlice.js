@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = [];
 
@@ -8,7 +8,19 @@ const minersSlice = createSlice({
     reducers: {
         minersAdded(state, action) {
             action.payload.forEach( (el) => {
-                state.push(el);
+                state.push({
+                    ip: el,
+                    summary: {
+                        state: 'idle',
+                        error: null,
+                        data: null //store the time accessed?
+                    },
+                    history: {
+                        state: 'idle',
+                        error: null,
+                        data: null
+                    }
+                });
             });
         }
     }
@@ -17,3 +29,5 @@ const minersSlice = createSlice({
 export const { minersAdded } = minersSlice.actions
 
 export default minersSlice.reducer
+
+export const selectAllMiners = state => state.miners
