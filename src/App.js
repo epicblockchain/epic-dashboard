@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import Sidebar from 'react-sidebar'
 import DashboardPage from './components/DashboardPage'
@@ -12,14 +12,32 @@ import './App.css'
 
 import logo from './assets/img/EpicLogo-Vertical.png'
 
+import { minersAdded } from './features/miners/minersSlice' 
+import { useDispatch } from 'react-redux'
+
+const electron = window.require('electron') //this disables viewing in browser but allows use of node api
+
+
+
 const App = (props) => {
 
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [page, setPage] = useState('loading');
 
     const onSetSidebarOpen = (open) => {
         setSidebarOpen(open);
     }
+
+    const dispatch = useDispatch()
+    const onInit = function(){ //nice thread @react-devs
+        electron.ipcRenderer.on('update-miner-ips', (event, message) => {
+            const newMiners = message;
+            dispatch(
+                minersAdded(newMiners)
+            )
+        })
+    }
+    useEffect(onInit, []) //code only runs once but to not get a warning u need to sacrifice a goat to the react devs
 
     return  (
         <div>
@@ -29,7 +47,7 @@ const App = (props) => {
                         <Button className="minimizeSidebarButton" icon="caret-left" onClick={() => onSetSidebarOpen(false)}/>
                         <img id="epicSidebarLogo" src={logo} alt="/"/>
                         <MenuDivider />
-                        <MenuItem icon="dashboard" text="Dashboard" onClick={() => setPage('dashboard')} />
+                        <MenuItem icon="dashboard" text="Overview" onClick={() => setPage('dashboard')} />
                         <MenuItem icon="chart" text="Hashrate Chart" onClick={() => setPage('chart')} />
                         <MenuItem icon="th" text="Miners" onClick={() => setPage('table')} />
                         <MenuItem icon="cog" text="Settings" onClick={() => setPage('settings')} />

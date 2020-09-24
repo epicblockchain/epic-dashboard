@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Elevation } from '@blueprintjs/core'
+import { Card } from '@blueprintjs/core'
 import './DashboardPage.css'
 
 class DashboardPage extends React.Component {

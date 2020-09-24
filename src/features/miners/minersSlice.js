@@ -7,7 +7,9 @@ const minersSlice = createSlice({
     initialState,
     reducers: {
         minersAdded(state, action) {
-            state.push(action.payload)
+            action.payload.forEach( (el) => {
+                state.push(el);
+            });
         }
     }
 })
