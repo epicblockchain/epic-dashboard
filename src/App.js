@@ -12,8 +12,8 @@ import './App.css'
 
 import logo from './assets/img/EpicLogo-Vertical.png'
 
-import { minersAdded, fetchMinerSummaries } from './features/miners/minersSlice' 
-import { useDispatch } from 'react-redux'
+import { minersAdded, fetchMinerSummaries, selectAllMiners } from './features/miners/minersSlice' 
+import { useDispatch, useSelector } from 'react-redux'
 
 const electron = window.require('electron') //this disables viewing in browser but allows use of node api
 
@@ -29,19 +29,24 @@ const App = (props) => {
     }
 
     const dispatch = useDispatch()
-    const onInit = function(){ //nice thread @react-devs
-        electron.ipcRenderer.on('update-miner-ips', (event, message) => { //todo, does this belong in a thunk? or elsewhere?
+    useEffect(function(){
+        electron.ipcRenderer.on('update-miner-ips', (event, message) => {
             const newMiners = message;
+            console.log('recieved miners: ' + JSON.stringify(newMiners))
             dispatch(
                 minersAdded(newMiners)
             )
-            setTimeout(()=>{
-            dispatch(
-                fetchMinerSummaries()
-            )}, 3000)
         })
-    }
-    useEffect(onInit, []) //code only runs once but to not get a warning doing it a cleaner way you need to sacrifice a goat to the react devs
+    }, [dispatch]) //TODO make sure that this only can run once
+
+    const minersLen = useSelector(selectAllMiners).length;
+
+    useEffect(function(){
+        dispatch(
+            fetchMinerSummaries()
+        )
+        console.log('Dispatched fetchMinerSummaries()')
+    }, [dispatch])
 
     return  (
         <div>
@@ -61,8 +66,8 @@ const App = (props) => {
                 onSetOpen={() => onSetSidebarOpen}
                 styles={{ sidebar: {background: "white"} }}
             >
-            </Sidebar>
             <Button className="maximizeSidebarButton" icon="caret-right" onClick={() => onSetSidebarOpen(true)} />
+            </Sidebar>
             {page === 'dashboard' && <DashboardPage />}
             {page === 'chart'     && <ChartPage />}
             {page === 'table'     && <TablePage />}

@@ -7,13 +7,13 @@ export const fetchMinerSummaries = createAsyncThunk(
     'miners/fetchMinerSummaries',
     async (params, thunkAPI) => {
         const response = await axios.get('http://jsonplaceholder.typicode.com/posts/1')
-        return response;
+        return response.data;
     }
 )
 
 const minersSlice = createSlice({
     name: 'miners',
-    initialState: [],
+    initialState,
     reducers: {
         minersAdded(state, action) {
             action.payload.forEach( (el) => {
@@ -36,12 +36,12 @@ const minersSlice = createSlice({
     },
     extraReducers: {
         [fetchMinerSummaries.fulfilled]: (state, action) => {
-            console.log('fulfilled')
+            console.log('Fetch miner summaries fulfilled')
             console.log(action.payload)
-            console.log(state.miners)
+            console.log(state.push({ip: 'im not loving it:420'}))
         },
-        [fetchMinerSummaries.rejected]: () => {
-            console.log('not fulfilled')
+        [fetchMinerSummaries.rejected]: (state, action) => {
+            console.log('Error: fetch miner summaries not fulfilled')
         }
     }
 })
