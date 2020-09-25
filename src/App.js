@@ -12,7 +12,7 @@ import './App.css'
 
 import logo from './assets/img/EpicLogo-Vertical.png'
 
-import { minersAdded } from './features/miners/minersSlice' 
+import { minersAdded, fetchMinerSummaries } from './features/miners/minersSlice' 
 import { useDispatch } from 'react-redux'
 
 const electron = window.require('electron') //this disables viewing in browser but allows use of node api
@@ -35,9 +35,13 @@ const App = (props) => {
             dispatch(
                 minersAdded(newMiners)
             )
+            setTimeout(()=>{
+            dispatch(
+                fetchMinerSummaries()
+            )}, 3000)
         })
     }
-    useEffect(onInit, []) //code only runs once but to not get a warning u need to sacrifice a goat to the react devs
+    useEffect(onInit, []) //code only runs once but to not get a warning doing it a cleaner way you need to sacrifice a goat to the react devs
 
     return  (
         <div>

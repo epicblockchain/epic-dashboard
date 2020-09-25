@@ -8,7 +8,7 @@ class SettingsPage extends React.Component {
         return (
             <div className="settingsContainer">
                 <div>
-                    <Table numRows={2}>
+                    <Table enableRowHeader={false} numRows={2}>
                         <Column name='Miner'/>
                         <Column name='Apply to'/>
                     </Table>

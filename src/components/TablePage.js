@@ -13,11 +13,15 @@ const TablePage = (props) => {
     const ipCellRenderer = (rowIndex: number) => {
         return <Cell>{miners[rowIndex].ip}</Cell>
     }
+    const stringifyRenderer = (rowIndex: number) => {
+        return <Cell>{JSON.stringify(miners[rowIndex])}</Cell>
+    }
 
     return (
         <div className="settingsTableContainer">
             <Table enableRowHeader={false} numRows={miners.length}>
                 <Column name="IP" cellRenderer={ipCellRenderer}/>
+                <Column name="Miner Object String" cellRenderer={stringifyRenderer} />
             </Table>
         </div>
     );

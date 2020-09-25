@@ -1,27 +1,47 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import axios from 'axios'
 
 const initialState = [];
 
+export const fetchMinerSummaries = createAsyncThunk(
+    'miners/fetchMinerSummaries',
+    async (params, thunkAPI) => {
+        const response = await axios.get('http://jsonplaceholder.typicode.com/posts/1')
+        return response;
+    }
+)
+
 const minersSlice = createSlice({
     name: 'miners',
-    initialState,
+    initialState: [],
     reducers: {
         minersAdded(state, action) {
             action.payload.forEach( (el) => {
                 state.push({
                     ip: el,
                     summary: {
-                        state: 'idle',
+                        status: 'idle',
                         error: null,
-                        data: null //store the time accessed?
+                        data: null,
+                        lastUpdate: null
                     },
                     history: {
-                        state: 'idle',
+                        status: 'idle',
                         error: null,
                         data: null
                     }
                 });
             });
+        }
+    },
+    extraReducers: {
+        [fetchMinerSummaries.fulfilled]: (state, action) => {
+            console.log('fulfilled')
+            console.log(action.payload)
+            console.log(state.miners)
+        },
+        [fetchMinerSummaries.rejected]: () => {
+            console.log('not fulfilled')
         }
     }
 })
