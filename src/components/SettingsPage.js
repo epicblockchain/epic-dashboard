@@ -1,26 +1,81 @@
 import React from 'react'
-import { Tab, Tabs } from '@blueprintjs/core'
-import { Column, Table } from '@blueprintjs/table'
+import { Checkbox, Tab, Tabs } from '@blueprintjs/core'
+import { Cell, Column, Table } from '@blueprintjs/table'
+import MiningPoolTab from './SettingsTabs/MiningPoolTab'
+import WalletAddressTab from './SettingsTabs/WalletAddressTab'
+import OperatingModeTab from './SettingsTabs/OperatingModeTab'
+import UniqueIDTab from './SettingsTabs/UniqueIDTab'
+import FirmwareTab from './SettingsTabs/FirmwareTab'
+import PasswordTab from './SettingsTabs/PasswordTab'
 import './SettingsPage.css'
 
+const electron = window.require('electron')
+
+function requestMinerSettingsData(){
+    electron.ipcRenderer.send('get-settings');
+}
+
 class SettingsPage extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            pageState: 'loading',
+            miners: []
+        }
+        this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
+        this.ipCellRenderer = this.ipCellRenderer.bind(this);
+        this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
+    }
+
+    settingsGetterHandler(event, args){
+        this.setState({miners: args})
+        this.setState({pageState: 'loaded'})
+    }
+
+    componentDidMount(){
+        requestMinerSettingsData()
+        electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
+    }
+
+    componentWillUnmount(){
+        electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
+    }
+
+    ipCellRenderer(rowIndex: number){
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].ip}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+
+    applyToCellRenderer(rowIndex: number){
+        return <Cell><Checkbox /></Cell>
+    }
+
     render () {
         return (
             <div className="settingsContainer">
                 <div>
-                    <Table enableRowHeader={false} numRows={2}>
-                        <Column name='Miner'/>
-                        <Column name='Apply to'/>
+                    <Table enableRowHeader={false} numRows={this.state.miners.length || 0}>
+                        <Column name='Miner' cellRenderer={this.ipCellRenderer}/>
+                        <Column name='Apply to' cellRenderer={this.applyToCellRenderer}/>
                     </Table>
                 </div>
-                <Tabs id="SettingsTabs">
-                    <Tab id="MiningPoolTab" title="Mining Pool" />
-                    <Tab id="WalletAddressTab" title="Wallet Address" />
-                    <Tab id="OperatingModeTab" title="Operating Mode" />
-                    <Tab id="UniqueIDTab" title="Unique ID" />
-                    <Tab id="NewPasswordTab" title="Password" />
-                    <Tab id="SoftwareUpdateTab" title="Firmware" />
-                </Tabs>
+                <div>
+                    <Tabs id="SettingsTabs">
+                        <Tab id="MiningPoolTab" title="Mining Pool" panel={<MiningPoolTab />} />
+                        <Tab id="WalletAddressTab" title="Wallet Address" panel={<WalletAddressTab />} />
+                        <Tab id="OperatingModeTab" title="Operating Mode" panel={<OperatingModeTab />} />
+                        <Tab id="UniqueIDTab" title="Unique ID" panel={<UniqueIDTab />} />
+                        <Tab id="PasswordTab" title="Password" panel={<PasswordTab />} />
+                        <Tab id="FirmwareTab" title="Firmware" panel={<FirmwareTab />} />
+                    </Tabs>
+                </div>
             </div>
         );
     }
