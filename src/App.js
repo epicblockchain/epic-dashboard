@@ -29,6 +29,7 @@ const App = (props) => {
     }
 
     const dispatch = useDispatch()
+
     useEffect(function(){
         electron.ipcRenderer.on('update-miner-ips', (event, message) => {
             const newMiners = message;
@@ -46,7 +47,7 @@ const App = (props) => {
             fetchMinerSummaries()
         )
         console.log('Dispatched fetchMinerSummaries()')
-    }, [dispatch])
+    }, [minersLen, dispatch])
 
     return  (
         <div>
