@@ -4,10 +4,6 @@ import './DashboardPage.css'
 
 const electron = window.require('electron')
 
-function requestMinerDashboardData(){
-    electron.ipcRenderer.send('get-dashboard')
-}
-
 class DashboardPage extends React.Component {
     constructor(props){
         super(props)
@@ -21,11 +17,10 @@ class DashboardPage extends React.Component {
     dashboardGetterHandler(event, args){
         this.setState({dashboardData: args})
         this.setState({pageState: 'loaded'})
-        console.log(this.state)
     }
 
     componentDidMount(){
-        requestMinerDashboardData()
+        electron.ipcRenderer.send('get-dashboard')
         electron.ipcRenderer.on('get-dashboard-reply', this.dashboardGetterHandler)
     }
 

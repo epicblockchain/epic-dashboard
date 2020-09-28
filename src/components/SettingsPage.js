@@ -11,10 +11,6 @@ import './SettingsPage.css'
 
 const electron = window.require('electron')
 
-function requestMinerSettingsData(){
-    electron.ipcRenderer.send('get-settings');
-}
-
 class SettingsPage extends React.Component {
     constructor(props) {
         super(props)
@@ -33,7 +29,7 @@ class SettingsPage extends React.Component {
     }
 
     componentDidMount(){
-        requestMinerSettingsData()
+        electron.ipcRenderer.send('get-settings');
         electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
     }
 

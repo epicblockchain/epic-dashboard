@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "private": true,
   "dependencies": {
+    "@amcharts/amcharts4": "^4.10.4",
     "@blueprintjs/core": "^3.31.0",
     "@blueprintjs/table": "^3.8.15",
     "@reduxjs/toolkit": "^1.4.0",
@@ -15,7 +16,6 @@
     "electron": "^10.1.2",
     "electron-builder": "^22.8.1",
     "electron-is-dev": "^1.2.0",
-    "plottable": "^3.9.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",

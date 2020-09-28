@@ -6,10 +6,6 @@ import './TablePage.css'
 
 const electron = window.require('electron')
 
-function requestMinerTableData(){
-    electron.ipcRenderer.send('get-table');
-}
-
 class TablePage extends React.Component {
     
     constructor(props) {
@@ -186,7 +182,7 @@ class TablePage extends React.Component {
     temperatureCellRenderer = (rowIndex: number) => {
         let maxTemp = "N/A";
         if (this.state.miners[rowIndex]){
-            const hbs = this.state.miners[rowIndex].summary.data["HBs"]
+            const hbs = this.state.miners[rowIndex].summary.data["HBs"];
             if (hbs.length > 0){
                 maxTemp = 0
                 hbs.forEach(hb => {
@@ -210,7 +206,7 @@ class TablePage extends React.Component {
     }
 
     componentDidMount(){
-        requestMinerTableData()
+        electron.ipcRenderer.send('get-table');
         electron.ipcRenderer.on('get-table-reply', this.tableGetterHandler);
     }
 
