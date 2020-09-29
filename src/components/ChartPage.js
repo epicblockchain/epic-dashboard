@@ -3,8 +3,6 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
-import {Tab, Tabs} from '@blueprintjs/core'
-
 am4core.useTheme(am4themes_animated);
 
 const electron = window.require('electron')
@@ -29,11 +27,16 @@ class ChartPage extends React.Component {
         dateAxis.title.text = "Time"
         //todo use a baseinterval
         let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        yAxis.min = 0
         yAxis.title.text = "Hashrate"
         let series = chart.series.push(new am4charts.LineSeries());
-        series.name = "Hashrate"
+        series.name = "Hashrate (TH/s)"
         series.dataFields.valueY = "hashrate"
         series.dataFields.dateX = "time"
+        chart.scrollbarX = new am4core.Scrollbar();
+        chart.scrollbarY = new am4core.Scrollbar();
+        //hide the logo for now
+        chart.logo.height = -15000;
 
         this.chart = chart
         this.setState({pageState: 'loaded'})
@@ -57,12 +60,6 @@ class ChartPage extends React.Component {
         return (
             <div>
                 <div id="chartdiv" style={{ width: "100%", height: "500px"}} />
-                <Tabs id="ChartTabs">
-                    <Tab id="min15" title="15 min"/>
-                    <Tab id="hr3"   title="3 hr"/>
-                    <Tab id="hr12"  title="12 hr"/>
-                    <Tab id="hr48"  title="48 hr"/>
-                </Tabs>
             </div>
         );
     }

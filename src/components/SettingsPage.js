@@ -20,6 +20,7 @@ class SettingsPage extends React.Component {
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
         this.ipCellRenderer = this.ipCellRenderer.bind(this);
+        this.nameCellRenderer = this.nameCellRenderer.bind(this);
         this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
     }
 
@@ -49,6 +50,18 @@ class SettingsPage extends React.Component {
         }
     }
 
+    nameCellRenderer(rowIndex: number){
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+
     applyToCellRenderer(rowIndex: number){
         return <Cell><Checkbox /></Cell>
     }
@@ -58,8 +71,9 @@ class SettingsPage extends React.Component {
             <div className="settingsContainer">
                 <div>
                     <Table enableRowHeader={false} numRows={this.state.miners.length || 0}>
-                        <Column name='Miner' cellRenderer={this.ipCellRenderer}/>
-                        <Column name='Apply to' cellRenderer={this.applyToCellRenderer}/>
+                        <Column name='IP' cellRenderer={this.ipCellRenderer}/>
+                        <Column name='Miner Name' cellRenderer={this.nameCellRenderer}/>
+                        <Column name='Apply To' cellRenderer={this.applyToCellRenderer}/>
                     </Table>
                 </div>
                 <div>

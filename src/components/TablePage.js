@@ -108,7 +108,7 @@ class TablePage extends React.Component {
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{"TODO: STARTED"}</Cell>
+            return <Cell>{new Date(this.state.miners[rowIndex].summary.data["Session"]["Startup Timestamp"] * 1000).toString()}</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }
@@ -119,7 +119,7 @@ class TablePage extends React.Component {
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{"uptime"}</Cell>
+            return <Cell>{new Date(this.state.miners[rowIndex].summary.data["Session"]["Uptime"] * 1000 - Date.now()).toISOString().substr(11, 8)}</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }
@@ -217,7 +217,7 @@ class TablePage extends React.Component {
     render() {
         return (
             <div className="settingsTableContainer">
-                <Table enableRowHeader={false} numRows={5}>
+                <Table className="minersTable" enableRowHeader={false} numRows={5}>
                     <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>
                     <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>
                     <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>
