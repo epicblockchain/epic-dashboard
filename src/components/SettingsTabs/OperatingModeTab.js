@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core'
+import "./Inputs.css"
 
 class OperatingModeTab extends React.Component {
     
@@ -8,8 +9,8 @@ class OperatingModeTab extends React.Component {
         return (
             <div>
                 <FormGroup>
-                    <InputGroup placeholder="Operating mode"/>
-                    <InputGroup placeholder="Password"/>
+                    <InputGroup className="inputClass" placeholder="Operating mode"/>
+                    <InputGroup className="inputClass" placeholder="Password"/>
                     <Button>Apply</Button>
                 </FormGroup>
             </div>

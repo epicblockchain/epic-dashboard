@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core'
+import './Inputs.css'
 
 class WalletAddressTab extends React.Component {
     
@@ -8,9 +9,9 @@ class WalletAddressTab extends React.Component {
         return (
             <div>
                 <FormGroup>
-                    <InputGroup placeholder="Wallet address"/>
-                    <InputGroup placeholder="Worker name..."/>
-                    <InputGroup placeholder="Password" type="password"/>
+                    <InputGroup className="inputClass" placeholder="Wallet address"/>
+                    <InputGroup className="inputClass" placeholder="Worker name..."/>
+                    <InputGroup className="inputClass" placeholder="Password" type="password"/>
                     <Button>Apply</Button>
                 </FormGroup>
             </div>

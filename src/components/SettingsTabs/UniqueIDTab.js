@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Button, Checkbox, FormGroup, InputGroup } from '@blueprintjs/core'
+import "./Inputs.css"
 
 class UniqueIDTab extends React.Component {
     
@@ -8,8 +9,8 @@ class UniqueIDTab extends React.Component {
         return (
             <div>
                 <FormGroup>
-                    <Checkbox>Append Unique ID to Worker Name</Checkbox>
-                    <InputGroup placeholder="Password" type="password" />
+                    <Checkbox defaultChecked={true}>Append Unique ID to Worker Name</Checkbox>
+                    <InputGroup className="inputClass" placeholder="Password" type="password" />
                     <Button>Apply</Button>
                 </FormGroup>
             </div>

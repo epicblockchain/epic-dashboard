@@ -21,7 +21,6 @@ class ChartPage extends React.Component {
     chartGetterHandler(event, args){
         let chart = am4core.create("chartdiv", am4charts.XYChart);
         //chart code
-        console.log(args)
         chart.data = args;
         let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
         dateAxis.title.text = "Time"
@@ -46,13 +45,13 @@ class ChartPage extends React.Component {
         electron.ipcRenderer.send('get-chart')
         electron.ipcRenderer.on('get-chart-reply', this.chartGetterHandler)
 
-        if (this.chart) {
-            this.chart.dispose()
-        }
     }
 
     componentWillUnmount(){
         electron.ipcRenderer.removeListener('get-chart-reply', this.chartGetterHandler)
+        if (this.chart) {
+            this.chart.dispose()
+        }
     }
 
     //todo add a .css to improve performance instead of inlining the style

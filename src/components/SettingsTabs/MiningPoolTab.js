@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core'
+import './Inputs.css'
 
 class MiningPoolTab extends React.Component {
     
@@ -8,8 +9,8 @@ class MiningPoolTab extends React.Component {
         return (
             <div>
                 <FormGroup>
-                    <InputGroup placeholder="Mining pool"/>
-                    <InputGroup placeholder="Password" type="password"/>
+                    <InputGroup className="inputClass" placeholder="Mining pool"/>
+                    <InputGroup className="inputClass" placeholder="Password" type="password"/>
                     <Button>Apply</Button>
                 </FormGroup>
             </div>
