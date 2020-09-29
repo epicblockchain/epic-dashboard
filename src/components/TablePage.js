@@ -39,12 +39,8 @@ class TablePage extends React.Component {
     ipCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].ip}</Cell>
         } else {
-            return <Cell>{"Error"}</Cell>
+            return <Cell>{this.state.miners[rowIndex].ip}</Cell>
         }
     }
     nameCellRenderer = (rowIndex: number) => {
@@ -180,26 +176,27 @@ class TablePage extends React.Component {
         }
     }
     temperatureCellRenderer = (rowIndex: number) => {
-        let maxTemp = "N/A";
-        if (this.state.miners[rowIndex]){
-            const hbs = this.state.miners[rowIndex].summary.data["HBs"];
-            if (hbs.length > 0){
-                maxTemp = 0
-                hbs.forEach(hb => {
-                    const newTemp = hb["Temperature"];
-                    if (newTemp > maxTemp){
-                        maxTemp = newTemp
-                    }
-                });
-            }
-        }
-
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            
+            let maxTemp = "N/A";
+            if (this.state.miners[rowIndex]){
+                const hbs = this.state.miners[rowIndex].summary.data["HBs"];
+                if (hbs.length > 0){
+                    maxTemp = 0
+                    hbs.forEach(hb => {
+                        const newTemp = hb["Temperature"];
+                        if (newTemp > maxTemp){
+                            maxTemp = newTemp
+                        }
+                    });
+                }
+            }
+
+            return <Cell>{maxTemp}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{maxTemp}</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }

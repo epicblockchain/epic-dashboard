@@ -22,6 +22,7 @@ class SettingsPage extends React.Component {
         this.ipCellRenderer = this.ipCellRenderer.bind(this);
         this.nameCellRenderer = this.nameCellRenderer.bind(this);
         this.walletCellRenderer = this.walletCellRenderer.bind(this);
+        this.miningPoolCellRenderer = this.miningPoolCellRenderer.bind(this);
         this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
     }
 
@@ -36,18 +37,14 @@ class SettingsPage extends React.Component {
     }
 
     componentWillUnmount(){
-        electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
+        electron.ipcRenderer.removeListener('get-settings-reply', this.settingsGetterHandler);
     }
 
     ipCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+        } else  {
             return <Cell>{this.state.miners[rowIndex].ip}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
         }
     }
 
@@ -75,6 +72,18 @@ class SettingsPage extends React.Component {
         }
     }
 
+    miningPoolCellRenderer(rowIndex: number){
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+
     applyToCellRenderer(rowIndex: number){
         return <Cell><Checkbox defaultChecked={true}/></Cell>
     }
@@ -83,11 +92,11 @@ class SettingsPage extends React.Component {
         return (
             <div className="settingsContainer">
                 <div className="settingsTableDiv">
-                    <Table enableRowHeader={false} numRows={this.state.miners.length || 0}>
-                        <Column name='IP' cellRenderer={this.ipCellRenderer}/>
-                        <Column name='Miner Name' cellRenderer={this.nameCellRenderer}/>
-                        <Column name='Miner Name' cellRenderer={this.walletCellRenderer}/>
-                        <Column name='Apply To' cellRenderer={this.applyToCellRenderer}/>
+                    <Table enableRowHeader={false} numRows={this.state.miners.length}>
+                        <Column name='IP' cellRenderer={this.ipCellRenderer} />
+                        <Column name='Miner Name' cellRenderer={this.nameCellRenderer} />
+                        <Column name='Mining Pool' cellRenderer={this.miningPoolCellRenderer} />
+                        <Column name='Apply To' cellRenderer={this.applyToCellRenderer} />
                     </Table>
                 </div>
                 <div className="settingsTabsDiv">
