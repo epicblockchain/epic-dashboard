@@ -10,7 +10,7 @@ class OperatingModeTab extends React.Component {
             <div>
                 <FormGroup>
                     <InputGroup className="inputClass" placeholder="Operating mode"/>
-                    <InputGroup className="inputClass" placeholder="Password"/>
+                    <InputGroup className="inputClass" placeholder="Password" type="password"/>
                     <Button>Apply</Button>
                 </FormGroup>
             </div>

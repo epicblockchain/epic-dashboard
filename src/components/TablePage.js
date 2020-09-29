@@ -214,7 +214,7 @@ class TablePage extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="minersPageContainer">
                 <div className="minersTableContainer">
                     <Table className="minersTable" enableRowHeader={false} numRows={5}>
                         <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>
@@ -236,7 +236,7 @@ class TablePage extends React.Component {
                 <div className="newMinersFormContainer">
                     <h4>{"Add new miners"}</h4>
                     <InputGroup placeholder="IP" />  
-                    <Button icon="add" />
+                    <Button className="addMinerButton" icon="plus" text="Add Miner via IP"/>
                 </div>
             </div>
         );
