@@ -1,5 +1,5 @@
 import React from 'react'
-import { Checkbox, Tab, Tabs } from '@blueprintjs/core'
+import { Switch, Tab, Tabs } from '@blueprintjs/core'
 import { Cell, Column, Table } from '@blueprintjs/table'
 import MiningPoolTab from './SettingsTabs/MiningPoolTab'
 import WalletAddressTab from './SettingsTabs/WalletAddressTab'
@@ -86,7 +86,7 @@ class SettingsPage extends React.Component {
 
     applyToCellRenderer(rowIndex: number){
         const isDisabled = this.state.miners[rowIndex].summary.status !== 'completed';
-        return <Cell><Checkbox defaultChecked={!isDisabled} disabled={isDisabled}/></Cell>
+        return <Cell><Switch defaultChecked={!isDisabled} disabled={isDisabled}/></Cell>
     }
 
     render () {
