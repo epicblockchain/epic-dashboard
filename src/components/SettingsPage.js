@@ -85,7 +85,8 @@ class SettingsPage extends React.Component {
     }
 
     applyToCellRenderer(rowIndex: number){
-        return <Cell><Checkbox defaultChecked={true}/></Cell>
+        const isDisabled = this.state.miners[rowIndex].summary.status !== 'completed';
+        return <Cell><Checkbox defaultChecked={!isDisabled} disabled={isDisabled}/></Cell>
     }
 
     render () {

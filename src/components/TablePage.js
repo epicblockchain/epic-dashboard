@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button, InputGroup } from "@blueprintjs/core"
 import { Cell, Column, Table } from "@blueprintjs/table"
 
 import '@blueprintjs/table/lib/css/table.css'
@@ -137,7 +138,7 @@ class TablePage extends React.Component {
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].summary.data["Session"]["Average MHs"]}</Cell>
+            return <Cell>{Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100}</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }
@@ -213,23 +214,30 @@ class TablePage extends React.Component {
 
     render() {
         return (
-            <div className="settingsTableContainer">
-                <Table className="minersTable" enableRowHeader={false} numRows={5}>
-                    <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>
-                    <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>
-                    <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>
-                    <Column name="Operating Mode" cellRenderer        = {this.operatingModeCellRenderer}/>
-                    <Column name="Pool" cellRenderer                  = {this.poolCellRenderer}/>
-                    <Column name="User" cellRenderer                  = {this.userCellRenderer}/>
-                    <Column name="Started" cellRenderer               = {this.startedCellRenderer}/>
-                    <Column name="Uptime" cellRenderer                = {this.uptimeCellRenderer}/>
-                    <Column name="Active HBs" cellRenderer            = {this.activeHBCellRenderer}/>
-                    <Column name="Hashrate" cellRenderer              = {this.hashrateCellRenderer}/>
-                    <Column name="Accepted" cellRenderer              = {this.acceptedCellRenderer}/>
-                    <Column name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>
-                    <Column name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>
-                    <Column name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>
-                </Table>
+            <div>
+                <div className="minersTableContainer">
+                    <Table className="minersTable" enableRowHeader={false} numRows={5}>
+                        <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>
+                        <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>
+                        <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>
+                        <Column name="Operating Mode" cellRenderer        = {this.operatingModeCellRenderer}/>
+                        <Column name="Pool" cellRenderer                  = {this.poolCellRenderer}/>
+                        <Column name="User" cellRenderer                  = {this.userCellRenderer}/>
+                        <Column name="Started" cellRenderer               = {this.startedCellRenderer}/>
+                        <Column name="Uptime" cellRenderer                = {this.uptimeCellRenderer}/>
+                        <Column name="Active HBs" cellRenderer            = {this.activeHBCellRenderer}/>
+                        <Column name="Hashrate (TH/s)" cellRenderer       = {this.hashrateCellRenderer}/>
+                        <Column name="Accepted" cellRenderer              = {this.acceptedCellRenderer}/>
+                        <Column name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>
+                        <Column name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>
+                        <Column name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>
+                    </Table>
+                </div>
+                <div className="newMinersFormContainer">
+                    <h4>{"Add new miners"}</h4>
+                    <InputGroup placeholder="IP" />  
+                    <Button icon="add" />
+                </div>
             </div>
         );
     }
