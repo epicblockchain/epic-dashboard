@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card } from '@blueprintjs/core'
 import './DashboardPage.css'
+import '@blueprintjs/core/lib/css/blueprint.css'
 
 const electron = window.require('electron')
 

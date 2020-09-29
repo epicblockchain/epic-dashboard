@@ -7,6 +7,8 @@ import OperatingModeTab from './SettingsTabs/OperatingModeTab'
 import UniqueIDTab from './SettingsTabs/UniqueIDTab'
 import FirmwareTab from './SettingsTabs/FirmwareTab'
 import PasswordTab from './SettingsTabs/PasswordTab'
+import '@blueprintjs/core/lib/css/blueprint.css'
+import '@blueprintjs/table/lib/css/table.css'
 import './SettingsPage.css'
 
 const electron = window.require('electron')

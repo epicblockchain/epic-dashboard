@@ -5,14 +5,15 @@ import DashboardPage from './components/DashboardPage'
 import ChartPage from './components/ChartPage'
 import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
-import { Button, Menu, MenuItem, MenuDivider } from '@blueprintjs/core'
+import LoadingPage from './components/LoadingPage'
+import { Button, FocusStyleManager, Menu, MenuItem, MenuDivider } from '@blueprintjs/core'
 
 import '@blueprintjs/core/lib/css/blueprint.css'
 import './App.css'
 
 import logo from './assets/img/EpicLogo-Vertical.png'
 
-// const electron = window.require('electron') //this disables viewing in browser but allows use of node api
+FocusStyleManager.onlyShowFocusOnTabs();
 
 class App extends React.Component {
   constructor(props) {
@@ -39,7 +40,7 @@ class App extends React.Component {
           <Sidebar
             sidebar={
                 <Menu>
-                    <Button className="minimizeSidebarButton" icon="caret-left" onClick={() => this.onSetSidebarOpen(false)}/>
+                    <Button className="minimizeSidebarButton" icon="caret-left" onClick={() => this.onSetSidebarOpen(false)} />
                     <img id="epicSidebarLogo" src={logo} alt="/"/>
                     <MenuDivider />
                     <MenuItem icon="dashboard" text="Overview" onClick={() => this.onSetPage('dashboard')} />
@@ -54,11 +55,12 @@ class App extends React.Component {
             styles={{ sidebar: { background: "white" } }}
           >
             <Button className="maximizeSidebarButton" icon="caret-right" onClick={() => this.onSetSidebarOpen(true)} />
+            {this.state.page === 'loading' && <LoadingPage />}
+            {this.state.page === 'dashboard' && <DashboardPage />}
+            {this.state.page === 'chart' && <ChartPage />}
+            {this.state.page === 'table' && <TablePage />}
+            {this.state.page === 'settings' && <SettingsPage />}
           </Sidebar>
-          {this.state.page === 'dashboard' && <DashboardPage />}
-          {this.state.page === 'chart' && <ChartPage />}
-          {this.state.page === 'table' && <TablePage />}
-          {this.state.page === 'settings' && <SettingsPage />}
         </div>
     );
   }

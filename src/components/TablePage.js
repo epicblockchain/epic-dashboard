@@ -4,6 +4,7 @@ import { Cell, Column, Table } from "@blueprintjs/table"
 
 import '@blueprintjs/table/lib/css/table.css'
 import './TablePage.css'
+import '@blueprintjs/core/lib/css/blueprint.css'
 
 const electron = window.require('electron')
 
@@ -236,7 +237,7 @@ class TablePage extends React.Component {
                 <div className="newMinersFormContainer">
                     <h4>{"Add new miners"}</h4>
                     <InputGroup placeholder="IP" />  
-                    <Button className="addMinerButton" icon="plus" text="Add Miner via IP"/>
+                    <Button className="addMinerButton" icon="plus" text="Add Miner via IP" onClick={console.log('todo')} />
                 </div>
             </div>
         );
