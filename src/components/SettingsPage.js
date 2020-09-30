@@ -26,11 +26,17 @@ class SettingsPage extends React.Component {
         this.walletCellRenderer = this.walletCellRenderer.bind(this);
         this.miningPoolCellRenderer = this.miningPoolCellRenderer.bind(this);
         this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
+
+        this.handleApplyToChange = this.handleApplyToChange.bind(this);
     }
 
     settingsGetterHandler(event, args){
         this.setState({miners: args})
         this.setState({pageState: 'loaded'})
+        const applyToArray = args.map(m => {
+            return (m.summary.status === 'completed');
+        });
+        this.setState({applyTo: applyToArray})
     }
 
     componentDidMount(){
@@ -86,9 +92,17 @@ class SettingsPage extends React.Component {
         }
     }
 
+    handleApplyToChange(e){
+        console.log(e.target.checked)
+        console.log(e.target.value)
+        var newApplyTo = [...this.state.applyTo];
+        newApplyTo[e.target.value] = e.target.checked;
+        this.setState({applyTo: newApplyTo});
+    }
+
     applyToCellRenderer(rowIndex: number){
         const isDisabled = this.state.miners[rowIndex].summary.status !== 'completed';
-        return <Cell><Switch defaultChecked={!isDisabled} disabled={isDisabled}/></Cell>
+        return <Cell><Switch value={rowIndex} defaultChecked={!isDisabled} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
     }
 
     render () {
