@@ -31,6 +31,9 @@ class TablePage extends React.Component {
         this.rejectedCellRenderer      = this.rejectedCellRenderer.bind(this);
         this.difficultyCellRenderer    = this.difficultyCellRenderer.bind(this);
         this.temperatureCellRenderer   = this.temperatureCellRenderer.bind(this);
+
+        this.addNewMiner = this.addNewMiner.bind(this);
+        this.handleNewMinerIpChange = this.handleNewMinerIpChange.bind(this);
     }
 
     tableGetterHandler(event, args){
@@ -204,6 +207,14 @@ class TablePage extends React.Component {
         }
     }
 
+    addNewMiner(){
+        electron.ipcRenderer.send('add-new-miners', [this.state.newMinerIP + ':4028'])
+    }
+
+    handleNewMinerIpChange(e){
+        this.setState({newMinerIP: e.target.value})
+    }
+
     componentDidMount(){
         electron.ipcRenderer.send('get-table');
         electron.ipcRenderer.on('get-table-reply', this.tableGetterHandler);
@@ -217,7 +228,7 @@ class TablePage extends React.Component {
         return (
             <div className="minersPageContainer">
                 <div className="minersTableContainer">
-                    <Table className="minersTable" enableRowHeader={false} numRows={5}>
+                    <Table className="minersTable" enableRowHeader={false} numRows={this.state.miners.length}>
                         <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>
                         <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>
                         <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>
@@ -236,8 +247,8 @@ class TablePage extends React.Component {
                 </div>
                 <div className="newMinersFormContainer">
                     <h4>{"Add new miners"}</h4>
-                    <InputGroup placeholder="IP" />  
-                    <Button className="addMinerButton" icon="plus" text="Add Miner via IP" onClick={console.log('todo')} />
+                    <InputGroup placeholder="IP" onChange={this.handleNewMinerIpChange}/>  
+                    <Button className="addMinerButton" icon="plus" text="Add Miner via IP" onClick={this.addNewMiner} />
                 </div>
             </div>
         );
