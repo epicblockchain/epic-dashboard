@@ -18,7 +18,8 @@ class SettingsPage extends React.Component {
         super(props)
         this.state = {
             pageState: 'loading',
-            miners: []
+            miners: [],
+            operatingMode: 'efficiency'
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
         this.ipCellRenderer = this.ipCellRenderer.bind(this);
@@ -28,6 +29,25 @@ class SettingsPage extends React.Component {
         this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
 
         this.handleApplyToChange = this.handleApplyToChange.bind(this);
+        //miningpool
+        this.handleMiningPoolChange = this.handleMiningPoolChange.bind(this);
+        //walletaddress
+        //operatingmode
+        this.handleOperatingModeChange = this.handleOperatingModeChange.bind(this);
+        //uniqueid
+        //password
+        //firmware
+    }
+
+    handleMiningPoolChange(e){
+        console.log(e.target.value)
+        this.setState({miningPool: e.target.value})
+    }
+
+    handleOperatingModeChange(e){
+        console.log('todo this doesnt work')
+        console.log(e.target.value)
+        this.setState({operatingMode: e.target.value})
     }
 
     settingsGetterHandler(event, args){
@@ -93,8 +113,6 @@ class SettingsPage extends React.Component {
     }
 
     handleApplyToChange(e){
-        console.log(e.target.checked)
-        console.log(e.target.value)
         var newApplyTo = [...this.state.applyTo];
         newApplyTo[e.target.value] = e.target.checked;
         this.setState({applyTo: newApplyTo});
@@ -118,9 +136,18 @@ class SettingsPage extends React.Component {
                 </div>
                 <div className="settingsTabsDiv">
                     <Tabs id="SettingsTabs">
-                        <Tab id="MiningPoolTab" title="Mining Pool" panel={<MiningPoolTab />} />
+                        <Tab id="MiningPoolTab"
+                            title="Mining Pool"
+                            panel={<MiningPoolTab />}
+                            miningpool={this.state.miningPool}
+                            onChangeMiningPool={this.handleMiningPoolChange} />
                         <Tab id="WalletAddressTab" title="Wallet Address" panel={<WalletAddressTab />} />
-                        <Tab id="OperatingModeTab" title="Operating Mode" panel={<OperatingModeTab />} />
+                        <Tab id="OperatingModeTab"
+                            title="Operating Mode"
+                            panel={<OperatingModeTab />}
+                            operatingmode={this.state.operatingMode}
+                            onChangeOperatingMode={this.handleOperatingModeChange}
+                        />
                         <Tab id="UniqueIDTab" title="Unique ID" panel={<UniqueIDTab />} />
                         <Tab id="PasswordTab" title="Password" panel={<PasswordTab />} />
                         <Tab id="FirmwareTab" title="Firmware" panel={<FirmwareTab />} />

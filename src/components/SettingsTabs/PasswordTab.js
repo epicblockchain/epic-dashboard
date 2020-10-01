@@ -10,6 +10,8 @@ class PasswordTab extends React.Component {
             <div>
                 <FormGroup>
                     <InputGroup className="inputClass" placeholder="New password" type="password"/>
+                    <InputGroup className="inputClass" placeholder="Verify New password" type="password"/>
+                    <div className="inputSpacer" />
                     <InputGroup className="inputClass" placeholder="Old password" type="password"/>
                     <Button>Apply</Button>
                 </FormGroup>
