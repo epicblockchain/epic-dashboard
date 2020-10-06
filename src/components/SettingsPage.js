@@ -33,13 +33,14 @@ class SettingsPage extends React.Component {
         this.handleMiningPoolChange = this.handleMiningPoolChange.bind(this);
         //walletaddress
         //operatingmode
-        this.handleOperatingModeChange = this.handleOperatingModeChange.bind(this);
+        // this.handleOperatingModeChange = this.handleOperatingModeChange.bind(this);
         //uniqueid
         //password
         //firmware
     }
 
     handleMiningPoolChange(e){
+        console.log('reached (delete me)')
         console.log(e.target.value)
         this.setState({miningPool: e.target.value})
     }
@@ -140,14 +141,11 @@ class SettingsPage extends React.Component {
                             title="Mining Pool"
                             panel={<MiningPoolTab />}
                             miningpool={this.state.miningPool}
-                            onChangeMiningPool={this.handleMiningPoolChange} />
+                            changeminingpool={this.handleMiningPoolChange} />
                         <Tab id="WalletAddressTab" title="Wallet Address" panel={<WalletAddressTab />} />
                         <Tab id="OperatingModeTab"
                             title="Operating Mode"
-                            panel={<OperatingModeTab />}
-                            operatingmode={this.state.operatingMode}
-                            onChangeOperatingMode={this.handleOperatingModeChange}
-                        />
+                            panel={<OperatingModeTab />} />
                         <Tab id="UniqueIDTab" title="Unique ID" panel={<UniqueIDTab />} />
                         <Tab id="PasswordTab" title="Password" panel={<PasswordTab />} />
                         <Tab id="FirmwareTab" title="Firmware" panel={<FirmwareTab />} />

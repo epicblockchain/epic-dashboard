@@ -34,6 +34,7 @@ class TablePage extends React.Component {
 
         this.addNewMiner = this.addNewMiner.bind(this);
         this.handleNewMinerIpChange = this.handleNewMinerIpChange.bind(this);
+        this.loadPreviousMiners = this.loadPreviousMiners.bind(this);
     }
 
     tableGetterHandler(event, args){
@@ -215,6 +216,10 @@ class TablePage extends React.Component {
         this.setState({newMinerIP: e.target.value})
     }
 
+    loadPreviousMiners(){
+        electron.ipcRenderer.send('load-previous-miners');
+    }
+
     componentDidMount(){
         electron.ipcRenderer.send('get-table');
         electron.ipcRenderer.on('get-table-reply', this.tableGetterHandler);
@@ -249,6 +254,7 @@ class TablePage extends React.Component {
                     <h4>{"Add new miners"}</h4>
                     <InputGroup placeholder="IP" onChange={this.handleNewMinerIpChange}/>  
                     <Button className="addMinerButton" icon="plus" text="Add Miner via IP" onClick={this.addNewMiner} />
+                    <Button className="loadMinerButton" icon="bring-data" text="Load previously added miners" onClick={this.loadPreviousMiners} />
                 </div>
             </div>
         );

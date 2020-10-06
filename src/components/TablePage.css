@@ -20,5 +20,9 @@
 
 .addMinerButton {
     margin-top: 3px;
-    -webkit-app-region: no-drag;
+}
+
+
+.loadMinerButton {
+    margin-top: 3px;
 }
