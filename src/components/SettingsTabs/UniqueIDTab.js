@@ -8,9 +8,14 @@ class UniqueIDTab extends React.Component {
     render() {
         return (
             <div>
-                <Switch defaultChecked={true}>Append Unique ID to Worker Name</Switch>
-                <InputGroup className="inputClass" placeholder="Password" type="password" />
-                <Button>Apply</Button>
+                <Switch defaultChecked={true}
+                        onChange={this.props.updateAppendUniqueID}    
+                    >Append Unique ID to Worker Name</Switch>
+                <InputGroup className="inputClass"
+                            placeholder="Password"
+                            type="password"
+                            onChange={this.props.updatePassword}/>
+                <Button onClick={this.props.applyClicked.bind(this, 'unique-id')}>Apply</Button>
             </div>
         );
     }

@@ -7,19 +7,20 @@ class OperatingModeTab extends React.Component {
     
     render() {
         return (
-            <p>temp</p>
-        )
-        return (
             <div>
                 <RadioGroup
                     label="Operating Mode"
                     inline={true}
+                    onChange={this.props.updateOperatingMode}
                 >
                     <Radio label="Normal" value="normal" />
                     <Radio label="Efficiency" value="efficiency" />
                 </RadioGroup>
-                <InputGroup className="inputClass" placeholder="Password" type="password"/>
-                <Button>Apply</Button>
+                <InputGroup className="inputClass"
+                            placeholder="Password"
+                            type="password"
+                            onChange={this.props.updatePassword}/>
+                <Button onClick={this.props.applyClicked.bind(this, 'operating-mode')}>Apply</Button>
             </div>
         );
     }
