@@ -29,6 +29,8 @@ class SettingsPage extends React.Component {
         this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
 
         this.handleApplyToChange = this.handleApplyToChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleApplyClicked = this.handleApplyClicked.bind(this);
         //miningpool
         this.handleMiningPoolChange = this.handleMiningPoolChange.bind(this);
         //walletaddress
@@ -37,36 +39,6 @@ class SettingsPage extends React.Component {
         //uniqueid
         //password
         //firmware
-    }
-
-    handleMiningPoolChange(e){
-        console.log('reached (delete me)')
-        console.log(e.target.value)
-        this.setState({miningPool: e.target.value})
-    }
-
-    handleOperatingModeChange(e){
-        console.log('todo this doesnt work')
-        console.log(e.target.value)
-        this.setState({operatingMode: e.target.value})
-    }
-
-    settingsGetterHandler(event, args){
-        this.setState({miners: args})
-        this.setState({pageState: 'loaded'})
-        const applyToArray = args.map(m => {
-            return (m.summary.status === 'completed');
-        });
-        this.setState({applyTo: applyToArray})
-    }
-
-    componentDidMount(){
-        electron.ipcRenderer.send('get-settings');
-        electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
-    }
-
-    componentWillUnmount(){
-        electron.ipcRenderer.removeListener('get-settings-reply', this.settingsGetterHandler);
     }
 
     ipCellRenderer(rowIndex: number){
@@ -124,6 +96,42 @@ class SettingsPage extends React.Component {
         return <Cell><Switch value={rowIndex} defaultChecked={!isDisabled} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
     }
 
+    handleMiningPoolChange(e){
+        this.setState({miningPool: e.target.value})
+    }
+
+    handlePasswordChange(e){
+        this.setState({password: e.target.value})
+    }
+
+    handleApplyClicked(arg, e){
+        console.log('apply clicked for ' + arg)
+    }
+
+    handleOperatingModeChange(e){
+        console.log('todo this doesnt work')
+        console.log(e.target.value)
+        this.setState({operatingMode: e.target.value})
+    }
+
+    settingsGetterHandler(event, args){
+        this.setState({miners: args})
+        this.setState({pageState: 'loaded'})
+        const applyToArray = args.map(m => {
+            return (m.summary.status === 'completed');
+        });
+        this.setState({applyTo: applyToArray})
+    }
+
+    componentDidMount(){
+        electron.ipcRenderer.send('get-settings');
+        electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
+    }
+
+    componentWillUnmount(){
+        electron.ipcRenderer.removeListener('get-settings-reply', this.settingsGetterHandler);
+    }
+
     render () {
         return (
             <div className="settingsContainer">
@@ -139,13 +147,17 @@ class SettingsPage extends React.Component {
                     <Tabs id="SettingsTabs">
                         <Tab id="MiningPoolTab"
                             title="Mining Pool"
-                            panel={<MiningPoolTab />}
-                            miningpool={this.state.miningPool}
-                            changeminingpool={this.handleMiningPoolChange} />
-                        <Tab id="WalletAddressTab" title="Wallet Address" panel={<WalletAddressTab />} />
-                        <Tab id="OperatingModeTab"
-                            title="Operating Mode"
-                            panel={<OperatingModeTab />} />
+                            panel={<MiningPoolTab
+                                updateMiningPool={this.handleMiningPoolChange}
+                                updatePassword={this.handlePasswordChange}
+                                applyClicked={this.handleApplyClicked}
+                                />
+                            }
+                        />
+                        <Tab id="WalletAddressTab" title="Wallet Address" panel={<WalletAddressTab
+                                change
+                            />} />
+                        <Tab id="OperatingModeTab" title="Operating Mode" panel={<OperatingModeTab />} />
                         <Tab id="UniqueIDTab" title="Unique ID" panel={<UniqueIDTab />} />
                         <Tab id="PasswordTab" title="Password" panel={<PasswordTab />} />
                         <Tab id="FirmwareTab" title="Firmware" panel={<FirmwareTab />} />

@@ -9,11 +9,13 @@ class MiningPoolTab extends React.Component {
         return (
             <div>
                 <InputGroup className="inputClass"
-                        placeholder="Mining pool"
-                        value={this.props.miningpool}
-                        onChange={this.props.changeminingpool} />
-                <InputGroup className="inputClass" placeholder="Password" type="password"/>
-                <Button>Apply</Button>
+                        placeholder="Mining Pool"
+                        onChange={this.props.updateMiningPool} />
+                <InputGroup className="inputClass"
+                            placeholder="Password"
+                            type="password"
+                            onChange={this.props.updatePassword}/>
+                <Button onClick={this.props.applyClicked.bind(this, 'mining-pool')}>Apply</Button>
             </div>
         );
     }

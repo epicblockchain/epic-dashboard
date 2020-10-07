@@ -216,6 +216,10 @@ class TablePage extends React.Component {
         this.setState({newMinerIP: e.target.value})
     }
 
+    saveCurrentMiners(){
+        electron.ipcRenderer.send('save-current-miners');
+    }
+
     loadPreviousMiners(){
         electron.ipcRenderer.send('load-previous-miners');
     }
@@ -254,6 +258,7 @@ class TablePage extends React.Component {
                     <h4>{"Add new miners"}</h4>
                     <InputGroup placeholder="IP" onChange={this.handleNewMinerIpChange}/>  
                     <Button className="addMinerButton" icon="plus" text="Add Miner via IP" onClick={this.addNewMiner} />
+                    <Button className="saveMinerButton" icon="floppy-disk" text="Save current miners" onClick={this.saveCurrentMiners} />
                     <Button className="loadMinerButton" icon="bring-data" text="Load previously added miners" onClick={this.loadPreviousMiners} />
                 </div>
             </div>
