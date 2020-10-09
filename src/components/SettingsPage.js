@@ -7,6 +7,7 @@ import OperatingModeTab from './SettingsTabs/OperatingModeTab'
 import UniqueIDTab from './SettingsTabs/UniqueIDTab'
 import FirmwareTab from './SettingsTabs/FirmwareTab'
 import PasswordTab from './SettingsTabs/PasswordTab'
+import RebootTab from './SettingsTabs/RebootTab'
 import '@blueprintjs/core/lib/css/blueprint.css'
 import '@blueprintjs/table/lib/css/table.css'
 import './SettingsPage.css'
@@ -45,6 +46,8 @@ class SettingsPage extends React.Component {
         //firmware
         this.handleReuseHardwareConfigChange = this.handleReuseHardwareConfigChange.bind(this)
         this.handleFirmwareFileChange = this.handleFirmwareFileChange.bind(this)
+        //reboot
+        this.handleReboot = this.handleReboot.bind(this)
     }
 
     ipCellRenderer(rowIndex: number){
@@ -102,6 +105,13 @@ class SettingsPage extends React.Component {
         return <Cell><Switch value={rowIndex} defaultChecked={!isDisabled} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
     }
 
+    handleApplyClicked(arg, e){
+        electron.ipcRenderer.send('post-settings', {
+            state: this.state,
+            tab: arg
+        });
+    }
+
     handleMiningPoolChange(e){
         this.setState({miningPool: e.target.value})
     }
@@ -110,10 +120,6 @@ class SettingsPage extends React.Component {
         this.setState({password: e.target.value})
     }
 
-    handleApplyClicked(arg, e){
-        console.log('todo: apply clicked for ' + arg)
-        console.log(this.state)
-    }
 
     handleOperatingModeChange(e){
         this.setState({operatingMode: e.target.value})
@@ -163,6 +169,10 @@ class SettingsPage extends React.Component {
 
     handleFirmwareFileChange(e){
         this.setState({swuFilepath: e.target.value})
+    }
+
+    handleReboot(e){
+        this.setState({rebootDelay: e.target.value})
     }
 
     render () {
@@ -219,6 +229,13 @@ class SettingsPage extends React.Component {
                              panel={<FirmwareTab
                                     updateFirmwareFile={this.handleFirmwareFileChange}
                                     updateReuseHardwareConfig={this.handleReuseHardwareConfigChange}
+                                    updatePassword={this.handlePasswordChange}
+                                    applyClicked={this.handleApplyClicked}
+                                 />} />
+                        <Tab id="RebootTab"
+                             title="Reboot"
+                             panel={<RebootTab
+                                    updateReboot={this.handleReboot}
                                     updatePassword={this.handlePasswordChange}
                                     applyClicked={this.handleApplyClicked}
                                  />} />
