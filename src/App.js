@@ -30,10 +30,10 @@ class App extends React.Component {
   }
 
   handleForceRender(){
-    this.setState({state: this.state})
     if (this.state.page === 'loading'){
         this.setState({page: 'dashboard'})
     }
+    this.setState({state: this.state})
   }
 
   componentDidMount(){
