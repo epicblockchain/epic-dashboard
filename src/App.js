@@ -15,6 +15,8 @@ import logo from './assets/img/EpicLogo-Vertical.png'
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
+const electron = window.require('electron')
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -24,6 +26,22 @@ class App extends React.Component {
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.setPage = this.onSetPage.bind(this);
+    this.handleForceRender = this.handleForceRender.bind(this)
+  }
+
+  handleForceRender(){
+    this.setState({state: this.state})
+    if (this.state.page === 'loading'){
+        this.setState({page: 'dashboard'})
+    }
+  }
+
+  componentDidMount(){
+    electron.ipcRenderer.on('force-render', this.handleForceRender)
+  }
+
+  componentWillUnmount(){
+    electron.ipcRenderer.removeListener('force-render', this.handleForceRender)
   }
  
   onSetSidebarOpen(open) {

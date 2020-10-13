@@ -8,6 +8,7 @@ class MiningPoolTab extends React.Component {
     render() {
         return (
             <div>
+                <p>stratum+tcp://</p>
                 <InputGroup className="inputClass"
                         placeholder="Mining Pool"
                         onChange={this.props.updateMiningPool} />

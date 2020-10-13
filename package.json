@@ -21,6 +21,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-sidebar": "^3.0.2",
+    "sha256-file": "^1.0.0",
     "wait-on": "^5.2.0"
   },
   "scripts": {

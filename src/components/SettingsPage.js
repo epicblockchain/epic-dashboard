@@ -19,6 +19,9 @@ class SettingsPage extends React.Component {
         super(props)
         this.state = {
             pageState: 'loading',
+            swuFilepath: '',
+            filePathSelected: false,
+            reuseHardwareConfig: true,
             miners: []
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
@@ -167,8 +170,10 @@ class SettingsPage extends React.Component {
         this.setState({reuseHardwareConfig: e.target.checked})
     }
 
-    handleFirmwareFileChange(e){
-        this.setState({swuFilepath: e.target.value})
+    handleFirmwareFileChange(file){
+        this.setState({swuFilepath: file})
+        this.setState({filePathSelected: true})
+        console.log(file)
     }
 
     handleReboot(e){
@@ -228,6 +233,7 @@ class SettingsPage extends React.Component {
                              title="Firmware"
                              panel={<FirmwareTab
                                     updateFirmwareFile={this.handleFirmwareFileChange}
+                                    swuFilepath={this.state.swuFilepath}
                                     updateReuseHardwareConfig={this.handleReuseHardwareConfigChange}
                                     updatePassword={this.handlePasswordChange}
                                     applyClicked={this.handleApplyClicked}
