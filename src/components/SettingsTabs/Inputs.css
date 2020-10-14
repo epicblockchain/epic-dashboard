@@ -5,3 +5,29 @@
 .inputSpacer {
     margin-bottom: 20px;
 }
+
+.formRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.workerPeriod {
+    position: relative;
+    top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.walletAddress {
+    width: 80%;
+}
+
+.stratumText {
+    position: relative;
+    top: 6px;
+    margin-right: 10px;
+}
+
+.miningPool {
+    width: 100%
+}

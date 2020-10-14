@@ -8,12 +8,15 @@ class WalletAddressTab extends React.Component {
     render() {
         return (
             <div>
-                <InputGroup className="inputClass"
-                            placeholder="Wallet address"
-                            onChange={this.props.updateWalletAddress}/>
-                <InputGroup className="inputClass"
-                            placeholder="Worker name..."
-                            onChange={this.props.updateWorkerName}/>
+                <div className="formRow">
+                    <InputGroup className="inputClass walletAddress"
+                                placeholder="Wallet address"
+                                onChange={this.props.updateWalletAddress}/>
+                    <p className="workerPeriod">{'.'}</p>
+                    <InputGroup className="inputClass workerName"
+                                placeholder="Worker name..."
+                                onChange={this.props.updateWorkerName}/>
+                </div>
                 <InputGroup className="inputClass"
                             placeholder="Password"
                             type="password"

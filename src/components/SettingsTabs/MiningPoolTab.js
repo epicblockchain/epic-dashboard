@@ -8,10 +8,12 @@ class MiningPoolTab extends React.Component {
     render() {
         return (
             <div>
-                <p>stratum+tcp://</p>
-                <InputGroup className="inputClass"
-                        placeholder="Mining Pool"
-                        onChange={this.props.updateMiningPool} />
+                <div className="formRow">
+                    <p className="stratumText">stratum+tcp://</p>
+                    <InputGroup className="inputClass miningPool"
+                            placeholder="Mining Pool"
+                            onChange={this.props.updateMiningPool} />
+                </div>
                 <InputGroup className="inputClass"
                             placeholder="Password"
                             type="password"
