@@ -8,6 +8,7 @@ import UniqueIDTab from './SettingsTabs/UniqueIDTab'
 import FirmwareTab from './SettingsTabs/FirmwareTab'
 import PasswordTab from './SettingsTabs/PasswordTab'
 import RebootTab from './SettingsTabs/RebootTab'
+import HardwareConfigTab from './SettingsTabs/HardwareConfigTab'
 import '@blueprintjs/core/lib/css/blueprint.css'
 import '@blueprintjs/table/lib/css/table.css'
 import './SettingsPage.css'
@@ -22,6 +23,7 @@ class SettingsPage extends React.Component {
             swuFilepath: '',
             filePathSelected: false,
             reuseHardwareConfig: true,
+            appendUniqueID: true,
             miners: []
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
@@ -213,6 +215,7 @@ class SettingsPage extends React.Component {
                              panel={<OperatingModeTab
                                 updateOperatingMode={this.handleOperatingModeChange}
                                 updatePassword={this.handlePasswordChange}
+                                 selectedValue={this.state.operatingMode}
                                 applyClicked={this.handleApplyClicked}/>} />
                         <Tab id="UniqueIDTab"
                             title="Unique ID"
@@ -245,6 +248,13 @@ class SettingsPage extends React.Component {
                                     updatePassword={this.handlePasswordChange}
                                     applyClicked={this.handleApplyClicked}
                                  />} />
+                        <Tab id="HWConfigTab"
+                            title="Reset HW Config"
+                            panel={
+                                <HardwareConfigTab
+                                updatePassword={this.handlePasswordChange}
+                                applyClicked={this.handleApplyClicked}/>
+                            }/>
                     </Tabs>
                 </div>
             </div>

@@ -141,7 +141,7 @@ Format of request body:
 }
 ```
 **/hwconfig**
-Reinitialize the hardware config.
+Recalibrate the miner.
 param should be set to true.
 Format of request body:
 ```
