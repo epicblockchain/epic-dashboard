@@ -1,0 +1,28 @@
+.minersPageContainer {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.minersTableContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.minersTable {
+    margin-top: 30px;
+}
+
+.newMinersFormContainer {
+    margin-right: 50%;
+}
+
+.addMinerButton {
+    margin-top: 3px;
+}
+
+
+.loadMinerButton {
+    margin-top: 3px;
+}

@@ -7,7 +7,7 @@ Clone this repo
 ```
 git clone <this repo>
 npm install
-npm start
+npm run dev
 ```
 A window should open with the app running
 ## API
@@ -141,7 +141,7 @@ Format of request body:
 }
 ```
 **/hwconfig**
-Reinitialize the hardware config.
+Recalibrate the miner.
 param should be set to true.
 Format of request body:
 ```
