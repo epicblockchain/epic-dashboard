@@ -7,7 +7,7 @@ Clone this repo
 ```
 git clone <this repo>
 npm install
-npm start
+npm run dev
 ```
 A window should open with the app running
 ## API
