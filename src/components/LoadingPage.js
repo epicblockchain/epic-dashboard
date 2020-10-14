@@ -2,11 +2,13 @@ import React from 'react'
 
 import { Spinner } from '@blueprintjs/core'
 
+import './LoadingPage.css'
+
 class LoadingPage extends React.Component {
     
     render(){
         return (
-            <Spinner size={200} />
+            <Spinner className="spinner" size={200} />
         )
     }
 

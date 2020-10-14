@@ -25,3 +25,7 @@ yarn-error.log*
 *.swp
 todo
 ipaddr.txt
+
+/ePIC-Dashboard-*
+*.zip
+checksums.txt
