@@ -1,17 +1,15 @@
-.dashboardCardContainer {
+.flex-grid {
     display: flex;
-    margin: 15%;
-    flex-wrap: wrap;
-    justify-content: center;
 }
 
-.dashboardRowContainer {
-    display: flex;
-    width: 100%;
-    justify-content: space-evenly;
+.col {
+    flex: 1;
 }
 
-.dashboardRowContainer * {
-    margin: 10px;
-    justify-content: center;
+.dashboardCards {
+    margin: 15%
+}
+
+.dashboardCard {
+    margin: 20px;
 }
