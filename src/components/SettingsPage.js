@@ -24,6 +24,7 @@ class SettingsPage extends React.Component {
             filePathSelected: false,
             reuseHardwareConfig: true,
             appendUniqueID: true,
+            operatingMode: 'normal',
             miners: []
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
@@ -215,7 +216,7 @@ class SettingsPage extends React.Component {
                              panel={<OperatingModeTab
                                 updateOperatingMode={this.handleOperatingModeChange}
                                 updatePassword={this.handlePasswordChange}
-                                 selectedValue={this.state.operatingMode}
+                                operatingMode={this.state.operatingMode}
                                 applyClicked={this.handleApplyClicked}/>} />
                         <Tab id="UniqueIDTab"
                             title="Unique ID"
@@ -249,7 +250,7 @@ class SettingsPage extends React.Component {
                                     applyClicked={this.handleApplyClicked}
                                  />} />
                         <Tab id="HWConfigTab"
-                            title="Reset HW Config"
+                            title="Recalibrate"
                             panel={
                                 <HardwareConfigTab
                                 updatePassword={this.handlePasswordChange}

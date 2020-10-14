@@ -12,7 +12,7 @@ class HardwareConfigTab extends React.Component {
                             placeholder="Password"
                             type="password"
                             onChange={this.props.updatePassword}/>
-                <Button onClick={this.props.applyClicked.bind(this, 'hwconfig')}>Reinitialize Hardware Configuration</Button>
+                <Button onClick={this.props.applyClicked.bind(this, 'hwconfig')}>Recalibrate Hardware</Button>
             </div>
         );
     }

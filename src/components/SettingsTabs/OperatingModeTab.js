@@ -5,6 +5,7 @@ import "./Inputs.css"
 
 class OperatingModeTab extends React.Component {
     
+
     render() {
         return (
             <div>
@@ -12,6 +13,7 @@ class OperatingModeTab extends React.Component {
                     label="Operating Mode"
                     inline={true}
                     onChange={this.props.updateOperatingMode}
+                    selectedValue={this.props.operatingMode}
                 >
                     <Radio label="Normal" value="normal" />
                     <Radio label="Efficiency" value="efficiency" />
@@ -24,6 +26,7 @@ class OperatingModeTab extends React.Component {
             </div>
         );
     }
+
 }
 
 export default OperatingModeTab;
