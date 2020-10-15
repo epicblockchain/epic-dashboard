@@ -132,12 +132,14 @@ class SettingsPage extends React.Component {
     }
 
     settingsGetterHandler(event, args){
-        this.setState({miners: args})
-        this.setState({pageState: 'loaded'})
-        const applyToArray = args.map(m => {
-            return (m.summary.status === 'completed');
-        });
-        this.setState({applyTo: applyToArray})
+        if (!this.state.applyTo) {
+            this.setState({miners: args})
+            this.setState({pageState: 'loaded'})
+            const applyToArray = args.map(m => {
+                return (m.summary.status === 'completed');
+            });
+            this.setState({applyTo: applyToArray})
+        }
     }
 
     componentDidMount(){
