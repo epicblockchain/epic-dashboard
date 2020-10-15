@@ -25,7 +25,8 @@ class SettingsPage extends React.Component {
             reuseHardwareConfig: true,
             appendUniqueID: true,
             operatingMode: 'normal',
-            miners: []
+            miners: [],
+            ignoreUpdates: {}
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
         this.ipCellRenderer = this.ipCellRenderer.bind(this);
@@ -108,7 +109,7 @@ class SettingsPage extends React.Component {
 
     applyToCellRenderer(rowIndex: number){
         const isDisabled = this.state.miners[rowIndex].summary.status !== 'completed';
-        return <Cell><Switch value={rowIndex} defaultChecked={!isDisabled} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
+        return <Cell><Switch value={rowIndex} defaultChecked={false} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
     }
 
     handleApplyClicked(arg, e){
@@ -132,14 +133,29 @@ class SettingsPage extends React.Component {
     }
 
     settingsGetterHandler(event, args){
-        if (!this.state.applyTo) {
-            this.setState({miners: args})
-            this.setState({pageState: 'loaded'})
-            const applyToArray = args.map(m => {
-                return (m.summary.status === 'completed');
-            });
-            this.setState({applyTo: applyToArray})
-        }
+        console.log(this.state.applyTo)
+        console.log(this.state.ignoreUpdates)
+        console.log(' ')
+        this.setState({miners: args})
+        this.setState({pageState: 'loaded'})
+        let newIgnoreUpdates = this.state.ignoreUpdates;
+        const applyToArray = args.map((m, i) => {
+            if (this.state.ignoreUpdates[m.ip]) {
+               return this.state.applyTo[i]; 
+            }
+            if (m.summary.status === 'completed') {
+                newIgnoreUpdates[m.ip] = true;
+                return false;
+            }
+            if (this.state.applyTo) {
+                return this.state.applyTo[i]
+            } else {
+                //miner not loaded case
+                return false;
+            }
+        });
+        this.setState({ignoreUpdates: newIgnoreUpdates})
+        this.setState({applyTo: applyToArray})
     }
 
     componentDidMount(){
