@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, InputGroup } from "@blueprintjs/core"
 import { Cell, Column, Table } from "@blueprintjs/table"
-import { BadToaster, GoodToaster } from './Toasters'
+import { BadToaster } from './Toasters'
 
 import '@blueprintjs/table/lib/css/table.css'
 import './TablePage.css'
@@ -250,7 +250,10 @@ class TablePage extends React.Component {
         return (
             <div className="minersPageContainer">
                 <div className="minersTableContainer">
-                    <Table className="minersTable" enableRowHeader={false} numRows={this.state.miners.length}>
+                    <Table className="minersTable"
+                            enableRowHeader={false}
+                            numRows={this.state.miners.length}
+                            enableColumnReordering={true}>
                         <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>
                         <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>
                         <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>

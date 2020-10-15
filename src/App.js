@@ -7,7 +7,7 @@ import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
 import LoadingPage from './components/LoadingPage'
 import { Button, FocusStyleManager, Menu, MenuItem, MenuDivider } from '@blueprintjs/core'
-import { BadToaster, GoodToaster } from './components/Toasters'
+import { BadToaster, GoodToaster, WarningToaster } from './components/Toasters'
 
 import '@blueprintjs/core/lib/css/blueprint.css'
 import './App.css'
@@ -49,6 +49,11 @@ class App extends React.Component {
             message: args.message,
             timeout: 0,
             intent: 'danger'
+        })
+    } else if (args.type === 'warning') {
+        WarningToaster.show({
+            message: args.message,
+            intent: 'warning'
         })
     }
   }
