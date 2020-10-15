@@ -6,7 +6,8 @@ import ChartPage from './components/ChartPage'
 import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
 import LoadingPage from './components/LoadingPage'
-import { Button, FocusStyleManager, Menu, MenuItem, MenuDivider, Position, Toaster } from '@blueprintjs/core'
+import { Button, FocusStyleManager, Menu, MenuItem, MenuDivider } from '@blueprintjs/core'
+import { BadToaster, GoodToaster } from './components/Toasters'
 
 import '@blueprintjs/core/lib/css/blueprint.css'
 import './App.css'
@@ -17,15 +18,6 @@ FocusStyleManager.onlyShowFocusOnTabs();
 
 const electron = window.require('electron')
 
-const GoodToaster = Toaster.create({
-    className: "good-toaster",
-    position: Position.TOP_RIGHT
-});
-
-const BadToaster = Toaster.create({
-    className: "bad-toaster",
-    position: Position.TOP_RIGHT
-});
 
 class App extends React.Component {
   constructor(props) {
@@ -44,7 +36,6 @@ class App extends React.Component {
     if (this.state.page === 'loading'){
         this.setState({page: 'dashboard'})
     }
-    this.setState({state: this.state})
   }
 
   toastHandler(e, args){
@@ -63,12 +54,12 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    electron.ipcRenderer.on('force-render', this.handleForceRender)
+    electron.ipcRenderer.on('stop-loading', this.handleForceRender)
     electron.ipcRenderer.on('toast', this.toastHandler)
   }
 
   componentWillUnmount(){
-    electron.ipcRenderer.removeListener('force-render', this.handleForceRender)
+    electron.ipcRenderer.removeListener('stop-loading', this.handleForceRender)
     electron.ipcRenderer.removeListener('toast', this.toastHandler)
   }
  

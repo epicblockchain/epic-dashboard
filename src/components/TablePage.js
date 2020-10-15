@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, InputGroup } from "@blueprintjs/core"
 import { Cell, Column, Table } from "@blueprintjs/table"
+import { BadToaster, GoodToaster } from './Toasters'
 
 import '@blueprintjs/table/lib/css/table.css'
 import './TablePage.css'
@@ -209,7 +210,19 @@ class TablePage extends React.Component {
     }
 
     addNewMiner(){
-        electron.ipcRenderer.send('add-new-miners', [this.state.newMinerIP + ':4028'])
+        if (this.state.newMinerIP){
+            if (this.state.newMinerIP.includes(':')){
+                electron.ipcRenderer.send('add-new-miners', [this.state.newMinerIP])
+            } else {
+                electron.ipcRenderer.send('add-new-miners', [this.state.newMinerIP + ':4028'])
+            }
+        } else {
+            BadToaster.show({
+                message: "Please provide an IP",
+                timeout: 0,
+                intent: 'danger'
+            })
+        }
     }
 
     handleNewMinerIpChange(e){

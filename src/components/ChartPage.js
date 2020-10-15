@@ -15,7 +15,10 @@ class ChartPage extends React.Component {
         super(props);
         this.state = {
             pageState: 'loading',
-            chartData: []
+            chartData: [],
+            firstAnimation: true,
+            scrollX: null,
+            scrollY: null
         }
         this.chartGetterHandler = this.chartGetterHandler.bind(this);
     }
@@ -34,6 +37,12 @@ class ChartPage extends React.Component {
         series.name = "Hashrate (TH/s)"
         series.dataFields.valueY = "hashrate"
         series.dataFields.dateX = "time"
+        if (this.state.firstAnimation) {
+            this.setState({firstAnimation: false})
+        } else {
+            series.showOnInit = false // so that live updating data doesnt look bad
+            chart.showOnInit = false
+        }
         chart.scrollbarX = new am4core.Scrollbar();
         chart.scrollbarY = new am4core.Scrollbar();
         //hide the logo for now
