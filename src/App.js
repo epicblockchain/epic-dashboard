@@ -88,8 +88,8 @@ class App extends React.Component {
                     <MenuDivider />
                     <MenuItem icon="dashboard" text="Overview" onClick={() => this.onSetPage('dashboard')} />
                     <MenuItem icon="chart" text="Hashrate Chart" onClick={() => this.onSetPage('chart')} />
-                    <MenuItem icon="th" text="Miners" onClick={() => this.onSetPage('table')} />
-                    <MenuItem icon="cog" text="Settings" onClick={() => this.onSetPage('settings')} />
+                    <MenuItem icon="th" text="Miner List" onClick={() => this.onSetPage('table')} />
+                    <MenuItem icon="cog" text="Miner Settings" onClick={() => this.onSetPage('settings')} />
                 </Menu>
             }
             open={this.state.sidebarOpen}

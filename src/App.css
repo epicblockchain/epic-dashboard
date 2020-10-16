@@ -3,7 +3,7 @@
 }
 
 .minimizeSidebarButton {
-  float: right;
+  float: left;
 }
 
 .maximizeSidebarButton {
@@ -12,3 +12,7 @@
     left: 5px;
     top: 5px;
 }
+
+/* 1b1d4d
+   ffc107
+   */
