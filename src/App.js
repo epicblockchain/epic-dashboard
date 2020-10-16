@@ -6,7 +6,7 @@ import ChartPage from './components/ChartPage'
 import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
 import LoadingPage from './components/LoadingPage'
-import { Button, FocusStyleManager, Menu, MenuItem, MenuDivider } from '@blueprintjs/core'
+import { Button, Classes, Dialog, FocusStyleManager, Menu, MenuDivider, MenuItem} from '@blueprintjs/core'
 import { EpicToaster } from './components/Toasters'
 
 import '@blueprintjs/core/lib/css/blueprint.css'
@@ -24,15 +24,19 @@ class App extends React.Component {
     super(props);
     this.state = {
       sidebarOpen: true,
-      page: 'loading'
+      page: 'loading',
+      isVpnDialogOpen: false
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.setPage = this.onSetPage.bind(this);
-    this.handleForceRender = this.handleForceRender.bind(this)
+    this.handleStopLoading = this.handleStopLoading.bind(this)
     this.toastHandler = this.toastHandler.bind(this)
+
+    this.handleVpnDialogDismiss = this.handleVpnDialogDismiss.bind(this);
+    this.handleMoveToMinerList = this.handleMoveToMinerList.bind(this);
   }
 
-  handleForceRender(){
+  handleStopLoading(){
     if (this.state.page === 'loading'){
         this.setState({page: 'dashboard'})
     }
@@ -60,12 +64,17 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    electron.ipcRenderer.on('stop-loading', this.handleForceRender)
+    electron.ipcRenderer.on('stop-loading', this.handleStopLoading)
     electron.ipcRenderer.on('toast', this.toastHandler)
+    setTimeout(function(){
+        if ( this.state.page === 'loading' ){
+            this.setState({isVpnDialogOpen: true});
+        }
+    }.bind(this), 10000);
   }
 
   componentWillUnmount(){
-    electron.ipcRenderer.removeListener('stop-loading', this.handleForceRender)
+    electron.ipcRenderer.removeListener('stop-loading', this.handleStopLoading)
     electron.ipcRenderer.removeListener('toast', this.toastHandler)
   }
  
@@ -76,34 +85,63 @@ class App extends React.Component {
   onSetPage(newPage) {
     this.setState({page: newPage})
   }
+
+  handleMoveToMinerList(){
+    this.setState({isVpnDialogOpen: false})
+    this.setState({page: 'table'})
+  }
+
+  handleVpnDialogDismiss(){
+    this.setState({isVpnDialogOpen: false});
+  }
  
   render() {
+
     return (
       <div>
-          <Sidebar
-            sidebar={
-                <Menu>
-                    <Button className="minimizeSidebarButton" icon="caret-left" onClick={() => this.onSetSidebarOpen(false)} />
-                    <img id="epicSidebarLogo" src={logo} alt="/"/>
-                    <MenuDivider />
-                    <MenuItem icon="dashboard" text="Overview" onClick={() => this.onSetPage('dashboard')} />
-                    <MenuItem icon="chart" text="Hashrate Chart" onClick={() => this.onSetPage('chart')} />
-                    <MenuItem icon="th" text="Miner List" onClick={() => this.onSetPage('table')} />
-                    <MenuItem icon="cog" text="Miner Settings" onClick={() => this.onSetPage('settings')} />
-                </Menu>
-            }
-            open={this.state.sidebarOpen}
-            className="sidebar"
-            onSetOpen={this.onSetSidebarOpen}
-            styles={{ sidebar: { background: "white" } }}
-          >
-            <Button className="maximizeSidebarButton" icon="caret-right" onClick={() => this.onSetSidebarOpen(true)} />
-            {this.state.page === 'loading' && <LoadingPage />}
-            {this.state.page === 'dashboard' && <DashboardPage />}
-            {this.state.page === 'chart' && <ChartPage />}
-            {this.state.page === 'table' && <TablePage />}
-            {this.state.page === 'settings' && <SettingsPage />}
-          </Sidebar>
+            <Sidebar
+              sidebar={
+                  <Menu>
+                      <Button className="minimizeSidebarButton" icon="caret-left" onClick={() => this.onSetSidebarOpen(false)} />
+                      <img id="epicSidebarLogo" src={logo} alt="/"/>
+                      <MenuDivider />
+                      <MenuItem icon="dashboard" text="Overview" onClick={() => this.onSetPage('dashboard')} />
+                      <MenuItem icon="chart" text="Hashrate Chart" onClick={() => this.onSetPage('chart')} />
+                      <MenuItem icon="th" text="Miner List" onClick={() => this.onSetPage('table')} />
+                      <MenuItem icon="cog" text="Miner Settings" onClick={() => this.onSetPage('settings')} />
+                  </Menu>
+              }
+              open={this.state.sidebarOpen}
+              className="sidebar"
+              onSetOpen={this.onSetSidebarOpen}
+              styles={{ sidebar: { background: "white" } }}
+            >
+              <Button className="maximizeSidebarButton" icon="caret-right" onClick={() => this.onSetSidebarOpen(true)} />
+              {this.state.page === 'loading' && <LoadingPage />}
+              {this.state.page === 'dashboard' && <DashboardPage />}
+              {this.state.page === 'chart' && <ChartPage />}
+              {this.state.page === 'table' && <TablePage />}
+              {this.state.page === 'settings' && <SettingsPage />}
+            </Sidebar>
+            
+            <Dialog className="vpnDialog" isOpen={this.state.isVpnDialogOpen && this.state.page==='loading'}>
+                <div className={Classes.DIALOG_BODY}>
+                    <p>
+                    If you are connecting over a VPN, this software will not detect your miners. You must manually add miners by IP in the Miner List tab.
+                    </p>
+                </div>
+                <div className={Classes.DIALOG_FOOTER}>
+                    <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+                        <Button onClick={this.handleMoveToMinerList}>
+                            Navigate to Miner List tab
+                        </Button>
+                        <Button onClick={this.handleVpnDialogDismiss}>
+                            Dismiss
+                        </Button>
+                    </div>
+                </div>
+            </Dialog>
+        
         </div>
     );
   }
