@@ -105,6 +105,7 @@ class TablePage extends React.Component {
             return <Cell>{"Error"}</Cell>
         }
     }
+
     startedCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
@@ -116,13 +117,25 @@ class TablePage extends React.Component {
             return <Cell>{"Error"}</Cell>
         }
     }
+
+    secondsToHumanReadable(seconds){
+        let mutSeconds = seconds;
+        const days = Math.floor(seconds / 86400)
+        mutSeconds -= days * 86400;
+        const hours = Math.floor(mutSeconds / 3600)
+        mutSeconds -= hours * 3600;
+        const minutes = Math.floor(mutSeconds / 60)
+        mutSeconds -= minutes * 60;
+        return days+'d'+hours+'h'+minutes+'m'+mutSeconds+'s';
+    }
+
     uptimeCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{new Date(this.state.miners[rowIndex].summary.data["Session"]["Uptime"] * 1000 - Date.now()).toISOString().substr(11, 8)}</Cell>
+            return <Cell>{ this.secondsToHumanReadable(this.state.miners[rowIndex].summary.data["Session"]["Uptime"]) }</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }
