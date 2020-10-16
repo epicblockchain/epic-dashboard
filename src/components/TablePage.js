@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, InputGroup } from "@blueprintjs/core"
 import { Cell, Column, Table } from "@blueprintjs/table"
-import { BadToaster } from './Toasters'
+import { EpicToaster } from './Toasters'
 
 import '@blueprintjs/table/lib/css/table.css'
 import './TablePage.css'
@@ -216,10 +216,15 @@ class TablePage extends React.Component {
             } else {
                 electron.ipcRenderer.send('add-new-miners', [this.state.newMinerIP + ':4028'])
             }
+            EpicToaster.show({
+                message: "Adding miner: " + this.state.newMinerIP,
+                timeout: 5,
+                intent: 'success'
+            })
         } else {
-            BadToaster.show({
+            EpicToaster.show({
                 message: "Please provide an IP",
-                timeout: 0,
+                timeout: 10,
                 intent: 'danger'
             })
         }

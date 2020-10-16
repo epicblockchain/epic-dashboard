@@ -7,7 +7,7 @@ import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
 import LoadingPage from './components/LoadingPage'
 import { Button, FocusStyleManager, Menu, MenuItem, MenuDivider } from '@blueprintjs/core'
-import { BadToaster, GoodToaster, WarningToaster } from './components/Toasters'
+import { EpicToaster } from './components/Toasters'
 
 import '@blueprintjs/core/lib/css/blueprint.css'
 import './App.css'
@@ -40,19 +40,20 @@ class App extends React.Component {
 
   toastHandler(e, args){
     if (args.type === 'good'){
-        GoodToaster.show({
+        EpicToaster.show({
             message: args.message,
             intent: 'success'
         })
     } else if (args.type === 'bad') {
-        BadToaster.show({
+        EpicToaster.show({
             message: args.message,
-            timeout: 0,
+            timeout: 10,
             intent: 'danger'
         })
     } else if (args.type === 'warning') {
-        WarningToaster.show({
+        EpicToaster.show({
             message: args.message,
+            timout: 10,
             intent: 'warning'
         })
     }
