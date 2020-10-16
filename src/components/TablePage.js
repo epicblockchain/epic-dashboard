@@ -253,7 +253,7 @@ class TablePage extends React.Component {
                     <Table className="minersTable"
                             enableRowHeader={false}
                             numRows={this.state.miners.length}
-                            enableColumnReordering={true}>
+                            >
                         <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>
                         <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>
                         <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>

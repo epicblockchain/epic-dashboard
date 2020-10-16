@@ -133,9 +133,6 @@ class SettingsPage extends React.Component {
     }
 
     settingsGetterHandler(event, args){
-        console.log(this.state.applyTo)
-        console.log(this.state.ignoreUpdates)
-        console.log(' ')
         this.setState({miners: args})
         this.setState({pageState: 'loaded'})
         let newIgnoreUpdates = this.state.ignoreUpdates;
