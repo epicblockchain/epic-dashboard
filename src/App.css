@@ -3,6 +3,7 @@
 }
 
 .minimizeSidebarButton {
+  position: absolute;
   float: left;
 }
 
