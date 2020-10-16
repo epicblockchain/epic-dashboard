@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, FileInput, InputGroup, Switch } from '@blueprintjs/core'
+import { Button, InputGroup, Switch } from '@blueprintjs/core'
 import "./Inputs.css"
 
 const electron = window.require('electron')

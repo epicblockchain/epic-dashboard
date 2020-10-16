@@ -32,11 +32,13 @@ class ChartPage extends React.Component {
         //todo use a baseinterval
         let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
         yAxis.min = 0
-        yAxis.title.text = "Hashrate"
+        yAxis.title.text = "Hashrate (TH/s)"
         let series = chart.series.push(new am4charts.LineSeries());
         series.name = "Hashrate (TH/s)"
         series.dataFields.valueY = "hashrate"
         series.dataFields.dateX = "time"
+        series.strokeWidth = 2;
+        // series.smoothing = "monotoneX"
         if (this.state.firstAnimation) {
             this.setState({firstAnimation: false})
         } else {
@@ -47,7 +49,9 @@ class ChartPage extends React.Component {
         chart.scrollbarY = new am4core.Scrollbar();
         //hide the logo for now
         chart.logo.height = -15000;
-
+        chart.cursor = new am4charts.XYCursor();
+        var bullet = series.bullets.push(new am4charts.CircleBullet());
+        bullet.scale = 0.6;
         this.chart = chart
         this.setState({pageState: 'loaded'})
     }

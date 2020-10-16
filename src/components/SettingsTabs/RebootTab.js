@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, InputGroup, NumericInput } from '@blueprintjs/core'
+import { Button, InputGroup } from '@blueprintjs/core'
 import './Inputs.css'
 
 class RebootTab extends React.Component {
