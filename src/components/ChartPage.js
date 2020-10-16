@@ -38,6 +38,7 @@ class ChartPage extends React.Component {
         series.dataFields.valueY = "hashrate"
         series.dataFields.dateX = "time"
         series.strokeWidth = 2;
+        series.stroke = am4core.color("#1b1d4d");
         // series.smoothing = "monotoneX"
         if (this.state.firstAnimation) {
             this.setState({firstAnimation: false})
@@ -52,6 +53,7 @@ class ChartPage extends React.Component {
         chart.cursor = new am4charts.XYCursor();
         var bullet = series.bullets.push(new am4charts.CircleBullet());
         bullet.scale = 0.6;
+        bullet.fill = am4core.color("#1b1d4d");
         this.chart = chart
         this.setState({pageState: 'loaded'})
     }
