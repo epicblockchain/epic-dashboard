@@ -37,25 +37,7 @@ class SettingsPage extends React.Component {
         this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
 
         this.handleApplyToChange = this.handleApplyToChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleApplyClicked = this.handleApplyClicked.bind(this);
-        //miningpool
-        this.handleMiningPoolChange = this.handleMiningPoolChange.bind(this);
-        //walletaddress
-        this.handleWalletAddressChange = this.handleWalletAddressChange.bind(this);
-        this.handleWorkerNameChange = this.handleWorkerNameChange.bind(this);
-        //operatingmode
-        this.handleOperatingModeChange = this.handleOperatingModeChange.bind(this);
-        //uniqueid
-        this.handleAppendUniqueIDChange = this.handleAppendUniqueIDChange.bind(this);
-        //password
-        this.handleNewPasswordChange = this.handleNewPasswordChange.bind(this);
-        this.handleVerifyPasswordChange = this.handleVerifyPasswordChange.bind(this);
-        //firmware
-        this.handleReuseHardwareConfigChange = this.handleReuseHardwareConfigChange.bind(this)
-        this.handleFirmwareFileChange = this.handleFirmwareFileChange.bind(this)
-        //reboot
-        this.handleReboot = this.handleReboot.bind(this)
     }
 
     ipCellRenderer(rowIndex: number){
@@ -126,23 +108,7 @@ class SettingsPage extends React.Component {
     }
 
     handleApplyClicked(arg, e){
-        electron.ipcRenderer.send('post-settings', {
-            state: this.state,
-            tab: arg
-        });
-    }
-
-    handleMiningPoolChange(e){
-        this.setState({miningPool: e.target.value})
-    }
-
-    handlePasswordChange(e){
-        this.setState({password: e.target.value})
-    }
-
-
-    handleOperatingModeChange(e){
-        this.setState({operatingMode: e.target.value})
+        electron.ipcRenderer.send('post-settings', arg);
     }
 
     settingsGetterHandler(event, args){
@@ -177,40 +143,6 @@ class SettingsPage extends React.Component {
         electron.ipcRenderer.removeListener('get-settings-reply', this.settingsGetterHandler);
     }
 
-    handleWalletAddressChange(e){
-        this.setState({walletAddress: e.target.value})
-    }
-
-    handleWorkerNameChange(e){
-        this.setState({workerName: e.target.value})
-    }
-
-    handleAppendUniqueIDChange(e){
-        this.setState({appendUniqueID: e.target.checked})
-    }
-
-    handleNewPasswordChange(e){
-        this.setState({newPassword: e.target.value})
-    }
-
-    handleVerifyPasswordChange(e){
-        this.setState({verifyPassword: e.target.value})
-    }
-
-    handleReuseHardwareConfigChange(e){
-        this.setState({reuseHardwareConfig: e.target.checked})
-    }
-
-    handleFirmwareFileChange(file){
-        this.setState({swuFilepath: file})
-        this.setState({filePathSelected: true})
-        console.log(file)
-    }
-
-    handleReboot(e){
-        this.setState({rebootDelay: e.target.value})
-    }
-
     render () {
         return (
             <div className="settingsContainer">
@@ -228,61 +160,41 @@ class SettingsPage extends React.Component {
                         <Tab id="MiningPoolTab"
                             title="Mining Pool"
                             panel={<MiningPoolTab
-                                updateMiningPool={this.handleMiningPoolChange}
-                                updatePassword={this.handlePasswordChange}
                                 applyClicked={this.handleApplyClicked}
                                 />} />
                         <Tab id="WalletAddressTab"
                              title="Wallet Address"
                              panel={<WalletAddressTab
-                                 updateWalletAddress={this.handleWalletAddressChange}
-                                 updateWorkerName={this.handleWorkerNameChange}
-                                 updatePassword={this.handlePasswordChange}
                                  applyClicked={this.handleApplyClicked}
                             />} />
                         <Tab id="OperatingModeTab"
                              title="Operating Mode" 
                              panel={<OperatingModeTab
-                                updateOperatingMode={this.handleOperatingModeChange}
-                                updatePassword={this.handlePasswordChange}
-                                operatingMode={this.state.operatingMode}
                                 applyClicked={this.handleApplyClicked}/>} />
                         <Tab id="UniqueIDTab"
                             title="Unique ID"
                             panel={<UniqueIDTab
-                                    updateAppendUniqueID={this.handleAppendUniqueIDChange}
-                                    updatePassword={this.handlePasswordChange}
                                     applyClicked={this.handleApplyClicked}
                                 />} />
                         <Tab id="PasswordTab"
                              title="Password"
                              panel={<PasswordTab
-                                    updateNewPassword={this.handleNewPasswordChange}
-                                    updateVerifyPassword={this.handleVerifyPasswordChange}
-                                    updatePassword={this.handlePasswordChange}
                                     applyClicked={this.handleApplyClicked}
                                  />} />
                         <Tab id="FirmwareTab"
                              title="Firmware"
                              panel={<FirmwareTab
-                                    updateFirmwareFile={this.handleFirmwareFileChange}
-                                    swuFilepath={this.state.swuFilepath}
-                                    updateReuseHardwareConfig={this.handleReuseHardwareConfigChange}
-                                    updatePassword={this.handlePasswordChange}
                                     applyClicked={this.handleApplyClicked}
                                  />} />
                         <Tab id="RebootTab"
                              title="Reboot"
                              panel={<RebootTab
-                                    updateReboot={this.handleReboot}
-                                    updatePassword={this.handlePasswordChange}
                                     applyClicked={this.handleApplyClicked}
                                  />} />
                         <Tab id="HWConfigTab"
                             title="Recalibrate"
                             panel={
                                 <HardwareConfigTab
-                                updatePassword={this.handlePasswordChange}
                                 applyClicked={this.handleApplyClicked}/>
                             }/>
                     </Tabs>

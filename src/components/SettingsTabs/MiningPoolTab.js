@@ -5,6 +5,25 @@ import './Inputs.css'
 
 class MiningPoolTab extends React.Component {
 
+    constructor(props){
+        super(props)
+        this.state = {
+            miningPool: '',
+            password: ''
+        }
+
+        this.updateMiningPool = this.updateMiningPool.bind(this)
+        this.updatePassword = this.updatePassword.bind(this)
+    }
+
+    updateMiningPool(e){
+        this.setState({miningPool: e.target.value});
+    }
+
+    updatePassword(e){
+        this.setState({password: e.target.value});
+    }
+
     render() {
         return (
             <div>
@@ -12,13 +31,16 @@ class MiningPoolTab extends React.Component {
                     <p className="stratumText">stratum+tcp://</p>
                     <InputGroup className="inputClass miningPool"
                             placeholder="Mining Pool"
-                            onChange={this.props.updateMiningPool} />
+                            onChange={this.updateMiningPool} />
                 </div>
                 <InputGroup className="inputClass"
                             placeholder="Password"
                             type="password"
-                            onChange={this.props.updatePassword}/>
-                <Button onClick={this.props.applyClicked.bind(this, 'mining-pool')}>Apply</Button>
+                            onChange={this.updatePassword}/>
+                <Button disabled={!this.state.miningPool || !this.state.password} onClick={this.props.applyClicked.bind(this, {
+                    state: this.state,
+                    tab: 'miningPool'
+                })}>Apply</Button>
             </div>
         );
     }
