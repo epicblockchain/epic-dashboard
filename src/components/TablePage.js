@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Checkbox, InputGroup } from "@blueprintjs/core"
+import { Button, Checkbox, Icon, InputGroup, Position, Tooltip } from "@blueprintjs/core"
 import { Cell, Column, Table } from "@blueprintjs/table"
 import { EpicToaster } from './Toasters'
 
@@ -356,6 +356,9 @@ class TablePage extends React.Component {
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.difficulty     } onChange={this.handleColumnVisibility.bind(this, 'difficulty')}>  Difficulty          </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.temperature    } onChange={this.handleColumnVisibility.bind(this, 'temperature')}>  {"Temperature \u00b0C"} </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.power          } onChange={this.handleColumnVisibility.bind(this, 'power')}>  Power               </ Checkbox>
+                    <Tooltip content="Not including fan consumption" position={Position.BOTTOM_RIGHT}>
+                        <Icon className="powerTip" icon="info-sign"/>
+                    </Tooltip>
                 </div>
                 <div className="minersTableContainer">
                     <Table className="minersTable"

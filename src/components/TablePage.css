@@ -26,3 +26,8 @@
 .loadMinerButton {
     margin-top: 3px;
 }
+
+.powerTip {
+    position: relative;
+    right: 13px;
+}
