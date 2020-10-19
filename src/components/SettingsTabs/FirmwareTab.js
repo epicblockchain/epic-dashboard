@@ -1,6 +1,8 @@
 import React from 'react'
 
 import { Button, InputGroup, Spinner, Switch } from '@blueprintjs/core'
+import { EpicToaster } from '../Toasters'
+
 import "./Inputs.css"
 
 const electron = window.require('electron')
@@ -35,6 +37,10 @@ class FirmwareTab extends React.Component {
             state: this.state,
             tab: 'firmware'
         }, e);
+        EpicToaster.show({
+            message: "This may take a few minutes depending on the number of miners being updated.",
+            intent: 'warning'
+        });
     }
 
     filepathIPChandler(event, msg){
