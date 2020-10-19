@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, InputGroup, Switch } from '@blueprintjs/core'
+import { Button, InputGroup, Spinner, Switch } from '@blueprintjs/core'
 import "./Inputs.css"
 
 const electron = window.require('electron')
@@ -12,13 +12,29 @@ class FirmwareTab extends React.Component {
             isDefaultEnabled: true,
             keepSettings: true,
             swuFilepath: '',
-            password: ''
+            password: '',
+            waitingForCompletion: false
         }
         this.getFilePath = this.getFilePath.bind(this)
         this.filepathIPChandler = this.filepathIPChandler.bind(this)
 
         this.updatePassword = this.updatePassword.bind(this);
         this.updateReuseHardwareConfig = this.updateReuseHardwareConfig.bind(this)
+        this.handleApplyClick = this.handleApplyClick.bind(this)
+
+        this.handleFirmwareJobsDone = this.handleFirmwareJobsDone.bind(this)
+    }
+
+    handleFirmwareJobsDone(){
+        this.setState({waitingForCompletion: false});
+    }
+
+    handleApplyClick(e){
+        this.setState({waitingForCompletion: true});
+        this.props.applyClicked({
+            state: this.state,
+            tab: 'firmware'
+        }, e);
     }
 
     filepathIPChandler(event, msg){
@@ -30,11 +46,13 @@ class FirmwareTab extends React.Component {
     }
 
     componentDidMount(){
-        electron.ipcRenderer.on('get-filepath-reply', this.filepathIPChandler)
+        electron.ipcRenderer.on('get-filepath-reply', this.filepathIPChandler);
+        electron.ipcRenderer.on('done-firmware-job', this.handleFirmwareJobsDone);
     }
 
     componentWillUnmount(){
         electron.ipcRenderer.removeListener('get-filepath-reply', this.filepathIPChandler)
+        electron.ipcRenderer.removeListener('done-firmware-job', this.handleFirmwareJobsDone);
     }
 
     getFilePath(){
@@ -63,10 +81,9 @@ class FirmwareTab extends React.Component {
                             placeholder="Password"
                             type="password"
                             onChange={this.updatePassword}/>
-                <Button disabled={!this.state.password || !this.state.swuFilepath} onClick={this.props.applyClicked.bind(this, {
-                    state: this.state,
-                    tab: 'firmware'
-                })}>Apply</Button>
+                <Button disabled={!this.state.password || !this.state.swuFilepath || this.state.waitingForCompletion} onClick={this.handleApplyClick}>
+                    { this.state.waitingForCompletion ? <Spinner className="applyButtonSpinner" size={20} /> : "Apply" }
+                </Button>
             </div>
         );
     }

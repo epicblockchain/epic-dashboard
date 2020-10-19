@@ -31,3 +31,7 @@
 .miningPool {
     width: 100%
 }
+
+.applyButtonSpinner {
+    width: 35px; 
+}
