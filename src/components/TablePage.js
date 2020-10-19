@@ -33,27 +33,24 @@ class TablePage extends React.Component {
                 temperature    : true,
                 power          : false
             },
-            columns: [
-                <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>           ,
-                <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>         ,
-                <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>     ,
-                <Column name="Operating Mode" cellRenderer        = {this.operatingModeCellRenderer}/>,
-                <Column name="Pool" cellRenderer                  = {this.poolCellRenderer}/>         ,
-                <Column name="User" cellRenderer                  = {this.userCellRenderer}/>         ,
-                <Column name="Started" cellRenderer               = {this.startedCellRenderer}/>      ,
-                <Column name="Uptime" cellRenderer                = {this.uptimeCellRenderer}/>       ,
-                <Column name="Active HBs" cellRenderer            = {this.activeHBCellRenderer}/>     ,
-                <Column name="Hashrate (TH/s)" cellRenderer       = {this.hashrateCellRenderer}/>     ,
-                <Column name="Accepted" cellRenderer              = {this.acceptedCellRenderer}/>     ,
-                <Column name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>     ,
-                <Column name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>   ,
-                <Column name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>  ,
-                <Column name={"Power (W)"} cellRenderer           = {this.powerCellRenderer}/>        
-            ]
+            columns: {
+                "ip": <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>           ,
+                "name": <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>         ,
+                "firmware": <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>     ,
+                "operatingMode": <Column name="Operating Mode" cellRenderer        = {this.operatingModeCellRenderer}/>,
+                "pool": <Column name="Pool" cellRenderer                  = {this.poolCellRenderer}/>         ,
+                "user": <Column name="User" cellRenderer                  = {this.userCellRenderer}/>         ,
+                "started": <Column name="Started" cellRenderer               = {this.startedCellRenderer}/>      ,
+                "uptime": <Column name="Uptime" cellRenderer                = {this.uptimeCellRenderer}/>       ,
+                "activeHBs": <Column name="Active HBs" cellRenderer            = {this.activeHBCellRenderer}/>     ,
+                "hashrate": <Column name="Hashrate (TH/s)" cellRenderer       = {this.hashrateCellRenderer}/>     ,
+                "acceptedShares": <Column name="Accepted" cellRenderer              = {this.acceptedCellRenderer}/>     ,
+                "rejectedShares": <Column name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>     ,
+                "difficulty": <Column name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>   ,
+                "temperature": <Column name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>  ,
+                "power": <Column name={"Power (W)"} cellRenderer           = {this.powerCellRenderer}/>        
+            }
         }
-
-        this.isCheckedOrdering = ['ip', 'name', 'firmware', 'operatingMode', 'pool', 'user', 'startTime', 'uptime', 'activeHBs', 'hashrate', 
-            'acceptedShares', 'rejectedShares', 'difficulty', 'temperature', 'power'];
 
         this.tableGetterHandler        = this.tableGetterHandler.bind(this);
         this.ipCellRenderer            = this.ipCellRenderer.bind(this);
@@ -335,10 +332,10 @@ class TablePage extends React.Component {
     render() {
 
         let columns = [];
-        const len = this.state.columns.length;
-        for (let i = 0; i < len; i++) {
-            if (this.state.isChecked[this.isCheckedOrdering[i]]) {
-                columns.push(this.state.columns[i]);
+
+        for (const key of Object.keys(this.state.columns)) {
+            if (this.state.isChecked[key]) {
+                columns.push(this.state.columns[key])
             }
         }
 
