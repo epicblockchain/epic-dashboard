@@ -51,9 +51,9 @@ class ChartPage extends React.Component {
         //hide the logo for now
         chart.logo.height = -15000;
         chart.cursor = new am4charts.XYCursor();
-        var bullet = series.bullets.push(new am4charts.CircleBullet());
-        bullet.scale = 0.6;
-        bullet.fill = am4core.color("#1b1d4d");
+        // var bullet = series.bullets.push(new am4charts.CircleBullet());
+        // bullet.scale = 0.6;
+        // bullet.fill = am4core.color("#1b1d4d");
         this.chart = chart
         this.setState({pageState: 'loaded'})
     }
