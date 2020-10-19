@@ -221,6 +221,28 @@ class TablePage extends React.Component {
             return <Cell>{"Error"}</Cell>
         }
     }
+    powerCellRenderer = (rowIndex: number) => {
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            
+            let sumPower = 0;
+            if (this.state.miners[rowIndex]){
+                const hbs = this.state.miners[rowIndex].summary.data["HBs"];
+                if (hbs.length > 0){
+                    hbs.forEach(hb => {
+                        sumPower += hb["Input Power"];
+                    });
+                }
+            }
+
+            return <Cell>{Math.round(sumPower)}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
 
     addNewMiner(){
         if (this.state.newMinerIP){
@@ -286,6 +308,7 @@ class TablePage extends React.Component {
                         <Column name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>
                         <Column name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>
                         <Column name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>
+                        <Column name={"Power (W)"} cellRenderer           = {this.powerCellRenderer}/>
                     </Table>
                 </div>
                 <div className="newMinersFormContainer">
