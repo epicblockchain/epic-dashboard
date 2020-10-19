@@ -34,21 +34,21 @@ class TablePage extends React.Component {
                 power          : false
             },
             columns: {
-                "ip": <Column name="IP" cellRenderer                    = {this.ipCellRenderer}/>           ,
-                "name": <Column name="Name" cellRenderer                  = {this.nameCellRenderer}/>         ,
-                "firmware": <Column name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>     ,
-                "operatingMode": <Column name="Operating Mode" cellRenderer        = {this.operatingModeCellRenderer}/>,
-                "pool": <Column name="Pool" cellRenderer                  = {this.poolCellRenderer}/>         ,
-                "user": <Column name="User" cellRenderer                  = {this.userCellRenderer}/>         ,
-                "started": <Column name="Started" cellRenderer               = {this.startedCellRenderer}/>      ,
-                "uptime": <Column name="Uptime" cellRenderer                = {this.uptimeCellRenderer}/>       ,
-                "activeHBs": <Column name="Active HBs" cellRenderer            = {this.activeHBCellRenderer}/>     ,
-                "hashrate": <Column name="Hashrate (TH/s)" cellRenderer       = {this.hashrateCellRenderer}/>     ,
-                "acceptedShares": <Column name="Accepted" cellRenderer              = {this.acceptedCellRenderer}/>     ,
-                "rejectedShares": <Column name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>     ,
-                "difficulty": <Column name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>   ,
-                "temperature": <Column name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>  ,
-                "power": <Column name={"Power (W)"} cellRenderer           = {this.powerCellRenderer}/>        
+                "ip": <Column key="ip" name="IP" cellRenderer                    = {this.ipCellRenderer}/>           ,
+                "name": <Column key="name" name="Name" cellRenderer                  = {this.nameCellRenderer}/>         ,
+                "firmware": <Column key="firmware" name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>     ,
+                "operatingMode": <Column key="operatingMode" name="Operating Mode" cellRenderer        = {this.operatingModeCellRenderer}/>,
+                "pool": <Column key="pool" name="Pool" cellRenderer                  = {this.poolCellRenderer}/>         ,
+                "user": <Column key="user" name="User" cellRenderer                  = {this.userCellRenderer}/>         ,
+                "started": <Column key="started" name="Started" cellRenderer               = {this.startedCellRenderer}/>      ,
+                "uptime": <Column key="uptime" name="Uptime" cellRenderer                = {this.uptimeCellRenderer}/>       ,
+                "activeHBs": <Column key="activeHBs" name="Active HBs" cellRenderer            = {this.activeHBCellRenderer}/>     ,
+                "hashrate": <Column key="hashrate" name="Hashrate (TH/s)" cellRenderer       = {this.hashrateCellRenderer}/>     ,
+                "acceptedShares": <Column key="acceptedShares" name="Accepted" cellRenderer              = {this.acceptedCellRenderer}/>     ,
+                "rejectedShares": <Column key="rejectedShares" name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>     ,
+                "difficulty": <Column key="difficulty" name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>   ,
+                "temperature": <Column key="temperature" name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>  ,
+                "power": <Column key="power" name={"Power (W)"} cellRenderer           = {this.powerCellRenderer}/>        
             }
         }
 
@@ -332,32 +332,30 @@ class TablePage extends React.Component {
     render() {
 
         let columns = [];
-
         for (const key of Object.keys(this.state.columns)) {
             if (this.state.isChecked[key]) {
                 columns.push(this.state.columns[key])
             }
         }
 
-
         return (
             <div className="minersPageContainer">
                 <div className="minersTableCategoriesContainer">
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.ip             } onChange={this.handleColumnVisibility.bind(this, 'ip')}>  IP </Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.name           } onChange={this.handleColumnVisibility.bind(this, 'name')}>  Name                </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.firmware       } onChange={this.handleColumnVisibility.bind(this, 'firmware')}>  Firmware            </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.operatingMode  } onChange={this.handleColumnVisibility.bind(this, 'operatingMode')}>  Operating Mode      </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.pool           } onChange={this.handleColumnVisibility.bind(this, 'pool')}>  Pool                </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.user           } onChange={this.handleColumnVisibility.bind(this, 'user')}>  User                </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.startTime      } onChange={this.handleColumnVisibility.bind(this, 'startTime')}>  Start Time          </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.uptime         } onChange={this.handleColumnVisibility.bind(this, 'uptime')}>  Uptime              </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.activeHBs      } onChange={this.handleColumnVisibility.bind(this, 'activeHBs')}>  Active HBs          </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate       } onChange={this.handleColumnVisibility.bind(this, 'hashrate')}>  Hashrate            </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.acceptedShares } onChange={this.handleColumnVisibility.bind(this, 'acceptedShares')}>  Accepted Shares     </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.rejectedShares } onChange={this.handleColumnVisibility.bind(this, 'rejectedShares')}>  Rejected Shares     </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.difficulty     } onChange={this.handleColumnVisibility.bind(this, 'difficulty')}>  Difficulty          </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.temperature    } onChange={this.handleColumnVisibility.bind(this, 'temperature')}>  Temperature \u00b0C </ Checkbox>
-                        <Checkbox inline={true} defaultChecked={this.state.isChecked.power          } onChange={this.handleColumnVisibility.bind(this, 'power')}>  Power               </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.ip             } onChange={this.handleColumnVisibility.bind(this, 'ip')}>  IP </Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.name           } onChange={this.handleColumnVisibility.bind(this, 'name')}>  Name                </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.firmware       } onChange={this.handleColumnVisibility.bind(this, 'firmware')}>  Firmware            </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.operatingMode  } onChange={this.handleColumnVisibility.bind(this, 'operatingMode')}>  Operating Mode      </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.pool           } onChange={this.handleColumnVisibility.bind(this, 'pool')}>  Pool                </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.user           } onChange={this.handleColumnVisibility.bind(this, 'user')}>  User                </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.startTime      } onChange={this.handleColumnVisibility.bind(this, 'startTime')}>  Start Time          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.uptime         } onChange={this.handleColumnVisibility.bind(this, 'uptime')}>  Uptime              </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.activeHBs      } onChange={this.handleColumnVisibility.bind(this, 'activeHBs')}>  Active HBs          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate       } onChange={this.handleColumnVisibility.bind(this, 'hashrate')}>  Hashrate            </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.acceptedShares } onChange={this.handleColumnVisibility.bind(this, 'acceptedShares')}>  Accepted Shares     </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.rejectedShares } onChange={this.handleColumnVisibility.bind(this, 'rejectedShares')}>  Rejected Shares     </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.difficulty     } onChange={this.handleColumnVisibility.bind(this, 'difficulty')}>  Difficulty          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.temperature    } onChange={this.handleColumnVisibility.bind(this, 'temperature')}>  Temperature \u00b0C </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.power          } onChange={this.handleColumnVisibility.bind(this, 'power')}>  Power               </ Checkbox>
                 </div>
                 <div className="minersTableContainer">
                     <Table className="minersTable"
