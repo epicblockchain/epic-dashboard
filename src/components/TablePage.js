@@ -354,7 +354,7 @@ class TablePage extends React.Component {
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.acceptedShares } onChange={this.handleColumnVisibility.bind(this, 'acceptedShares')}>  Accepted Shares     </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.rejectedShares } onChange={this.handleColumnVisibility.bind(this, 'rejectedShares')}>  Rejected Shares     </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.difficulty     } onChange={this.handleColumnVisibility.bind(this, 'difficulty')}>  Difficulty          </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.temperature    } onChange={this.handleColumnVisibility.bind(this, 'temperature')}>  Temperature \u00b0C </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.temperature    } onChange={this.handleColumnVisibility.bind(this, 'temperature')}>  {"Temperature \u00b0C"} </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.power          } onChange={this.handleColumnVisibility.bind(this, 'power')}>  Power               </ Checkbox>
                 </div>
                 <div className="minersTableContainer">
