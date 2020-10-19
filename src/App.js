@@ -51,13 +51,13 @@ class App extends React.Component {
     } else if (args.type === 'bad') {
         EpicToaster.show({
             message: args.message,
-            timeout: 10,
+            timeout: 10000,
             intent: 'danger'
         })
     } else if (args.type === 'warning') {
         EpicToaster.show({
             message: args.message,
-            timout: 10,
+            timout: 10000,
             intent: 'warning'
         })
     }
