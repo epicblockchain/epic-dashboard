@@ -231,13 +231,13 @@ class TablePage extends React.Component {
             }
             EpicToaster.show({
                 message: "Adding miner: " + this.state.newMinerIP,
-                timeout: 5,
+                timeout: 5000,
                 intent: 'success'
             })
         } else {
             EpicToaster.show({
                 message: "Please provide an IP",
-                timeout: 10,
+                timeout: 10000,
                 intent: 'danger'
             })
         }
