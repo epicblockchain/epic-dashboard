@@ -9,14 +9,24 @@ class FirmwareTab extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            isEnabled: true,
+            isDefaultEnabled: true,
+            keepSettings: true,
+            swuFilepath: '',
+            password: ''
         }
         this.getFilePath = this.getFilePath.bind(this)
         this.filepathIPChandler = this.filepathIPChandler.bind(this)
+
+        this.updatePassword = this.updatePassword.bind(this);
+        this.updateReuseHardwareConfig = this.updateReuseHardwareConfig.bind(this)
     }
 
     filepathIPChandler(event, msg){
-        this.props.updateFirmwareFile(msg)
+        this.updateFirmwareFile(msg)
+    }
+
+    updateFirmwareFile(msg){
+        this.setState({swuFilepath: msg})
     }
 
     componentDidMount(){
@@ -31,21 +41,32 @@ class FirmwareTab extends React.Component {
         electron.ipcRenderer.send('get-filepath');
     }
 
+    updateReuseHardwareConfig(e){
+        this.setState({keepSetting: e.target.checked})
+    }
+
+    updatePassword(e){
+        this.setState({password: e.target.value})
+    }
+
     render() {
         return (
             <div>
                 <label className="bp3-file-input bp3-fill" >
                   <input />
-                  <span className="bp3-file-upload-input" onClick={this.getFilePath}>{this.props.swuFilepath || 'Choose file...'}</span>
+                  <span className="bp3-file-upload-input" onClick={this.getFilePath}>{this.state.swuFilepath || 'Choose file...'}</span>
                 </label>
-                <Switch defaultChecked={this.state.isEnabled}
-                        onChange={this.props.updateReuseHardwareConfig}
+                <Switch defaultChecked={this.state.isDefaultEnabled}
+                        onChange={this.updateReuseHardwareConfig}
                         >Maintain config over update</Switch>
                 <InputGroup className="inputClass"
                             placeholder="Password"
                             type="password"
-                            onChange={this.props.updatePassword}/>
-                <Button onClick={this.props.applyClicked.bind(this, 'firmware')}>Apply</Button>
+                            onChange={this.updatePassword}/>
+                <Button disabled={!this.state.password || !this.state.swuFilepath} onClick={this.props.applyClicked.bind(this, {
+                    state: this.state,
+                    tab: 'firmware'
+                })}>Apply</Button>
             </div>
         );
     }

@@ -5,6 +5,24 @@ import "./Inputs.css"
 
 class OperatingModeTab extends React.Component {
     
+    constructor(props){
+        super(props)
+        this.state = {
+            operatingMode: 'normal',
+            password: ''
+        }
+
+        this.updateOperatingMode = this.updateOperatingMode.bind(this)
+        this.updatePassword = this.updatePassword.bind(this)
+    }
+
+    updateOperatingMode(e){
+        this.setState({operatingMode: e.target.value});
+    }
+
+    updatePassword(e){
+        this.setState({password: e.target.value})
+    }
 
     render() {
         return (
@@ -12,8 +30,8 @@ class OperatingModeTab extends React.Component {
                 <RadioGroup
                     label="Operating Mode"
                     inline={true}
-                    onChange={this.props.updateOperatingMode}
-                    selectedValue={this.props.operatingMode}
+                    onChange={this.updateOperatingMode}
+                    selectedValue={this.state.operatingMode}
                 >
                     <Radio label="Normal" value="normal" />
                     <Radio label="Efficiency" value="efficiency" />
@@ -21,8 +39,11 @@ class OperatingModeTab extends React.Component {
                 <InputGroup className="inputClass"
                             placeholder="Password"
                             type="password"
-                            onChange={this.props.updatePassword}/>
-                <Button onClick={this.props.applyClicked.bind(this, 'operating-mode')}>Apply</Button>
+                            onChange={this.updatePassword}/>
+                <Button disabled={!this.state.password} onClick={this.props.applyClicked.bind(this, {
+                    state: this.state,
+                    tab: 'operating-mode'
+                })}>Apply</Button>
             </div>
         );
     }

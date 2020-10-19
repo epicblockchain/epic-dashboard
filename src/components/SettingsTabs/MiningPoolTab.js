@@ -39,7 +39,7 @@ class MiningPoolTab extends React.Component {
                             onChange={this.updatePassword}/>
                 <Button disabled={!this.state.miningPool || !this.state.password} onClick={this.props.applyClicked.bind(this, {
                     state: this.state,
-                    tab: 'miningPool'
+                    tab: 'mining-pool'
                 })}>Apply</Button>
             </div>
         );

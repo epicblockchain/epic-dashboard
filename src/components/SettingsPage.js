@@ -108,6 +108,8 @@ class SettingsPage extends React.Component {
     }
 
     handleApplyClicked(arg, e){
+        arg.state.miners = this.state.miners;
+        arg.state.applyTo = this.state.applyTo;
         electron.ipcRenderer.send('post-settings', arg);
     }
 

@@ -5,17 +5,40 @@ import './Inputs.css'
 
 class RebootTab extends React.Component {
 
+    constructor(props){
+        super(props)
+        this.state = {
+            rebootDelay: '',
+            password: ''
+        }
+
+        this.updateReboot = this.updateReboot.bind(this)
+        this.updatePassword = this.updatePassword.bind(this)
+    }
+
+    updateReboot(e){
+        this.setState({rebootDelay: e.target.value})
+    }
+
+    updatePassword(e){
+        this.setState({password: e.target.value})
+    }
+
     render() {
         return (
             <div>
                 <InputGroup className="inputClass"
                         placeholder="Delay before reboot (seconds)"
-                        onChange={this.props.updateReboot} />
+                        intent={isNaN(this.state.rebootDelay) ? "danger" : ""}
+                        onChange={this.updateReboot} />
                 <InputGroup className="inputClass"
                             placeholder="Password"
                             type="password"
-                            onChange={this.props.updatePassword}/>
-                <Button onClick={this.props.applyClicked.bind(this, 'reboot')}>Reboot</Button>
+                            onChange={this.updatePassword}/>
+                <Button disabled={!this.state.rebootDelay || !this.state.password || isNaN(this.state.rebootDelay)} onClick={this.props.applyClicked.bind(this, {
+                    state: this.state,
+                    tab: 'reboot'
+                })}>Reboot</Button>
             </div>
         );
     }
