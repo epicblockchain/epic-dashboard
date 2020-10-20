@@ -98,12 +98,28 @@ class TablePage extends React.Component {
 
     }
     
-    //reorders columns idx to key as well as ischecked
+    //reorders columns idx to key
     handleColumnReordering(oldIndex, newIndex, length){
         console.log(oldIndex);
         console.log(newIndex);
         console.log(length);
-        console.log();
+        let modelOfColumns = [];//only the visible columns, put the other columns at the end
+        let invisibleColumns = [];
+        const len = this.state.colIdxToKey.length;
+        for(let i = 0; i < len; i++){
+            if (this.state.isChecked[this.state.colIdxToKey[i]]){
+                modelOfColumns.push(this.state.colIdxToKey[i]);
+            } else {
+                invisibleColumns.push(this.state.colIdxToKey[i]);
+            }
+        }
+        invisibleColumns.forEach(i => {
+            modelOfColumns.push(i);
+        })
+        //modelOfColumns is what the user sees appended by the invis columns, should be ok to just splice stuff around
+        let grabbed = modelOfColumns.splice(oldIndex, length);
+        modelOfColumns.splice(newIndex, 0, ...grabbed);
+        this.setState({colIdxToKey: modelOfColumns});
     }
 
     tableGetterHandler(event, args){
