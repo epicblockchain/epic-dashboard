@@ -32,6 +32,7 @@ class SettingsPage extends React.Component {
         this.ipCellRenderer = this.ipCellRenderer.bind(this);
         this.nameCellRenderer = this.nameCellRenderer.bind(this);
         this.firmwareVersionCellRenderer = this.firmwareVersionCellRenderer.bind(this);
+        this.operatingModeCellRenderer = this.operatingModeCellRenderer.bind(this);
         this.walletCellRenderer = this.walletCellRenderer.bind(this);
         this.miningPoolCellRenderer = this.miningPoolCellRenderer.bind(this);
         this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
@@ -68,6 +69,18 @@ class SettingsPage extends React.Component {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
             return <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+    
+    operatingModeCellRenderer(rowIndex: number){
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }
@@ -169,6 +182,7 @@ class SettingsPage extends React.Component {
                     <Table getCellClipboardData={this.handleCopy}  enableRowHeader={false} numRows={this.state.miners.length}>
                         <Column name='IP' cellRenderer={this.ipCellRenderer} />
                         <Column name='Firmware Version' cellRenderer={this.firmwareVersionCellRenderer} />
+                        <Column name='Preset' cellRenderer={this.operatingModeCellRenderer} />
                         <Column name='Miner Name' cellRenderer={this.nameCellRenderer} />
                         <Column name='Mining Pool' cellRenderer={this.miningPoolCellRenderer} />
                         <Column name='Apply To' cellRenderer={this.applyToCellRenderer} />
