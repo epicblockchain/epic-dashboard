@@ -185,7 +185,7 @@ class TablePage extends React.Component {
         mutSeconds -= hours * 3600;
         const minutes = Math.floor(mutSeconds / 60)
         mutSeconds -= minutes * 60;
-        return days+'d '+hours+'h '+minutes+'m '+mutSeconds+'s ';
+        return days+'d '+hours+'h '+minutes+'m '+mutSeconds+'s';
     }
 
     uptimeCellRenderer = (rowIndex: number) => {
@@ -368,10 +368,66 @@ class TablePage extends React.Component {
         return this.colIdxToKey[realCol-1];
     }
 
-    handleCopy(row: number, col: number){
+    handleCopy(rowIndex: number, col: number){
         const key = this.getKeyFromColumnIndex(col);
-        return key;
         
+        switch(key){
+            case 'ip':
+                return this.state.miners[rowIndex].ip;
+            case 'name':
+                return this.state.miners[rowIndex].summary.data["Hostname"];
+            case 'firmware':
+                return this.state.miners[rowIndex].summary.data["Software"];
+            case 'operatingMode':
+                return this.state.miners[rowIndex].summary.data["Preset"];
+            case 'pool':
+                return this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"];
+            case 'user':
+                return this.state.miners[rowIndex].summary.data["Stratum"]["Current User"];
+            case 'started':
+                return new Date(this.state.miners[rowIndex].summary.data["Session"]["Startup Timestamp"] * 1000).toString();
+            case 'uptime':
+                return this.secondsToHumanReadable(this.state.miners[rowIndex].summary.data["Session"]["Uptime"]);
+            case 'activeHBs':
+                return this.state.miners[rowIndex].summary.data["HBs"].length;
+            case 'hashrate':
+                return Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100;
+            case 'acceptedShares':
+                return this.state.miners[rowIndex].summary.data["Session"]["Accepted"];
+            case 'rejectedShares':
+                return this.state.miners[rowIndex].summary.data["Session"]["Rejected"];
+            case 'difficulty':
+                return this.state.miners[rowIndex].summary.data["Session"]["Difficulty"];
+            case 'temperature':
+                let maxTemp = "N/A";
+                if (this.state.miners[rowIndex]){
+                    const hbs = this.state.miners[rowIndex].summary.data["HBs"];
+                    if (hbs.length > 0){
+                        maxTemp = 0
+                        hbs.forEach(hb => {
+                            const newTemp = hb["Temperature"];
+                            if (newTemp > maxTemp){
+                                maxTemp = newTemp
+                            }
+                        });
+                    }
+                }
+                return maxTemp;
+            case 'power':
+                let sumPower = 0;
+                if (this.state.miners[rowIndex]){
+                    const hbs = this.state.miners[rowIndex].summary.data["HBs"];
+                    if (hbs.length > 0){
+                        hbs.forEach(hb => {
+                            sumPower += hb["Input Power"];
+                        });
+                    }
+                }
+                return Math.round(sumPower)
+            default:
+                console.log('bad copy paste key')
+                return '';
+        }
 
     }
 
