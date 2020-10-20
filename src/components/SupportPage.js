@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { Button } from '@blueprintjs/core'
-import { EpicToaster } from './Toasters'
 
 import './SupportPage.css'
 import '@blueprintjs/core/lib/css/blueprint.css'

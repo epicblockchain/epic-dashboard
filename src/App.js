@@ -7,7 +7,7 @@ import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
 import LoadingPage from './components/LoadingPage'
 import SupportPage from './components/SupportPage'
-import { Button, Classes, Dialog, FocusStyleManager, Menu, MenuDivider, MenuItem} from '@blueprintjs/core'
+import { Button, Classes, Dialog, FocusStyleManager, Menu, MenuDivider, MenuItem, Popover, Position } from '@blueprintjs/core'
 import { EpicToaster } from './components/Toasters'
 
 import '@blueprintjs/core/lib/css/blueprint.css'
@@ -26,7 +26,8 @@ class App extends React.Component {
     this.state = {
       sidebarOpen: true,
       page: 'loading',
-      isVpnDialogOpen: false
+      isVpnDialogOpen: false,
+      isFirmwareUpdateAvailableChecked: false
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.setPage = this.onSetPage.bind(this);
@@ -124,6 +125,18 @@ class App extends React.Component {
               {this.state.page === 'table' && <TablePage />}
               {this.state.page === 'settings' && <SettingsPage />}
               {this.state.page === 'support' && <SupportPage />}
+
+                <Popover 
+                    isOpen={true}
+                    position={Position.BOTTOM_RIGHT}
+                    content={
+                        <p>Test content</p>
+                    }
+                    target={
+                        <Button class="right" text="test"/>
+                    }
+                />        
+
             </Sidebar>
             
             <Dialog className="vpnDialog" isOpen={this.state.isVpnDialogOpen && this.state.page==='loading'}>
@@ -143,7 +156,6 @@ class App extends React.Component {
                     </div>
                 </div>
             </Dialog>
-        
         </div>
     );
   }
