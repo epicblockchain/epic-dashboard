@@ -17,7 +17,7 @@
 }
 
 .bp3-table-cell {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .bp3-table-header {
@@ -28,7 +28,11 @@
   background: #1B1D4D !important;/* Green */
   color: #ffc107 !important;
 }
-bp3-table-header:hover {
+.bp3-table-column-name:hover {
+  background: #1B1D4D !important;/* Green */
+  color: #ffc107 !important;
+}
+.bp3-table-cell:hover {
   background: #1B1D4D !important;/* Green */
   color: #ffc107 !important;
 }
@@ -42,19 +46,19 @@ bp3-table-header:hover {
 }
 
 .addMinerButton {
-    margin-top: 3px;
+    margin-top: 6px;
     margin-left: 3px;
     margin-right: 3px;
 }
 
 .saveMinerButton {
-    margin-left: 3px;
+    margin-left: 6px;
     margin-right: 3px;
     margin-top: 3px;
 }
 
 .loadMinerButton {
-    margin-left: 3px;
+    margin-left: 6px;
     margin-right: 3px;
     margin-top: 3px;
 }

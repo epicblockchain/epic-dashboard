@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card } from '@blueprintjs/core'
+import { Card, Elevation } from '@blueprintjs/core'
 import './DashboardPage.css'
 import '@blueprintjs/core/lib/css/blueprint.css'
 
@@ -34,33 +34,33 @@ class DashboardPage extends React.Component {
             <>{this.state.pageState === 'loaded' &&
                 <div className="flex-grid dashboardCards">
                     <div className="col">
-                        <Card className="dashboardCard">
-                            <h5>{this.state.dashboardData.card1.heading}</h5>
-                            <p>{this.state.dashboardData.card1.content}</p>
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card1.heading}</h3>
+                            <h2>{this.state.dashboardData.card1.content}</h2>
                         </Card>
-                        <Card className="dashboardCard">
-                            <h5>{this.state.dashboardData.card2.heading}</h5>
-                            <p>{this.state.dashboardData.card2.content}</p>
-                        </Card>
-                    </div>
-                    <div className="col">
-                        <Card className="dashboardCard">
-                            <h5>{this.state.dashboardData.card3.heading}</h5>
-                            <p>{this.state.dashboardData.card3.content}</p>
-                        </Card>
-                        <Card className="dashboardCard">
-                            <h5>{this.state.dashboardData.card4.heading}</h5>
-                            <p>{this.state.dashboardData.card4.content}</p>
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card2.heading}</h3>
+                            <h2>{this.state.dashboardData.card2.content}</h2>
                         </Card>
                     </div>
                     <div className="col">
-                        <Card className="dashboardCard">
-                            <h5>{this.state.dashboardData.card5.heading}</h5>
-                            <p>{this.state.dashboardData.card5.content}</p>
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card3.heading}</h3>
+                            <h2>{this.state.dashboardData.card3.content}</h2>
                         </Card>
-                        <Card className="dashboardCard">
-                            <h5>{this.state.dashboardData.card6.heading}</h5>
-                            <p>{this.state.dashboardData.card6.content}</p>
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card4.heading}</h3>
+                            <h2>{this.state.dashboardData.card4.content}</h2>
+                        </Card>
+                    </div>
+                    <div className="col">
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card5.heading}</h3>
+                            <h2>{this.state.dashboardData.card5.content}</h2>
+                        </Card>
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card6.heading}</h3>
+                            <h2>{this.state.dashboardData.card6.content}</h2>
                         </Card>
                     </div>
                 </div>

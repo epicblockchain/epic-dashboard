@@ -471,7 +471,7 @@ class TablePage extends React.Component {
                     </Table>
                 </div>
                 <div className="newMinersFormContainer">
-                    <h4>{"Add new miners"}</h4>
+                    <h3>{"Add new miners"}</h3>
                     <InputGroup placeholder="IP" onChange={this.handleNewMinerIpChange}/>  
                     <Button className="addMinerButton" icon="plus" text="Add Miner via IP" onClick={this.addNewMiner} />
                     <Button className="saveMinerButton" icon="floppy-disk" text="Save current miners" onClick={this.saveCurrentMiners} />
