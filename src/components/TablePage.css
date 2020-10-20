@@ -3,11 +3,34 @@
     margin-right: 5%;
 }
 
+.minersTableCategoriesContainer {
+    margin-top: 5%;
+    margin-right: 5%;
+
+}
+
 .minersTableContainer {
     display: flex;
     flex-wrap: nowrap;
-    margin-top: 20px;
+    margin-top: 10px;
     justify-content: center;
+}
+
+.bp3-table-cell {
+  font-size: 12px;
+}
+
+.bp3-table-header {
+  background: #1B1D4D !important;/* Green */
+  color: white !important;
+}
+.bp3-table-header-selected {
+  background: #1B1D4D !important;/* Green */
+  color: #ffc107 !important;
+}
+bp3-table-header:hover {
+  background: #1B1D4D !important;/* Green */
+  color: #ffc107 !important;
 }
 
 .minersTable {
@@ -20,14 +43,28 @@
 
 .addMinerButton {
     margin-top: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
+.saveMinerButton {
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top: 3px;
+}
 
 .loadMinerButton {
+    margin-left: 3px;
+    margin-right: 3px;
     margin-top: 3px;
 }
 
 .powerTip {
     position: relative;
     right: 13px;
+}
+
+.bp3-icon {
+  color: #ffc107 !important;
+
 }

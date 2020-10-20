@@ -1,10 +1,25 @@
 #epicSidebarLogo {
-    width: 160px;
+  padding-top: 40px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 8px;
 }
 
+.sidebar {
+  background: #1B1D4D !important;/* Green */
+  color: white !important;
+  font-size: 18px;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-bottom: 5px;
+}
 .minimizeSidebarButton {
   position: absolute;
   float: left;
+  background: #1B1D4D !important;/* Green */
+  border-color: #ffc107 !important;
+  border: 2px solid black;
+  color: #1B1D4D !important;/* Green */
 }
 
 .maximizeSidebarButton {
