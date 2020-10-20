@@ -112,7 +112,6 @@ class App extends React.Component {
                   </Menu>
               }
               open={this.state.sidebarOpen}
-              className="sidebar"
               onSetOpen={this.onSetSidebarOpen}
             styles={{ sidebar: { background: "#1B1D4D" } }}
             >

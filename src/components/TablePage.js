@@ -34,21 +34,21 @@ class TablePage extends React.Component {
                 power          : false
             },
             columns: {
-                "ip": <Column key="ip" name="IP" cellRenderer                    = {this.ipCellRenderer}/>           ,
-                "name": <Column key="name" name="Name" cellRenderer                  = {this.nameCellRenderer}/>         ,
-                "firmware": <Column key="firmware" name="Firmware" cellRenderer              = {this.firmwareCellRenderer}/>     ,
-                "operatingMode": <Column key="operatingMode" name="Operating Mode" cellRenderer        = {this.operatingModeCellRenderer}/>,
-                "pool": <Column key="pool" name="Pool" cellRenderer                  = {this.poolCellRenderer}/>         ,
-                "user": <Column key="user" name="User" cellRenderer                  = {this.userCellRenderer}/>         ,
-                "started": <Column key="started" name="Started" cellRenderer               = {this.startedCellRenderer}/>      ,
-                "uptime": <Column key="uptime" name="Uptime" cellRenderer                = {this.uptimeCellRenderer}/>       ,
-                "activeHBs": <Column key="activeHBs" name="Active HBs" cellRenderer            = {this.activeHBCellRenderer}/>     ,
-                "hashrate": <Column key="hashrate" name="Hashrate (TH/s)" cellRenderer       = {this.hashrateCellRenderer}/>     ,
-                "acceptedShares": <Column key="acceptedShares" name="Accepted" cellRenderer              = {this.acceptedCellRenderer}/>     ,
-                "rejectedShares": <Column key="rejectedShares" name="Rejected" cellRenderer              = {this.rejectedCellRenderer}/>     ,
-                "difficulty": <Column key="difficulty" name="Difficulty" cellRenderer            = {this.difficultyCellRenderer}/>   ,
-                "temperature": <Column key="temperature" name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/>  ,
-                "power": <Column key="power" name={"Power (W)"} cellRenderer           = {this.powerCellRenderer}/>        
+                "ip"             : <Column key="ip"             name="IP"                    cellRenderer = {this.ipCellRenderer}/>          ,
+                "name"           : <Column key="name"           name="Name"                  cellRenderer = {this.nameCellRenderer}/>        ,
+                "firmware"       : <Column key="firmware"       name="Firmware"              cellRenderer = {this.firmwareCellRenderer}/>    ,
+                "operatingMode"  : <Column key="operatingMode"  name="Operating Mode"        cellRenderer = {this.operatingModeCellRenderer}/>,
+                "pool"           : <Column key="pool"           name="Pool"                  cellRenderer = {this.poolCellRenderer}/>        ,
+                "user"           : <Column key="user"           name="User"                  cellRenderer = {this.userCellRenderer}/>        ,
+                "started"        : <Column key="started"        name="Started"               cellRenderer = {this.startedCellRenderer}/>     ,
+                "uptime"         : <Column key="uptime"         name="Uptime"                cellRenderer = {this.uptimeCellRenderer}/>      ,
+                "activeHBs"      : <Column key="activeHBs"      name="Active HBs"            cellRenderer = {this.activeHBCellRenderer}/>    ,
+                "hashrate"       : <Column key="hashrate"       name="Hashrate (TH/s)"       cellRenderer = {this.hashrateCellRenderer}/>    ,
+                "acceptedShares" : <Column key="acceptedShares" name="Accepted"              cellRenderer = {this.acceptedCellRenderer}/>    ,
+                "rejectedShares" : <Column key="rejectedShares" name="Rejected"              cellRenderer = {this.rejectedCellRenderer}/>    ,
+                "difficulty"     : <Column key="difficulty"     name="Difficulty"            cellRenderer = {this.difficultyCellRenderer}/>  ,
+                "temperature"    : <Column key="temperature"    name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/> ,
+                "power"          : <Column key="power"          name={"Power (W)"}           cellRenderer = {this.powerCellRenderer}/>
             }
         }
 
@@ -73,6 +73,28 @@ class TablePage extends React.Component {
         this.loadPreviousMiners = this.loadPreviousMiners.bind(this);
 
         this.handleColumnVisibility = this.handleColumnVisibility.bind(this);
+        this.handleCopy = this.handleCopy.bind(this);
+
+        this.getKeyFromColumnIndex = this.getKeyFromColumnIndex.bind(this);
+
+        this.colIdxToKey = [
+            'ip',
+            'name',
+            'firmware',
+            'operatingMode',
+            'pool',
+            'user',
+            'started',
+            'uptime',
+            'activeHBs',
+            'hashrate',
+            'acceptedShares',
+            'rejectedShares',
+            'difficulty',
+            'temperature',
+            'power'
+        ]; //in the future this can be made an object and handle column swapping
+
     }
 
     tableGetterHandler(event, args){
@@ -163,7 +185,7 @@ class TablePage extends React.Component {
         mutSeconds -= hours * 3600;
         const minutes = Math.floor(mutSeconds / 60)
         mutSeconds -= minutes * 60;
-        return days+'d'+hours+'h'+minutes+'m'+mutSeconds+'s';
+        return days+'d '+hours+'h '+minutes+'m '+mutSeconds+'s ';
     }
 
     uptimeCellRenderer = (rowIndex: number) => {
@@ -329,6 +351,30 @@ class TablePage extends React.Component {
         electron.ipcRenderer.removeListener('get-table-reply', this.tableGetterHandler)
     }
 
+    getKeyFromColumnIndex(col){
+        //find idx of col'd checked col
+
+        let realCol = 0;
+        let sum = 0;
+        while (sum <= col) {
+            if (!this.state.isChecked[this.colIdxToKey[realCol]]){
+                realCol++;
+            } else {
+                realCol++;
+                sum++;
+            }
+        }
+
+        return this.colIdxToKey[realCol-1];
+    }
+
+    handleCopy(row: number, col: number){
+        const key = this.getKeyFromColumnIndex(col);
+        return key;
+        
+
+    }
+
     render() {
 
         let columns = [];
@@ -361,7 +407,7 @@ class TablePage extends React.Component {
                     </Tooltip>
                 </div>
                 <div className="minersTableContainer">
-                    <Table className="minersTable"
+                    <Table getCellClipboardData={this.handleCopy} className="minersTable"
                             enableRowHeader={false}
                             numRows={this.state.miners.length}
                             >
