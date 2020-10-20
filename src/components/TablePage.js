@@ -49,7 +49,24 @@ class TablePage extends React.Component {
                 "difficulty"     : <Column key="difficulty"     name="Difficulty"            cellRenderer = {this.difficultyCellRenderer}/>  ,
                 "temperature"    : <Column key="temperature"    name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/> ,
                 "power"          : <Column key="power"          name="Power (W)"             cellRenderer = {this.powerCellRenderer}/>
-            }
+            },
+            colIdxToKey: [
+                'ip',
+                'name',
+                'firmware',
+                'operatingMode',
+                'pool',
+                'user',
+                'started',
+                'uptime',
+                'activeHBs',
+                'hashrate',
+                'acceptedShares',
+                'rejectedShares',
+                'difficulty',
+                'temperature',
+                'power'
+            ] //in the future this can be made an object and handle column swapping
         }
 
         this.tableGetterHandler        = this.tableGetterHandler.bind(this);
@@ -76,25 +93,17 @@ class TablePage extends React.Component {
         this.handleCopy = this.handleCopy.bind(this);
 
         this.getKeyFromColumnIndex = this.getKeyFromColumnIndex.bind(this);
+        this.handleColumnReordering = this.handleColumnReordering.bind(this);
 
-        this.colIdxToKey = [
-            'ip',
-            'name',
-            'firmware',
-            'operatingMode',
-            'pool',
-            'user',
-            'started',
-            'uptime',
-            'activeHBs',
-            'hashrate',
-            'acceptedShares',
-            'rejectedShares',
-            'difficulty',
-            'temperature',
-            'power'
-        ]; //in the future this can be made an object and handle column swapping
 
+    }
+    
+    //reorders columns idx to key as well as ischecked
+    handleColumnReordering(oldIndex, newIndex, length){
+        console.log(oldIndex);
+        console.log(newIndex);
+        console.log(length);
+        console.log();
     }
 
     tableGetterHandler(event, args){
@@ -357,7 +366,7 @@ class TablePage extends React.Component {
         let realCol = 0;
         let sum = 0;
         while (sum <= col) {
-            if (!this.state.isChecked[this.colIdxToKey[realCol]]){
+            if (!this.state.isChecked[this.state.colIdxToKey[realCol]]){
                 realCol++;
             } else {
                 realCol++;
@@ -365,7 +374,7 @@ class TablePage extends React.Component {
             }
         }
 
-        return this.colIdxToKey[realCol-1];
+        return this.state.colIdxToKey[realCol-1];
     }
 
     handleCopy(rowIndex: number, col: number){
@@ -434,11 +443,12 @@ class TablePage extends React.Component {
     render() {
 
         let columns = [];
-        for (const key of Object.keys(this.state.columns)) {
+
+        this.state.colIdxToKey.forEach(key => {
             if (this.state.isChecked[key]) {
                 columns.push(this.state.columns[key])
             }
-        }
+        });
 
         return (
             <div className="minersPageContainer">
@@ -465,7 +475,9 @@ class TablePage extends React.Component {
                 <div className="minersTableContainer">
                     <Table getCellClipboardData={this.handleCopy} className="minersTable"
                             enableRowHeader={false}
+                            enableColumnReordering={true}
                             numRows={this.state.miners.length}
+                            onColumnsReordered={this.handleColumnReordering}
                             >
                         {columns}
                     </Table>

@@ -175,7 +175,7 @@ class App extends React.Component {
                 <div className={Classes.DIALOG_FOOTER}>
                     <div className={Classes.DIALOG_FOOTER_ACTIONS}>
                         <Button intent={'primary'} onClick={this.handleMoveToMinerList}>
-                            Navigate to Miner List tab
+                            Navigate to Miner List
                         </Button>
                         <Button onClick={this.handleVpnDialogDismiss}>
                             Dismiss
