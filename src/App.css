@@ -38,6 +38,22 @@ body {
     font-size: 18px;
 }
 
+.popoverContent{
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.popover {
+    margin-left: 67%;
+}
+
+.githubButton {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 /* 1b1d4d
    ffc107
    */

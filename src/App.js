@@ -7,7 +7,7 @@ import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
 import LoadingPage from './components/LoadingPage'
 import SupportPage from './components/SupportPage'
-import { Button, Classes, Dialog, FocusStyleManager, Menu, MenuDivider, MenuItem, Popover, Position } from '@blueprintjs/core'
+import { Button, Classes, Dialog, FocusStyleManager, Menu, MenuDivider, MenuItem, Popover } from '@blueprintjs/core'
 import { EpicToaster } from './components/Toasters'
 
 import '@blueprintjs/core/lib/css/blueprint.css'
@@ -101,6 +101,24 @@ class App extends React.Component {
 
     return (
       <div>
+            <Popover 
+                isOpen={true}
+                className="popover"
+                minimal={true}
+                modifiers={{ preventOverflow: {enabled: false}, hide: { enabled: false} }}
+                content={
+                    <div className="popoverContent">
+                        <p>A new firmware update is available!</p>
+                        <span>
+                            <Button className="githubButton downloadPageButton" text="Download Page"/>
+                            <Button className="githubButton downloadDismiss" text="Dismiss"/>
+                        </span>
+                    </div>
+                }
+                target={
+                    <div className="popoverTarget" text="test"/>
+                }
+            />        
             <Sidebar className="sidebar"
               sidebar={
                   <Menu className="sidebar">
@@ -126,16 +144,6 @@ class App extends React.Component {
               {this.state.page === 'settings' && <SettingsPage />}
               {this.state.page === 'support' && <SupportPage />}
 
-                <Popover 
-                    isOpen={true}
-                    position={Position.BOTTOM_RIGHT}
-                    content={
-                        <p>Test content</p>
-                    }
-                    target={
-                        <Button class="right" text="test"/>
-                    }
-                />        
 
             </Sidebar>
             
