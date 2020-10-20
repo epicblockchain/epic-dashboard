@@ -28,7 +28,11 @@
   background: #1B1D4D !important;/* Green */
   color: #ffc107 !important;
 }
-bp3-table-header:hover {
+.bp3-table-column-name:hover {
+  background: #1B1D4D !important;/* Green */
+  color: #ffc107 !important;
+}
+.bp3-table-cell:hover {
   background: #1B1D4D !important;/* Green */
   color: #ffc107 !important;
 }

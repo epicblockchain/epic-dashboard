@@ -13,3 +13,16 @@
 .dashboardCard {
     margin: 20px;
 }
+
+.bp3-card {
+  background: #1B1D4D !important;/* Green */
+  color: white !important;
+  font-size: 32px;
+
+}
+.bp3-card h5 {
+  color: #ffc107 !important;/* Green */
+  font-size: 24px;
+
+}
+
