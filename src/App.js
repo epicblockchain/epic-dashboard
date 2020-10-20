@@ -99,9 +99,9 @@ class App extends React.Component {
 
     return (
       <div>
-            <Sidebar
+            <Sidebar className="sidebar"
               sidebar={
-                  <Menu>
+                  <Menu className="sidebar">
                       <Button className="minimizeSidebarButton" icon="caret-left" onClick={() => this.onSetSidebarOpen(false)} />
                       <img id="epicSidebarLogo" src={logo} alt="/"/>
                       <MenuDivider />
@@ -114,7 +114,7 @@ class App extends React.Component {
               open={this.state.sidebarOpen}
               className="sidebar"
               onSetOpen={this.onSetSidebarOpen}
-              styles={{ sidebar: { background: "white" } }}
+            styles={{ sidebar: { background: "#1B1D4D" } }}
             >
               <Button className="maximizeSidebarButton" icon="caret-right" onClick={() => this.onSetSidebarOpen(true)} />
               {this.state.page === 'loading' && <LoadingPage />}
