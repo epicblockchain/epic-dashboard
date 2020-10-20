@@ -7,7 +7,7 @@
 }
 
 .dashboardCards {
-    margin: 15%
+    margin: 8%
 }
 
 .dashboardCard {
@@ -18,11 +18,14 @@
   background: #1B1D4D !important;/* Green */
   color: white !important;
   font-size: 32px;
+  text-align: center;
 
 }
-.bp3-card h5 {
+
+.bp3-card h3 {
   color: #ffc107 !important;/* Green */
   font-size: 24px;
+  text-align: center;
 
 }
 

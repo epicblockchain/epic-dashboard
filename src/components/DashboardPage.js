@@ -35,32 +35,32 @@ class DashboardPage extends React.Component {
                 <div className="flex-grid dashboardCards">
                     <div className="col">
                         <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
-                            <h5>{this.state.dashboardData.card1.heading}</h5>
-                            <h4>{this.state.dashboardData.card1.content}</h4>
+                            <h3>{this.state.dashboardData.card1.heading}</h3>
+                            <h2>{this.state.dashboardData.card1.content}</h2>
                         </Card>
                         <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
-                            <h5>{this.state.dashboardData.card2.heading}</h5>
-                            <h4>{this.state.dashboardData.card2.content}</h4>
-                        </Card>
-                    </div>
-                    <div className="col">
-                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
-                            <h5>{this.state.dashboardData.card3.heading}</h5>
-                            <h4>{this.state.dashboardData.card3.content}</h4>
-                        </Card>
-                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
-                            <h5>{this.state.dashboardData.card4.heading}</h5>
-                            <h4>{this.state.dashboardData.card4.content}</h4>
+                            <h3>{this.state.dashboardData.card2.heading}</h3>
+                            <h2>{this.state.dashboardData.card2.content}</h2>
                         </Card>
                     </div>
                     <div className="col">
                         <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
-                            <h5>{this.state.dashboardData.card5.heading}</h5>
-                            <h4>{this.state.dashboardData.card5.content}</h4>
+                            <h3>{this.state.dashboardData.card3.heading}</h3>
+                            <h2>{this.state.dashboardData.card3.content}</h2>
                         </Card>
                         <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
-                            <h5>{this.state.dashboardData.card6.heading}</h5>
-                            <h4>{this.state.dashboardData.card6.content}</h4>
+                            <h3>{this.state.dashboardData.card4.heading}</h3>
+                            <h2>{this.state.dashboardData.card4.content}</h2>
+                        </Card>
+                    </div>
+                    <div className="col">
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card5.heading}</h3>
+                            <h2>{this.state.dashboardData.card5.content}</h2>
+                        </Card>
+                        <Card className="dashboardCard" interactive={true} elevation={Elevation.FOUR}>
+                            <h3>{this.state.dashboardData.card6.heading}</h3>
+                            <h2>{this.state.dashboardData.card6.content}</h2>
                         </Card>
                     </div>
                 </div>
