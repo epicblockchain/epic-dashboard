@@ -6,6 +6,7 @@ import ChartPage from './components/ChartPage'
 import TablePage from './components/TablePage'
 import SettingsPage from './components/SettingsPage'
 import LoadingPage from './components/LoadingPage'
+import SupportPage from './components/SupportPage'
 import { Button, Classes, Dialog, FocusStyleManager, Menu, MenuDivider, MenuItem} from '@blueprintjs/core'
 import { EpicToaster } from './components/Toasters'
 
@@ -109,6 +110,7 @@ class App extends React.Component {
                       <MenuItem icon="chart" text="Hashrate Chart" onClick={() => this.onSetPage('chart')} />
                       <MenuItem icon="th" text="Miner List" onClick={() => this.onSetPage('table')} />
                       <MenuItem icon="cog" text="Miner Settings" onClick={() => this.onSetPage('settings')} />
+                      <MenuItem icon="help" text="Support" onClick={() => this.onSetPage('support')} />
                   </Menu>
               }
               open={this.state.sidebarOpen}
@@ -121,6 +123,7 @@ class App extends React.Component {
               {this.state.page === 'chart' && <ChartPage />}
               {this.state.page === 'table' && <TablePage />}
               {this.state.page === 'settings' && <SettingsPage />}
+              {this.state.page === 'support' && <SupportPage />}
             </Sidebar>
             
             <Dialog className="vpnDialog" isOpen={this.state.isVpnDialogOpen && this.state.page==='loading'}>

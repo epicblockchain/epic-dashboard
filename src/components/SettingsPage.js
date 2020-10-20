@@ -38,6 +38,7 @@ class SettingsPage extends React.Component {
 
         this.handleApplyToChange = this.handleApplyToChange.bind(this);
         this.handleApplyClicked = this.handleApplyClicked.bind(this);
+        this.handleCopy = this.handleCopy.bind(this);
     }
 
     ipCellRenderer(rowIndex: number){
@@ -136,6 +137,22 @@ class SettingsPage extends React.Component {
         this.setState({applyTo: applyToArray})
     }
 
+    handleCopy(rowIndex: number, col: number){
+        switch(col) {
+            case 0:
+                return this.state.miners[rowIndex].ip;
+            case 1:
+                return this.state.miners[rowIndex].summary.data["Software"];
+            case 2:
+                return this.state.miners[rowIndex].summary.data["Stratum"]["Current User"];
+            case 3:
+                return this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"];
+            default:
+                console.log('bad copypaste');
+                return '';
+        }
+    }
+
     componentDidMount(){
         electron.ipcRenderer.send('get-settings');
         electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
@@ -149,7 +166,7 @@ class SettingsPage extends React.Component {
         return (
             <div className="settingsContainer">
                 <div className="settingsTableDiv">
-                    <Table enableRowHeader={false} numRows={this.state.miners.length}>
+                    <Table getCellClipboardData={this.handleCopy}  enableRowHeader={false} numRows={this.state.miners.length}>
                         <Column name='IP' cellRenderer={this.ipCellRenderer} />
                         <Column name='Firmware Version' cellRenderer={this.firmwareVersionCellRenderer} />
                         <Column name='Miner Name' cellRenderer={this.nameCellRenderer} />
