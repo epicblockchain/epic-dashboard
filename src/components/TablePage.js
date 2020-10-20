@@ -48,7 +48,7 @@ class TablePage extends React.Component {
                 "rejectedShares" : <Column key="rejectedShares" name="Rejected"              cellRenderer = {this.rejectedCellRenderer}/>    ,
                 "difficulty"     : <Column key="difficulty"     name="Difficulty"            cellRenderer = {this.difficultyCellRenderer}/>  ,
                 "temperature"    : <Column key="temperature"    name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/> ,
-                "power"          : <Column key="power"          name={"Power (W)"}           cellRenderer = {this.powerCellRenderer}/>
+                "power"          : <Column key="power"          name="Power (W)"             cellRenderer = {this.powerCellRenderer}/>
             }
         }
 
