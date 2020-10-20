@@ -27,7 +27,7 @@ class App extends React.Component {
       sidebarOpen: true,
       page: 'loading',
       isVpnDialogOpen: false,
-      isFirmwareUpdateAvailableChecked: false
+      isPopoverOpen: false
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.setPage = this.onSetPage.bind(this);
@@ -36,6 +36,23 @@ class App extends React.Component {
 
     this.handleVpnDialogDismiss = this.handleVpnDialogDismiss.bind(this);
     this.handleMoveToMinerList = this.handleMoveToMinerList.bind(this);
+    this.handleNewReleases = this.handleNewReleases.bind(this);
+    this.handleDismissNewReleases = this.handleDismissNewReleases.bind(this);
+    this.handleDownloadPageClick = this.handleDownloadPageClick.bind(this);
+  }
+
+  handleDismissNewReleases(){
+    this.setState({isPopoverOpen: false});
+  }
+
+  handleDownloadPageClick(){
+    this.setState({isPopoverOpen: false});
+    electron.ipcRenderer.send('open-link', 'https://github.com/epicblockchain/epic-miner/releases/')
+  }
+
+  handleNewReleases(event, args){
+    this.setState({isPopoverOpen: true});
+    this.setState({latestRelease: args});
   }
 
   handleStopLoading(){
@@ -68,6 +85,7 @@ class App extends React.Component {
   componentDidMount(){
     electron.ipcRenderer.on('stop-loading', this.handleStopLoading)
     electron.ipcRenderer.on('toast', this.toastHandler)
+    electron.ipcRenderer.on('new-releases', this.handleNewReleases)
     setTimeout(function(){
         if ( this.state.page === 'loading' ){
             this.setState({isVpnDialogOpen: true});
@@ -78,6 +96,7 @@ class App extends React.Component {
   componentWillUnmount(){
     electron.ipcRenderer.removeListener('stop-loading', this.handleStopLoading)
     electron.ipcRenderer.removeListener('toast', this.toastHandler)
+    electron.ipcRenderer.removeListener('new-releases', this.handleNewReleases)
   }
  
   onSetSidebarOpen(open) {
@@ -102,16 +121,16 @@ class App extends React.Component {
     return (
       <div>
             <Popover 
-                isOpen={true}
+                isOpen={this.state.isPopoverOpen}
                 className="popover"
                 minimal={true}
                 modifiers={{ preventOverflow: {enabled: false}, hide: { enabled: false} }}
                 content={
                     <div className="popoverContent">
-                        <p>A new firmware update is available!</p>
+                        <p>{"A new firmware update is available" + (this.state.latestRelease ? ': ' + this.state.latestRelease : '!') }</p>
                         <span>
-                            <Button className="githubButton downloadPageButton" text="Download Page"/>
-                            <Button className="githubButton downloadDismiss" text="Dismiss"/>
+                            <Button href="https://www.google.com" onClick={this.handleDownloadPageClick} className="githubButton downloadPageButton" text="Download Page"/>
+                            <Button onClick={this.handleDismissNewReleases} className="githubButton downloadDismiss" text="Dismiss"/>
                         </span>
                     </div>
                 }
