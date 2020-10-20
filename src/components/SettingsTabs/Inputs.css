@@ -60,6 +60,9 @@
 .bp3-control.bp3-switch .bp3-control-indicator {
   background: #D3D3D3 !important;/* Green */
 }
+.bp3-control.bp3-switch .bp3-control-indicator:hover {
+  background: #ffc107 !important;
+}
 .bp3-control input:checked~.bp3-control-indicator {
   background: #1B1D4D !important;/* Green */
 }
