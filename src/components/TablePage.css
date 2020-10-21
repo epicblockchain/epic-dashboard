@@ -42,12 +42,12 @@
 }
 
 .newMinersFormContainer {
-    margin-right: 50%;
+    margin: 10px;
 }
 
 .addMinerButton {
     margin-top: 6px;
-    margin-left: 3px;
+    margin-left: 6px;
     margin-right: 3px;
 }
 
@@ -70,5 +70,9 @@
 
 .bp3-icon {
   color: #ffc107 !important;
+}
 
+.ipBox {
+    width: 400px;
+    margin-left: 6px;
 }
