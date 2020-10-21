@@ -66,7 +66,24 @@ class TablePage extends React.Component {
                 'difficulty',
                 'temperature',
                 'power'
-            ] //in the future this can be made an object and handle column swapping
+            ],
+            isSortAscending: {
+                ip             : true,
+                name           : true,
+                firmware       : true,
+                operatingMode  : true,
+                pool           : true,
+                user           : true,
+                startTime      : true,
+                uptime         : true,
+                activeHBs      : true,
+                hashrate       : true,
+                acceptedShares : true,
+                rejectedShares : true,
+                difficulty     : true,
+                temperature    : true,
+                power          : true
+            }
         }
 
         this.tableGetterHandler        = this.tableGetterHandler.bind(this);
@@ -94,8 +111,64 @@ class TablePage extends React.Component {
 
         this.getKeyFromColumnIndex = this.getKeyFromColumnIndex.bind(this);
         this.handleColumnReordering = this.handleColumnReordering.bind(this);
+        
+        this.handleSelectionChange = this.handleSelectionChange.bind(this);
+        this.sortMiners = this.sortMiners.bind(this);
+    }
 
+    handleSelectionChange(selection){
+        //conditions when only a column is selected
+        if (!selection[0].rows
+            && selection[0].cols
+            && (selection[0].cols[0] === selection[0].cols[1])
+            ) {
+            const key = this.getKeyFromColumnIndex(selection[0].cols[0]);
+            this.sortMiners(key);
+        }
+    }
 
+    sortMiners(key){
+        let newMiners = this.state.miners;
+        newMiners.sort((a, b) => {
+            try {
+                switch(key){
+                    case 'ip':
+                        let aIpNum = a.ip.split('.');
+                        aIpNum[3] = aIpNum[3].split(':');
+                        aIpNum = Math.pow(256, 4) * aIpNum[0] + Math.pow(256, 3) * aIpNum[1] + Math.pow(256, 2) * aIpNum[2] + 256 * aIpNum[3][0] + aIpNum[3][1]
+                        let bIpNum = b.ip.split('.');
+                        bIpNum[3] = bIpNum[3].split(':');
+                        bIpNum = Math.pow(256, 4) * bIpNum[0] + Math.pow(256, 3) * bIpNum[1] + Math.pow(256, 2) * bIpNum[2] + 256 * bIpNum[3][0] + bIpNum[3][1]
+                        return aIpNum-bIpNum;
+                    case 'name':
+                    case 'firmware':
+                    case 'operatingMode':
+                    case 'pool':
+                    case 'user':
+                    case 'started':
+                    case 'uptime':
+                    case 'activeHBs':
+                    case 'hashrate':
+                    case 'acceptedShares':
+                    case 'rejectedShares':
+                    case 'difficulty':
+                    case 'temperature':
+                    case 'power':
+                    default:
+                        return 0; //do nothing more
+                }
+            } catch (err) {
+                console.log(err)
+                return ( a.ip > b.ip ) ? 1 : -1;
+            }
+        });
+        if (!this.state.isSortAscending[key]){
+            newMiners.reverse();
+        }
+        this.setState({miners: newMiners})
+        let newIsSortAscending = this.state.isSortAscending;
+        newIsSortAscending[key] = !this.state.isSortAscending[key]
+        this.setState({isSortAscending: newIsSortAscending})
     }
 
     //reorders columns idx to key
@@ -469,32 +542,34 @@ class TablePage extends React.Component {
         return (
             <div className="minersPageContainer">
                 <div className="minersTableCategoriesContainer">
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.ip             } onChange={this.handleColumnVisibility.bind(this, 'ip')}>  IP </Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.name           } onChange={this.handleColumnVisibility.bind(this, 'name')}>  Name                </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.firmware       } onChange={this.handleColumnVisibility.bind(this, 'firmware')}>  Firmware            </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.operatingMode  } onChange={this.handleColumnVisibility.bind(this, 'operatingMode')}>  Operating Mode      </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.pool           } onChange={this.handleColumnVisibility.bind(this, 'pool')}>  Pool                </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.user           } onChange={this.handleColumnVisibility.bind(this, 'user')}>  User                </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.startTime      } onChange={this.handleColumnVisibility.bind(this, 'startTime')}>  Start Time          </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.uptime         } onChange={this.handleColumnVisibility.bind(this, 'uptime')}>  Uptime              </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.activeHBs      } onChange={this.handleColumnVisibility.bind(this, 'activeHBs')}>  Active HBs          </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate       } onChange={this.handleColumnVisibility.bind(this, 'hashrate')}>  Hashrate            </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.acceptedShares } onChange={this.handleColumnVisibility.bind(this, 'acceptedShares')}>  Accepted Shares     </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.rejectedShares } onChange={this.handleColumnVisibility.bind(this, 'rejectedShares')}>  Rejected Shares     </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.difficulty     } onChange={this.handleColumnVisibility.bind(this, 'difficulty')}>  Difficulty          </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.temperature    } onChange={this.handleColumnVisibility.bind(this, 'temperature')}>  {"Temperature \u00b0C"} </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.power          } onChange={this.handleColumnVisibility.bind(this, 'power')}>  Power               </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.ip            } onChange={this.handleColumnVisibility.bind(this, 'ip')}>  IP </Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.name          } onChange={this.handleColumnVisibility.bind(this, 'name')}>  Name                </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.firmware      } onChange={this.handleColumnVisibility.bind(this, 'firmware')}>  Firmware            </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.operatingMode } onChange={this.handleColumnVisibility.bind(this, 'operatingMode')}>  Operating Mode      </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.pool          } onChange={this.handleColumnVisibility.bind(this, 'pool')}>  Pool                </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.user          } onChange={this.handleColumnVisibility.bind(this, 'user')}>  User                </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.startTime     } onChange={this.handleColumnVisibility.bind(this, 'startTime')}>  Start Time          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.uptime        } onChange={this.handleColumnVisibility.bind(this, 'uptime')}>  Uptime              </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.activeHBs     } onChange={this.handleColumnVisibility.bind(this, 'activeHBs')}>  Active HBs          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate      } onChange={this.handleColumnVisibility.bind(this, 'hashrate')}>  Hashrate            </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.acceptedShares} onChange={this.handleColumnVisibility.bind(this, 'acceptedShares')}>  Accepted Shares     </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.rejectedShares} onChange={this.handleColumnVisibility.bind(this, 'rejectedShares')}>  Rejected Shares     </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.difficulty    } onChange={this.handleColumnVisibility.bind(this, 'difficulty')}>  Difficulty          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.temperature   } onChange={this.handleColumnVisibility.bind(this, 'temperature')}>  {"Temperature \u00b0C"} </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.power         } onChange={this.handleColumnVisibility.bind(this, 'power')}>  Power               </ Checkbox>
                     <Tooltip content="Not including fan consumption" position={Position.BOTTOM_RIGHT}>
                         <Icon className="powerTip" icon="info-sign"/>
                     </Tooltip>
                 </div>
                 <div className="minersTableContainer">
-                    <Table getCellClipboardData={this.handleCopy} className="minersTable"
+                    <Table getCellClipboardData={this.handleCopy}
+                            className="minersTable"
                             enableRowHeader={false}
                             enableColumnReordering={true}
                             numRows={this.state.miners.length}
                             onColumnsReordered={this.handleColumnReordering}
-                            >
+                            onSelection={this.handleSelectionChange}    
+                        >
                         {columns}
                     </Table>
                 </div>
