@@ -35,9 +35,16 @@
 .applyButtonSpinner {
     width: 35px; 
 }
+
 .bp3-button {
   background: #1B1D4D !important;/* Green */
   color: white !important;
+  font-size: 16px;
+}
+
+.bp3-button:disabled {
+  background: lightgray !important;/* Green */
+  color: gray  !important;
   font-size: 16px;
 }
 
@@ -45,29 +52,31 @@
   background: #1B1D4D !important;/* Green */
   color: white !important;
   font-size: 16px;
-
 }
+
 .bp3-tab-indicator-wrapper .bp3-tab-indicator {
   color: white !important;
   font-size: 16px;
-
 }
+
 .bp3-tab-indicator {
   background: #1B1D4D !important;/* Green */
   color: white !important;
-
 }
+
 .bp3-control.bp3-switch .bp3-control-indicator {
   background: #D3D3D3 !important;/* Green */
 }
+
 .bp3-control.bp3-switch .bp3-control-indicator:hover {
   background: #ffc107 !important;
 }
+
 .bp3-control input:checked~.bp3-control-indicator {
   background: #1B1D4D !important;/* Green */
 }
+
 .bp3-tab {
   color: #1B1D4D !important;
   font-size: 16px;
-
 }
