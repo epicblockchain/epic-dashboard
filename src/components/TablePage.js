@@ -74,7 +74,7 @@ class TablePage extends React.Component {
                 operatingMode  : true,
                 pool           : true,
                 user           : true,
-                startTime      : true,
+                started        : true,
                 uptime         : true,
                 activeHBs      : true,
                 hashrate       : true,
@@ -130,6 +130,11 @@ class TablePage extends React.Component {
     sortMiners(key){
         let newMiners = this.state.miners;
         newMiners.sort((a, b) => {
+            if (a.summary.status !== 'completed'
+                || b.summary.status !== 'completed'){
+                return 0;
+            }
+
             try {
                 switch(key){
                     case 'ip':
@@ -141,11 +146,39 @@ class TablePage extends React.Component {
                         bIpNum = Math.pow(256, 4) * bIpNum[0] + Math.pow(256, 3) * bIpNum[1] + Math.pow(256, 2) * bIpNum[2] + 256 * bIpNum[3][0] + bIpNum[3][1]
                         return aIpNum-bIpNum;
                     case 'name':
+                        return (a.ip > b.ip) ? 1 : -1;
                     case 'firmware':
+                        let aData = a.summary.data["Software"].substr(12).split('.');
+                        aData = [parseInt(aData[0]), parseInt(aData[1]), parseInt(aData[2])]
+                        let bData = b.summary.data["Software"].substr(12).split('.');
+                        bData = [parseInt(bData[0]), parseInt(bData[1]), parseInt(bData[2])]
+                        if (aData[0] > bData[0]) {
+                            return 1;
+                        } else if (aData[0] < bData[0]) {
+                            return -1;
+                        } else {
+                            if (aData[1] > bData[1]) {
+                                return 1;
+                            } else if (aData[1] < bData[1]) {
+                                return -1;
+                            } else {
+                                if (aData[2] > bData[2]) {
+                                    return 1;
+                                } else if (aData[2] < bData[2]) {
+                                    return -1;
+                                } else {
+                                    return 0;
+                                }
+                            }
+                        }
                     case 'operatingMode':
+                        return (a.summary.data["Preset"].toLowerCase() > b.summary.data["Preset"].toLowerCase) ? 1 : -1;
                     case 'pool':
+                        return (a.summary.data["Stratum"]["Current Pool"].toLowerCase() > b.summary.data["Stratum"]["Current Pool"].toLowerCase) ? 1 : -1;
                     case 'user':
+                        return (a.summary.data["Stratum"]["Current User"].toLowerCase() > b.summary.data["Stratum"]["Current User"].toLowerCase) ? 1 : -1;
                     case 'started':
+                        return 0;
                     case 'uptime':
                     case 'activeHBs':
                     case 'hashrate':
@@ -165,6 +198,7 @@ class TablePage extends React.Component {
         if (!this.state.isSortAscending[key]){
             newMiners.reverse();
         }
+        //TODO push dead miners to the end
         this.setState({miners: newMiners})
         let newIsSortAscending = this.state.isSortAscending;
         newIsSortAscending[key] = !this.state.isSortAscending[key]
@@ -548,7 +582,7 @@ class TablePage extends React.Component {
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.operatingMode } onChange={this.handleColumnVisibility.bind(this, 'operatingMode')}>  Operating Mode      </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.pool          } onChange={this.handleColumnVisibility.bind(this, 'pool')}>  Pool                </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.user          } onChange={this.handleColumnVisibility.bind(this, 'user')}>  User                </ Checkbox>
-                    <Checkbox inline={true} defaultChecked={this.state.isChecked.startTime     } onChange={this.handleColumnVisibility.bind(this, 'startTime')}>  Start Time          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.startTime     } onChange={this.handleColumnVisibility.bind(this, 'started')}>  Start Time          </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.uptime        } onChange={this.handleColumnVisibility.bind(this, 'uptime')}>  Uptime              </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.activeHBs     } onChange={this.handleColumnVisibility.bind(this, 'activeHBs')}>  Active HBs          </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate      } onChange={this.handleColumnVisibility.bind(this, 'hashrate')}>  Hashrate            </ Checkbox>
