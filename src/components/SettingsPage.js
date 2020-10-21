@@ -27,13 +27,7 @@ class SettingsPage extends React.Component {
             operatingMode: 'normal',
             miners: [],
             ignoreUpdates: {},
-            isSortAscending: [
-                true,
-                true,
-                true,
-                true,
-                true
-            ]
+            isSortAscending: Array(5).fill(true)
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
         this.ipCellRenderer = this.ipCellRenderer.bind(this);
