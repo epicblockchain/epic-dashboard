@@ -27,7 +27,8 @@ class App extends React.Component {
       sidebarOpen: true,
       page: 'loading',
       isVpnDialogOpen: false,
-      isPopoverOpen: false
+      isPopoverOpen: false,
+      isDarkMode: false
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.setPage = this.onSetPage.bind(this);
@@ -39,6 +40,7 @@ class App extends React.Component {
     this.handleNewReleases = this.handleNewReleases.bind(this);
     this.handleDismissNewReleases = this.handleDismissNewReleases.bind(this);
     this.handleDownloadPageClick = this.handleDownloadPageClick.bind(this);
+    this.toggleDarkMode = this.toggleDarkMode.bind(this);
   }
 
   handleDismissNewReleases(){
@@ -115,11 +117,15 @@ class App extends React.Component {
   handleVpnDialogDismiss(){
     this.setState({isVpnDialogOpen: false});
   }
+
+  toggleDarkMode(){
+        this.setState({isDarkMode: !this.state.isDarkMode});
+  }
  
   render() {
 
     return (
-      <div>
+      <div className={this.state.isDarkMode ? "bp3-dark appContainerDark" : ""}>
             <Popover 
                 isOpen={this.state.isPopoverOpen}
                 className="popover"
@@ -143,7 +149,9 @@ class App extends React.Component {
                   <Menu className="sidebar">
                       <Button className="minimizeSidebarButton" icon="caret-left" onClick={() => this.onSetSidebarOpen(false)} />
                       <img id="epicSidebarLogo" src={logo} alt="/"/>
-                      <MenuDivider />
+                      <MenuDivider className="yellowMenuDivider"/>
+                      <MenuItem icon={this.state.isDarkMode ? "lightbulb" : "moon"} text={this.state.isDarkMode ? "Light Mode" : "Dark Mode"} onClick={this.toggleDarkMode} />
+                      <MenuDivider className="yellowMenuDivider"/>
                       <MenuItem icon="dashboard" text="Overview" onClick={() => this.onSetPage('dashboard')} />
                       <MenuItem icon="chart" text="Hashrate Chart" onClick={() => this.onSetPage('chart')} />
                       <MenuItem icon="th" text="Miner List" onClick={() => this.onSetPage('table')} />
