@@ -14,7 +14,6 @@ class TablePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pageState: 'loading',
             miners: [],
             isChecked: {
                 ip             : true,
@@ -279,8 +278,24 @@ class TablePage extends React.Component {
     }
 
     tableGetterHandler(event, args){
-        this.setState({miners: args})
-        this.setState({pageState: 'loaded'})
+        const currentIps = this.state.miners.map(m => {
+            return m.ip;
+        });
+
+        let newMiners = this.state.miners;
+
+        args.forEach(newMiner => {
+            const idx = currentIps.findIndex((ip) => ip === newMiner.ip);
+            if (idx === -1){
+                //append
+                newMiners.push(newMiner);
+            } else {
+                //update
+                newMiners[idx] = newMiner;
+            }
+        })
+        
+        this.setState({miners: newMiners})
     }
 
     ipCellRenderer = (rowIndex: number) => {
