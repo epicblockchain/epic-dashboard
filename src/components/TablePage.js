@@ -174,19 +174,65 @@ class TablePage extends React.Component {
                     case 'operatingMode':
                         return (a.summary.data["Preset"].toLowerCase() > b.summary.data["Preset"].toLowerCase) ? 1 : -1;
                     case 'pool':
-                        return (a.summary.data["Stratum"]["Current Pool"].toLowerCase() > b.summary.data["Stratum"]["Current Pool"].toLowerCase) ? 1 : -1;
+                        return (a.summary.data["Stratum"]["Current Pool"].toLowerCase() > b.summary.data["Stratum"]["Current Pool"].toLowerCase()) ? 1 : -1;
                     case 'user':
-                        return (a.summary.data["Stratum"]["Current User"].toLowerCase() > b.summary.data["Stratum"]["Current User"].toLowerCase) ? 1 : -1;
+                        return (a.summary.data["Stratum"]["Current User"].toLowerCase() > b.summary.data["Stratum"]["Current User"].toLowerCase()) ? 1 : -1;
                     case 'started':
-                        return 0;
+                        return a.summary.data["Session"]["Startup Timestamp"] - b.summary.data["Session"]["Startup Timestamp"];
                     case 'uptime':
+                        return a.summary.data["Session"]["Uptime"] - b.summary.data["Session"]["Uptime"];
                     case 'activeHBs':
+                        return a.summary.data["HBs"].length - b.summary.data["HBs"].length;
                     case 'hashrate':
+                        return a.summary.data["Session"]["Average MHs"] - b.summary.data["Session"]["Average MHs"];
                     case 'acceptedShares':
+                        return a.summary.data["Session"]["Accepted"] - b.summary.data["Session"]["Accepted"];
                     case 'rejectedShares':
+                        return a.summary.data["Session"]["Rejected"] - b.summary.data["Session"]["Rejected"];
                     case 'difficulty':
+                        return a.summary.data["Session"]["Difficulty"] - b.summary.data["Session"]["Difficulty"];
                     case 'temperature':
+                        let aMaxTemp = null;
+                        a.summary.data["HBs"].forEach(hb => {
+                            if (aMaxTemp === null || aMaxTemp < hb["Temperature"]){
+                                aMaxTemp = hb["Temperature"];
+                            }
+                        });
+                        if (aMaxTemp === null){
+                            return -1;
+                        }
+                        let bMaxTemp = null;
+                        b.summary.data["HBs"].forEach(hb => {
+                            if (bMaxTemp === null || bMaxTemp < hb["Temperature"]){
+                                bMaxTemp = hb["Temperature"];
+                            }
+                        });
+                        if (bMaxTemp === null){
+                            return -1;
+                        }
+                        return aMaxTemp - bMaxTemp;
                     case 'power':
+                        let aPower = null;
+                        a.summary.data["HBs"].forEach(hb => {
+                            if (aPower === null){
+                                aPower = 0;
+                            }
+                            aPower += hb["Input Power"];
+                        });
+                        if (aPower === null){
+                            return -1;
+                        }
+                        let bPower = null;
+                        b.summary.data["HBs"].forEach(hb => {
+                            if (bPower === null){
+                                bPower = 0;
+                            }
+                            bPower += hb["Input Power"];
+                        });
+                        if (bPower === null){
+                            return -1;
+                        }
+                        return aPower - bPower;
                     default:
                         return 0; //do nothing more
                 }
