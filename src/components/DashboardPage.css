@@ -16,14 +16,14 @@
 
 .bp3-card {
   background: #1B1D4D !important;/* Green */
-  color: white !important;
-  font-size: 32px;
+  color: white;
+  font-size: 24px;
   text-align: center;
 
 }
 
 .bp3-card h3 {
-  color: #ffc107 !important;/* Green */
+  color: #ffc107;/* Green */
   font-size: 24px;
   text-align: center;
 
