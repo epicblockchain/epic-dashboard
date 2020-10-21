@@ -34,21 +34,21 @@ class TablePage extends React.Component {
                 power          : false
             },
             columns: {
-                "ip"             : <Column key="ip"             name="IP"                    cellRenderer = {this.ipCellRenderer}/>          ,
-                "name"           : <Column key="name"           name="Name"                  cellRenderer = {this.nameCellRenderer}/>        ,
-                "firmware"       : <Column key="firmware"       name="Firmware"              cellRenderer = {this.firmwareCellRenderer}/>    ,
-                "operatingMode"  : <Column key="operatingMode"  name="Operating Mode"        cellRenderer = {this.operatingModeCellRenderer}/>,
-                "pool"           : <Column key="pool"           name="Pool"                  cellRenderer = {this.poolCellRenderer}/>        ,
-                "user"           : <Column key="user"           name="User"                  cellRenderer = {this.userCellRenderer}/>        ,
-                "started"        : <Column key="started"        name="Started"               cellRenderer = {this.startedCellRenderer}/>     ,
-                "uptime"         : <Column key="uptime"         name="Uptime"                cellRenderer = {this.uptimeCellRenderer}/>      ,
-                "activeHBs"      : <Column key="activeHBs"      name="Active HBs"            cellRenderer = {this.activeHBCellRenderer}/>    ,
-                "hashrate"       : <Column key="hashrate"       name="Hashrate (TH/s)"       cellRenderer = {this.hashrateCellRenderer}/>    ,
-                "acceptedShares" : <Column key="acceptedShares" name="Accepted"              cellRenderer = {this.acceptedCellRenderer}/>    ,
-                "rejectedShares" : <Column key="rejectedShares" name="Rejected"              cellRenderer = {this.rejectedCellRenderer}/>    ,
-                "difficulty"     : <Column key="difficulty"     name="Difficulty"            cellRenderer = {this.difficultyCellRenderer}/>  ,
-                "temperature"    : <Column key="temperature"    name={"Temperature \u00b0C"} cellRenderer = {this.temperatureCellRenderer}/> ,
-                "power"          : <Column key="power"          name="Power (W)"             cellRenderer = {this.powerCellRenderer}/>
+                "ip"             : <Column key="ip"             name="IP"                    cellRenderer={this.ipCellRenderer}/>           ,
+                "name"           : <Column key="name"           name="Name"                  cellRenderer={this.nameCellRenderer}/>         ,
+                "firmware"       : <Column key="firmware"       name="Firmware"              cellRenderer={this.firmwareCellRenderer}/>     ,
+                "operatingMode"  : <Column key="operatingMode"  name="Operating Mode"        cellRenderer={this.operatingModeCellRenderer}/>,
+                "pool"           : <Column key="pool"           name="Pool"                  cellRenderer={this.poolCellRenderer}/>         ,
+                "user"           : <Column key="user"           name="User"                  cellRenderer={this.userCellRenderer}/>         ,
+                "started"        : <Column key="started"        name="Started"               cellRenderer={this.startedCellRenderer}/>      ,
+                "uptime"         : <Column key="uptime"         name="Uptime"                cellRenderer={this.uptimeCellRenderer}/>       ,
+                "activeHBs"      : <Column key="activeHBs"      name="Active HBs"            cellRenderer={this.activeHBCellRenderer}/>     ,
+                "hashrate"       : <Column key="hashrate"       name="Hashrate (TH/s)"       cellRenderer={this.hashrateCellRenderer}/>     ,
+                "acceptedShares" : <Column key="acceptedShares" name="Accepted"              cellRenderer={this.acceptedCellRenderer}/>     ,
+                "rejectedShares" : <Column key="rejectedShares" name="Rejected"              cellRenderer={this.rejectedCellRenderer}/>     ,
+                "difficulty"     : <Column key="difficulty"     name="Difficulty"            cellRenderer={this.difficultyCellRenderer}/>   ,
+                "temperature"    : <Column key="temperature"    name={"Temperature \u00b0C"} cellRenderer={this.temperatureCellRenderer}/>  ,
+                "power"          : <Column key="power"          name="Power (W)"             cellRenderer={this.powerCellRenderer}/>
             },
             colIdxToKey: [
                 'ip',
@@ -97,7 +97,7 @@ class TablePage extends React.Component {
 
 
     }
-    
+
     //reorders columns idx to key
     handleColumnReordering(oldIndex, newIndex, length){
         console.log(oldIndex);
