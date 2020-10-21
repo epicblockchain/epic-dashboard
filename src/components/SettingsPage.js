@@ -1,6 +1,6 @@
 import React from 'react'
-import { Switch, Tab, Tabs } from '@blueprintjs/core'
-import { Cell, Column, Table } from '@blueprintjs/table'
+import { Switch, Menu, MenuItem, Tab, Tabs } from '@blueprintjs/core'
+import { Cell, Column, ColumnHeaderCell, Table } from '@blueprintjs/table'
 import MiningPoolTab from './SettingsTabs/MiningPoolTab'
 import WalletAddressTab from './SettingsTabs/WalletAddressTab'
 import OperatingModeTab from './SettingsTabs/OperatingModeTab'
@@ -43,17 +43,18 @@ class SettingsPage extends React.Component {
         this.handleCopy = this.handleCopy.bind(this);
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
         this.sortMiners = this.sortMiners.bind(this);
+
+        this.selectAll = this.selectAll.bind(this);
+        this.deselectAll = this.deselectAll.bind(this);
     }
 
     sortMiners(col){
         let newMiners = this.state.miners;
         newMiners.sort((a, b) => {
             if (a.summary.status !== 'completed'){
-                console.log(a.summary.status);
                 return (this.state.isSortAscending[col]) ? 1 : -1;
             }
             if (b.summary.status !== 'completed'){
-                console.log(b.summary.status);
                 return (this.state.isSortAscending[col]) ? -1 : 1;
             }
 
@@ -192,19 +193,23 @@ class SettingsPage extends React.Component {
     }
 
     handleApplyToChange(e){
-        var newApplyTo = [...this.state.applyTo];
-        newApplyTo[e.target.value] = e.target.checked;
-        this.setState({applyTo: newApplyTo});
+        let newMiners = this.state.miners;
+        const idx = newMiners.findIndex(el => el.ip === e.target.value)
+        if (idx === -1){
+            console.log('could not find ip in apply to change')
+            return;
+        }
+        newMiners[idx].isChecked = !newMiners[idx].isChecked;
+        this.setState({miners: newMiners});
     }
 
     applyToCellRenderer(rowIndex: number){
         const isDisabled = this.state.miners[rowIndex].summary.status !== 'completed';
-        return <Cell><Switch value={rowIndex} defaultChecked={false} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
+        return <Cell><Switch value={this.state.miners[rowIndex].ip} checked={this.state.miners[rowIndex].isChecked || false} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
     }
 
     handleApplyClicked(arg, e){
         arg.state.miners = this.state.miners;
-        arg.state.applyTo = this.state.applyTo;
         electron.ipcRenderer.send('post-settings', arg);
     }
 
@@ -216,8 +221,10 @@ class SettingsPage extends React.Component {
         args.forEach(newMiner => {
             const idx = currentIps.findIndex((ip) => ip === newMiner.ip);
             if (idx === -1){
+                newMiner.isChecked = false;
                 newMiners.push(newMiner);
             } else {
+                newMiner.isChecked = newMiners[idx].isChecked; //persist checkbox data -> maybe this can be kept seperately but performance seems to be aboutthe same
                 newMiners[idx] = newMiner;
             }
         });
@@ -225,24 +232,6 @@ class SettingsPage extends React.Component {
 
 
         this.setState({pageState: 'loaded'})
-        let newIgnoreUpdates = this.state.ignoreUpdates;
-        const applyToArray = args.map((m, i) => {
-            if (this.state.ignoreUpdates[m.ip]) {
-               return this.state.applyTo[i]; 
-            }
-            if (m.summary.status === 'completed') {
-                newIgnoreUpdates[m.ip] = true;
-                return false;
-            }
-            if (this.state.applyTo) {
-                return this.state.applyTo[i]
-            } else {
-                //miner not loaded case
-                return false;
-            }
-        });
-        this.setState({ignoreUpdates: newIgnoreUpdates})
-        this.setState({applyTo: applyToArray})
     }
 
     handleCopy(rowIndex: number, col: number){
@@ -261,6 +250,30 @@ class SettingsPage extends React.Component {
         }
     }
 
+    selectAll(){
+        const newMiners = this.state.miners.map(el => {
+            if (el.summary.status !== 'completed') {
+                return el;
+            }
+            let newMiner = el;
+            newMiner.isChecked = true;
+            return newMiner;
+        });
+        this.setState({miners: newMiners});
+    }
+
+    deselectAll(){
+        const newMiners = this.state.miners.map(el => {
+            if (el.summary.status !== 'completed') {
+                return el;
+            }
+            let newMiner = el;
+            newMiner.isChecked = false;
+            return newMiner;
+        });
+        this.setState({miners: newMiners});
+    }
+
     componentDidMount(){
         electron.ipcRenderer.send('get-settings');
         electron.ipcRenderer.on('get-settings-reply', this.settingsGetterHandler);
@@ -271,6 +284,21 @@ class SettingsPage extends React.Component {
     }
 
     render () {
+        
+
+        const menuRenderer = () => {
+            return (
+                    <Menu>
+                        <MenuItem icon="selection" text="Select all"   onClick={this.selectAll} />
+                        <MenuItem icon="circle"    text="Deselect all" onClick={this.deselectAll} />
+                    </Menu>
+                );
+        }
+    
+        const columnHeaderCellRenderer = () => {
+            return <ColumnHeaderCell name="Apply To" menuRenderer={menuRenderer} />
+        }
+
         return (
             <div className="settingsContainer">
                 <div className="settingsTableDiv">
@@ -283,7 +311,7 @@ class SettingsPage extends React.Component {
                         <Column name='Preset' cellRenderer={this.operatingModeCellRenderer} />
                         <Column name='Miner Name' cellRenderer={this.nameCellRenderer} />
                         <Column name='Mining Pool' cellRenderer={this.miningPoolCellRenderer} />
-                        <Column name='Apply To' cellRenderer={this.applyToCellRenderer} />
+                        <Column columnHeaderCellRenderer={columnHeaderCellRenderer} name="Apply To" cellRenderer={this.applyToCellRenderer} />
                     </Table>
                 </div>
                 <div className="settingsTabsDiv">

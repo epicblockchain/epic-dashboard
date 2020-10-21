@@ -130,11 +130,9 @@ class TablePage extends React.Component {
         let newMiners = this.state.miners;
         newMiners.sort((a, b) => {
             if (a.summary.status !== 'completed'){
-                console.log(a.summary.status);
                 return (this.state.isSortAscending[key]) ? 1 : -1;
             }
             if (b.summary.status !== 'completed'){
-                console.log(b.summary.status);
                 return (this.state.isSortAscending[key]) ? -1 : 1;
             }
 
