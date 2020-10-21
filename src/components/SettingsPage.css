@@ -14,3 +14,8 @@
 .settingsTabsDiv {
     margin: 10px;
 }
+
+.selectAllMenu {
+    background-color: #1b1d4d!important;
+    color: white!important;
+}

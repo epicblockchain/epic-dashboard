@@ -288,7 +288,7 @@ class SettingsPage extends React.Component {
 
         const menuRenderer = () => {
             return (
-                    <Menu>
+                    <Menu className="selectAllMenu">
                         <MenuItem icon="selection" text="Select all"   onClick={this.selectAll} />
                         <MenuItem icon="circle"    text="Deselect all" onClick={this.deselectAll} />
                     </Menu>
