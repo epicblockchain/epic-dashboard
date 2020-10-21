@@ -130,9 +130,13 @@ class TablePage extends React.Component {
     sortMiners(key){
         let newMiners = this.state.miners;
         newMiners.sort((a, b) => {
-            if (a.summary.status !== 'completed'
-                || b.summary.status !== 'completed'){
-                return 0;
+            if (a.summary.status !== 'completed'){
+                console.log(a.summary.status);
+                return (this.state.isSortAscending[key]) ? 1 : -1;
+            }
+            if (b.summary.status !== 'completed'){
+                console.log(b.summary.status);
+                return (this.state.isSortAscending[key]) ? -1 : 1;
             }
 
             try {
@@ -244,7 +248,6 @@ class TablePage extends React.Component {
         if (!this.state.isSortAscending[key]){
             newMiners.reverse();
         }
-        //TODO push dead miners to the end
         this.setState({miners: newMiners})
         let newIsSortAscending = this.state.isSortAscending;
         newIsSortAscending[key] = !this.state.isSortAscending[key]
