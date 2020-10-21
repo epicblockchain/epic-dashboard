@@ -26,7 +26,14 @@ class SettingsPage extends React.Component {
             appendUniqueID: true,
             operatingMode: 'normal',
             miners: [],
-            ignoreUpdates: {}
+            ignoreUpdates: {},
+            isSortAscending: [
+                true,
+                true,
+                true,
+                true,
+                true
+            ]
         }
         this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
         this.ipCellRenderer = this.ipCellRenderer.bind(this);
@@ -40,6 +47,86 @@ class SettingsPage extends React.Component {
         this.handleApplyToChange = this.handleApplyToChange.bind(this);
         this.handleApplyClicked = this.handleApplyClicked.bind(this);
         this.handleCopy = this.handleCopy.bind(this);
+        this.handleSelectionChange = this.handleSelectionChange.bind(this);
+        this.sortMiners = this.sortMiners.bind(this);
+    }
+
+    sortMiners(col){
+        let newMiners = this.state.miners;
+        newMiners.sort((a, b) => {
+            if (a.summary.status !== 'completed'){
+                console.log(a.summary.status);
+                return (this.state.isSortAscending[col]) ? 1 : -1;
+            }
+            if (b.summary.status !== 'completed'){
+                console.log(b.summary.status);
+                return (this.state.isSortAscending[col]) ? -1 : 1;
+            }
+
+            try {
+                switch(col){
+                    case 0:
+                        let aIpNum = a.ip.split('.');
+                        aIpNum[3] = aIpNum[3].split(':');
+                        aIpNum = Math.pow(256, 4) * aIpNum[0] + Math.pow(256, 3) * aIpNum[1] + Math.pow(256, 2) * aIpNum[2] + 256 * aIpNum[3][0] + aIpNum[3][1]
+                        let bIpNum = b.ip.split('.');
+                        bIpNum[3] = bIpNum[3].split(':');
+                        bIpNum = Math.pow(256, 4) * bIpNum[0] + Math.pow(256, 3) * bIpNum[1] + Math.pow(256, 2) * bIpNum[2] + 256 * bIpNum[3][0] + bIpNum[3][1]
+                        return aIpNum-bIpNum;
+                    case 1:
+                        let aData = a.summary.data["Software"].substr(12).split('.');
+                        aData = [parseInt(aData[0]), parseInt(aData[1]), parseInt(aData[2])]
+                        let bData = b.summary.data["Software"].substr(12).split('.');
+                        bData = [parseInt(bData[0]), parseInt(bData[1]), parseInt(bData[2])]
+                        if (aData[0] > bData[0]) {
+                            return 1;
+                        } else if (aData[0] < bData[0]) {
+                            return -1;
+                        } else {
+                            if (aData[1] > bData[1]) {
+                                return 1;
+                            } else if (aData[1] < bData[1]) {
+                                return -1;
+                            } else {
+                                if (aData[2] > bData[2]) {
+                                    return 1;
+                                } else if (aData[2] < bData[2]) {
+                                    return -1;
+                                } else {
+                                    return 0;
+                                }
+                            }
+                        }
+                    case 2:
+                        return (a.summary.data["Preset"].toLowerCase() > b.summary.data["Preset"].toLowerCase()) ? 1 : -1;
+                    case 3:
+                        return (a.summary.data["Hostname"].toLowerCase() > b.summary.data["Hostname"].toLowerCase()) ? 1 : -1;
+                    case 4:
+                        return (a.summary.data["Stratum"]["Current Pool"].toLowerCase() > b.summary.data["Stratum"]["Current Pool"].toLowerCase()) ? 1 : -1;
+                    default:
+                        return 0; //do nothing more
+                }
+            } catch (err) {
+                console.log(err)
+                return ( a.ip > b.ip ) ? 1 : -1;
+            }
+        });
+        if (!this.state.isSortAscending[col]){
+            newMiners.reverse();
+        }
+        this.setState({miners: newMiners})
+        let newIsSortAscending = this.state.isSortAscending;
+        newIsSortAscending[col] = !this.state.isSortAscending[col]
+        this.setState({isSortAscending: newIsSortAscending})
+    }
+
+    handleSelectionChange(selection){
+        if (!selection[0].rows
+            && selection[0].cols
+            && selection[0].cols[0] === selection[0].cols[1]
+            && selection[0].cols[0] < 5){
+            this.sortMiners(selection[0].cols[0]);
+        }
     }
 
     ipCellRenderer(rowIndex: number){
@@ -128,7 +215,21 @@ class SettingsPage extends React.Component {
     }
 
     settingsGetterHandler(event, args){
-        this.setState({miners: args})
+        const currentIps = this.state.miners.map(m => {
+            return m.ip;
+        });
+        let newMiners = this.state.miners;
+        args.forEach(newMiner => {
+            const idx = currentIps.findIndex((ip) => ip === newMiner.ip);
+            if (idx === -1){
+                newMiners.push(newMiner);
+            } else {
+                newMiners[idx] = newMiner;
+            }
+        });
+        this.setState({miners: newMiners});
+
+
         this.setState({pageState: 'loaded'})
         let newIgnoreUpdates = this.state.ignoreUpdates;
         const applyToArray = args.map((m, i) => {
@@ -179,7 +280,10 @@ class SettingsPage extends React.Component {
         return (
             <div className="settingsContainer">
                 <div className="settingsTableDiv">
-                    <Table getCellClipboardData={this.handleCopy}  enableRowHeader={false} numRows={this.state.miners.length}>
+                    <Table getCellClipboardData={this.handleCopy}
+                            enableRowHeader={false}
+                            numRows={this.state.miners.length}
+                            onSelection={this.handleSelectionChange}>
                         <Column name='IP' cellRenderer={this.ipCellRenderer} />
                         <Column name='Firmware Version' cellRenderer={this.firmwareVersionCellRenderer} />
                         <Column name='Preset' cellRenderer={this.operatingModeCellRenderer} />

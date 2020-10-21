@@ -149,7 +149,7 @@ class TablePage extends React.Component {
                         bIpNum = Math.pow(256, 4) * bIpNum[0] + Math.pow(256, 3) * bIpNum[1] + Math.pow(256, 2) * bIpNum[2] + 256 * bIpNum[3][0] + bIpNum[3][1]
                         return aIpNum-bIpNum;
                     case 'name':
-                        return (a.ip > b.ip) ? 1 : -1;
+                        return (a.summary.data["Hostname"].toLowerCase() > b.summary.data["Hostname"].toLowerCase()) ? 1 : -1;
                     case 'firmware':
                         let aData = a.summary.data["Software"].substr(12).split('.');
                         aData = [parseInt(aData[0]), parseInt(aData[1]), parseInt(aData[2])]
@@ -175,7 +175,7 @@ class TablePage extends React.Component {
                             }
                         }
                     case 'operatingMode':
-                        return (a.summary.data["Preset"].toLowerCase() > b.summary.data["Preset"].toLowerCase) ? 1 : -1;
+                        return (a.summary.data["Preset"].toLowerCase() > b.summary.data["Preset"].toLowerCase()) ? 1 : -1;
                     case 'pool':
                         return (a.summary.data["Stratum"]["Current Pool"].toLowerCase() > b.summary.data["Stratum"]["Current Pool"].toLowerCase()) ? 1 : -1;
                     case 'user':
@@ -281,9 +281,7 @@ class TablePage extends React.Component {
         const currentIps = this.state.miners.map(m => {
             return m.ip;
         });
-
         let newMiners = this.state.miners;
-
         args.forEach(newMiner => {
             const idx = currentIps.findIndex((ip) => ip === newMiner.ip);
             if (idx === -1){
