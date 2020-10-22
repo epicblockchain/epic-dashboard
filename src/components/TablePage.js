@@ -276,7 +276,6 @@ class TablePage extends React.Component {
     }
 
     tableGetterHandler(event, args){
-        console.log('into')
         const currentIps = this.state.miners.map(m => {
             return m.ip;
         });
@@ -293,7 +292,6 @@ class TablePage extends React.Component {
         })
         
         this.setState({miners: newMiners})
-        console.log('out of')
     }
 
     ipCellRenderer = (rowIndex: number) => {
