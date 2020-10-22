@@ -72,6 +72,11 @@ body {
     background-color: #ffc107;
 }
 
+.invisible {
+    position: absolute;
+    left: 100%;
+} /* so dumb */
+
 /* 1b1d4d
    ffc107
    */

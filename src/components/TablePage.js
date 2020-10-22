@@ -535,16 +535,12 @@ class TablePage extends React.Component {
     }
 
     componentDidMount(){
-        if (this.props.previousTablePageState) {
-            this.setState(this.props.previousTablePageState);
-        }
         electron.ipcRenderer.send('get-table');
         electron.ipcRenderer.on('get-table-reply', this.tableGetterHandler);
     }
 
     componentWillUnmount(){
         electron.ipcRenderer.removeListener('get-table-reply', this.tableGetterHandler)
-        this.props.storeTablePageState(this.state);
     }
 
     getKeyFromColumnIndex(col){
@@ -638,7 +634,7 @@ class TablePage extends React.Component {
         });
 
         return (
-            <div className="minersPageContainer">
+            <div className={"minersPageContainer " + (this.props.visible ? "" : "invisible")} >
                 <div className="minersTableCategoriesContainer">
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.ip            } onChange={this.handleColumnVisibility.bind(this, 'ip')}>  IP </Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.name          } onChange={this.handleColumnVisibility.bind(this, 'name')}>  Name                </ Checkbox>

@@ -28,8 +28,7 @@ class App extends React.Component {
       page: 'loading',
       isVpnDialogOpen: false,
       isPopoverOpen: false,
-      isDarkMode: false,
-      tablePageState: null
+      isDarkMode: false
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.setPage = this.onSetPage.bind(this);
@@ -43,12 +42,6 @@ class App extends React.Component {
     this.handleDownloadPageClick = this.handleDownloadPageClick.bind(this);
     this.toggleDarkMode = this.toggleDarkMode.bind(this);
 
-    this.storeTablePageState = this.storeTablePageState.bind(this);
-  }
-
-  storeTablePageState(newTablePageState){
-      console.log(newTablePageState);
-    this.setState({tablePageState: newTablePageState});
   }
 
   handleDismissNewReleases(){
@@ -175,9 +168,7 @@ class App extends React.Component {
               {this.state.page === 'loading' && <LoadingPage />}
               {this.state.page === 'dashboard' && <DashboardPage />}
               {this.state.page === 'chart' && <ChartPage />}
-              {this.state.page === 'table' && <TablePage
-                                                storeTablePageState={this.storeTablePageState}
-                                                previousTablePageState={this.state.tablePageState}
+              {<TablePage                   visible={this.state.page === 'table'}
                                                 />}
               {this.state.page === 'settings' && <SettingsPage />}
               {this.state.page === 'support' && <SupportPage />}
