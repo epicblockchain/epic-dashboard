@@ -565,12 +565,10 @@ class TablePage extends React.Component {
     componentDidMount(){
         electron.ipcRenderer.send('get-table');
         electron.ipcRenderer.on('get-table-reply', this.tableGetterHandler);
-        console.log('mounted table')
     }
 
     componentWillUnmount(){
-        electron.ipcRenderer.removeListener('get-table-reply', this.tableGetterHandler)
-        console.log('unmounted table')
+        electron.ipcRenderer.removeListener('get-table-reply', this.tableGetterHandler); //right now will not run ever
     }
 
     getKeyFromColumnIndex(col){

@@ -3,7 +3,10 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
+import { Button } from '@blueprintjs/core'
+
 import '@blueprintjs/core/lib/css/blueprint.css'
+import './ChartPage.css'
 
 am4core.useTheme(am4themes_animated);
 
@@ -21,6 +24,14 @@ class ChartPage extends React.Component {
             scrollY: null
         }
         this.chartGetterHandler = this.chartGetterHandler.bind(this);
+        this.handleRefreshChartData = this.handleRefreshChartData.bind(this);
+    }
+
+    handleRefreshChartData(){
+        if (this.chart) {
+            this.chart.dispose()
+        }
+        electron.ipcRenderer.send('get-chart');
     }
 
     chartGetterHandler(event, args){
@@ -75,6 +86,7 @@ class ChartPage extends React.Component {
     render () {
         return (
             <div>
+                <Button className="refreshChartButton" onClick={this.handleRefreshChartData} icon="refresh"/>
                 <div id="chartdiv" style={{ width: "100%", height: "500px"}} />
             </div>
         );
