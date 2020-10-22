@@ -55,7 +55,14 @@ body {
 }
 
 .appContainerDark{
-    background-color: #394B59;
+    background-color: #48484f;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.appContainerLight {
+    background-color: #DDDDDD;
     position: absolute;
     height: 100%;
     width: 100%;
