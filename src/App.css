@@ -74,7 +74,7 @@ body {
 
 .invisible {
     position: absolute;
-    left: 100%;
+    right: 500%;
 } /* so dumb */
 
 /* 1b1d4d
