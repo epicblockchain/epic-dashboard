@@ -219,11 +219,17 @@ class SettingsPage extends React.Component {
     }
 
     handleApplyClicked(arg, e){
-        arg.state.miners = this.state.miners;
+        arg.state.miners = this.state.miners.map( m => {
+            return {
+                isChecked: m.isChecked,
+                ip: m.ip
+            };
+        });
         //deselect all AFTER getting miners
         if (arg.tab === 'firmware'
             || arg.tab === 'operating-mode'
             || arg.tab === 'hwconfig'
+            || arg.tab === 'reboot'
         ){
             let newMiners = this.state.miners;
             newMiners.forEach(m => {
