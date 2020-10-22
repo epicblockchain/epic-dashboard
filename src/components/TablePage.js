@@ -535,12 +535,16 @@ class TablePage extends React.Component {
     }
 
     componentDidMount(){
+        if (this.props.previousTablePageState) {
+            this.setState(this.props.previousTablePageState);
+        }
         electron.ipcRenderer.send('get-table');
         electron.ipcRenderer.on('get-table-reply', this.tableGetterHandler);
     }
 
     componentWillUnmount(){
         electron.ipcRenderer.removeListener('get-table-reply', this.tableGetterHandler)
+        this.props.storeTablePageState(this.state);
     }
 
     getKeyFromColumnIndex(col){
