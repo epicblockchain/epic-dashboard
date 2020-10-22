@@ -127,7 +127,7 @@ class SettingsPage extends React.Component {
     ipCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
-        } else  {
+        } else {
             return <Cell>{this.state.miners[rowIndex].ip}</Cell>
         }
     }
@@ -135,6 +135,8 @@ class SettingsPage extends React.Component {
     nameCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -147,6 +149,8 @@ class SettingsPage extends React.Component {
     firmwareVersionCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -159,6 +163,8 @@ class SettingsPage extends React.Component {
     operatingModeCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -171,6 +177,8 @@ class SettingsPage extends React.Component {
     walletCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -183,6 +191,8 @@ class SettingsPage extends React.Component {
     miningPoolCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {

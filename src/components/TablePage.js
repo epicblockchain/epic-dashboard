@@ -276,6 +276,7 @@ class TablePage extends React.Component {
     }
 
     tableGetterHandler(event, args){
+        console.log('into')
         const currentIps = this.state.miners.map(m => {
             return m.ip;
         });
@@ -292,6 +293,7 @@ class TablePage extends React.Component {
         })
         
         this.setState({miners: newMiners})
+        console.log('out of')
     }
 
     ipCellRenderer = (rowIndex: number) => {
@@ -304,6 +306,8 @@ class TablePage extends React.Component {
     nameCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -315,6 +319,8 @@ class TablePage extends React.Component {
     operatingModeCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -326,6 +332,8 @@ class TablePage extends React.Component {
     firmwareCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -337,6 +345,8 @@ class TablePage extends React.Component {
     poolCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -348,6 +358,8 @@ class TablePage extends React.Component {
     userCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -360,6 +372,8 @@ class TablePage extends React.Component {
     startedCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -383,6 +397,8 @@ class TablePage extends React.Component {
     uptimeCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -394,6 +410,8 @@ class TablePage extends React.Component {
     activeHBCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -405,6 +423,8 @@ class TablePage extends React.Component {
     hashrateCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -416,6 +436,8 @@ class TablePage extends React.Component {
     acceptedCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -427,6 +449,8 @@ class TablePage extends React.Component {
     rejectedCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -438,6 +462,8 @@ class TablePage extends React.Component {
     difficultyCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
@@ -449,6 +475,8 @@ class TablePage extends React.Component {
     temperatureCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
             
             let maxTemp = "N/A";
@@ -475,6 +503,8 @@ class TablePage extends React.Component {
     powerCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
             
             let sumPower = 0;
@@ -537,10 +567,12 @@ class TablePage extends React.Component {
     componentDidMount(){
         electron.ipcRenderer.send('get-table');
         electron.ipcRenderer.on('get-table-reply', this.tableGetterHandler);
+        console.log('mounted table')
     }
 
     componentWillUnmount(){
         electron.ipcRenderer.removeListener('get-table-reply', this.tableGetterHandler)
+        console.log('unmounted table')
     }
 
     getKeyFromColumnIndex(col){
