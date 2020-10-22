@@ -220,6 +220,17 @@ class SettingsPage extends React.Component {
 
     handleApplyClicked(arg, e){
         arg.state.miners = this.state.miners;
+        //deselect all AFTER getting miners
+        if (arg.tab === 'firmware'
+            || arg.tab === 'operating-mode'
+            || arg.tab === 'hwconfig'
+        ){
+            let newMiners = this.state.miners;
+            newMiners.forEach(m => {
+                m.isChecked = false;
+            });
+            this.setState({miners: newMiners});
+        }
         electron.ipcRenderer.send('post-settings', arg);
     }
 
