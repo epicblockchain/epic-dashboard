@@ -4,7 +4,7 @@ help:		## Show this help.
 release:	## Generate binaries on all platforms
 	@echo "generating releases..."
 	@npm run-script build
-	@electron-packager . "ePIC-Dashboard" --platform=all
+	@electron-packager . "ePIC-Dashboard" --platform="darwin,linux,win32" --arch="ia32,x64" --icon="./icon/512x512/png"
 
 zip:		## Compress generated binaries into zip files
 	@echo "compressing..."
