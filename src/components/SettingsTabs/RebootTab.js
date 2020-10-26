@@ -35,7 +35,7 @@ class RebootTab extends React.Component {
                             placeholder="Password"
                             type="password"
                             onChange={this.updatePassword}/>
-                <Button disabled={!this.state.rebootDelay || !this.state.password || isNaN(this.state.rebootDelay)} onClick={this.props.applyClicked.bind(this, {
+                <Button disabled={!this.state.rebootDelay || !this.state.password || isNaN(this.state.rebootDelay) || !this.props.hasSomeMinersSelected()} onClick={this.props.applyClicked.bind(this, {
                     state: this.state,
                     tab: 'reboot'
                 })}>Reboot</Button>

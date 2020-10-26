@@ -25,7 +25,7 @@ class HardwareConfigTab extends React.Component {
                             placeholder="Password"
                             type="password"
                             onChange={this.updatePassword}/>
-                <Button disabled={!this.state.password} onClick={this.props.applyClicked.bind(this, {
+                <Button disabled={!this.state.password || !this.props.hasSomeMinersSelected()} onClick={this.props.applyClicked.bind(this, {
                     state: this.state,
                     tab: 'hwconfig'
                 })}>Recalibrate Hardware</Button>

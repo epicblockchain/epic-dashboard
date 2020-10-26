@@ -87,7 +87,7 @@ class FirmwareTab extends React.Component {
                             placeholder="Password"
                             type="password"
                             onChange={this.updatePassword}/>
-                <Button disabled={!this.state.password || !this.state.swuFilepath || this.state.waitingForCompletion} onClick={this.handleApplyClick}>
+                <Button disabled={!this.state.password || !this.state.swuFilepath || this.state.waitingForCompletion || !this.props.hasSomeMinersSelected()} onClick={this.handleApplyClick}>
                     { this.state.waitingForCompletion ? <Spinner className="applyButtonSpinner" size={20} /> : "Apply" }
                 </Button>
             </div>

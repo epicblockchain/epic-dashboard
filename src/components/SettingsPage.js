@@ -29,23 +29,34 @@ class SettingsPage extends React.Component {
             ignoreUpdates: {},
             isSortAscending: Array(5).fill(true)
         }
-        this.settingsGetterHandler = this.settingsGetterHandler.bind(this);
-        this.ipCellRenderer = this.ipCellRenderer.bind(this);
-        this.nameCellRenderer = this.nameCellRenderer.bind(this);
+        this.settingsGetterHandler       = this.settingsGetterHandler.bind(this);
+        this.ipCellRenderer              = this.ipCellRenderer.bind(this);
+        this.nameCellRenderer            = this.nameCellRenderer.bind(this);
         this.firmwareVersionCellRenderer = this.firmwareVersionCellRenderer.bind(this);
-        this.operatingModeCellRenderer = this.operatingModeCellRenderer.bind(this);
-        this.walletCellRenderer = this.walletCellRenderer.bind(this);
-        this.miningPoolCellRenderer = this.miningPoolCellRenderer.bind(this);
-        this.applyToCellRenderer = this.applyToCellRenderer.bind(this);
+        this.operatingModeCellRenderer   = this.operatingModeCellRenderer.bind(this);
+        this.walletCellRenderer          = this.walletCellRenderer.bind(this);
+        this.miningPoolCellRenderer      = this.miningPoolCellRenderer.bind(this);
+        this.applyToCellRenderer         = this.applyToCellRenderer.bind(this);
 
-        this.handleApplyToChange = this.handleApplyToChange.bind(this);
-        this.handleApplyClicked = this.handleApplyClicked.bind(this);
-        this.handleCopy = this.handleCopy.bind(this);
-        this.handleSelectionChange = this.handleSelectionChange.bind(this);
-        this.sortMiners = this.sortMiners.bind(this);
+        this.handleApplyToChange         = this.handleApplyToChange.bind(this);
+        this.handleApplyClicked          = this.handleApplyClicked.bind(this);
+        this.handleCopy                  = this.handleCopy.bind(this);
+        this.handleSelectionChange       = this.handleSelectionChange.bind(this);
+        this.sortMiners                  = this.sortMiners.bind(this);
 
-        this.selectAll = this.selectAll.bind(this);
-        this.deselectAll = this.deselectAll.bind(this);
+        this.selectAll                   = this.selectAll.bind(this);
+        this.deselectAll                 = this.deselectAll.bind(this);
+
+        this.hasSomeMinersSelected       = this.hasSomeMinersSelected.bind(this);
+    }
+
+    hasSomeMinersSelected(){
+        let ret = false;
+        this.state.miners.forEach(m => {
+            if (m.isChecked) ret = true;
+        });
+
+        return ret;
     }
 
     sortMiners(col){
@@ -347,41 +358,50 @@ class SettingsPage extends React.Component {
                             title="Mining Pool"
                             panel={<MiningPoolTab
                                 applyClicked={this.handleApplyClicked}
+                                hasSomeMinersSelected={this.hasSomeMinersSelected}
                                 />} />
                         <Tab id="WalletAddressTab"
                              title="Wallet Address"
                              panel={<WalletAddressTab
                                  applyClicked={this.handleApplyClicked}
+                                 hasSomeMinersSelected={this.hasSomeMinersSelected}
                             />} />
                         <Tab id="OperatingModeTab"
                              title="Operating Mode" 
                              panel={<OperatingModeTab
-                                applyClicked={this.handleApplyClicked}/>} />
+                                        applyClicked={this.handleApplyClicked}
+                                        hasSomeMinersSelected={this.hasSomeMinersSelected}/>} />
                         <Tab id="UniqueIDTab"
                             title="Unique ID"
                             panel={<UniqueIDTab
                                     applyClicked={this.handleApplyClicked}
+                                    hasSomeMinersSelected={this.hasSomeMinersSelected}
                                 />} />
                         <Tab id="PasswordTab"
                              title="Password"
                              panel={<PasswordTab
                                     applyClicked={this.handleApplyClicked}
+                                    hasSomeMinersSelected={this.hasSomeMinersSelected}
                                  />} />
                         <Tab id="FirmwareTab"
                              title="Firmware"
                              panel={<FirmwareTab
                                     applyClicked={this.handleApplyClicked}
+                                    hasSomeMinersSelected={this.hasSomeMinersSelected}
                                  />} />
                         <Tab id="RebootTab"
                              title="Reboot"
                              panel={<RebootTab
                                     applyClicked={this.handleApplyClicked}
+                                    hasSomeMinersSelected={this.hasSomeMinersSelected}
                                  />} />
                         <Tab id="HWConfigTab"
                             title="Recalibrate"
                             panel={
                                 <HardwareConfigTab
-                                applyClicked={this.handleApplyClicked}/>
+                                applyClicked={this.handleApplyClicked}
+                                hasSomeMinersSelected={this.hasSomeMinersSelected}
+                                />
                             }/>
                     </Tabs>
                 </div>

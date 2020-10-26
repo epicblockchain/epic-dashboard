@@ -48,7 +48,7 @@ class PasswordTab extends React.Component {
                             type="password"
                             onChange={this.updatePassword}/>
                 <Button disabled={!this.state.newPassword || !this.state.verifyPassword || !this.state.password 
-                    || (this.state.verifyPassword !== this.state.newPassword)} onClick={this.props.applyClicked.bind(this, {
+                    || (this.state.verifyPassword !== this.state.newPassword) || !this.props.hasSomeMinersSelected()} onClick={this.props.applyClicked.bind(this, {
                         state: this.state,
                         tab: 'new-password'
                     })}>Apply</Button>
