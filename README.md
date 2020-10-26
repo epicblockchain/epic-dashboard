@@ -10,6 +10,18 @@ npm install
 npm run dev
 ```
 A window should open with the app running
+## Building from source
+To build all executables run
+```
+make all
+```
+To build only you executable open the makefile and edit the parameters in --platform and --arch to your platform and architecture.
+Then you can run
+```
+make all
+```
+to build only one executable. For more info refer to the documentation on electron-packager: https://github.com/electron/electron-packager
+
 ## API
 Api requests are documented as follows. Under each METHOD are the endpoint and expected values that are returned or should be provided.
 ### GET
@@ -168,9 +180,4 @@ The form values are described by their keys.
 ## Specific addresses
 
 It is possible to add ips with a file if mdns is not working for some reason.
-Create a file in the same directory as the executable named ipaddr.txt.
-Put each ip and port on its own line. An example is provided below.
-```
-1.2.3.4:4028
-10.10.10.10:4028
-```
+Use the interface in the table tab to add, save and load miners.
