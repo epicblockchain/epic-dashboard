@@ -24,7 +24,7 @@ class SupportPage extends React.Component {
             <div className="supportPageContainer bp3-running-text">
                 <h3> Support </h3>
                 <p><strong>support@epicblockchain.io</strong></p>
-                <p>Press the button below to create a log file which you can choose to attach to your support email. This button will not dump your IP addresses or wallet addresses.</p>
+                <p>Press the button below to create a log file which you can choose to attach to your support email.</p>
                 <Button onClick={this.handleDump}>Select Log Destination</Button>
             </div>
         );
