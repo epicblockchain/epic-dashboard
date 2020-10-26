@@ -49,7 +49,6 @@ class ChartPage extends React.Component {
         series.dataFields.valueY = "hashrate"
         series.dataFields.dateX = "time"
         series.strokeWidth = 2;
-        series.stroke = am4core.color("#1b1d4d");
         // series.smoothing = "monotoneX"
         if (this.state.firstAnimation) {
             this.setState({firstAnimation: false})
@@ -62,6 +61,55 @@ class ChartPage extends React.Component {
         chart.cursor = new am4charts.XYCursor();
         chart.scrollbarX = new am4charts.XYChartScrollbar();
         chart.scrollbarY = new am4charts.XYChartScrollbar();
+        chart.scrollbarX.minHeight = 30;
+        chart.scrollbarY.minWidth = 30;
+        if (this.props.getDarkMode()) {
+            chart.scrollbarX.startGrip.background.fill        = am4core.color("#1b1d4d");
+            chart.scrollbarX.endGrip.background.fill          = am4core.color("#1b1d4d");
+            chart.scrollbarX.thumb.background.fill            = am4core.color("#1b1d4d");
+            chart.scrollbarX.startGrip.background.stroke      = am4core.color("#1b1d4d");
+            chart.scrollbarX.endGrip.background.stroke        = am4core.color("#1b1d4d");
+            chart.scrollbarX.thumb.background.stroke          = am4core.color("#1b1d4d");
+            chart.scrollbarX.startGrip.background.fillOpacity = 0.8;
+            chart.scrollbarX.endGrip.background.fillOpacity   = 0.8;
+            chart.scrollbarX.thumb.background.fillOpacity     = 0.8;
+            chart.scrollbarX.startGrip.background.states.getKey("hover").properties.fill        = am4core.color("#1b1d4d");
+            chart.scrollbarX.endGrip.background.states.getKey("hover").properties.fill          = am4core.color("#1b1d4d");
+            chart.scrollbarX.thumb.background.states.getKey("hover").properties.fill            = am4core.color("#1b1d4d");
+            chart.scrollbarX.startGrip.background.states.getKey("hover").properties.fillOpacity = 0.8
+            chart.scrollbarX.endGrip.background.states.getKey("hover").properties.fillOpacity   = 0.8
+            chart.scrollbarX.thumb.background.states.getKey("hover").properties.fillOpacity     = 0.8
+            chart.scrollbarX.startGrip.background.states.getKey("down").properties.fill        = am4core.color("#1b1d4d");
+            chart.scrollbarX.endGrip.background.states.getKey("down").properties.fill          = am4core.color("#1b1d4d");
+            chart.scrollbarX.thumb.background.states.getKey("down").properties.fill            = am4core.color("#1b1d4d");
+            chart.scrollbarX.startGrip.background.states.getKey("down").properties.fillOpacity = 0.5
+            chart.scrollbarX.endGrip.background.states.getKey("down").properties.fillOpacity   = 0.5
+            chart.scrollbarY.thumb.background.states.getKey("down").properties.fillOpacity     = 0.5
+            chart.scrollbarY.startGrip.background.fill        = am4core.color("#1b1d4d");
+            chart.scrollbarY.endGrip.background.fill          = am4core.color("#1b1d4d");
+            chart.scrollbarY.thumb.background.fill            = am4core.color("#1b1d4d");
+            chart.scrollbarY.startGrip.background.stroke      = am4core.color("#1b1d4d");
+            chart.scrollbarY.endGrip.background.stroke        = am4core.color("#1b1d4d");
+            chart.scrollbarY.thumb.background.stroke          = am4core.color("#1b1d4d");
+            chart.scrollbarY.startGrip.background.fillOpacity = 0.8;
+            chart.scrollbarY.endGrip.background.fillOpacity   = 0.8;
+            chart.scrollbarY.thumb.background.fillOpacity     = 0.8;
+            chart.scrollbarY.startGrip.background.states.getKey("hover").properties.fill        = am4core.color("#1b1d4d");
+            chart.scrollbarY.endGrip.background.states.getKey("hover").properties.fill          = am4core.color("#1b1d4d");
+            chart.scrollbarY.thumb.background.states.getKey("hover").properties.fill            = am4core.color("#1b1d4d");
+            chart.scrollbarY.startGrip.background.states.getKey("hover").properties.fillOpacity = 0.8
+            chart.scrollbarY.endGrip.background.states.getKey("hover").properties.fillOpacity   = 0.8
+            chart.scrollbarY.thumb.background.states.getKey("hover").properties.fillOpacity     = 0.8
+            chart.scrollbarY.startGrip.background.states.getKey("down").properties.fill        = am4core.color("#1b1d4d");
+            chart.scrollbarY.endGrip.background.states.getKey("down").properties.fill          = am4core.color("#1b1d4d");
+            chart.scrollbarY.thumb.background.states.getKey("down").properties.fill            = am4core.color("#1b1d4d");
+            chart.scrollbarY.startGrip.background.states.getKey("down").properties.fillOpacity = 0.5
+            chart.scrollbarY.endGrip.background.states.getKey("down").properties.fillOpacity   = 0.5
+            chart.scrollbarY.thumb.background.states.getKey("down").properties.fillOpacity     = 0.5
+            series.stroke = am4core.color("#ffc107");
+        } else {
+            series.stroke = am4core.color("#1b1d4d");
+        }
         // var bullet = series.bullets.push(new am4charts.CircleBullet());
         // bullet.scale = 0.6;
         // bullet.fill = am4core.color("#1b1d4d");
