@@ -1,6 +1,6 @@
 import React from 'react'
-import { Switch, Menu, MenuItem, Tab, Tabs } from '@blueprintjs/core'
-import { Cell, Column, ColumnHeaderCell, Table } from '@blueprintjs/table'
+import { Button, Switch, Tab, Tabs } from '@blueprintjs/core'
+import { Cell, Column, Table } from '@blueprintjs/table'
 import MiningPoolTab from './SettingsTabs/MiningPoolTab'
 import WalletAddressTab from './SettingsTabs/WalletAddressTab'
 import OperatingModeTab from './SettingsTabs/OperatingModeTab'
@@ -324,22 +324,26 @@ class SettingsPage extends React.Component {
     render () {
         
 
-        const menuRenderer = () => {
-            return (
-                    <Menu className="selectAllMenu">
-                        <MenuItem icon="selection" text="Select all"   onClick={this.selectAll} />
-                        <MenuItem icon="circle"    text="Deselect all" onClick={this.deselectAll} />
-                    </Menu>
-                );
-        }
+        // const menuRenderer = () => {
+        //     return (
+        //             <Menu className="selectAllMenu">
+        //                 <MenuItem icon="selection" text="Select all"   onClick={this.selectAll} />
+        //                 <MenuItem icon="circle"    text="Deselect all" onClick={this.deselectAll} />
+        //             </Menu>
+        //         );
+        // }
     
-        const columnHeaderCellRenderer = () => {
-            return <ColumnHeaderCell name="Apply To" menuRenderer={menuRenderer} />
-        }
+        // const columnHeaderCellRenderer = () => {
+        //     return <ColumnHeaderCell name="Apply To" menuRenderer={menuRenderer} />
+        // }
 
         return (
             <div className="settingsContainer">
                 <div className="settingsTableDiv">
+                    <div className="selectionButtons">
+                        <Button className="selectionButton" icon="circle" onClick={this.deselectAll} />
+                        <Button className="selectionButton" icon="selection" onClick={this.selectAll} />
+                    </div>
                     <Table getCellClipboardData={this.handleCopy}
                             enableRowHeader={false}
                             numRows={this.state.miners.length}
@@ -349,7 +353,7 @@ class SettingsPage extends React.Component {
                         <Column name='Preset' cellRenderer={this.operatingModeCellRenderer} />
                         <Column name='Miner Name' cellRenderer={this.nameCellRenderer} />
                         <Column name='Mining Pool' cellRenderer={this.miningPoolCellRenderer} />
-                        <Column columnHeaderCellRenderer={columnHeaderCellRenderer} name="Apply To" cellRenderer={this.applyToCellRenderer} />
+                        <Column name="Apply To" cellRenderer={this.applyToCellRenderer} />
                     </Table>
                 </div>
                 <div className="settingsTabsDiv">
