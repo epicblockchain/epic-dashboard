@@ -4,7 +4,7 @@ help:		## Show this help.
 release:	## Generate binaries on all platforms
 	@echo "generating releases..."
 	@npm run-script build
-	@electron-packager . "ePIC-Dashboard" --platform="darwin,linux,win32" --arch="ia32,x64" --icon="./icon/512x512.png"
+	@electron-packager . "ePIC-Dashboard" --platform="darwin,linux,win32" --arch="ia32,x64" --icon=./icon/512x512 --overwrite=true
 
 zip:		## Compress generated binaries into zip files
 	@echo "compressing..."
@@ -34,4 +34,4 @@ clean:		## Remove generated binaries and zip files
 	@rm -f *.zip
 	@rm -f checksums.txt
 
-all: clean release zip sha256##
+all: release zip sha256##
