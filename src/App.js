@@ -41,12 +41,7 @@ class App extends React.Component {
     this.handleDismissNewReleases = this.handleDismissNewReleases.bind(this);
     this.handleDownloadPageClick = this.handleDownloadPageClick.bind(this);
     this.toggleDarkMode = this.toggleDarkMode.bind(this);
-    this.getDarkMode = this.getDarkMode.bind(this);
 
-  }
-
-  getDarkMode(){
-    return this.state.isDarkMode;
   }
 
   handleDismissNewReleases(){
@@ -126,6 +121,9 @@ class App extends React.Component {
 
   toggleDarkMode(){
         this.setState({isDarkMode: !this.state.isDarkMode});
+        if (this.state.page === 'chart') {
+            this.forceUpdate();
+        }
   }
  
   render() {
@@ -175,7 +173,7 @@ class App extends React.Component {
               <Button className="maximizeSidebarButton" icon="caret-right" onClick={() => this.onSetSidebarOpen(true)} />
               {this.state.page === 'loading' && <LoadingPage />}
               {this.state.page === 'dashboard' && <DashboardPage />}
-              {this.state.page === 'chart' && <ChartPage getDarkMode={this.getDarkMode} />}
+              {this.state.page === 'chart' && <ChartPage dark={this.state.isDarkMode} />}
               {<TablePage                   visible={this.state.page === 'table'}
                                                 />}
               {this.state.page === 'settings' && <SettingsPage />}

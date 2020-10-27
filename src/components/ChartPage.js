@@ -63,7 +63,7 @@ class ChartPage extends React.Component {
         chart.scrollbarY = new am4charts.XYChartScrollbar();
         chart.scrollbarX.minHeight = 30;
         chart.scrollbarY.minWidth = 30;
-        if (this.props.getDarkMode()) {
+        if (this.props.dark) {
             chart.scrollbarX.startGrip.background.fill        = am4core.color("#1b1d4d");
             chart.scrollbarX.endGrip.background.fill          = am4core.color("#1b1d4d");
             chart.scrollbarX.thumb.background.fill            = am4core.color("#1b1d4d");
