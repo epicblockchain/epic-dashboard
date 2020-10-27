@@ -76,3 +76,14 @@
     width: 400px;
     margin-left: 6px;
 }
+
+.embeddedTableButton {
+    position: relative;
+    bottom: 5px;
+    margin-left: 39%; /* not sure why this behaves this way */
+    font-size: 12px!important;
+}
+
+.embeddedTableButton svg {
+    color: red;
+}

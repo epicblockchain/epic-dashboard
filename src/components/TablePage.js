@@ -30,7 +30,8 @@ class TablePage extends React.Component {
                 rejectedShares : false,
                 difficulty     : false,
                 temperature    : true,
-                power          : false
+                power          : false,
+                remove : false
             },
             columns: {
                 "ip"             : <Column key="ip"             name="IP"                    cellRenderer={this.ipCellRenderer}/>           ,
@@ -47,7 +48,8 @@ class TablePage extends React.Component {
                 "rejectedShares" : <Column key="rejectedShares" name="Rejected"              cellRenderer={this.rejectedCellRenderer}/>     ,
                 "difficulty"     : <Column key="difficulty"     name="Difficulty"            cellRenderer={this.difficultyCellRenderer}/>   ,
                 "temperature"    : <Column key="temperature"    name={"Temperature \u00b0C"} cellRenderer={this.temperatureCellRenderer}/>  ,
-                "power"          : <Column key="power"          name="Power (W)"             cellRenderer={this.powerCellRenderer}/>
+                "power"          : <Column key="power"          name="Power (W)"             cellRenderer={this.powerCellRenderer}/>,
+                "remove"         : <Column key="remove"          name="Remove Miner"         cellRenderer={this.removeCellRenderer}/>,
             },
             colIdxToKey: [
                 'ip',
@@ -64,7 +66,8 @@ class TablePage extends React.Component {
                 'rejectedShares',
                 'difficulty',
                 'temperature',
-                'power'
+                'power',
+                'remove'
             ],
             isSortAscending: {
                 ip             : true,
@@ -81,7 +84,7 @@ class TablePage extends React.Component {
                 rejectedShares : true,
                 difficulty     : true,
                 temperature    : true,
-                power          : true
+                power          : true,
             }
         }
 
@@ -100,6 +103,7 @@ class TablePage extends React.Component {
         this.rejectedCellRenderer      = this.rejectedCellRenderer.bind(this);
         this.difficultyCellRenderer    = this.difficultyCellRenderer.bind(this);
         this.temperatureCellRenderer   = this.temperatureCellRenderer.bind(this);
+        this.removeCellRenderer        = this.removeCellRenderer.bind(this);
 
         this.addNewMiner = this.addNewMiner.bind(this);
         this.handleNewMinerIpChange = this.handleNewMinerIpChange.bind(this);
@@ -113,14 +117,16 @@ class TablePage extends React.Component {
         
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
         this.sortMiners = this.sortMiners.bind(this);
+
+        this.handleRemoveMiner = this.handleRemoveMiner.bind(this);
     }
 
     handleSelectionChange(selection){
-        //conditions when only a column is selected
+        //conditions when only a single column is selected (by click); honestly its a hack but its the only exposed api I see
         if (!selection[0].rows
             && selection[0].cols
-            && (selection[0].cols[0] === selection[0].cols[1])
-            ) {
+            && (selection[0].cols[0] === selection[0].cols[1]))
+        {
             const key = this.getKeyFromColumnIndex(selection[0].cols[0]);
             this.sortMiners(key);
         }
@@ -523,6 +529,20 @@ class TablePage extends React.Component {
         }
     }
 
+    handleRemoveMiner(rowIndex){
+        electron.ipcRenderer.send('remove-miners',
+            [this.state.miners[rowIndex].ip]
+        );
+        const newMiners = this.state.miners.filter( (m, idx) => {return idx !== rowIndex});
+        this.setState({miners: newMiners});
+    }
+
+    removeCellRenderer = (rowIndex) => {
+        return (<Cell>
+                 <Button className="embeddedTableButton" ><Icon icon="remove" onClick={() => {this.handleRemoveMiner(rowIndex)}} /> </Button>
+               </Cell>);
+    }
+
     addNewMiner(){
         if (this.state.newMinerIP){
             if (this.state.newMinerIP.includes(':')){
@@ -682,6 +702,7 @@ class TablePage extends React.Component {
                     <Tooltip content="Not including fan consumption" position={Position.BOTTOM_RIGHT}>
                         <Icon className="powerTip" icon="info-sign"/>
                     </Tooltip>
+                    <Checkbox inline={true} default={this.state.isChecked.remove} onChange={this.handleColumnVisibility.bind(this, 'remove')}>Remove Miner Column</Checkbox>
                 </div>
                 <div className="minersTableContainer">
                     <Table getCellClipboardData={this.handleCopy}
