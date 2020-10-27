@@ -56,8 +56,8 @@ class ChartPage extends React.Component {
             series.showOnInit = false // so that live updating data doesnt look bad
             chart.showOnInit = false
         }
-        //hide the logo for now
-        chart.logo.height = -15000;
+        //unhide the logo
+        // chart.logo.height = -15000;
         chart.cursor = new am4charts.XYCursor();
         chart.scrollbarX = new am4charts.XYChartScrollbar();
         chart.scrollbarY = new am4charts.XYChartScrollbar();
