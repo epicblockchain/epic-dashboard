@@ -117,6 +117,8 @@ class TablePage extends React.Component {
         
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
         this.sortMiners = this.sortMiners.bind(this);
+
+        this.handleRemoveMiner = this.handleRemoveMiner.bind(this);
     }
 
     handleSelectionChange(selection){
@@ -526,9 +528,18 @@ class TablePage extends React.Component {
             return <Cell>{"Error"}</Cell>
         }
     }
+
+    handleRemoveMiner(rowIndex){
+        electron.ipcRenderer.send('remove-miners',
+            [this.state.miners[rowIndex].ip]
+        );
+        const newMiners = this.state.miners.filter( (m, idx) => {return idx !== rowIndex});
+        this.setState({miners: newMiners});
+    }
+
     removeCellRenderer = (rowIndex) => {
         return (<Cell>
-                 <Button className="embeddedTableButton" icon="remove" />
+                 <Button className="embeddedTableButton" ><Icon icon="remove" onClick={() => {this.handleRemoveMiner(rowIndex)}} /> </Button>
                </Cell>);
     }
 
