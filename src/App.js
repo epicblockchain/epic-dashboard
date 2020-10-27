@@ -121,6 +121,9 @@ class App extends React.Component {
 
   toggleDarkMode(){
     this.setState({isDarkMode: !this.state.isDarkMode});
+    if (this.state.page === 'chart') {
+        this.refs.chartPage.handleRefreshChartData();
+    }
   }
  
   render() {
@@ -170,7 +173,7 @@ class App extends React.Component {
               <Button className="maximizeSidebarButton" icon="caret-right" onClick={() => this.onSetSidebarOpen(true)} />
               {this.state.page === 'loading' && <LoadingPage />}
               {this.state.page === 'dashboard' && <DashboardPage />}
-              {this.state.page === 'chart' && <ChartPage dark={this.state.isDarkMode} />}
+              {this.state.page === 'chart' && <ChartPage ref="chartPage" dark={this.state.isDarkMode} />}
               {<TablePage                   visible={this.state.page === 'table'}
                                                 />}
               {this.state.page === 'settings' && <SettingsPage />}
