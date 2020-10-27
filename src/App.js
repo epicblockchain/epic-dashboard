@@ -120,10 +120,7 @@ class App extends React.Component {
   }
 
   toggleDarkMode(){
-        this.setState({isDarkMode: !this.state.isDarkMode});
-        if (this.state.page === 'chart') {
-            this.forceUpdate();
-        }
+    this.setState({isDarkMode: !this.state.isDarkMode});
   }
  
   render() {
