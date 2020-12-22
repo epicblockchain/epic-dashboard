@@ -35,3 +35,13 @@ clean:		## Remove generated binaries and zip files
 	@rm -f checksums.txt
 
 all: release zip sha256##
+
+arm: ##arm release
+	@echo "generating releases for arm"
+	@npm run-script build
+	@electron-packager . "ePIC-Dashboard" --platform="linux" --arch="armv7l,arm64" --icon=./icon/512x512 --overwrite=true
+
+mips: ## mips release 
+	@echo "generating for mips"
+	@npm run-script build
+	@electron-packager . "ePIC-Dashboard" --platform="linux" --arch="mips64el"
