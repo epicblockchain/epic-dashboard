@@ -50,6 +50,7 @@ class ChartPage extends React.Component {
         series.dataFields.dateX = "time"
         series.strokeWidth = 2;
         series.smoothing = "monotoneX"
+        series.tooltipText = "Hashrate (TH/s): [bold]{valueY}[/]"//\nTime: [bold]{dateX}[/]"
         if (this.state.firstAnimation) {
             this.setState({firstAnimation: false})
         } else {
@@ -58,6 +59,7 @@ class ChartPage extends React.Component {
         }
         //unhide the logo
         // chart.logo.height = -15000;
+        
         chart.cursor = new am4charts.XYCursor();
         chart.scrollbarX = new am4charts.XYChartScrollbar();
         chart.scrollbarY = new am4charts.XYChartScrollbar();
@@ -110,9 +112,13 @@ class ChartPage extends React.Component {
         } else {
             series.stroke = am4core.color("#1b1d4d");
         }
-        // var bullet = series.bullets.push(new am4charts.CircleBullet());
-        // bullet.scale = 0.6;
-        // bullet.fill = am4core.color("#1b1d4d");
+        var bullet = series.bullets.push(new am4charts.CircleBullet());
+        bullet.scale = 0.6;
+        bullet.fill = am4core.color("#1b1d4d");
+
+        //if we want multiple moving averages in the future then a legend might be useful
+        // chart.legend = new am4charts.Legend();
+
         this.chart = chart
         this.setState({pageState: 'loaded'})
     }
