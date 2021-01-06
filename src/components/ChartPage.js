@@ -44,12 +44,12 @@ class ChartPage extends React.Component {
         let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
         yAxis.min = 0
         yAxis.title.text = "Hashrate (TH/s)"
-        let series = chart.series.push(new am4charts.StepLineSeries());
+        let series = chart.series.push(new am4charts.LineSeries());
         series.name = "Hashrate (TH/s)"
         series.dataFields.valueY = "hashrate"
         series.dataFields.dateX = "time"
         series.strokeWidth = 2;
-        // series.smoothing = "monotoneX"
+        series.smoothing = "monotoneX"
         if (this.state.firstAnimation) {
             this.setState({firstAnimation: false})
         } else {
