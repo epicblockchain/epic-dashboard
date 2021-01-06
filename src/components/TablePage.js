@@ -419,7 +419,27 @@ class TablePage extends React.Component {
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].summary.data["HBs"].length}</Cell>
+            let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
+            if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
+                return <Cell>{cellText}</Cell>
+            } else {
+                let goodHBs = [];
+                let possibleHBs = [0,1,2];
+                let badHBs = [];
+                this.state.miners[rowIndex].summary.data["HBs"].forEach(hb => {
+                    goodHBs.push(hb.Index);
+                });
+
+                possibleHBs.forEach(phb => {
+                    if (!goodHBs.includes(phb)){
+                        badHBs.push(phb);
+                    }
+                })
+                
+                
+
+                return <Cell>{cellText + ' (Down: ' + badHBs.toString() + ')'}</Cell>
+            }
         } else {
             return <Cell>{"Error"}</Cell>
         }
