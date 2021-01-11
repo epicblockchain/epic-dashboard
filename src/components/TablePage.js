@@ -124,6 +124,16 @@ class TablePage extends React.Component {
 
     handleFilterChange(e){
         this.setState({filterValue: e.target.value});
+        let newMiners = this.state.miners;
+        newMiners.forEach(m => {
+            m.visible = JSON.stringify(m).includes(e.target.value)
+        });
+        this.setState({miners: newMiners});
+    }
+
+    getVisibleMiners(){
+        const miners = this.state.miners;
+        return miners.filter(m => m.visible);
     }
 
     handleSelectionChange(selection){
@@ -294,11 +304,14 @@ class TablePage extends React.Component {
         args.forEach(newMiner => {
             const idx = currentIps.findIndex((ip) => ip === newMiner.ip);
             if (idx === -1){
-                //append
+                //append and default to visible
+                newMiner.visible = true;
                 newMiners.push(newMiner);
             } else {
                 //update
+                const oldVisible = newMiners[idx].visible;
                 newMiners[idx] = newMiner;
+                newMiners[idx].visible = oldVisible;
             }
         })
         
@@ -631,7 +644,6 @@ class TablePage extends React.Component {
                         leftIcon="filter"
                         onChange={this.handleFilterChange}
                         placeholder="Filter table..."
-                        value={this.state.filterValue}
                     />
                 </div>
                 <div className="minersTableContainer">
@@ -639,7 +651,7 @@ class TablePage extends React.Component {
                             className="minersTable"
                             enableRowHeader={false}
                             enableColumnReordering={true}
-                            numRows={this.state.miners.length}
+                            numRows={this.getVisibleMiners().length}
                             onColumnsReordered={this.handleColumnReordering}
                             onSelection={this.handleSelectionChange}    
                         >
