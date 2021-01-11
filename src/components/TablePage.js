@@ -119,6 +119,11 @@ class TablePage extends React.Component {
         this.sortMiners = this.sortMiners.bind(this);
 
         this.handleRemoveMiner = this.handleRemoveMiner.bind(this);
+        this.handleFilterChange = this.handleFilterChange.bind(this);
+    }
+
+    handleFilterChange(e){
+        this.setState({filterValue: e.target.value});
     }
 
     handleSelectionChange(selection){
@@ -620,6 +625,14 @@ class TablePage extends React.Component {
                         <Icon className="powerTip" icon="info-sign"/>
                     </Tooltip>
                     <Checkbox inline={true} default={this.state.isChecked.remove} onChange={this.handleColumnVisibility.bind(this, 'remove')}>Remove Miner Column</Checkbox>
+                </div>
+                <div className="minerSearchBarContainer">
+                    <InputGroup
+                        leftIcon="filter"
+                        onChange={this.handleFilterChange}
+                        placeholder="Filter table..."
+                        value={this.state.filterValue}
+                    />
                 </div>
                 <div className="minersTableContainer">
                     <Table getCellClipboardData={this.handleCopy}
