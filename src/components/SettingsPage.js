@@ -143,7 +143,7 @@ class SettingsPage extends React.Component {
         }
     }
 
-    renderCellIfValid(rowIndex: number, cell){
+    nameCellRenderer(rowIndex: number){
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].rebooting) {
@@ -151,26 +151,52 @@ class SettingsPage extends React.Component {
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return cell;
+            return <Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }
     }
 
-    nameCellRenderer(rowIndex: number){
-        return this.renderCellIfValid(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell>);
-    }
-
     firmwareVersionCellRenderer(rowIndex: number){
-        return this.renderCellIfValid(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
     
     operatingModeCellRenderer(rowIndex: number){
-        return this.renderCellIfValid(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
 
     walletCellRenderer(rowIndex: number){
-        return this.renderCellIfValid(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
 
     miningPoolCellRenderer(rowIndex: number){
