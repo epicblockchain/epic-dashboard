@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, InputGroup, Switch, Tab, Tabs } from '@blueprintjs/core'
+import { Button, Switch, Tab, Tabs } from '@blueprintjs/core'
 import { Cell, Column, Table } from '@blueprintjs/table'
 import MiningPoolTab from './SettingsTabs/MiningPoolTab'
 import WalletAddressTab from './SettingsTabs/WalletAddressTab'
@@ -27,8 +27,7 @@ class SettingsPage extends React.Component {
             operatingMode: 'normal',
             miners: [],
             ignoreUpdates: {},
-            isSortAscending: Array(5).fill(true),
-            filterValue: ""
+            isSortAscending: Array(5).fill(true)
         }
         this.settingsGetterHandler       = this.settingsGetterHandler.bind(this);
         this.ipCellRenderer              = this.ipCellRenderer.bind(this);
@@ -49,11 +48,6 @@ class SettingsPage extends React.Component {
         this.deselectAll                 = this.deselectAll.bind(this);
 
         this.hasSomeMinersSelected       = this.hasSomeMinersSelected.bind(this);
-        this.handleFilterChange          = this.handleFilterChange.bind(this);
-    }
-
-    handleFilterChange(e) {
-        this.setState({filterValue: e.target.value});
     }
 
     hasSomeMinersSelected(){
@@ -316,21 +310,9 @@ class SettingsPage extends React.Component {
         // const columnHeaderCellRenderer = () => {
         //     return <ColumnHeaderCell name="Apply To" menuRenderer={menuRenderer} />
         // }
-        
-        const maybeSpinner = false;
 
         return (
             <div className="settingsContainer">
-                <div>
-                    <InputGroup
-                        large={true}
-                        leftIcon="filter"
-                        onChange={this.handleFilterChange}
-                        placeholder="Filter miners included..."
-                        rightElement={maybeSpinner}
-                        value={this.state.filterValue}
-                    />
-                </div>
                 <div className="settingsTableDiv">
                     <div className="selectionButtons">
                         <Button className="selectionButton" icon="circle" onClick={this.deselectAll} />
