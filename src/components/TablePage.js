@@ -134,6 +134,7 @@ class TablePage extends React.Component {
             str += miner.summary.data["Preset"] + ' ';
             str += miner.summary.data["Stratum"]["Current Pool"] + ' ';
             str += miner.summary.data["Stratum"]["Current User"] + ' ';
+            str += miner.summary.data["Software"] + ' ';
 
             console.log(miner);
 
