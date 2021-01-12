@@ -319,11 +319,29 @@ class TablePage extends React.Component {
     }
 
     ipCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
         } else {
             return <Cell>{this.state.miners[rowIndex].ip}</Cell>
         }
+    }
+
+    getNthVisibleMinerIndex(rowIndex){
+        let count = 0;
+        const miners = this.state.miners;
+        for (let i = 0; i < miners.length; i++){
+            const m = miners[i];
+            if (m.visible){
+                if (count === rowIndex){
+                    return i;
+                } else {
+                    count += 1;
+                }
+            }
+        }
+        console.log('count: ', count);
+        throw new Error("Higher rowIndex than number of visible miners");
     }
 
     errorCellRenderer(rowIndex: number, cell_contents_closure){
@@ -341,26 +359,32 @@ class TablePage extends React.Component {
     }
 
     nameCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex,()=>{ return this.state.miners[rowIndex].summary.data["Hostname"] });
     }
 
     operatingModeCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex,()=>{ return this.state.miners[rowIndex].summary.data["Preset"]});
     }
 
     firmwareCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex,()=>{ return this.state.miners[rowIndex].summary.data["Software"]});
     }
 
     poolCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{return this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]});
     }
 
     userCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]});
     }
 
     startedCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{return new Date(this.state.miners[rowIndex].summary.data["Session"]["Startup Timestamp"] * 1000).toString()});
     }
 
@@ -376,9 +400,11 @@ class TablePage extends React.Component {
     }
 
     uptimeCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.secondsToHumanReadable(this.state.miners[rowIndex].summary.data["Session"]["Uptime"]) });
     }
     activeHBCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
         if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
             return this.errorCellRenderer(rowIndex, <Cell>{cellText}</Cell>);
@@ -399,18 +425,23 @@ class TablePage extends React.Component {
         }
     }
     hashrateCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100});
     }
     acceptedCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Session"]["Accepted"]});
     }
     rejectedCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Session"]["Rejected"]});
     }
     difficultyCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Session"]["Difficulty"]});
     }
     temperatureCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].rebooting) {
@@ -440,6 +471,7 @@ class TablePage extends React.Component {
     }
 
     powerCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].rebooting) {
@@ -473,6 +505,7 @@ class TablePage extends React.Component {
     }
 
     removeCellRenderer = (rowIndex) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return (<Cell>
                  <Button className="embeddedTableButton" ><Icon icon="remove" onClick={() => {this.handleRemoveMiner(rowIndex)}} /> </Button>
                </Cell>);
