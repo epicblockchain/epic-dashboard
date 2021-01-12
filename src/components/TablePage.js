@@ -129,8 +129,6 @@ class TablePage extends React.Component {
             return "Loading";
         } else if (miner.summary.status === 'completed') {
             let str = miner.ip + ' ';
-            str += miner.port + ' ';
-
             str += miner.summary.data["Preset"] + ' ';
             str += miner.summary.data["Stratum"]["Current Pool"] + ' ';
             str += miner.summary.data["Stratum"]["Current User"] + ' ';
