@@ -325,8 +325,7 @@ class TablePage extends React.Component {
             return <Cell>{this.state.miners[rowIndex].ip}</Cell>
         }
     }
-
-    errorCellRenderer(rowIndex: number, cell){
+    nameCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].rebooting) {
@@ -334,34 +333,76 @@ class TablePage extends React.Component {
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
             return <Cell>{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return cell
+            return <Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+    operatingModeCellRenderer = (rowIndex: number) => {
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+    firmwareCellRenderer = (rowIndex: number) => {
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+    poolCellRenderer = (rowIndex: number) => {
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
+    }
+    userCellRenderer = (rowIndex: number) => {
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]}</Cell>
         } else {
             return <Cell>{"Error"}</Cell>
         }
     }
 
-    nameCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex,<Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell>);
-    }
-
-    operatingModeCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell>);
-    }
-
-    firmwareCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell>);
-    }
-
-    poolCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]}</Cell>);
-    }
-
-    userCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]}</Cell>);
-    }
-
     startedCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{new Date(this.state.miners[rowIndex].summary.data["Session"]["Startup Timestamp"] * 1000).toString()}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{new Date(this.state.miners[rowIndex].summary.data["Session"]["Startup Timestamp"] * 1000).toString()}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
 
     secondsToHumanReadable(seconds){
@@ -376,39 +417,102 @@ class TablePage extends React.Component {
     }
 
     uptimeCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{ this.secondsToHumanReadable(this.state.miners[rowIndex].summary.data["Session"]["Uptime"]) }</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{ this.secondsToHumanReadable(this.state.miners[rowIndex].summary.data["Session"]["Uptime"]) }</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
     activeHBCellRenderer = (rowIndex: number) => {
-        let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
-        if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
-            return this.errorCellRenderer(rowIndex, <Cell>{cellText}</Cell>);
-        } else {
-            let goodHBs = [];
-            let possibleHBs = [0,1,2];
-            let badHBs = [];
-            this.state.miners[rowIndex].summary.data["HBs"].forEach(hb => {
-                goodHBs.push(hb.Index);
-            });
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
+            if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
+                return <Cell>{cellText}</Cell>
+            } else {
+                let goodHBs = [];
+                let possibleHBs = [0,1,2];
+                let badHBs = [];
+                this.state.miners[rowIndex].summary.data["HBs"].forEach(hb => {
+                    goodHBs.push(hb.Index);
+                });
 
-            possibleHBs.forEach(phb => {
-                if (!goodHBs.includes(phb)){
-                    badHBs.push(phb);
-                }
-            })
-            return this.errorCellRenderer(rowIndex, <Cell>{cellText + ' (Down: ' + badHBs.toString() + ')'}</Cell>);
+                possibleHBs.forEach(phb => {
+                    if (!goodHBs.includes(phb)){
+                        badHBs.push(phb);
+                    }
+                })
+                
+                
+
+                return <Cell>{cellText + ' (Down: ' + badHBs.toString() + ')'}</Cell>
+            }
+        } else {
+            return <Cell>{"Error"}</Cell>
         }
     }
     hashrateCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
     acceptedCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Session"]["Accepted"]}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Session"]["Accepted"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
     rejectedCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Session"]["Rejected"]}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Session"]["Rejected"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
     difficultyCellRenderer = (rowIndex: number) => {
-        return this.errorCellRenderer(rowIndex, <Cell>{this.state.miners[rowIndex].summary.data["Session"]["Difficulty"]}</Cell>);
+        if (this.state.pageState === 'loading') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>
+        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
+            return <Cell>{this.state.miners[rowIndex].summary.data["Session"]["Difficulty"]}</Cell>
+        } else {
+            return <Cell>{"Error"}</Cell>
+        }
     }
     temperatureCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
@@ -438,7 +542,6 @@ class TablePage extends React.Component {
             return <Cell>{"Error"}</Cell>
         }
     }
-
     powerCellRenderer = (rowIndex: number) => {
         if (this.state.pageState === 'loading') {
             return <Cell>{"Loading"}</Cell>
