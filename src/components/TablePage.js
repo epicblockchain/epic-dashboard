@@ -462,12 +462,7 @@ class TablePage extends React.Component {
     }
     temperatureCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            
+        return this.errorCellRenderer(rowIndex, () => {
             let maxTemp = "N/A";
             if (this.state.miners[rowIndex]){
                 const hbs = this.state.miners[rowIndex].summary.data["HBs"];
@@ -481,23 +476,13 @@ class TablePage extends React.Component {
                     });
                 }
             }
-
-            return <Cell>{maxTemp}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
-        }
+            return maxTemp;
+        });
     }
 
     powerCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            
+        return this.errorCellRenderer(rowIndex, () => {
             let sumPower = 0;
             if (this.state.miners[rowIndex]){
                 const hbs = this.state.miners[rowIndex].summary.data["HBs"];
@@ -508,12 +493,8 @@ class TablePage extends React.Component {
                 }
             }
 
-            return <Cell>{Math.round(sumPower)}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
-        }
+            return Math.round(sumPower);
+        });
     }
 
     handleRemoveMiner(rowIndex){
