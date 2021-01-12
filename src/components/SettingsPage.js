@@ -135,82 +135,53 @@ class SettingsPage extends React.Component {
         }
     }
 
-    ipCellRenderer(rowIndex: number){
+    errorCellRenderer(rowIndex: number, cell_contents_closure){
         if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
+            return <Cell>{"Loading"}</Cell>;
+        } else if (this.state.miners[rowIndex].rebooting) {
+            return <Cell>{"Rebooting"}</Cell>;
+        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
+            return <Cell>{"Loading"}</Cell>;
+        } else if (this.state.miners[rowIndex].summary.status === 'completed'){
+            return <Cell>{cell_contents_closure()}</Cell>
         } else {
-            return <Cell>{this.state.miners[rowIndex].ip}</Cell>
+            return <Cell>{"Error"}</Cell>;
         }
+    }
+
+    getNthVisibleMinerIndex(rowIndex){
+        return rowIndex;
+        throw new Error("not implemented yet");
+    }
+
+    ipCellRenderer(rowIndex: number){
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        return this.errorCellRenderer(rowIndex, () => { return <Cell>{this.state.miners[rowIndex].ip}</Cell> } );
     }
 
     nameCellRenderer(rowIndex: number){
-        if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
-        }
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell> });
     }
 
     firmwareVersionCellRenderer(rowIndex: number){
-        if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
-        }
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell> });
     }
     
     operatingModeCellRenderer(rowIndex: number){
-        if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
-        }
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell> });
     }
 
     walletCellRenderer(rowIndex: number){
-        if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
-        }
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]}</Cell> });
     }
 
     miningPoolCellRenderer(rowIndex: number){
-        if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
-        } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]}</Cell>
-        } else {
-            return <Cell>{"Error"}</Cell>
-        }
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]}</Cell> });
     }
 
     handleApplyToChange(e){
@@ -225,6 +196,7 @@ class SettingsPage extends React.Component {
     }
 
     applyToCellRenderer(rowIndex: number){
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         const isDisabled = this.state.miners[rowIndex].summary.status !== 'completed';
         return <Cell><Switch value={this.state.miners[rowIndex].ip} checked={this.state.miners[rowIndex].isChecked || false} disabled={isDisabled} onChange={this.handleApplyToChange} /></Cell>
     }
