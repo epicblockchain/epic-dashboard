@@ -122,11 +122,32 @@ class TablePage extends React.Component {
         this.handleFilterChange = this.handleFilterChange.bind(this);
     }
 
+    stringifyMinerForSearch(miner){
+        if (miner.rebooting) {
+            return "Rebooting";
+        } else if (miner.summary.status === 'empty') {
+            return "Loading";
+        } else if (miner.summary.status === 'completed') {
+            let str = miner.ip + ' ';
+            str += miner.port + ' ';
+
+            str += miner.summary.data["Preset"] + ' ';
+            str += miner.summary.data["Stratum"]["Current Pool"] + ' ';
+            str += miner.summary.data["Stratum"]["Current User"] + ' ';
+
+            console.log(miner);
+
+            return str;
+        } else {
+            return "Error"
+        }
+    }
+
     handleFilterChange(e){
         this.setState({filterValue: e.target.value});
         let newMiners = this.state.miners;
         newMiners.forEach(m => {
-            m.visible = JSON.stringify(m).includes(e.target.value)
+            m.visible = this.stringifyMinerForSearch(m).includes(e.target.value)
         });
         this.setState({miners: newMiners});
     }
