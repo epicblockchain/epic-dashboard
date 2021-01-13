@@ -235,32 +235,32 @@ class SettingsPage extends React.Component {
 
     ipCellRenderer(rowIndex: number){
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, () => { return <Cell>{this.state.miners[rowIndex].ip}</Cell> } );
+        return this.errorCellRenderer(rowIndex, () => { return this.state.miners[rowIndex].ip} );
     }
 
     nameCellRenderer(rowIndex: number){
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Hostname"]}</Cell> });
+        return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Hostname"]});
     }
 
     firmwareVersionCellRenderer(rowIndex: number){
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Software"]}</Cell> });
+        return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Software"]});
     }
     
     operatingModeCellRenderer(rowIndex: number){
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Preset"]}</Cell> });
+        return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Preset"]});
     }
 
     walletCellRenderer(rowIndex: number){
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]}</Cell> });
+        return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Stratum"]["Current User"]});
     }
 
     miningPoolCellRenderer(rowIndex: number){
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return <Cell>{this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]}</Cell> });
+        return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Stratum"]["Current Pool"]});
     }
 
     handleApplyToChange(e){
