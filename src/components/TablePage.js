@@ -124,9 +124,9 @@ class TablePage extends React.Component {
 
     stringifyMinerForSearch(miner){
         if (miner.rebooting) {
-            return "Rebooting";
+            return miner.ip + " Rebooting";
         } else if (miner.summary.status === 'empty') {
-            return "Loading";
+            return miner.ip + " Loading";
         } else if (miner.summary.status === 'completed') {
             let str = miner.ip + ' ';
             str += miner.summary.data["Preset"] + ' ';
@@ -134,16 +134,13 @@ class TablePage extends React.Component {
             str += miner.summary.data["Stratum"]["Current User"] + ' ';
             str += miner.summary.data["Software"] + ' ';
 
-            console.log(miner);
-
             return str;
         } else {
-            return "Error"
+            return miner.ip + " Error"
         }
     }
 
     handleFilterChange(e){
-        this.setState({filterValue: e.target.value});
         let newMiners = this.state.miners;
         newMiners.forEach(m => {
             m.visible = this.stringifyMinerForSearch(m).includes(e.target.value)
