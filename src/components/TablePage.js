@@ -422,24 +422,27 @@ class TablePage extends React.Component {
     }
     activeHBCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
-        if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
-            return this.errorCellRenderer(rowIndex, <Cell>{cellText}</Cell>);
-        } else {
-            let goodHBs = [];
-            let possibleHBs = [0,1,2];
-            let badHBs = [];
-            this.state.miners[rowIndex].summary.data["HBs"].forEach(hb => {
-                goodHBs.push(hb.Index);
-            });
+        let cell_contents_closure = () => {
+            let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
+            if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
+                return cellText;
+            } else {
+                let goodHBs = [];
+                let possibleHBs = [0,1,2];
+                let badHBs = [];
+                this.state.miners[rowIndex].summary.data["HBs"].forEach(hb => {
+                    goodHBs.push(hb.Index);
+                });
 
-            possibleHBs.forEach(phb => {
-                if (!goodHBs.includes(phb)){
-                    badHBs.push(phb);
-                }
-            })
-            return this.errorCellRenderer(rowIndex, <Cell>{cellText + ' (Down: ' + badHBs.toString() + ')'}</Cell>);
+                possibleHBs.forEach(phb => {
+                    if (!goodHBs.includes(phb)){
+                        badHBs.push(phb);
+                    }
+                })
+            return cellText + ' (Down: ' + badHBs.toString() + ')';
+            }
         }
+        return this.errorCellRenderer(rowIndex, cell_contents_closure);
     }
     hashrateCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
