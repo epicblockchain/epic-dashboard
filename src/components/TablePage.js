@@ -23,8 +23,8 @@ class TablePage extends React.Component {
                 pool           : true,
                 user           : true,
                 startTime      : false,
-                uptime         : true,
-                activeHBs      : false,
+                uptime         : false,
+                activeHBs      : true,
                 hashrate       : true,
                 acceptedShares : false,
                 rejectedShares : false,
@@ -338,9 +338,20 @@ class TablePage extends React.Component {
     ipCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
+            return <Cell intent="warning">{"Loading"}</Cell>
         } else {
-            return <Cell>{this.state.miners[rowIndex].ip}</Cell>
+            let cellIntent = "";
+            try {
+                const numBadHBs = this.getBadHashboards(rowIndex).length;
+                if (numBadHBs === 3){
+                    cellIntent = "danger";
+                } else if (numBadHBs > 0){
+                    cellIntent = "warning";
+                }
+            } catch {
+                cellIntent = "warning";
+            }
+            return <Cell intent={cellIntent}>{this.state.miners[rowIndex].ip}</Cell>
         }
     }
 
@@ -363,15 +374,22 @@ class TablePage extends React.Component {
 
     errorCellRenderer(rowIndex: number, cell_contents_closure){
         if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>
+            return <Cell intent="warning">{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>
+            return <Cell intent="warning">{"Rebooting"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>
+            return <Cell intent="warning">{"Loading"}</Cell>
         } else if (this.state.miners[rowIndex].summary.status === 'completed') {
-            return <Cell>{cell_contents_closure()}</Cell>
+            let cellIntent = "";
+            const numBadHBs = this.getBadHashboards(rowIndex).length;
+            if (numBadHBs === 3){
+                cellIntent = "danger";
+            } else if (numBadHBs > 0) {
+                cellIntent = "warning";
+            }
+            return <Cell intent={cellIntent}>{cell_contents_closure()}</Cell>
         } else {
-            return <Cell>{"Error"}</Cell>
+            return <Cell intent="danger">{"Error"}</Cell>
         }
     }
 
@@ -420,13 +438,8 @@ class TablePage extends React.Component {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.secondsToHumanReadable(this.state.miners[rowIndex].summary.data["Session"]["Uptime"]) });
     }
-    activeHBCellRenderer = (rowIndex: number) => {
-        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        let cell_contents_closure = () => {
-            let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
-            if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
-                return cellText;
-            } else {
+
+    getBadHashboards(rowIndex){
                 let goodHBs = [];
                 let possibleHBs = [0,1,2];
                 let badHBs = [];
@@ -439,7 +452,18 @@ class TablePage extends React.Component {
                         badHBs.push(phb);
                     }
                 })
-            return cellText + ' (Down: ' + badHBs.toString() + ')';
+                return badHBs;
+    }
+
+    activeHBCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        let cell_contents_closure = () => {
+            let cellText = this.state.miners[rowIndex].summary.data["HBs"].length;
+            if (this.state.miners[rowIndex].summary.data["HBs"].length === 3 && true){
+                return cellText;
+            } else {
+                const badHBs = this.getBadHashboards(rowIndex);
+                return cellText + ' (Down: ' + badHBs.toString() + ')';
             }
         }
         return this.errorCellRenderer(rowIndex, cell_contents_closure);
