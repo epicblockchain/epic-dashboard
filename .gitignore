@@ -29,3 +29,4 @@ ipaddr.txt
 /ePIC-Dashboard-*
 *.zip
 checksums.txt
+localmakefile

@@ -5,7 +5,7 @@
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.4",
     "@blueprintjs/core": "^3.31.0",
-    "@blueprintjs/table": "^3.7.1",
+    "@blueprintjs/table": "3.7.1",
     "dnssd2": "^1.0.0",
     "electron-is-dev": "^1.2.0",
     "form-data": "^3.0.0",
