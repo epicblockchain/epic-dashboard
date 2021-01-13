@@ -188,7 +188,6 @@ class SettingsPage extends React.Component {
             const m = miners[i];
             if (m.visible){
                 if (count === rowIndex){
-                    console.log('returning');
                     return i;
                 } else {
                     count += 1;
@@ -323,7 +322,7 @@ class SettingsPage extends React.Component {
                 return el;
             }
             let newMiner = el;
-            newMiner.isChecked = true;
+            newMiner.isChecked = el.visible;
             return newMiner;
         });
         this.setState({miners: newMiners});
