@@ -468,22 +468,27 @@ class TablePage extends React.Component {
         }
         return this.errorCellRenderer(rowIndex, cell_contents_closure);
     }
+
     hashrateCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100});
     }
+
     acceptedCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Session"]["Accepted"]});
     }
+    
     rejectedCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Session"]["Rejected"]});
     }
+
     difficultyCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, ()=>{ return this.state.miners[rowIndex].summary.data["Session"]["Difficulty"]});
     }
+
     temperatureCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
         return this.errorCellRenderer(rowIndex, () => {
