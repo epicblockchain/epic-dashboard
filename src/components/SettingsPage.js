@@ -167,17 +167,44 @@ class SettingsPage extends React.Component {
         }
     }
 
+    getBadHashboards(rowIndex){
+        let goodHBs = [];
+        let possibleHBs = [0,1,2];
+        let badHBs = [];
+        this.state.miners[rowIndex].summary.data["HBs"].forEach(hb => {
+            goodHBs.push(hb.Index);
+        });
+
+        possibleHBs.forEach(phb => {
+            if (!goodHBs.includes(phb)){
+                badHBs.push(phb);
+            }
+        });
+        return badHBs;
+    }
+
     errorCellRenderer(rowIndex: number, cell_contents_closure){
         if (this.state.pageState === 'loading') {
-            return <Cell>{"Loading"}</Cell>;
+            return <Cell intent="warning">{"Loading"}</Cell>;
         } else if (this.state.miners[rowIndex].rebooting) {
-            return <Cell>{"Rebooting"}</Cell>;
+            return <Cell intent="warning">{"Rebooting"}</Cell>;
         } else if (this.state.miners[rowIndex].summary.status === 'empty') {
-            return <Cell>{"Loading"}</Cell>;
+            return <Cell intent="warning">{"Loading"}</Cell>;
         } else if (this.state.miners[rowIndex].summary.status === 'completed'){
-            return <Cell>{cell_contents_closure()}</Cell>
+            let cellIntent = "";
+            try {
+                const numBadHBs = this.getBadHashboards(rowIndex).length;
+                if (numBadHBs === 3){
+                    cellIntent = "danger";
+                } else if (numBadHBs > 0){
+                    cellIntent = "warning";
+                }
+            } catch {
+                cellIntent = "warning";
+            }
+            return <Cell intent={cellIntent}>{cell_contents_closure()}</Cell>
         } else {
-            return <Cell>{"Error"}</Cell>;
+            return <Cell intent="danger">{"Error"}</Cell>;
         }
     }
 
