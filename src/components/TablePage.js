@@ -26,6 +26,7 @@ class TablePage extends React.Component {
                 uptime         : false,
                 activeHBs      : true,
                 hashrate1hr    : true,
+                hashrate6hr    : false,
                 hashrate24hr   : false,
                 acceptedShares : false,
                 rejectedShares : false,
@@ -45,6 +46,7 @@ class TablePage extends React.Component {
                 "uptime"         : <Column key="uptime"         name="Uptime"                cellRenderer={this.uptimeCellRenderer}/>       ,
                 "activeHBs"      : <Column key="activeHBs"      name="Active HBs"            cellRenderer={this.activeHBCellRenderer}/>     ,
                 "hashrate1hr"    : <Column key="hashrate1hr"    name="Hashrate 1hr (TH/s)"       cellRenderer={this.hashrate1hrCellRenderer}/>     ,
+                "hashrate6hr"    : <Column key="hashrate6hr"    name="Hashrate 6hr (TH/s)"       cellRenderer={this.hashrate1hrCellRenderer}/>     ,
                 "hashrate24hr"   : <Column key="hashrate24hr"   name="Hashrate 24hr (TH/s)"       cellRenderer={this.hashrate24hrCellRenderer}/>     ,
                 "acceptedShares" : <Column key="acceptedShares" name="Accepted"              cellRenderer={this.acceptedCellRenderer}/>     ,
                 "rejectedShares" : <Column key="rejectedShares" name="Rejected"              cellRenderer={this.rejectedCellRenderer}/>     ,
@@ -64,6 +66,7 @@ class TablePage extends React.Component {
                 'uptime',
                 'activeHBs',
                 'hashrate1hr',
+                'hashrate6hr',
                 'hashrate24hr',
                 'acceptedShares',
                 'rejectedShares',
@@ -83,6 +86,7 @@ class TablePage extends React.Component {
                 uptime         : true,
                 activeHBs      : true,
                 hashrate1hr    : true,
+                hashrate6hr    : true,
                 hashrate24hr   : true,
                 acceptedShares : true,
                 rejectedShares : true,
@@ -103,6 +107,7 @@ class TablePage extends React.Component {
         this.uptimeCellRenderer        = this.uptimeCellRenderer.bind(this);
         this.activeHBCellRenderer      = this.activeHBCellRenderer.bind(this);
         this.hashrate1hrCellRenderer      = this.hashrate1hrCellRenderer.bind(this);
+        this.hashrate6hrCellRenderer      = this.hashrate6hrCellRenderer.bind(this);
         this.hashrate24hrCellRenderer      = this.hashrate24hrCellRenderer.bind(this);
         this.acceptedCellRenderer      = this.acceptedCellRenderer.bind(this);
         this.rejectedCellRenderer      = this.rejectedCellRenderer.bind(this);
@@ -228,11 +233,11 @@ class TablePage extends React.Component {
                     case 'activeHBs':
                         return a.summary.data["HBs"].length - b.summary.data["HBs"].length;
                     case 'hashrate1hr':
-                        return 'todo';
-                        return a.summary.data["Session"]["Average MHs"] - b.summary.data["Session"]["Average MHs"];
+                        return a.averageHRs["1hr"] - b.averageHRs["1hr"];
+                    case 'hashrate6hr':
+                        return a.averageHRs["6hr"] - b.averageHRs["6hr"];
                     case 'hashrate24hr':
-                        return 'todo';
-                        return a.summary.data["Session"]["Average MHs"] - b.summary.data["Session"]["Average MHs"];
+                        return a.averageHRs["24hr"] - b.averageHRs["24hr"];
                     case 'acceptedShares':
                         return a.summary.data["Session"]["Accepted"] - b.summary.data["Session"]["Accepted"];
                     case 'rejectedShares':
@@ -480,14 +485,15 @@ class TablePage extends React.Component {
 
     hashrate1hrCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return <Cell>todo</Cell>;
-        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100});
+        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100});
+    }
+    hashrate6hrCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100});
     }
     hashrate24hrCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        console.log(this.state.miners[0])
-        return <Cell>todo</Cell>;
-        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100});
+        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100});
     }
 
     acceptedCellRenderer = (rowIndex: number) => {
@@ -645,11 +651,11 @@ class TablePage extends React.Component {
             case 'activeHBs':
                 return this.state.miners[rowIndex].summary.data["HBs"].length;
             case 'hashrate1hr':
-                return 'todo';
-                return Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100;
+                return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100;
+            case 'hashrate6hr':
+                return Math.round(this.state.miners[rowIndex].averageHRs["6hr"] / 10000) / 100;
             case 'hashrate24hr':
-                return 'todo';
-                return Math.round(this.state.miners[rowIndex].summary.data["Session"]["Average MHs"] / 10000) / 100;
+                return Math.round(this.state.miners[rowIndex].averageHRs["24hr"] / 10000) / 100;
             case 'acceptedShares':
                 return this.state.miners[rowIndex].summary.data["Session"]["Accepted"];
             case 'rejectedShares':
@@ -712,6 +718,7 @@ class TablePage extends React.Component {
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.uptime        } onChange={this.handleColumnVisibility.bind(this, 'uptime')}>  Uptime              </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.activeHBs     } onChange={this.handleColumnVisibility.bind(this, 'activeHBs')}>  Active HBs          </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate1hr      } onChange={this.handleColumnVisibility.bind(this, 'hashrate1hr')}>  Hashrate 1hr           </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate6hr      } onChange={this.handleColumnVisibility.bind(this, 'hashrate6hr')}>  Hashrate 6hr           </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate24hr      } onChange={this.handleColumnVisibility.bind(this, 'hashrate24hr')}>  Hashrate 24hr           </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.acceptedShares} onChange={this.handleColumnVisibility.bind(this, 'acceptedShares')}>  Accepted Shares     </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.rejectedShares} onChange={this.handleColumnVisibility.bind(this, 'rejectedShares')}>  Rejected Shares     </ Checkbox>
