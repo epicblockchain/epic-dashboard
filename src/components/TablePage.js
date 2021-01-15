@@ -46,7 +46,7 @@ class TablePage extends React.Component {
                 "uptime"         : <Column key="uptime"         name="Uptime"                cellRenderer={this.uptimeCellRenderer}/>       ,
                 "activeHBs"      : <Column key="activeHBs"      name="Active HBs"            cellRenderer={this.activeHBCellRenderer}/>     ,
                 "hashrate1hr"    : <Column key="hashrate1hr"    name="Hashrate 1hr (TH/s)"       cellRenderer={this.hashrate1hrCellRenderer}/>     ,
-                "hashrate6hr"    : <Column key="hashrate6hr"    name="Hashrate 6hr (TH/s)"       cellRenderer={this.hashrate1hrCellRenderer}/>     ,
+                "hashrate6hr"    : <Column key="hashrate6hr"    name="Hashrate 6hr (TH/s)"       cellRenderer={this.hashrate6hrCellRenderer}/>     ,
                 "hashrate24hr"   : <Column key="hashrate24hr"   name="Hashrate 24hr (TH/s)"       cellRenderer={this.hashrate24hrCellRenderer}/>     ,
                 "acceptedShares" : <Column key="acceptedShares" name="Accepted"              cellRenderer={this.acceptedCellRenderer}/>     ,
                 "rejectedShares" : <Column key="rejectedShares" name="Rejected"              cellRenderer={this.rejectedCellRenderer}/>     ,
@@ -489,11 +489,11 @@ class TablePage extends React.Component {
     }
     hashrate6hrCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100});
+        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["6hr"] / 10000) / 100});
     }
     hashrate24hrCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100});
+        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["24hr"] / 10000) / 100});
     }
 
     acceptedCellRenderer = (rowIndex: number) => {
