@@ -16,24 +16,25 @@ class TablePage extends React.Component {
         this.state = {
             miners: [],
             isChecked: {
-                ip             : true,
-                name           : true,
-                firmware       : true,
-                operatingMode  : true,
-                pool           : true,
-                user           : true,
-                startTime      : false,
-                uptime         : false,
-                activeHBs      : true,
-                hashrate1hr    : true,
-                hashrate6hr    : false,
-                hashrate24hr   : false,
-                acceptedShares : false,
-                rejectedShares : false,
-                difficulty     : false,
-                temperature    : true,
-                power          : false,
-                remove : false
+                ip:             true,
+                name:           true,
+                firmware:       true,
+                operatingMode:  true,
+                pool:           true,
+                user:           true,
+                startTime:      false,
+                uptime:         false,
+                activeHBs:      true,
+                hashrate15min:  true,
+                hashrate1hr:    false,
+                hashrate6hr:    false,
+                hashrate24hr:   false,
+                acceptedShares: false,
+                rejectedShares: false,
+                difficulty:     false,
+                temperature:    true,
+                power:          false,
+                remove:         false
             },
             columns: {
                 "ip"             : <Column key="ip"             name="IP"                    cellRenderer={this.ipCellRenderer}/>           ,
@@ -45,6 +46,7 @@ class TablePage extends React.Component {
                 "started"        : <Column key="started"        name="Started"               cellRenderer={this.startedCellRenderer}/>      ,
                 "uptime"         : <Column key="uptime"         name="Uptime"                cellRenderer={this.uptimeCellRenderer}/>       ,
                 "activeHBs"      : <Column key="activeHBs"      name="Active HBs"            cellRenderer={this.activeHBCellRenderer}/>     ,
+                "hashrate15min"    : <Column key="hashrate15min"    name="Hashrate 15min (TH/s)"       cellRenderer={this.hashrate15minCellRenderer}/>     ,
                 "hashrate1hr"    : <Column key="hashrate1hr"    name="Hashrate 1hr (TH/s)"       cellRenderer={this.hashrate1hrCellRenderer}/>     ,
                 "hashrate6hr"    : <Column key="hashrate6hr"    name="Hashrate 6hr (TH/s)"       cellRenderer={this.hashrate6hrCellRenderer}/>     ,
                 "hashrate24hr"   : <Column key="hashrate24hr"   name="Hashrate 24hr (TH/s)"       cellRenderer={this.hashrate24hrCellRenderer}/>     ,
@@ -65,6 +67,7 @@ class TablePage extends React.Component {
                 'started',
                 'uptime',
                 'activeHBs',
+                'hashrate15min',
                 'hashrate1hr',
                 'hashrate6hr',
                 'hashrate24hr',
@@ -85,6 +88,7 @@ class TablePage extends React.Component {
                 started        : true,
                 uptime         : true,
                 activeHBs      : true,
+                hashrate15min  : true,
                 hashrate1hr    : true,
                 hashrate6hr    : true,
                 hashrate24hr   : true,
@@ -106,9 +110,10 @@ class TablePage extends React.Component {
         this.startedCellRenderer       = this.startedCellRenderer.bind(this);
         this.uptimeCellRenderer        = this.uptimeCellRenderer.bind(this);
         this.activeHBCellRenderer      = this.activeHBCellRenderer.bind(this);
-        this.hashrate1hrCellRenderer      = this.hashrate1hrCellRenderer.bind(this);
-        this.hashrate6hrCellRenderer      = this.hashrate6hrCellRenderer.bind(this);
-        this.hashrate24hrCellRenderer      = this.hashrate24hrCellRenderer.bind(this);
+        this.hashrate15minCellRenderer = this.hashrate15minCellRenderer.bind(this);
+        this.hashrate1hrCellRenderer   = this.hashrate1hrCellRenderer.bind(this);
+        this.hashrate6hrCellRenderer   = this.hashrate6hrCellRenderer.bind(this);
+        this.hashrate24hrCellRenderer  = this.hashrate24hrCellRenderer.bind(this);
         this.acceptedCellRenderer      = this.acceptedCellRenderer.bind(this);
         this.rejectedCellRenderer      = this.rejectedCellRenderer.bind(this);
         this.difficultyCellRenderer    = this.difficultyCellRenderer.bind(this);
@@ -232,6 +237,8 @@ class TablePage extends React.Component {
                         return a.summary.data["Session"]["Uptime"] - b.summary.data["Session"]["Uptime"];
                     case 'activeHBs':
                         return a.summary.data["HBs"].length - b.summary.data["HBs"].length;
+                    case 'hashrate15min':
+                        return a.averageHRs["15min"] - b.averageHRs["15min"];
                     case 'hashrate1hr':
                         return a.averageHRs["1hr"] - b.averageHRs["1hr"];
                     case 'hashrate6hr':
@@ -483,17 +490,49 @@ class TablePage extends React.Component {
         return this.errorCellRenderer(rowIndex, cell_contents_closure);
     }
 
+    hashrate15minCellRenderer = (rowIndex: number) => {
+        rowIndex = this.getNthVisibleMinerIndex(rowIndex);
+        const miner = this.state.miners[rowIndex];
+        return this.errorCellRenderer(rowIndex, ()=>{ 
+            if (miner.averageHRs["15min"].valid) {
+                return Math.round(miner.averageHRs["15min"].hashrate / 10000) / 100;
+            } else {
+                return 'N/A';
+            }
+        });
+    }
     hashrate1hrCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100});
+        const miner = this.state.miners[rowIndex];
+        return this.errorCellRenderer(rowIndex, ()=>{ 
+            if (miner.averageHRs["1hr"].valid) {
+                return Math.round(miner.averageHRs["1hr"].hashrate / 10000) / 100;
+            } else {
+                return 'N/A';
+            }
+        });
     }
     hashrate6hrCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["6hr"] / 10000) / 100});
+        const miner = this.state.miners[rowIndex];
+        return this.errorCellRenderer(rowIndex, ()=>{ 
+            if (miner.averageHRs["6hr"].valid) {
+                return Math.round(miner.averageHRs["6hr"].hashrate / 10000) / 100;
+            } else {
+                return 'N/A';
+            }
+        });
     }
     hashrate24hrCellRenderer = (rowIndex: number) => {
         rowIndex = this.getNthVisibleMinerIndex(rowIndex);
-        return this.errorCellRenderer(rowIndex, ()=>{ return Math.round(this.state.miners[rowIndex].averageHRs["24hr"] / 10000) / 100});
+        const miner = this.state.miners[rowIndex];
+        return this.errorCellRenderer(rowIndex, ()=>{ 
+            if (miner.averageHRs["24hr"].valid) {
+                return Math.round(miner.averageHRs["24hr"].hashrate / 10000) / 100;
+            } else {
+                return 'N/A';
+            }
+        });
     }
 
     acceptedCellRenderer = (rowIndex: number) => {
@@ -650,6 +689,8 @@ class TablePage extends React.Component {
                 return this.secondsToHumanReadable(this.state.miners[rowIndex].summary.data["Session"]["Uptime"]);
             case 'activeHBs':
                 return this.state.miners[rowIndex].summary.data["HBs"].length;
+            case 'hashrate15min':
+                return Math.round(this.state.miners[rowIndex].averageHRs["15min"] / 10000) / 100;
             case 'hashrate1hr':
                 return Math.round(this.state.miners[rowIndex].averageHRs["1hr"] / 10000) / 100;
             case 'hashrate6hr':
@@ -717,6 +758,7 @@ class TablePage extends React.Component {
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.startTime     } onChange={this.handleColumnVisibility.bind(this, 'started')}>  Start Time          </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.uptime        } onChange={this.handleColumnVisibility.bind(this, 'uptime')}>  Uptime              </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.activeHBs     } onChange={this.handleColumnVisibility.bind(this, 'activeHBs')}>  Active HBs          </ Checkbox>
+                    <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate15min      } onChange={this.handleColumnVisibility.bind(this, 'hashrate15min')}>  Hashrate 15min           </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate1hr      } onChange={this.handleColumnVisibility.bind(this, 'hashrate1hr')}>  Hashrate 1hr           </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate6hr      } onChange={this.handleColumnVisibility.bind(this, 'hashrate6hr')}>  Hashrate 6hr           </ Checkbox>
                     <Checkbox inline={true} defaultChecked={this.state.isChecked.hashrate24hr      } onChange={this.handleColumnVisibility.bind(this, 'hashrate24hr')}>  Hashrate 24hr           </ Checkbox>
