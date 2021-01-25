@@ -6,6 +6,7 @@ import './SupportPage.css'
 import '@blueprintjs/core/lib/css/blueprint.css'
 
 const electron = window.require('electron')
+const pjson = require('../../package.json');
 
 class SupportPage extends React.Component {
 
@@ -22,7 +23,7 @@ class SupportPage extends React.Component {
     render() {
         return (
             <div className="supportPageContainer bp3-running-text">
-                <h3> Support </h3>
+                <h3> Support {"(Dashboard v"+pjson.version+")"} </h3>
                 <p><strong>support@epicblockchain.io</strong></p>
                 <p>Press the button below to create a log file which you can choose to attach to your support email.</p>
                 <Button onClick={this.handleDump}>Select Log Destination</Button>
