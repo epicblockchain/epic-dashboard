@@ -400,6 +400,7 @@ class SettingsPage extends React.Component {
                         <Column name='Firmware Version' cellRenderer={this.firmwareVersionCellRenderer} />
                         <Column name='Preset' cellRenderer={this.operatingModeCellRenderer} />
                         <Column name='Miner Name' cellRenderer={this.nameCellRenderer} />
+                        <Column name='Wallet' cellRenderer={this.walletCellRenderer} />
                         <Column name='Mining Pool' cellRenderer={this.miningPoolCellRenderer} />
                         <Column name="Apply To" cellRenderer={this.applyToCellRenderer} />
                     </Table>
