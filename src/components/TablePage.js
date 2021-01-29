@@ -238,13 +238,13 @@ class TablePage extends React.Component {
                     case 'activeHBs':
                         return a.summary.data["HBs"].length - b.summary.data["HBs"].length;
                     case 'hashrate15min':
-                        return a.averageHRs["15min"] - b.averageHRs["15min"];
+                        return a.averageHRs["15min"].hashrate - b.averageHRs["15min"].hashrate;
                     case 'hashrate1hr':
-                        return a.averageHRs["1hr"] - b.averageHRs["1hr"];
+                        return a.averageHRs["1hr"].hashrate - b.averageHRs["1hr"].hashrate;
                     case 'hashrate6hr':
-                        return a.averageHRs["6hr"] - b.averageHRs["6hr"];
+                        return a.averageHRs["6hr"].hashrate - b.averageHRs["6hr"].hashrate;
                     case 'hashrate24hr':
-                        return a.averageHRs["24hr"] - b.averageHRs["24hr"];
+                        return a.averageHRs["24hr"].hashrate - b.averageHRs["24hr"].hashrate;
                     case 'acceptedShares':
                         return a.summary.data["Session"]["Accepted"] - b.summary.data["Session"]["Accepted"];
                     case 'rejectedShares':
