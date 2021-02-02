@@ -7,6 +7,12 @@ release:	## Generate binaries on all platforms
 	@echo "popular os"
 	@electron-packager . "ePIC-Dashboard" --platform="darwin,linux,win32" --arch="ia32,x64,armv7l,arm64" --icon=./icon/512x512 --overwrite=true
 
+release-hometemp: # generate binaries with hometemp
+	@echo "generating releases..."
+	@npm run-script build
+	@echo "popular os"
+	@electron-packager . "ePIC-Dashboard" --platform="darwin,linux,win32" --tmpdir="/home" --arch="ia32,x64,armv7l,arm64" --icon=./icon/512x512 --overwrite=true
+
 zip:		## Compress generated binaries into zip files
 	@echo "compressing..."
 	@rm -rf *.zip
@@ -48,3 +54,5 @@ clean:		## Remove generated binaries and zip files
 	@rm -f checksums.txt
 
 all: release zip sha256##
+
+all-hometemp: release-hometemp zip sha256##
