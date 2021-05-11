@@ -12,14 +12,14 @@ export class TestTable extends React.Component {
 
     renderCell(row) {
         return (
-            <Cell>{row}</Cell>
+            <Cell>{this.props.data[row]}</Cell>
         );
     };
 
     render() {
         return (
-            <Table numRows={10}>
-                <Column name="IP"/>
+            <Table numRows={this.props.data.length}>
+                <Column name="IP" cellRenderer={this.renderCell}/>
             </Table>
         );
     }

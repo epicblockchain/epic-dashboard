@@ -59,8 +59,8 @@ class App extends React.Component {
                 name: '_epicminer._tcp.local'
             }).then((list) => {
                 miners = list;
-                this.test();
                 setTimeout(() => {
+                    this.test();
                     console.log('update');
                 }, 3000);
             });
@@ -102,7 +102,7 @@ class App extends React.Component {
                 >
                     <button onClick={() => this.onSetSidebarOpen(true)}>Open Sidebar</button>
                     { this.state.page == 'main' && <Dashboard data={this.state.miners}/> }
-                    { this.state.page == 'table' && <TestTable/> }
+                    { this.state.page == 'table' && <TestTable data={this.state.miners}/> }
                 </Sidebar>
             </div>
         );
