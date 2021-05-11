@@ -11,6 +11,7 @@ import { Menu, MenuItem, MenuDivider } from '@blueprintjs/core';
 import "@blueprintjs/core/lib/css/blueprint.css";
 
 var miners = [];
+var miner_hist = [];
 
 /*async function test() {
     var miner_data = [];
@@ -35,37 +36,54 @@ class App extends React.Component {
         this.state = {
             sidebarOpen: true,
             page: 'main',
-            miners: []
+            miner_data: [],
         };
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     }
 
-    async test() {
+    async summary(init) {
         var miner_data = [];
+        
         for (let miner of miners) {
             try {
-                const data = await got(`http://${miner.address}:${miner.service.port}/summary`);
-                miner_data.push(data.body);
+                const summary = await got(`http://${miner.address}:${miner.service.port}/summary`);
+                if (init) {
+                    const history = await got(`http://${miner.address}:${miner.service.port}/history`);
+                    miner_data.push({ip: miner.address, sum: summary.body, hist: JSON.parse(history.body).History});
+                } else {
+                    const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
+                    if (lastMHs != null) {
+                        let match = this.state.miner_data.find(a => a.ip == miner.address);
+                        
+                        if (match.hist.length == 0) {
+                            miner_data.push({ip: miner.address, sum: summary.body, hist: [lastMHs]});
+                        } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
+                            match.hist.push(lastMHs);
+                            miner_data.push({ip: miner.address, sum: summary.body, hist: match.hist});
+                        } else {
+                            miner_data.push({ip: miner.address, sum: summary.body, hist: match.hist});
+                        }
+                    }
+                }
             } catch(err) {
-                miner_data.push(err);
+                console.log(err);
             }
         }
-        this.setState({miners: miner_data});
+        this.setState({miner_data: miner_data});
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.miners != this.state.miners) {
+        if (prevState.miner_data != this.state.miner_data) {
             mdns.discover({
                 name: '_epicminer._tcp.local'
             }).then((list) => {
                 miners = list;
                 setTimeout(() => {
-                    this.test();
+                    this.summary(false);
                     console.log('update');
                 }, 3000);
             });
         }
-        
     }
 
     componentDidMount() {
@@ -73,7 +91,7 @@ class App extends React.Component {
             name: '_epicminer._tcp.local'
         }).then((list) => {
             miners = list;
-            this.test();
+            this.summary(true);
             console.log('mounted');
         });
     }
@@ -101,8 +119,8 @@ class App extends React.Component {
                     styles={{sidebar: {background: 'white'}}}
                 >
                     <button onClick={() => this.onSetSidebarOpen(true)}>Open Sidebar</button>
-                    { this.state.page == 'main' && <Dashboard data={this.state.miners}/> }
-                    { this.state.page == 'table' && <TestTable data={this.state.miners}/> }
+                    { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
+                    { this.state.page == 'table' && <TestTable data={this.state.miner_data}/> }
                 </Sidebar>
             </div>
         );
