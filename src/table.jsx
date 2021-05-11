@@ -19,8 +19,19 @@ export class TestTable extends React.Component {
     };
 
     renderCell2(row) {
+        var sum = 0;
+        try {
+            for (let obj of this.props.data[row].hist.slice(-6)) {
+                sum += obj.Hashrate;
+            }
+            sum /= 6;
+        } catch(err) {
+            console.log(err);
+            sum = 'N/A'
+        }
+        
         return (
-            <Cell>{JSON.stringify(this.props.data[row].hist)}</Cell>
+            <Cell>{sum}</Cell>
         );
     };
 
@@ -29,7 +40,7 @@ export class TestTable extends React.Component {
             <div>
                 <Table numRows={this.props.data.length}>
                     <Column name="IP" cellRenderer={this.renderCell}/>
-                    <Column name="History" cellRenderer={this.renderCell2}/>
+                    <Column name="History (6h)" cellRenderer={this.renderCell2}/>
                 </Table>
                 <Tabs>
                     <Tab id="miningpool" title="Mining Pool"/>
