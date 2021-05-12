@@ -5,6 +5,28 @@ import { Tabs, Tab } from '@blueprintjs/core';
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/table/lib/css/table.css";
 
+import { DataGrid } from '@material-ui/data-grid';
+
+const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'ip', headerName: 'IP', width: 130 },
+    { field: 'hashrate15min', headerName: 'Hashrate (15min)', width: 150 }
+];
+
+export class DataTable extends React.Component {
+    render() {
+        const rows = this.props.data.map(
+            (a, i) => ({id: i, ip: a.ip, hashrate15min: a.sum.Session['Average MHs']})
+        );
+
+        return (
+            <div style={{ height: 400, width: '100%' }}>
+                <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
+            </div>
+        );
+    }
+}
+
 export class TestTable extends React.Component {
     constructor(props) {
         super(props);
@@ -38,7 +60,7 @@ export class TestTable extends React.Component {
     render() {
         return (
             <div>
-                <Table numRows={this.props.data.length}>
+                <Table numRows={this.props.data.length} enableColumnReordering={true}>
                     <Column name="IP" cellRenderer={this.renderCell}/>
                     <Column name="History (6h)" cellRenderer={this.renderCell2}/>
                 </Table>

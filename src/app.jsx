@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Sidebar from 'react-sidebar';
 import { Dashboard } from './dashboard.jsx';
-import { TestTable } from './table.jsx'
+import { DataTable, TestTable } from './table.jsx'
 
 import { Menu, MenuItem, MenuDivider } from '@blueprintjs/core';
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -49,19 +49,19 @@ class App extends React.Component {
                 const summary = await got(`http://${miner.address}:${miner.service.port}/summary`);
                 if (init) {
                     const history = await got(`http://${miner.address}:${miner.service.port}/history`);
-                    miner_data.push({ip: miner.address, sum: summary.body, hist: JSON.parse(history.body).History});
+                    miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: JSON.parse(history.body).History});
                 } else {
                     const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
                     if (lastMHs != null) {
                         let match = this.state.miner_data.find(a => a.ip == miner.address);
                         
                         if (match.hist.length == 0) {
-                            miner_data.push({ip: miner.address, sum: summary.body, hist: [lastMHs]});
+                            miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs]});
                         } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
                             match.hist.push(lastMHs);
-                            miner_data.push({ip: miner.address, sum: summary.body, hist: match.hist});
+                            miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist});
                         } else {
-                            miner_data.push({ip: miner.address, sum: summary.body, hist: match.hist});
+                            miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist});
                         }
                     }
                 }
@@ -120,7 +120,7 @@ class App extends React.Component {
                 >
                     <button onClick={() => this.onSetSidebarOpen(true)}>Open Sidebar</button>
                     { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
-                    { this.state.page == 'table' && <TestTable data={this.state.miner_data}/> }
+                    { this.state.page == 'table' && <DataTable data={this.state.miner_data}/> }
                 </Sidebar>
             </div>
         );
