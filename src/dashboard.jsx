@@ -16,10 +16,29 @@ export class Dashboard extends React.Component {
         let hashrateData = {};
         this.props.data.forEach(miner => {
             miner.hist.forEach(sample => {
-                hashrateData[sample.Timestamp] = sample.Hashrate;
-            })
+                if (!(sample.Timestamp in hashrateData)) {
+                    hashrateData[sample.Timestamp] = sample.Hashrate;
+                } else {
+                    hashrateData[sample.Timestamp] += sample.Hashrate;
+                }
+            });
         });
-        console.log(hashrateData);
+        let chartHashrateData = [];
+        for (const seconds in hashrateData) {
+            chartHashrateData.push({
+                time: new Date(seconds * 1000),
+                hashrate: hashrateData[seconds]
+            });
+        }
+
+        let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        let series = chart.series.push(new am4charts.LineSeries());
+
+        chart.data = chartHashrateData;
+
+        console.log(chartHashrateData);
+        
 
         this.chart = chart;
     }
