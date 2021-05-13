@@ -41,7 +41,9 @@ function Toolbar() {
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {selected: []};
+        this.state = {selected: [], tab: 0};
+        this.select = this.select.bind(this);
+        this.setTab = this.setTab.bind(this);
     }
 
     hashrate_x_hr(row, x) {
@@ -54,7 +56,7 @@ export class DataTable extends React.Component {
         } catch {
             sum = 'N/A'
         }
-        return sum;
+        return Math.round(sum / 10000) / 100;
     }
 
     secondsToHumanReadable(seconds){
@@ -87,6 +89,10 @@ export class DataTable extends React.Component {
         this.setState({selected: temp});
     }
 
+    setTab(event, newVal) {
+        this.setState({tab: newVal});
+    }
+
     render() {
         const rows = this.props.data.map(
             (a, i) => ({
@@ -100,7 +106,7 @@ export class DataTable extends React.Component {
                 start: a.sum.Session['Startup Timestamp'],
                 uptime: this.secondsToHumanReadable(a.sum.Session.Uptime),
                 hbs: a.sum.Session['Active HBs'],
-                hashrate15min: a.sum.Session['Average MHs'],
+                hashrate15min: Math.round(a.sum.Session['Average MHs'] / 10000) / 100,
                 hashrate1hr: this.hashrate_x_hr(i, 1),
                 hashrate6hr: this.hashrate_x_hr(i, 6),
                 hashrate24hr: this.hashrate_x_hr(i, 24),
@@ -113,10 +119,11 @@ export class DataTable extends React.Component {
         );
 
         return (
-            <div style={{ height: 500, width: '100%' }}>
+            <div style={{ height: 500, maxWidth: '1400px', margin: '0 auto'}}>
                 <DataGrid rows={rows} columns={columns} checkboxSelection
                     components={{Toolbar: Toolbar}}
                     selectionModel={this.selected}
+                    rowHeight={32}
                     onSelectionModelChange={sel => {
                         this.select(sel.selectionModel);
                         console.log(this.state.selected);
@@ -125,10 +132,22 @@ export class DataTable extends React.Component {
                         this.select(sel.data.ip, sel.isSelected);
                     }}*/
                 />
-                <Tabs value={0}>
-                    <Tab label="one" index={0}/>
-                    <Tab label="two" index={1}/>
+                <Tabs centered value={this.state.tab} onChange={this.setTab}>
+                    <Tab label="Mining Pool"/>
+                    <Tab label="Wallet Address"/>
+                    <Tab label="Operating Mode"/>
+                    <Tab label="Password"/>
+                    <Tab label="Firmware"/>
+                    <Tab label="Reboot"/>
+                    <Tab label="Recalibrate"/>
                 </Tabs>
+                { this.state.tab == 0 && <div>One</div> }
+                { this.state.tab == 1 && <div>Two</div> }
+                { this.state.tab == 2 && <div>Three</div> }
+                { this.state.tab == 3 && <div>Four</div> }
+                { this.state.tab == 4 && <div>Five</div> }
+                { this.state.tab == 5 && <div>Six</div> }
+                { this.state.tab == 6 && <div>Seven</div> }
             </div>
         );
     }
