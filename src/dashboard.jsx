@@ -36,6 +36,13 @@ export class Dashboard extends React.Component {
         let series = chart.series.push(new am4charts.LineSeries());
         series.dataFields.valueY = "hashrate";
         series.dataFields.dateX = "time";
+        series.strokeWidth = 2;
+        series.smoothing = "monotoneX";
+        series.tooltipText = "Hashrate (TH/s): [bold]{valueY}[/]";
+
+        let bullet = series.bullets.push(new am4charts.CircleBullet());
+        bullet.scale = 0.6;
+        bullet.fill = am4core.color("1b1d4d");
 
         this.chart = chart;
     }
