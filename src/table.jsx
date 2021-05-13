@@ -8,10 +8,24 @@ import {
 import { Tabs, Tab } from '@material-ui/core';
 
 const columns = [
-    { field: 'ip', headerName: 'IP', width: 120 },
+    { field: 'ip', headerName: 'IP', width: 130 },
     { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'hashrate15min', headerName: 'Hashrate (15min)', width: 180 },
-    { field: 'hashrate6hr', headerName: 'Hashrate (6h)', width: 180 }
+    { field: 'firmware', headerName: 'Firmware', width: 150 },
+    { field: 'mode', headerName: 'Mode', width: 100 },
+    { field: 'pool', headerName: 'Pool', width: 180 },
+    { field: 'user', headerName: 'User', width: 180 },
+    { field: 'start', headerName: 'Started', width: 260, hide: true },
+    { field: 'uptime', headerName: 'Uptime', width: 135, hide: true },
+    { field: 'hbs', headerName: 'Active HBs', width: 120 },
+    { field: 'hashrate15min', headerName: 'Hashrate (15min)', width: 150 },
+    { field: 'hashrate1hr', headerName: 'Hashrate (1h)', width: 150, hide: true }, 
+    { field: 'hashrate6hr', headerName: 'Hashrate (6h)', width: 150, hide: true },
+    { field: 'hashrate24hr', headerName: 'Hashrate (24h)', width: 150, hide: true },
+    { field: 'accepted', headerName: 'Accepted Shares', width: 150, hide: true },
+    { field: 'rejected', headerName: 'Rejected Shares', width: 150, hide: true },
+    { field: 'difficulty', headerName: 'Difficulty', width: 120, hide: true },
+    { field: 'temperature', headerName: 'Temp \u00b0C', width: 110 },
+    { field: 'power', headerName: 'Power (W)', width: 110, hide: true }
 ];
 
 function Toolbar() {
@@ -30,17 +44,41 @@ export class DataTable extends React.Component {
         this.state = {selected: []};
     }
 
-    hashrate6hr(row) {
+    hashrate_x_hr(row, x) {
         var sum = 0;
         try {
-            for (let obj of this.props.data[row].hist.slice(-6)) {
+            for (let obj of this.props.data[row].hist.slice(-x)) {
                 sum += obj.Hashrate;
             }
-            sum /= 6;
+            sum /= x;
         } catch {
             sum = 'N/A'
         }
         return sum;
+    }
+
+    secondsToHumanReadable(seconds){
+        let mutSeconds = seconds;
+        const days = Math.floor(seconds / 86400)
+        mutSeconds -= days * 86400;
+        const hours = Math.floor(mutSeconds / 3600)
+        mutSeconds -= hours * 3600;
+        const minutes = Math.floor(mutSeconds / 60)
+        mutSeconds -= minutes * 60;
+        return days+'d '+hours+'h '+minutes+'m '+mutSeconds+'s';
+    }
+
+    maxTemp(data) {
+        const temps = data.map(a => a.Temperature);
+        return Math.max.apply(null, temps);
+    }
+
+    totalPower(data) {
+        const power = data.map(a => a['Input Power']);
+        var sum = power.reduce((total, num) => {
+            return total + num;
+        });
+        return Math.round(sum);
     }
 
     select(model) {
@@ -55,8 +93,22 @@ export class DataTable extends React.Component {
                 id: i,
                 ip: a.ip,
                 name: a.sum.Hostname,
+                firmware: a.sum.Software,
+                mode: a.sum.Preset,
+                pool: a.sum.Stratum['Current Pool'],
+                user: a.sum.Stratum['Current User'],
+                start: a.sum.Session['Startup Timestamp'],
+                uptime: this.secondsToHumanReadable(a.sum.Session.Uptime),
+                hbs: a.sum.Session['Active HBs'],
                 hashrate15min: a.sum.Session['Average MHs'],
-                hashrate6hr: this.hashrate6hr(i)
+                hashrate1hr: this.hashrate_x_hr(i, 1),
+                hashrate6hr: this.hashrate_x_hr(i, 6),
+                hashrate24hr: this.hashrate_x_hr(i, 24),
+                accepted: a.sum.Session.Accepted,
+                rejected: a.sum.Session.Rejected,
+                difficulty: a.sum.Session.Difficulty,
+                temperature: this.maxTemp(a.sum.HBs),
+                power: this.totalPower(a.sum.HBs)
             })
         );
 
