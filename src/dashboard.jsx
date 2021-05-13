@@ -1,33 +1,60 @@
 import * as React from 'react';
-const got = require('got');
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+
+am4core.useTheme(am4themes_animated);
 
 export class Dashboard extends React.Component {
     constructor(props) {
         super(props);
-
-        //this.state = {miners: []};
-
-        //this.func = this.func.bind(this);
     }
 
-    /*async func() {
-        var miners = [];
-        for (let miner of this.props.data) {
-            try {
-                const data = await got(`http://${miner.address}:${miner.service.port}/summary`);
-            } catch(err) {
-                miners.push(err);
-            }
-            
-            miners.push(data.body);
+    componentDidMount() {
+        let chart = am4core.create("chartdiv", am4charts.XYChart);
+        
+        let hashrateData = {};
+        this.props.data.forEach(miner => {
+            miner.hist.forEach(sample => {
+                if (!(sample.Timestamp in hashrateData)) {
+                    hashrateData[sample.Timestamp] = sample.Hashrate;
+                } else {
+                    hashrateData[sample.Timestamp] += sample.Hashrate;
+                }
+            });
+        });
+        let chartHashrateData = [];
+        for (const seconds in hashrateData) {
+            chartHashrateData.push({
+                time: new Date(seconds * 1000),
+                hashrate: hashrateData[seconds]
+            });
         }
-        console.log(miners);
-        this.setState({miners: miners});
-    }*/
+
+        let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        let series = chart.series.push(new am4charts.LineSeries());
+
+        chart.data = chartHashrateData;
+
+        console.log(chartHashrateData);
+        
+
+        this.chart = chart;
+    }
+
+    componentWillUnmount(){
+        if (this.chart) {
+            this.chart.dispose();
+        }
+    }
 
     render() {
         return (
             <div>
+                
+                <div id="chartdiv"></div>
+
                 <h1>Table</h1>
                 <ul>
                     {
