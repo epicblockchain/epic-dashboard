@@ -6,6 +6,7 @@ import {
     GridColumnsToolbarButton,
     GridDensitySelector } from '@material-ui/data-grid';
 import { Tabs, Tab } from '@material-ui/core';
+import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 
 const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
@@ -92,29 +93,36 @@ export class DataTable extends React.Component {
     setTab(event, newVal) {
         this.setState({tab: newVal});
     }
+    
+    failSafe(summary) {
+        if (summary) {
+            return undefined;
+        }
+        return 'Error'
+    }
 
     render() {
         const rows = this.props.data.map(
             (a, i) => ({
                 id: i,
                 ip: a.ip,
-                name: a.sum.Hostname,
-                firmware: a.sum.Software,
-                mode: a.sum.Preset,
-                pool: a.sum.Stratum['Current Pool'],
-                user: a.sum.Stratum['Current User'],
-                start: a.sum.Session['Startup Timestamp'],
-                uptime: this.secondsToHumanReadable(a.sum.Session.Uptime),
-                hbs: a.sum.Session['Active HBs'],
-                hashrate15min: Math.round(a.sum.Session['Average MHs'] / 10000) / 100,
-                hashrate1hr: this.hashrate_x_hr(i, 1),
-                hashrate6hr: this.hashrate_x_hr(i, 6),
-                hashrate24hr: this.hashrate_x_hr(i, 24),
-                accepted: a.sum.Session.Accepted,
-                rejected: a.sum.Session.Rejected,
-                difficulty: a.sum.Session.Difficulty,
-                temperature: this.maxTemp(a.sum.HBs),
-                power: this.totalPower(a.sum.HBs)
+                name: this.failSafe(a.sum) || a.sum.Hostname,
+                firmware: this.failSafe(a.sum) || a.sum.Software,
+                mode: this.failSafe(a.sum) || a.sum.Preset,
+                pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
+                user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
+                start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
+                uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
+                hbs: this.failSafe(a.sum) || a.sum.Session['Active HBs'],
+                hashrate15min: this.failSafe(a.sum) || Math.round(a.sum.Session['Average MHs'] / 10000) / 100,
+                hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 1),
+                hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 6),
+                hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 24),
+                accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
+                rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
+                difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
+                temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
+                power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs)
             })
         );
 
@@ -132,7 +140,11 @@ export class DataTable extends React.Component {
                         this.select(sel.data.ip, sel.isSelected);
                     }}*/
                 />
-                <Tabs centered value={this.state.tab} onChange={this.setTab}>
+                <Tabs value={this.state.tab} onChange={this.setTab}
+                    variant="scrollable" indicatorColor="primary" textColor="primary"
+                    scrollButtons="auto"
+                >
+                    <Tab label="Add/Remove"/>
                     <Tab label="Mining Pool"/>
                     <Tab label="Wallet Address"/>
                     <Tab label="Operating Mode"/>
@@ -141,13 +153,19 @@ export class DataTable extends React.Component {
                     <Tab label="Reboot"/>
                     <Tab label="Recalibrate"/>
                 </Tabs>
-                { this.state.tab == 0 && <div>One</div> }
+                { this.state.tab == 0 &&
+                    <AddRemoveTab
+                        func={this.props.func}
+                        func2={this.props.func2}
+                        selected={this.state.selected}
+                    /> }
                 { this.state.tab == 1 && <div>Two</div> }
                 { this.state.tab == 2 && <div>Three</div> }
                 { this.state.tab == 3 && <div>Four</div> }
                 { this.state.tab == 4 && <div>Five</div> }
                 { this.state.tab == 5 && <div>Six</div> }
                 { this.state.tab == 6 && <div>Seven</div> }
+                { this.state.tab == 7 && <div>Eight</div> }
             </div>
         );
     }
