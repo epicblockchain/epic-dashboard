@@ -34,11 +34,8 @@ export class Dashboard extends React.Component {
         let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
         let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
         let series = chart.series.push(new am4charts.LineSeries());
-
-        chart.data = chartHashrateData;
-
-        console.log(chartHashrateData);
-        
+        series.dataFields.valueY = "hashrate";
+        series.dataFields.dateX = "time";
 
         this.chart = chart;
     }
@@ -53,7 +50,7 @@ export class Dashboard extends React.Component {
         return (
             <div>
                 
-                <div id="chartdiv"></div>
+                <div id="chartdiv" style={{ width: "100%", height: "500px" }}></div>
 
                 <h1>Table</h1>
                 <ul>
