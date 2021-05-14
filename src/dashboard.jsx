@@ -79,17 +79,50 @@ export class Dashboard extends React.Component {
     getRows(){
         //one for each type of miner
         let modelData = {};
+        //check for no miners
+        if (this.props.data.length < 1) {
+            return [createData('','',0,'','')];
+        }
+
         this.props.data.forEach(miner => {
-            if (!miner.sum.Mining.Algorithm in modelData) {
+            if (!(miner.sum.Mining.Algorithm in modelData)) {
                 modelData[miner.sum.Mining.Algorithm] = [];
             }
+            modelData[miner.sum.Mining.Algorithm].push(miner.sum);
         });
 
         console.log(modelData);
 
-        return [
-            createData('SC200', 159, 6.0, 24, 4.0)
-        ];
+        let rows = [];
+        for (algo in modelData) {
+            let totalHashrate = 0;
+            let activeMinerCount = 0;
+            let acceptedCount = 0;
+            let rejectedCount = 0;
+            let timeSince = null;
+
+            modelData[algo].forEach(miner => {
+                totalHashrate += miner.sum["Average MHs"];
+                activeMinerCount += 1;
+                acceptedCount += miner.sum["Accepted"];
+                rejectedCount += miner.sum["Rejected"];
+                if (!timeSince) {
+                    timeSince = miner.sum["Last Accepted Share Timestamp"];
+                } else if (timeSince < miner.sum["Last Accepted Share Timestamp"]) {
+                    timeSince = miner.sum["Last Accepted Share Timestamp"];
+                }
+            });
+
+            rows.push(createData(
+                algo,
+                totalHashrate,
+                activeMinerCount,
+                `${acceptedCount} / ${rejectedCount}`,
+                new Date(timeSince * 1000)
+            ));
+        }
+
+        return rows;
     }
 
     render() {
