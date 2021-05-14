@@ -10,7 +10,12 @@ import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider } f
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 
-var miners = [];
+var miners = [{
+    address: "10.10.0.216",
+    service: {
+        port: "4028"
+    }
+}];
 
 class App extends React.Component {
     constructor(props) {
@@ -60,44 +65,47 @@ class App extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.miner_data != this.state.miner_data) {
-            mdns.discover({
-                name: '_epicminer._tcp.local'
-            }).then((list) => {
-                let prev = miners.map(a => a.address);
-                for (let miner of list) {
-                    if (!prev.includes(miner.address)) miners.push(miner);
-                }
-                
-                setTimeout(() => {
-                    this.summary(false);
-                    console.log('update');
-                }, 3000);
-            });
-        }
+        this.summary(false);
+        // if (prevState.miner_data != this.state.miner_data) {
+        //     mdns.discover({
+        //         name: '_epicminer._tcp.local'
+        //     }).then((list) => {
+        //         let prev = miners.map(a => a.address);
+        //         for (let miner of list) {
+        //             if (!prev.includes(miner.address)) miners.push(miner);
+        //         }
+        //         
+        //         setTimeout(() => {
+        //             this.summary(false);
+        //             console.log('update');
+        //         }, 3000);
+        //     });
+        // }
     }
 
     componentDidMount() {
-        /*mdns.startMonitoring().then(() => {
-            console.log('Started');
-        }).catch((err) => {
-            console.error(err);
-        });
-        console.log('mounted');
-        mdns.ondata = (packet) => {
-            for (let ans of packet.answers) {
-                if (ans.name == '_epicminer._tcp.local') {
-                    console.log(packet.address);
-                }
-            }
-        };*/
-        mdns.discover({
-            name: '_epicminer._tcp.local'
-        }).then((list) => {
-            miners = list.sort(this.compare);
-            this.summary(true);
-            console.log('mounted');
-        });
+        this.summary(true);
+
+        // /*mdns.startMonitoring().then(() => {
+        //     console.log('Started');
+        // }).catch((err) => {
+        //     console.error(err);
+        // });
+        // console.log('mounted');
+        // mdns.ondata = (packet) => {
+        //     for (let ans of packet.answers) {
+        //         if (ans.name == '_epicminer._tcp.local') {
+        //             console.log(packet.address);
+        //         }
+        //     }
+        // };*/
+        // mdns.discover({
+        //     name: '_epicminer._tcp.local'
+        // }).then((list) => {
+        //     miners = list.sort(this.compare);
+        //     this.summary(true);
+        //     console.log('mounted');
+        // });
     }
 
     toggleDrawer(open) {
