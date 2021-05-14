@@ -27,14 +27,19 @@ export class Dashboard extends React.Component {
         let chart = am4core.create("chartdiv", am4charts.XYChart);
         let hashrateData = {};
         this.props.data.forEach(miner => {
-            if (miner.hist){
-                miner.hist.forEach(sample => {
-                    if (!(sample.Timestamp in hashrateData)) {
-                        hashrateData[sample.Timestamp] = sample.Hashrate;
-                    } else {
-                        hashrateData[sample.Timestamp] += sample.Hashrate;
-                    }
-                });    
+            try{
+                if (miner.hist){
+                    miner.hist.forEach(sample => {
+                        if (!(sample.Timestamp in hashrateData)) {
+                            hashrateData[sample.Timestamp] = sample.Hashrate;
+                        } else {
+                            hashrateData[sample.Timestamp] += sample.Hashrate;
+                        }
+                    });    
+                }
+            } catch (err) {
+                console.log(err);
+                console.log(this.props.data);
             }
         });
         let chartHashrateData = [];
@@ -75,8 +80,12 @@ export class Dashboard extends React.Component {
         //one for each type of miner
         let modelData = {};
         this.props.data.forEach(miner => {
-            console.log(miner);
-        })
+            if (!miner.sum.Mining.Algorithm in modelData) {
+                modelData[miner.sum.Mining.Algorithm] = [];
+            }
+        });
+
+        console.log(modelData);
 
         return [
             createData('SC200', 159, 6.0, 24, 4.0)
