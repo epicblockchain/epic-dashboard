@@ -12,12 +12,7 @@ import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 
-var miners = [{
-    address: "10.10.0.216",
-    service: {
-        port: "4028"
-    }
-}];
+var miners = [];
 
 class App extends React.Component {
     constructor(props) {
@@ -69,22 +64,21 @@ class App extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        this.summary(false);
-        // if (prevState.miner_data != this.state.miner_data) {
-        //     mdns.discover({
-        //         name: '_epicminer._tcp.local'
-        //     }).then((list) => {
-        //         let prev = miners.map(a => a.address);
-        //         for (let miner of list) {
-        //             if (!prev.includes(miner.address)) miners.push(miner);
-        //         }
-        //         
-        //         setTimeout(() => {
-        //             this.summary(false);
-        //             console.log('update');
-        //         }, 3000);
-        //     });
-        // }
+        if (prevState.miner_data != this.state.miner_data) {
+            mdns.discover({
+                name: '_epicminer._tcp.local'
+            }).then((list) => {
+                let prev = miners.map(a => a.address);
+                for (let miner of list) {
+                    if (!prev.includes(miner.address)) miners.push(miner);
+                }
+                
+                setTimeout(() => {
+                    this.summary(false);
+                    console.log('update');
+                }, 3000);
+            });
+        }
     }
 
     componentDidMount() {
