@@ -7,6 +7,7 @@ import {
     GridDensitySelector } from '@material-ui/data-grid';
 import { Tabs, Tab } from '@material-ui/core';
 import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
+import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
 
 const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
@@ -155,11 +156,15 @@ export class DataTable extends React.Component {
                 </Tabs>
                 { this.state.tab == 0 &&
                     <AddRemoveTab
-                        func={this.props.func}
-                        func2={this.props.func2}
+                        addMiner={this.props.addMiner}
+                        delMiner={this.props.delMiner}
                         selected={this.state.selected}
                     /> }
-                { this.state.tab == 1 && <div>Two</div> }
+                { this.state.tab == 1 &&
+                    <MinerPoolTab
+                        handleApi={this.props.handleApi}
+                        selected={this.state.selected}
+                    /> }
                 { this.state.tab == 2 && <div>Three</div> }
                 { this.state.tab == 3 && <div>Four</div> }
                 { this.state.tab == 4 && <div>Five</div> }

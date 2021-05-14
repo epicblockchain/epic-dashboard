@@ -7,7 +7,8 @@ import { Dashboard } from './dashboard.jsx';
 import { DataTable } from './table.jsx';
 
 import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
-        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
+        Snackbar
     } from '@material-ui/core';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
@@ -22,7 +23,8 @@ class App extends React.Component {
             drawerOpen: true,
             page: 'main',
             miner_data: [],
-            modal: false
+            modal: false,
+            snackbar: false
         };
     }
 
@@ -134,6 +136,31 @@ class App extends React.Component {
         }
     }
 
+    handleApi(api, data, selected) {
+        var obj;
+        switch(api) {
+            case '/pool':
+                obj = {"param": data.pool, "password": data.password};
+                break;
+        }
+
+        for (let i of selected) {
+            try {
+                const body = got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                    json: obj,
+                    timeout: 5000,
+                    responseType: 'json'
+                });
+                
+                if (body.result) {
+                    console.log('good');
+                } console.log('bad');
+            } catch(err) {
+                console.log(err);
+            }
+        }
+    }
+ 
     render() {
         return (
             <React.Fragment>
@@ -172,7 +199,10 @@ class App extends React.Component {
                 </Dialog>
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
                 { this.state.page == 'table' &&
-                    <DataTable data={this.state.miner_data} func={this.addMiner} func2={this.delMiner}/>
+                    <DataTable data={this.state.miner_data} 
+                        addMiner={this.addMiner} delMiner={this.delMiner}
+                        handleApi={this.handleApi}
+                    />
                 }
             </React.Fragment>
         );

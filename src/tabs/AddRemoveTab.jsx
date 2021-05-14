@@ -16,7 +16,7 @@ export class AddRemoveTab extends React.Component {
 
     render() {
         return(
-            <React.Fragment>
+            <div style={{padding: '12px 0'}}>
                 <TextField id="ip" variant="outlined" label="Miner IP" onChange={this.updateIP}/>
                 <Button onClick={() => {
                         var ip = document.getElementById('ip').value;
@@ -33,7 +33,7 @@ export class AddRemoveTab extends React.Component {
                 >
                     Remove Selected
                 </Button>
-            </React.Fragment>
+            </div>
         );
     }
 }
