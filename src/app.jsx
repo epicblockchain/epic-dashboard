@@ -6,7 +6,9 @@ import * as ReactDOM from 'react-dom';
 import { Dashboard } from './dashboard.jsx';
 import { DataTable } from './table.jsx';
 
-import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider } from '@material-ui/core';
+import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
+        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+    } from '@material-ui/core';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 
@@ -25,8 +27,8 @@ class App extends React.Component {
             drawerOpen: true,
             page: 'main',
             miner_data: [],
+            modal: false
         };
-        //this.toggleDrawer = this.toggleDrawer.bind(this);
     }
 
     async summary(init) {
@@ -34,7 +36,9 @@ class App extends React.Component {
         
         for (let miner of miners) {
             try {
-                const summary = await got(`http://${miner.address}:${miner.service.port}/summary`);
+                const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
+                    timeout: 3000
+                });
                 if (init) {
                     const history = await got(`http://${miner.address}:${miner.service.port}/history`);
                     miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: JSON.parse(history.body).History});
@@ -52,7 +56,7 @@ class App extends React.Component {
                     }
                 }
             } catch(err) {
-                console.log(err);
+                miner_data.push({ip: miner.address, sum: null, hist: null})
             }
         }
         this.setState({miner_data: miner_data});
@@ -84,28 +88,30 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        this.summary(true);
-
-        // /*mdns.startMonitoring().then(() => {
-        //     console.log('Started');
-        // }).catch((err) => {
-        //     console.error(err);
-        // });
-        // console.log('mounted');
-        // mdns.ondata = (packet) => {
-        //     for (let ans of packet.answers) {
-        //         if (ans.name == '_epicminer._tcp.local') {
-        //             console.log(packet.address);
-        //         }
-        //     }
-        // };*/
-        // mdns.discover({
-        //     name: '_epicminer._tcp.local'
-        // }).then((list) => {
-        //     miners = list.sort(this.compare);
-        //     this.summary(true);
-        //     console.log('mounted');
-        // });
+        /*mdns.startMonitoring().then(() => {
+            console.log('Started');
+        }).catch((err) => {
+            console.error(err);
+        });
+        console.log('mounted');
+        mdns.ondata = (packet) => {
+            for (let ans of packet.answers) {
+                if (ans.name == '_epicminer._tcp.local') {
+                    console.log(packet.address);
+                }
+            }
+        };*/
+        mdns.discover({
+            name: '_epicminer._tcp.local'
+        }).then((list) => {
+            if (!list.length) {
+                this.toggleModal(true);
+            } else {
+                miners = list.sort(this.compare);
+                this.summary(true);
+            } 
+            console.log('mounted');
+        });
     }
 
     toggleDrawer(open) {
@@ -115,8 +121,23 @@ class App extends React.Component {
         this.setState({drawerOpen: open});
     };
 
+    toggleModal(open) {
+        this.setState({modal: open});
+    }
+
     setPage(page) {
         this.setState({page: page});
+    }
+
+    addMiner(ip) {
+        miners.push({address: ip, service: {port: 4028}});
+        console.log(miners);
+    }
+
+    delMiner(ids) {
+        for (let id of ids) {
+            miners.splice(id, 1);
+        }
     }
 
     render() {
@@ -137,9 +158,28 @@ class App extends React.Component {
                         </List>
                     </div>
                 </Drawer>
-
+                <Dialog open={this.state.modal} onClose={() => this.state.toggleModal(false)}>
+                    <DialogTitle>No Miners found</DialogTitle>
+                    <DialogContent>
+                        If you are connecting over a VPN, this software will not detect your miners.
+                        You must manually add miners by IP in the Miner List tab.
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => {
+                                    this.toggleModal(false);
+                                    this.setPage('table');
+                                }} color="primary">
+                            Navigate to List
+                        </Button>
+                        <Button onClick={() => this.toggleModal(false)} color="primary">
+                            Dismiss
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
-                { this.state.page == 'table' && <DataTable data={this.state.miner_data}/> }
+                { this.state.page == 'table' &&
+                    <DataTable data={this.state.miner_data} func={this.addMiner} func2={this.delMiner}/>
+                }
             </React.Fragment>
         );
     }

@@ -58,13 +58,13 @@ export class Dashboard extends React.Component {
 
         chart.data = chartHashrateData;
 
-        this.chart = chart;
+        // this.chart = chart;
     }
 
     componentWillUnmount(){
-        if (this.chart) {
-            this.chart.dispose();
-        }
+        // if (this.chart) {
+        //     this.chart.dispose();
+        // }
     }
 
     render() {

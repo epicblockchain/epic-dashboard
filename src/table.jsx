@@ -6,6 +6,7 @@ import {
     GridColumnsToolbarButton,
     GridDensitySelector } from '@material-ui/data-grid';
 import { Tabs, Tab } from '@material-ui/core';
+import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 
 const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
@@ -41,7 +42,9 @@ function Toolbar() {
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {selected: []};
+        this.state = {selected: [], tab: 0};
+        this.select = this.select.bind(this);
+        this.setTab = this.setTab.bind(this);
     }
 
     hashrate_x_hr(row, x) {
@@ -54,7 +57,7 @@ export class DataTable extends React.Component {
         } catch {
             sum = 'N/A'
         }
-        return sum;
+        return Math.round(sum / 10000) / 100;
     }
 
     secondsToHumanReadable(seconds){
@@ -87,36 +90,48 @@ export class DataTable extends React.Component {
         this.setState({selected: temp});
     }
 
+    setTab(event, newVal) {
+        this.setState({tab: newVal});
+    }
+    
+    failSafe(summary) {
+        if (summary) {
+            return undefined;
+        }
+        return 'Error'
+    }
+
     render() {
         const rows = this.props.data.map(
             (a, i) => ({
                 id: i,
                 ip: a.ip,
-                name: a.sum.Hostname,
-                firmware: a.sum.Software,
-                mode: a.sum.Preset,
-                pool: a.sum.Stratum['Current Pool'],
-                user: a.sum.Stratum['Current User'],
-                start: a.sum.Session['Startup Timestamp'],
-                uptime: this.secondsToHumanReadable(a.sum.Session.Uptime),
-                hbs: a.sum.Session['Active HBs'],
-                hashrate15min: a.sum.Session['Average MHs'],
-                hashrate1hr: this.hashrate_x_hr(i, 1),
-                hashrate6hr: this.hashrate_x_hr(i, 6),
-                hashrate24hr: this.hashrate_x_hr(i, 24),
-                accepted: a.sum.Session.Accepted,
-                rejected: a.sum.Session.Rejected,
-                difficulty: a.sum.Session.Difficulty,
-                temperature: this.maxTemp(a.sum.HBs),
-                power: this.totalPower(a.sum.HBs)
+                name: this.failSafe(a.sum) || a.sum.Hostname,
+                firmware: this.failSafe(a.sum) || a.sum.Software,
+                mode: this.failSafe(a.sum) || a.sum.Preset,
+                pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
+                user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
+                start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
+                uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
+                hbs: this.failSafe(a.sum) || a.sum.Session['Active HBs'],
+                hashrate15min: this.failSafe(a.sum) || Math.round(a.sum.Session['Average MHs'] / 10000) / 100,
+                hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 1),
+                hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 6),
+                hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 24),
+                accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
+                rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
+                difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
+                temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
+                power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs)
             })
         );
 
         return (
-            <div style={{ height: 500, width: '100%' }}>
+            <div style={{ height: 500, maxWidth: '1400px', margin: '0 auto'}}>
                 <DataGrid rows={rows} columns={columns} checkboxSelection
                     components={{Toolbar: Toolbar}}
                     selectionModel={this.selected}
+                    rowHeight={32}
                     onSelectionModelChange={sel => {
                         this.select(sel.selectionModel);
                         console.log(this.state.selected);
@@ -125,10 +140,32 @@ export class DataTable extends React.Component {
                         this.select(sel.data.ip, sel.isSelected);
                     }}*/
                 />
-                <Tabs value={0}>
-                    <Tab label="one" index={0}/>
-                    <Tab label="two" index={1}/>
+                <Tabs value={this.state.tab} onChange={this.setTab}
+                    variant="scrollable" indicatorColor="primary" textColor="primary"
+                    scrollButtons="auto"
+                >
+                    <Tab label="Add/Remove"/>
+                    <Tab label="Mining Pool"/>
+                    <Tab label="Wallet Address"/>
+                    <Tab label="Operating Mode"/>
+                    <Tab label="Password"/>
+                    <Tab label="Firmware"/>
+                    <Tab label="Reboot"/>
+                    <Tab label="Recalibrate"/>
                 </Tabs>
+                { this.state.tab == 0 &&
+                    <AddRemoveTab
+                        func={this.props.func}
+                        func2={this.props.func2}
+                        selected={this.state.selected}
+                    /> }
+                { this.state.tab == 1 && <div>Two</div> }
+                { this.state.tab == 2 && <div>Three</div> }
+                { this.state.tab == 3 && <div>Four</div> }
+                { this.state.tab == 4 && <div>Five</div> }
+                { this.state.tab == 5 && <div>Six</div> }
+                { this.state.tab == 6 && <div>Seven</div> }
+                { this.state.tab == 7 && <div>Eight</div> }
             </div>
         );
     }
