@@ -136,17 +136,18 @@ class App extends React.Component {
         }
     }
 
-    handleApi(api, data, selected) {
+    async handleApi(api, data, selected) {
         var obj;
         switch(api) {
             case '/pool':
-                obj = {"param": data.pool, "password": data.password};
+                obj = {param: data.pool, password: data.password};
                 break;
         }
 
         for (let i of selected) {
             try {
-                const body = got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                console.log(`http://${miners[i].address}:${miners[i].service.port}${api}`, obj);
+                const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                     json: obj,
                     timeout: 5000,
                     responseType: 'json'
@@ -154,7 +155,9 @@ class App extends React.Component {
                 
                 if (body.result) {
                     console.log('good');
-                } console.log('bad');
+                } else {
+                    console.log(body);
+                }
             } catch(err) {
                 console.log(err);
             }
