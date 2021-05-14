@@ -3,7 +3,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
-import { makeStyles } from '@material-ui/core/styles';
+// import { makeStyles } from '@material-ui/core/styles'; // not sure how or why to use this
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -16,6 +16,22 @@ am4core.useTheme(am4themes_animated);
 
 function createData(model, totalHashrate, activeMinerCount, acceptedRejectedString, timeSince) {
     return { model, totalHashrate, activeMinerCount, acceptedRejectedString, timeSince };
+}
+
+function formatHashrateString(){
+    if (totalHashrate < 1000) {
+        return `${(totalHashrate).toFixed(2)} H/s`;
+    } else if (totalHashrate < 1e6) {
+        return `${(totalHashrate / 1e3).toFixed(2)} kH/s`;
+    } else if (totalHashrate < 1e9) {
+        return `${(totalHashrate / 1e6).toFixed(2)} MH/s`;
+    } else if (totalHashrate < 1e12) {
+        return `${(totalHashrate / 1e9).toFixed(2)} GH/s`;
+    } else if (totalHashrate < 1e15) {
+        return `${(totalHashrate / 1e12).toFixed(2)} TH/s`;
+    } else {
+        return `${(totalHashrate / 1e15).toFixed(2)} PH/s`;
+    }
 }
 
 export class Dashboard extends React.Component {
@@ -119,7 +135,7 @@ export class Dashboard extends React.Component {
 
             rows.push(createData(
                 algo,
-                `${(totalHashrate / 1000000).toFixed(2)}`,
+                formatHashrateString(totalHashrate),
                 activeMinerCount,
                 `${acceptedCount} / ${rejectedCount}`,
                 (new Date(timeSince * 1000)).toString()
@@ -139,7 +155,7 @@ export class Dashboard extends React.Component {
                         <TableHead>
                         <TableRow>
                             <TableCell>Algorithm</TableCell>
-                            <TableCell align="right">Total Hashrate (TH/s)</TableCell>
+                            <TableCell align="right">Total Hashrate</TableCell>
                             <TableCell align="right">Active Miners</TableCell>
                             <TableCell align="right">Accepted / Rejected Shares</TableCell>
                             <TableCell align="right">Last Share Submition Time</TableCell>
