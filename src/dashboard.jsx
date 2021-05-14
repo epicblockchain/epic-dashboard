@@ -18,7 +18,7 @@ function createData(model, totalHashrate, activeMinerCount, acceptedRejectedStri
     return { model, totalHashrate, activeMinerCount, acceptedRejectedString, timeSince };
 }
 
-function formatHashrateString(){
+function formatHashrateString(totalHashrate){
     if (totalHashrate < 1000) {
         return `${(totalHashrate).toFixed(2)} H/s`;
     } else if (totalHashrate < 1e6) {
