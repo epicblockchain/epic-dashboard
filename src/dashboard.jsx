@@ -21,16 +21,17 @@ export class Dashboard extends React.Component {
 
     componentDidMount() {
         let chart = am4core.create("chartdiv", am4charts.XYChart);
-        
         let hashrateData = {};
         this.props.data.forEach(miner => {
-            miner.hist.forEach(sample => {
-                if (!(sample.Timestamp in hashrateData)) {
-                    hashrateData[sample.Timestamp] = sample.Hashrate;
-                } else {
-                    hashrateData[sample.Timestamp] += sample.Hashrate;
-                }
-            });
+            if (miner.hist){
+                miner.hist.forEach(sample => {
+                    if (!(sample.Timestamp in hashrateData)) {
+                        hashrateData[sample.Timestamp] = sample.Hashrate;
+                    } else {
+                        hashrateData[sample.Timestamp] += sample.Hashrate;
+                    }
+                });    
+            }
         });
         let chartHashrateData = [];
         for (const seconds in hashrateData) {
@@ -57,14 +58,13 @@ export class Dashboard extends React.Component {
         // bullet.fill = am4core.color("1b1d4d");
 
         chart.data = chartHashrateData;
-
-        // this.chart = chart;
+        this.chart = chart;
     }
 
     componentWillUnmount(){
-        // if (this.chart) {
-        //     this.chart.dispose();
-        // }
+        if (this.chart) {
+            this.chart.dispose();
+        }
     }
 
     render() {
