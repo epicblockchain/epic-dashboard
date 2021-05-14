@@ -85,16 +85,20 @@ export class Dashboard extends React.Component {
         }
 
         this.props.data.forEach(miner => {
-            if (!(miner.sum.Mining.Algorithm in modelData)) {
-                modelData[miner.sum.Mining.Algorithm] = [];
+            try {
+                if (!(miner.sum.Mining.Algorithm in modelData)) {
+                    modelData[miner.sum.Mining.Algorithm] = [];
+                }
+                modelData[miner.sum.Mining.Algorithm].push(miner.sum);
+            } catch (err) {
+                console.log(err);
             }
-            modelData[miner.sum.Mining.Algorithm].push(miner.sum);
         });
 
         console.log(modelData);
 
         let rows = [];
-        for (algo in modelData) {
+        for (let algo in modelData) {
             let totalHashrate = 0;
             let activeMinerCount = 0;
             let acceptedCount = 0;
@@ -102,23 +106,23 @@ export class Dashboard extends React.Component {
             let timeSince = null;
 
             modelData[algo].forEach(miner => {
-                totalHashrate += miner.sum["Average MHs"];
-                activeMinerCount += 1;
-                acceptedCount += miner.sum["Accepted"];
-                rejectedCount += miner.sum["Rejected"];
-                if (!timeSince) {
-                    timeSince = miner.sum["Last Accepted Share Timestamp"];
-                } else if (timeSince < miner.sum["Last Accepted Share Timestamp"]) {
-                    timeSince = miner.sum["Last Accepted Share Timestamp"];
-                }
+                    totalHashrate += miner["Session"]["Average MHs"];
+                    activeMinerCount += 1;
+                    acceptedCount += miner["Session"]["Accepted"];
+                    rejectedCount += miner["Session"]["Rejected"];
+                    if (!timeSince) {
+                        timeSince = miner["Session"]["Last Accepted Share Timestamp"];
+                    } else if (timeSince < miner["Session"]["Last Accepted Share Timestamp"]) {
+                        timeSince = miner["Session"]["Last Accepted Share Timestamp"];
+                    }
             });
 
             rows.push(createData(
                 algo,
-                totalHashrate,
+                `${(totalHashrate / 1000000).toFixed(2)}`,
                 activeMinerCount,
                 `${acceptedCount} / ${rejectedCount}`,
-                new Date(timeSince * 1000)
+                (new Date(timeSince * 1000)).toString()
             ));
         }
 
@@ -134,11 +138,11 @@ export class Dashboard extends React.Component {
                     <Table aria-label="simple table">
                         <TableHead>
                         <TableRow>
-                            <TableCell>Miners</TableCell>
-                            <TableCell align="right">Total Hashrate</TableCell>
+                            <TableCell>Algorithm</TableCell>
+                            <TableCell align="right">Total Hashrate (TH/s)</TableCell>
                             <TableCell align="right">Active Miners</TableCell>
                             <TableCell align="right">Accepted / Rejected Shares</TableCell>
-                            <TableCell align="right">Time Since Last Share Submitted</TableCell>
+                            <TableCell align="right">Last Share Submition Time</TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
