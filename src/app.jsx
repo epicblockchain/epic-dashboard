@@ -10,6 +10,7 @@ import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
         Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
         Snackbar
     } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert'
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 
@@ -24,8 +25,11 @@ class App extends React.Component {
             page: 'main',
             miner_data: [],
             modal: false,
-            snackbar: false
+            snackbar: {open: false, sev: '', text: ''}
         };
+
+        this.handleApi = this.handleApi.bind(this);
+        this.toggleSnackbar = this.toggleSnackbar.bind(this);
     }
 
     async summary(init) {
@@ -84,19 +88,6 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        /*mdns.startMonitoring().then(() => {
-            console.log('Started');
-        }).catch((err) => {
-            console.error(err);
-        });
-        console.log('mounted');
-        mdns.ondata = (packet) => {
-            for (let ans of packet.answers) {
-                if (ans.name == '_epicminer._tcp.local') {
-                    console.log(packet.address);
-                }
-            }
-        };*/
         mdns.discover({
             name: '_epicminer._tcp.local'
         }).then((list) => {
@@ -111,14 +102,15 @@ class App extends React.Component {
     }
 
     toggleDrawer(open) {
-        /*if (event.type == 'keydown' && (event.key == 'Tab' || event.key == 'Shift')) {
-            return;
-        }*/
         this.setState({drawerOpen: open});
     };
 
     toggleModal(open) {
         this.setState({modal: open});
+    }
+
+    toggleSnackbar(open) {
+        this.setState({snackbar: {open: open, sev: this.state.snackbar.sev}});
     }
 
     setPage(page) {
@@ -146,7 +138,6 @@ class App extends React.Component {
 
         for (let i of selected) {
             try {
-                console.log(`http://${miners[i].address}:${miners[i].service.port}${api}`, obj);
                 const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                     json: obj,
                     timeout: 5000,
@@ -156,7 +147,8 @@ class App extends React.Component {
                 if (body.result) {
                     console.log('good');
                 } else {
-                    console.log(body);
+                    console.log('clicked');
+                    this.setState({snackbar: {open: true, sev: 'error', text: body.error}});
                 }
             } catch(err) {
                 console.log(err);
@@ -200,6 +192,13 @@ class App extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
+                <Snackbar open={this.state.snackbar.open} onClose={() => this.toggleSnackbar(false)}
+                    autoHideDuration={6000}>
+                    <MuiAlert elevation={6} variant='filled' onClose={() => this.toggleSnackbar(false)}
+                        severity={this.state.snackbar.sev}>
+                        {this.state.snackbar.text}
+                    </MuiAlert>
+                </Snackbar>
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
                 { this.state.page == 'table' &&
                     <DataTable data={this.state.miner_data} 
