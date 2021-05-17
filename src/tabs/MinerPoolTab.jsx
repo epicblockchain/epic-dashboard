@@ -23,7 +23,7 @@ export class MinerPoolTab extends React.Component {
             <div style={{padding: '12px 0'}}>
                 stratum+tcp://
                 <TextField id="ip" variant="outlined" label="Mining Pool" onChange={this.updatePool}/>
-                <TextField id="password" variant="outlined" label="Password" onChange={this.updatePassword}/>
+                <TextField id="password" variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
                 <Button onClick={() => {
                         this.props.handleApi('/pool', this.state, this.props.selected);
                     }} variant="contained" color="primary"

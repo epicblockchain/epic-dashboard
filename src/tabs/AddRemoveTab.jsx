@@ -23,11 +23,24 @@ export class AddRemoveTab extends React.Component {
                     Add Miner via IP
                 </Button>
                 <Button
-                    onClick={() => this.props.delMiner(this.props.selected)}
+                    onClick={() => {
+                        this.props.delMiner(this.props.selected);
+                        this.props.select([]);
+                    }}
                     variant="contained" color="primary"
                     disabled={!this.props.selected.length}
                 >
                     Remove Selected
+                </Button>
+                <Button
+                    onClick={() => {
+                        this.props.blacklist(this.props.selected);
+                        this.props.select([]);
+                    }}
+                    variant="contained" color="secondary"
+                    disabled={!this.props.selected.length}
+                >
+                    Blacklist Selected
                 </Button>
             </div>
         );

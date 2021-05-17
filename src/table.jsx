@@ -159,7 +159,9 @@ export class DataTable extends React.Component {
                     <AddRemoveTab
                         addMiner={this.props.addMiner}
                         delMiner={this.props.delMiner}
+                        blacklist={this.props.blacklist}
                         selected={this.state.selected}
+                        select={this.select}
                     /> }
                 { this.state.tab == 1 &&
                     <MinerPoolTab

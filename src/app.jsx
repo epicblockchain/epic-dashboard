@@ -17,6 +17,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 
 var miners = [];
+var blacklist = [];
 var app_path = '';
 
 switch (process.platform) {
@@ -34,6 +35,15 @@ switch (process.platform) {
         process.exit(1);
 }
 
+fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
+    if (err) {
+        console.log('blacklist.txt not found');
+        return;
+    }
+    blacklist = data.toString().split('\n');
+    console.log(blacklist);
+});
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -48,6 +58,7 @@ class App extends React.Component {
 
         this.addMiner = this.addMiner.bind(this);
         this.delMiner = this.delMiner.bind(this);
+        this.blacklist = this.blacklist.bind(this);
         this.handleApi = this.handleApi.bind(this);
         this.toggleSnackbar = this.toggleSnackbar.bind(this);
     }
@@ -94,6 +105,7 @@ class App extends React.Component {
             mdns.discover({
                 name: '_epicminer._tcp.local', wait: 2
             }).then((list) => {
+                list = list.filter(a => !blacklist.includes(a.fqdn));
                 let prev = miners.map(a => a.address);
                 for (let miner of list) {
                     if (!prev.includes(miner.address)) miners.push(miner);
@@ -111,6 +123,8 @@ class App extends React.Component {
         mdns.discover({
             name: '_epicminer._tcp.local', wait: 2
         }).then((list) => {
+            list = list.filter(a => !blacklist.includes(a.fqdn));
+
             if (!list.length) {
                 this.toggleModal(true);
             } else {
@@ -139,28 +153,52 @@ class App extends React.Component {
     }
 
     addMiner(ip) {
-        var temp = this.state.miner_data;
-        miners.push({address: ip, service: {port: 4028}});
-        temp.push({ip: ip, sum: 'load', hist: 'load'});
-        
-        this.setState({miner_data: temp});
+        let prev = miners.map(a => a.address);
+        if (!prev.includes(ip)) {
+            miners.push({address: ip, service: {port: 4028}});
 
-        fs.writeFile(path.join(app_path, 'ipaddr.txt'), ip, function (err) {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-        });
+            var temp = this.state.miner_data;
+            temp.push({ip: ip, sum: 'load', hist: 'load'});
+        
+            this.setState({
+                miner_data: temp,
+                snackbar: {open: true, sev: 'success', text: `Successfully added ${ip}`}
+            });
+        } else {
+            this.setState({snackbar: {open: true, sev: 'info', text: `${ip} already tracked`}});
+        }
     }
 
     delMiner(ids) {
         var temp = this.state.miner_data;
-        for (let id of ids) {
+        for (let id of ids.reverse()) {
             miners.splice(id, 1);
             temp.splice(id, 1);
         }
 
         this.setState({miner_data: temp});
+    }
+
+    blacklist(ids) {
+        var temp = this.state.miner_data;
+        for (let id of ids.reverse()) {
+            blacklist.push(miners[id].fqdn);
+            miners.splice(id, 1);
+            temp.splice(id, 1);
+        }
+
+        fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
+        fs.writeFile(path.join(app_path, 'blacklist.txt'), blacklist.join('\n'), function (err) {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+        });
+
+        this.setState({
+            miner_data: temp,
+            snackbar: {open: true, sev: 'success', text: `Successfully blacklisted miners`}
+        });
     }
 
     async handleApi(api, data, selected) {
@@ -238,7 +276,7 @@ class App extends React.Component {
                 { this.state.page == 'table' &&
                     <DataTable data={this.state.miner_data} 
                         addMiner={this.addMiner} delMiner={this.delMiner}
-                        handleApi={this.handleApi}
+                        handleApi={this.handleApi} blacklist={this.blacklist}
                     />
                 }
             </React.Fragment>
