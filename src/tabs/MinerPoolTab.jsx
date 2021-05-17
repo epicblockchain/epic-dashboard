@@ -33,7 +33,7 @@ export class MinerPoolTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 stratum+tcp://
-                <TextField id="ip" variant="outlined" label="Mining Pool" onChange={this.updatePool}
+                <TextField id="pool" variant="outlined" label="Mining Pool" onChange={this.updatePool}
                     value={this.state.pool}
                 />
                 <TextField id="password" variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>

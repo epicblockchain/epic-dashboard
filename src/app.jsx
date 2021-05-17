@@ -207,6 +207,12 @@ class App extends React.Component {
             case '/pool':
                 obj = {param: data.pool, password: data.password};
                 break;
+            case '/login':
+                obj = {
+                    param: {login: data.worker + '.' + data.password, password: data.wallet_pass},
+                    password: data.password
+                };
+                break;
         }
 
         for (let i of selected) {

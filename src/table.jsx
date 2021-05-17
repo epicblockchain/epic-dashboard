@@ -8,6 +8,7 @@ import {
 import { Tabs, Tab } from '@material-ui/core';
 import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
+import { WalletAddrTab } from './tabs/WalletAddrTab.jsx';
 
 const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
@@ -169,7 +170,12 @@ export class DataTable extends React.Component {
                         selected={this.state.selected}
                         data={this.props.data}
                     /> }
-                { this.state.tab == 2 && <div>Three</div> }
+                { this.state.tab == 2 &&
+                    <WalletAddrTab
+                        handleApi={this.props.handleApi}
+                        selected={this.state.selected}
+                        data={this.props.data}
+                    /> }
                 { this.state.tab == 3 && <div>Four</div> }
                 { this.state.tab == 4 && <div>Five</div> }
                 { this.state.tab == 5 && <div>Six</div> }
