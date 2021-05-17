@@ -116,8 +116,8 @@ class App extends React.Component {
             } else {
                 console.log(list);
                 miners = list.sort(this.compare);
-                this.summary(true);
-            } 
+            }
+            this.summary(true);
             console.log('mounted');
         });
     }
