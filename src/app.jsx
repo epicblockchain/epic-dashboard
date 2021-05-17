@@ -1,6 +1,8 @@
 const { ipcRenderer } = require('electron');
 const got = require('got');
 const mdns = require('node-dns-sd');
+const path = require('path');
+const fs = require('fs');
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Dashboard } from './dashboard.jsx';
@@ -15,6 +17,22 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 
 var miners = [];
+var app_path = '';
+
+switch (process.platform) {
+    case "darwin":
+        app_path = path.join(process.env.HOME, "Library", "Application Support", "ePIC-Dashboard");
+        break;
+    case "win32":
+        app_path = path.join(process.env.APPDATA, "ePIC-Dashboard");
+        break;
+    case "linux":
+        app_path = path.join(process.env.HOME, ".ePIC-Dashboard");
+        break;
+    default:
+        console.log("Unsupported platform: " + process.platform);
+        process.exit(1);
+}
 
 class App extends React.Component {
     constructor(props) {
@@ -29,6 +47,7 @@ class App extends React.Component {
         };
 
         this.addMiner = this.addMiner.bind(this);
+        this.delMiner = this.delMiner.bind(this);
         this.handleApi = this.handleApi.bind(this);
         this.toggleSnackbar = this.toggleSnackbar.bind(this);
     }
@@ -95,6 +114,7 @@ class App extends React.Component {
             if (!list.length) {
                 this.toggleModal(true);
             } else {
+                console.log(list);
                 miners = list.sort(this.compare);
                 this.summary(true);
             } 
@@ -124,12 +144,23 @@ class App extends React.Component {
         temp.push({ip: ip, sum: 'load', hist: 'load'});
         
         this.setState({miner_data: temp});
+
+        fs.writeFile(path.join(app_path, 'ipaddr.txt'), ip, function (err) {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+        });
     }
 
     delMiner(ids) {
+        var temp = this.state.miner_data;
         for (let id of ids) {
             miners.splice(id, 1);
+            temp.splice(id, 1);
         }
+
+        this.setState({miner_data: temp});
     }
 
     async handleApi(api, data, selected) {

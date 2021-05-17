@@ -10,7 +10,6 @@ export class AddRemoveTab extends React.Component {
     }
 
     updateIP(e) {
-        console.log('type');
         this.setState({ip: e.target.value});
     }
 
