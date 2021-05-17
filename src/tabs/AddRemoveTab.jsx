@@ -18,16 +18,13 @@ export class AddRemoveTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField id="ip" variant="outlined" label="Miner IP" onChange={this.updateIP}/>
-                <Button onClick={() => {
-                        var ip = document.getElementById('ip').value;
-                        this.props.func(ip);
-                    }} variant="contained" color="primary"
+                <Button onClick={() => this.props.addMiner(this.state.ip)} variant="contained" color="primary"
                     disabled={!this.state.ip}
                 >
                     Add Miner via IP
                 </Button>
                 <Button
-                    onClick={() => this.props.func2(this.props.selected)}
+                    onClick={() => this.props.delMiner(this.props.selected)}
                     variant="contained" color="primary"
                     disabled={!this.props.selected.length}
                 >

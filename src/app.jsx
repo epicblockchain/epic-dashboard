@@ -28,6 +28,7 @@ class App extends React.Component {
             snackbar: {open: false, sev: '', text: ''}
         };
 
+        this.addMiner = this.addMiner.bind(this);
         this.handleApi = this.handleApi.bind(this);
         this.toggleSnackbar = this.toggleSnackbar.bind(this);
     }
@@ -38,7 +39,7 @@ class App extends React.Component {
         for (let miner of miners) {
             try {
                 const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
-                    timeout: 3000
+                    timeout: 2000
                 });
                 if (init) {
                     const history = await got(`http://${miner.address}:${miner.service.port}/history`);
@@ -72,7 +73,7 @@ class App extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevState.miner_data != this.state.miner_data) {
             mdns.discover({
-                name: '_epicminer._tcp.local'
+                name: '_epicminer._tcp.local', wait: 2
             }).then((list) => {
                 let prev = miners.map(a => a.address);
                 for (let miner of list) {
@@ -89,7 +90,7 @@ class App extends React.Component {
 
     componentDidMount() {
         mdns.discover({
-            name: '_epicminer._tcp.local'
+            name: '_epicminer._tcp.local', wait: 2
         }).then((list) => {
             if (!list.length) {
                 this.toggleModal(true);
@@ -118,8 +119,11 @@ class App extends React.Component {
     }
 
     addMiner(ip) {
+        var temp = this.state.miner_data;
         miners.push({address: ip, service: {port: 4028}});
-        console.log(miners);
+        temp.push({ip: ip, sum: 'load', hist: 'load'});
+        
+        this.setState({miner_data: temp});
     }
 
     delMiner(ids) {
@@ -192,7 +196,7 @@ class App extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <Snackbar open={this.state.snackbar.open} onClose={() => this.toggleSnackbar(false)}
+                <Snackbar open={this.state.snackbar.open}
                     autoHideDuration={6000}>
                     <MuiAlert elevation={6} variant='filled' onClose={() => this.toggleSnackbar(false)}
                         severity={this.state.snackbar.sev}>
