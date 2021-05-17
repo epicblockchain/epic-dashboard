@@ -10,6 +10,17 @@ export class MinerPoolTab extends React.Component {
         this.updatePassword = this.updatePassword.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.selected != this.props.selected) {
+            if (this.props.selected.length) {
+                if(!prevProps.selected.length)
+                    this.setState({pool: this.props.data[this.props.selected[0]].sum.Stratum['Current Pool']});
+            } else {
+                this.setState({pool: ''});        
+            }
+        }
+    }
+    
     updatePool(e) {
         this.setState({pool: e.target.value});
     }
@@ -22,7 +33,9 @@ export class MinerPoolTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 stratum+tcp://
-                <TextField id="ip" variant="outlined" label="Mining Pool" onChange={this.updatePool}/>
+                <TextField id="ip" variant="outlined" label="Mining Pool" onChange={this.updatePool}
+                    value={this.state.pool}
+                />
                 <TextField id="password" variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
                 <Button onClick={() => {
                         this.props.handleApi('/pool', this.state, this.props.selected);

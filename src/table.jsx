@@ -167,6 +167,7 @@ export class DataTable extends React.Component {
                     <MinerPoolTab
                         handleApi={this.props.handleApi}
                         selected={this.state.selected}
+                        data={this.props.data}
                     /> }
                 { this.state.tab == 2 && <div>Three</div> }
                 { this.state.tab == 3 && <div>Four</div> }
