@@ -1,27 +1,33 @@
+// TODO: https://github.com/electron/remote or something different to remoev warning
 const { dialog } = require('electron').remote;
+const fs = require('fs');
 
 import * as React from 'react';
 import Button from '@material-ui/core/Button'
 
-function writeLogs(){
-    dialog.showOpenDialog({
-        properties: ['openDirectory', 'createDirectory']
-    }).then((arg)=>{
-        console.log(arg);
-        // if (!arg.canceled){
-        //     fs.writeFile(arg.filePaths[0] + '/epicminers.log', JSON.stringify(privateMiners), function (err) {
-        //         if (err) throw err;
-        //         console.log('done');
-        //     });
-        // }
-    }).catch(err=>{
-        console.log(err);
-    })
-
-}
-
-
 export class Support extends React.Component {
+    
+    constructor(props){
+        super(props);
+
+        this.writeLogs = this.writeLogs.bind(this);
+    }
+    
+    writeLogs(){
+        dialog.showOpenDialog({
+            properties: ['openDirectory', 'createDirectory']
+        }).then((arg)=>{
+            if (!arg.canceled){
+                fs.writeFile(arg.filePaths[0] + '/epicminers.log', JSON.stringify(this.props.data), function (err) {
+                    if (err) throw err;
+                    console.log('Logs written.');
+                });
+            }
+        }).catch(err=>{
+            console.log(err);
+        })
+    
+    }
 
     render(){
         return (
@@ -29,7 +35,7 @@ export class Support extends React.Component {
                 <h3>Support</h3>
                 <p><strong>support@epicblockchain.io</strong></p>
                 <p>Press the button below to create a log file which you can choose to attach to your support email.</p>
-                <Button varaint="contained" onClick={writeLogs}>Generate Logs</Button>
+                <Button varaint="contained" onClick={this.writeLogs}>Generate Logs</Button>
             </div>
         );
     }
