@@ -213,6 +213,9 @@ class App extends React.Component {
                     password: data.password
                 };
                 break;
+            case '/mode':
+                obj = {param: data.mode, password: data.password};
+                break;
         }
 
         for (let i of selected) {
