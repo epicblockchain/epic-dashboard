@@ -11,6 +11,8 @@ import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
 import { WalletAddrTab } from './tabs/WalletAddrTab.jsx';
 import { OpModeTab } from './tabs/OpModeTab.jsx';
 import { UniqueIDTab } from './tabs/UniqueIDTab.jsx';
+import { PasswordTab } from './tabs/PasswordTab.jsx';
+import './table.css';
 
 const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
@@ -141,15 +143,12 @@ export class DataTable extends React.Component {
                         this.select(sel.selectionModel);
                         console.log(this.state.selected);
                     }}
-                    /*onRowSelected={sel => {
-                        this.select(sel.data.ip, sel.isSelected);
-                    }}*/
                 />
-                <Tabs value={this.state.tab} onChange={this.setTab}
-                    variant="scrollable" indicatorColor="primary" textColor="primary"
-                    scrollButtons="auto"
+                <Tabs value={this.state.tab} onChange={this.setTab} indicatorColor="primary"
+                    textColor="primary" scrollButtons="auto" variant="scrollable"
                 >
                     <Tab label="Add/Remove"/>
+                    <Tab label="Coin"/>
                     <Tab label="Mining Pool"/>
                     <Tab label="Wallet Address"/>
                     <Tab label="Operating Mode"/>
@@ -167,32 +166,37 @@ export class DataTable extends React.Component {
                         selected={this.state.selected}
                         select={this.select}
                     /> }
-                { this.state.tab == 1 &&
+                { this.state.tab == 1 && <div>Coin</div> }
+                { this.state.tab == 2 &&
                     <MinerPoolTab
                         handleApi={this.props.handleApi}
                         selected={this.state.selected}
                         data={this.props.data}
                     /> }
-                { this.state.tab == 2 &&
+                { this.state.tab == 3 &&
                     <WalletAddrTab
                         handleApi={this.props.handleApi}
                         selected={this.state.selected}
                         data={this.props.data}
                     /> }
-                { this.state.tab == 3 &&
+                { this.state.tab == 4 &&
                     <OpModeTab
                         handleApi={this.props.handleApi}
                         selected={this.state.selected}
                     /> }
-                { this.state.tab == 4 &&
+                { this.state.tab == 5 &&
                     <UniqueIDTab
                         handleApi={this.props.handleApi}
                         selected={this.state.selected}
                     /> }
-                { this.state.tab == 5 && <div>Six</div> }
-                { this.state.tab == 6 && <div>Seven</div> }
-                { this.state.tab == 7 && <div>Eight</div> }
+                { this.state.tab == 6 &&
+                    <PasswordTab
+                        handleApi={this.props.handleApi}
+                        selected={this.state.selected}
+                    /> }
+                { this.state.tab == 7 && <div>Seven</div> }
                 { this.state.tab == 8 && <div>Eight</div> }
+                { this.state.tab == 9 && <div>Eight</div> }
             </div>
         );
     }

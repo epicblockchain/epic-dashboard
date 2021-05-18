@@ -1,0 +1,5 @@
+@media (min-width: 600px) {
+    button.MuiTab-root {
+        min-width: 0;
+    }
+}

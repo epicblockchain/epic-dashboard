@@ -220,6 +220,9 @@ class App extends React.Component {
             case '/id':
                 obj = {param: data.checked, password: data.password};
                 break;
+            case '/password':
+                obj = {param: data.pass1, password: data.password};
+                break;
         }
 
         for (let i of selected) {
