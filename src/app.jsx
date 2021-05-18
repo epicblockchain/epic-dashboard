@@ -15,6 +15,7 @@ import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
 import MuiAlert from '@material-ui/lab/Alert'
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import { DataUsageSharp } from '@material-ui/icons';
 
 var miners = [];
 var blacklist = [];
@@ -216,6 +217,9 @@ class App extends React.Component {
             case '/mode':
                 obj = {param: data.mode, password: data.password};
                 break;
+            case '/id':
+                obj = {param: data.checked, password: data.password};
+                break;
         }
 
         for (let i of selected) {
@@ -227,9 +231,8 @@ class App extends React.Component {
                 });
                 
                 if (body.result) {
-                    console.log('good');
+                    this.setState({snackbar: {open: true, sev: 'success', text: body.result}});
                 } else {
-                    console.log('clicked');
                     this.setState({snackbar: {open: true, sev: 'error', text: body.error}});
                 }
             } catch(err) {

@@ -32,7 +32,6 @@ export class OpModeTab extends React.Component {
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                stratum+tcp://
                 <RadioGroup row onChange={this.updateMode} value={this.state.mode}>
                     <FormControlLabel
                         value="normal"

@@ -10,6 +10,7 @@ import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
 import { WalletAddrTab } from './tabs/WalletAddrTab.jsx';
 import { OpModeTab } from './tabs/OpModeTab.jsx';
+import { UniqueIDTab } from './tabs/UniqueIDTab.jsx';
 
 const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
@@ -152,6 +153,7 @@ export class DataTable extends React.Component {
                     <Tab label="Mining Pool"/>
                     <Tab label="Wallet Address"/>
                     <Tab label="Operating Mode"/>
+                    <Tab label="Unique ID"/>
                     <Tab label="Password"/>
                     <Tab label="Firmware"/>
                     <Tab label="Reboot"/>
@@ -181,12 +183,16 @@ export class DataTable extends React.Component {
                     <OpModeTab
                         handleApi={this.props.handleApi}
                         selected={this.state.selected}
-                        data={this.props.data}
                     /> }
-                { this.state.tab == 4 && <div>Five</div> }
+                { this.state.tab == 4 &&
+                    <UniqueIDTab
+                        handleApi={this.props.handleApi}
+                        selected={this.state.selected}
+                    /> }
                 { this.state.tab == 5 && <div>Six</div> }
                 { this.state.tab == 6 && <div>Seven</div> }
                 { this.state.tab == 7 && <div>Eight</div> }
+                { this.state.tab == 8 && <div>Eight</div> }
             </div>
         );
     }
