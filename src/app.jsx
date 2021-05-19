@@ -7,6 +7,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Dashboard } from './dashboard.jsx';
 import { DataTable } from './table.jsx';
+import { Support } from './support.jsx';
 
 import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
         Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
@@ -16,6 +17,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import './app.css';
 
 var miners = [];
@@ -260,6 +262,10 @@ class App extends React.Component {
                                 <ListAltIcon/>
                                 <ListItemText primary="Table"/>
                             </ListItem>
+                            <ListItem button key="Support" onClick={() => this.setPage('support')}>
+                                <ContactSupportIcon/>
+                                <ListItemText primary="Support"/>
+                            </ListItem>
                         </List>
                     </div>
                 </Drawer>
@@ -299,6 +305,7 @@ class App extends React.Component {
                         handleApi={this.handleApi} blacklist={this.blacklist}
                     />
                 }
+                { this.state.page == 'support' && <Support data={this.state}/> }
             </React.Fragment>
         );
     }

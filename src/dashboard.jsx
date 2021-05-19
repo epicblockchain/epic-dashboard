@@ -64,7 +64,7 @@ export class Dashboard extends React.Component {
                 "time": new Date(seconds * 1000),
                 "hashrate": hashrateData[seconds] / 1000000
             });
-        }
+        };
 
         let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
         let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -84,6 +84,36 @@ export class Dashboard extends React.Component {
 
         chart.data = chartHashrateData;
         this.chart = chart;
+        // force a rerender with the following
+        // this.setState({state: this.state});
+    }
+
+    componentDidUpdate(oldProps){
+        let hashrateData = {};
+        this.props.data.forEach(miner => {
+            try{
+                if (miner.hist){
+                    miner.hist.forEach(sample => {
+                        if (!(sample.Timestamp in hashrateData)) {
+                            hashrateData[sample.Timestamp] = sample.Hashrate;
+                        } else {
+                            hashrateData[sample.Timestamp] += sample.Hashrate;
+                        }
+                    });    
+                }
+            } catch (err) {
+                console.log(err);
+                console.log(this.props.data);
+            }
+        });
+        let chartHashrateData = [];
+        for (const seconds in hashrateData) {
+            chartHashrateData.push({
+                "time": new Date(seconds * 1000),
+                "hashrate": hashrateData[seconds] / 1000000
+            });
+        };
+        this.chart.data = chartHashrateData;
     }
 
     componentWillUnmount(){
