@@ -88,6 +88,7 @@
     "@material-ui/core": "^4.11.4",
     "@material-ui/data-grid": "^4.0.0-alpha.28",
     "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.58"
+    "@material-ui/lab": "^4.0.0-alpha.58",
+    "react-toastify": "^7.0.4"
   }
 }

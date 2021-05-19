@@ -1,0 +1,8 @@
+div.Toastify__toast--default {
+    min-height: 0;
+    padding: 0;
+}
+
+div.Toastify__toast-body {
+    padding: 0;
+}

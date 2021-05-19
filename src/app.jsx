@@ -9,13 +9,14 @@ import { Dashboard } from './dashboard.jsx';
 import { DataTable } from './table.jsx';
 
 import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
-        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-        Snackbar
+        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
     } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert'
+import Alert from '@material-ui/lab/Alert';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
-import { DataUsageSharp } from '@material-ui/icons';
+import './app.css';
 
 var miners = [];
 var blacklist = [];
@@ -45,6 +46,14 @@ fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
     console.log(blacklist);
 });
 
+const notify = (sev, text) => {
+    toast(({ closeToast }) => (
+        <Alert elevation={6} variant="filled" onClose={closeToast} severity={sev}>
+            {text}
+        </Alert>
+    ));
+}
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -61,7 +70,6 @@ class App extends React.Component {
         this.delMiner = this.delMiner.bind(this);
         this.blacklist = this.blacklist.bind(this);
         this.handleApi = this.handleApi.bind(this);
-        this.toggleSnackbar = this.toggleSnackbar.bind(this);
     }
 
     async summary(init) {
@@ -145,10 +153,6 @@ class App extends React.Component {
         this.setState({modal: open});
     }
 
-    toggleSnackbar(open) {
-        this.setState({snackbar: {open: open, sev: this.state.snackbar.sev}});
-    }
-
     setPage(page) {
         this.setState({page: page});
     }
@@ -161,12 +165,10 @@ class App extends React.Component {
             var temp = this.state.miner_data;
             temp.push({ip: ip, sum: 'load', hist: 'load'});
         
-            this.setState({
-                miner_data: temp,
-                snackbar: {open: true, sev: 'success', text: `Successfully added ${ip}`}
-            });
+            notify('success', `Successfully added ${ip}`);
+            this.setState({miner_data: temp});
         } else {
-            this.setState({snackbar: {open: true, sev: 'info', text: `${ip} already tracked`}});
+            notify('info', `${ip} already tracked`);
         }
     }
 
@@ -177,6 +179,7 @@ class App extends React.Component {
             temp.splice(id, 1);
         }
 
+        notify('success', 'Successfully removed miners');
         this.setState({miner_data: temp});
     }
 
@@ -196,10 +199,8 @@ class App extends React.Component {
             }
         });
 
-        this.setState({
-            miner_data: temp,
-            snackbar: {open: true, sev: 'success', text: `Successfully blacklisted miners`}
-        });
+        notify('success', 'Successfully blacklisted miners');
+        this.setState({miner_data: temp});
     }
 
     async handleApi(api, data, selected) {
@@ -234,9 +235,9 @@ class App extends React.Component {
                 });
                 
                 if (body.result) {
-                    this.setState({snackbar: {open: true, sev: 'success', text: body.result}});
+                    notify('success', `${miners[i].address}: ${body.result}`);
                 } else {
-                    this.setState({snackbar: {open: true, sev: 'error', text: body.error}});
+                    notify('error', `${miners[i].address}: ${body.error}`);
                 }
             } catch(err) {
                 console.log(err);
@@ -280,13 +281,17 @@ class App extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <Snackbar open={this.state.snackbar.open}
-                    autoHideDuration={6000}>
-                    <MuiAlert elevation={6} variant='filled' onClose={() => this.toggleSnackbar(false)}
-                        severity={this.state.snackbar.sev}>
-                        {this.state.snackbar.text}
-                    </MuiAlert>
-                </Snackbar>
+                <ToastContainer
+                    position='top-right'
+                    autoClose={5000}
+                    hideProgressBar
+                    newestOnTop={false}
+                    closeOnClick
+                    draggable={false}
+                    closeButton={false}
+                    rtl={false}
+                    pauseOnFocusLoss={false}
+                />
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
                 { this.state.page == 'table' &&
                     <DataTable data={this.state.miner_data} 
