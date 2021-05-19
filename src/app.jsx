@@ -200,6 +200,7 @@ class App extends React.Component {
             temp.splice(id, 1);
         }
 
+        console.log(miners);
         notify('success', 'Successfully removed miners');
         this.setState({miner_data: temp});
     }
@@ -260,6 +261,9 @@ class App extends React.Component {
                 
                 if (body.result) {
                     notify('success', `${miners[i].address}: ${body.result}`);
+                    /*if (api == '/reboot') {
+                        var temp = this.state.miner;
+                    }*/
                 } else {
                     notify('error', `${miners[i].address}: ${body.error}`);
                 }

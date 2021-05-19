@@ -50,7 +50,7 @@ function Toolbar() {
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {selected: [], list: 0, tab: 0};
+        this.state = {selected: {sc200: [], ks200: []}, list: 0, tab: 0};
 
         this.select = this.select.bind(this);
         this.setList = this.setList.bind(this);
@@ -95,12 +95,15 @@ export class DataTable extends React.Component {
     }
 
     select(model) {
-        var temp = model;
+        var temp = this.state.selected;
+        if (this.state.list == 0) temp.sc200 = model;
+        else temp.ks200 = model;
+
         this.setState({selected: temp});
     }
 
     setList(event, newVal) {
-        this.setState({selected: [], list: newVal});
+        this.setState({list: newVal});
     }
 
     setTab(event, newVal) {
@@ -141,8 +144,21 @@ export class DataTable extends React.Component {
             })
         );
 
-        const sc200 = rows.filter(a => a.alg == 'Blake2b');
-        const ks200 = rows.filter(a => a.alg == 'Keccak');
+        var sc200 = [];
+        var ks200 = [];
+
+        for (let row of rows) {
+            if (row.alg == 'Blake2b') sc200.push(row);
+            else if (row.alg == 'Keccak') ks200.push(row);
+            else sc200.push(row);
+        }
+
+        var selected;
+        if (this.state.list == 0) {
+            selected = this.state.selected.sc200;
+        } else {
+            selected = this.state.selected.ks200;
+        }
 
         return (
             <div style={{ height: 500, maxWidth: '1400px', margin: '0 auto'}}>
@@ -155,7 +171,7 @@ export class DataTable extends React.Component {
                 <div hidden={this.state.list != 0} style={{ height: 500 }}>
                     <DataGrid rows={sc200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
-                        selectionModel={this.selected}
+                        selectionModel={this.state.selected.sc200}
                         rowHeight={32}
                         onSelectionModelChange={sel => {
                             this.select(sel.selectionModel);
@@ -165,7 +181,7 @@ export class DataTable extends React.Component {
                 <div hidden={this.state.list != 1} style={{ height: 500 }}>
                     <DataGrid rows={ks200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
-                        selectionModel={this.selected}
+                        selectionModel={this.state.selected.ks200}
                         rowHeight={32}
                         onSelectionModelChange={sel => {
                             this.select(sel.selectionModel);
@@ -191,42 +207,42 @@ export class DataTable extends React.Component {
                         addMiner={this.props.addMiner}
                         delMiner={this.props.delMiner}
                         blacklist={this.props.blacklist}
-                        selected={this.state.selected}
+                        selected={selected}
                         select={this.select}
                     /> }
                 { this.state.tab == 1 && <div>Coin</div> }
                 { this.state.tab == 2 &&
                     <MinerPoolTab
                         handleApi={this.props.handleApi}
-                        selected={this.state.selected}
+                        selected={selected}
                         data={this.props.data}
                     /> }
                 { this.state.tab == 3 &&
                     <WalletAddrTab
                         handleApi={this.props.handleApi}
-                        selected={this.state.selected}
+                        selected={selected}
                         data={this.props.data}
                     /> }
                 { this.state.tab == 4 &&
                     <OpModeTab
                         handleApi={this.props.handleApi}
-                        selected={this.state.selected}
+                        selected={selected}
                     /> }
                 { this.state.tab == 5 &&
                     <UniqueIDTab
                         handleApi={this.props.handleApi}
-                        selected={this.state.selected}
+                        selected={selected}
                     /> }
                 { this.state.tab == 6 &&
                     <PasswordTab
                         handleApi={this.props.handleApi}
-                        selected={this.state.selected}
+                        selected={selected}
                     /> }
                 { this.state.tab == 7 && <div>Seven</div> }
                 { this.state.tab == 8 &&
                     <RebootTab
                         handleApi={this.props.handleApi}
-                        selected={this.state.selected}
+                        selected={selected}
                     /> }
                 { this.state.tab == 9 && <div>Eight</div> }
             </div>
