@@ -12,12 +12,14 @@ import { WalletAddrTab } from './tabs/WalletAddrTab.jsx';
 import { OpModeTab } from './tabs/OpModeTab.jsx';
 import { UniqueIDTab } from './tabs/UniqueIDTab.jsx';
 import { PasswordTab } from './tabs/PasswordTab.jsx';
+import { RebootTab } from './tabs/RebootTab.jsx';
 import './table.css';
 
 const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
     { field: 'name', headerName: 'Name', width: 150 },
     { field: 'firmware', headerName: 'Firmware', width: 150 },
+    { field: 'alg', headerName: 'Algorithm', width: 115, hide: true},
     { field: 'mode', headerName: 'Mode', width: 100 },
     { field: 'pool', headerName: 'Pool', width: 180 },
     { field: 'user', headerName: 'User', width: 180 },
@@ -48,8 +50,10 @@ function Toolbar() {
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {selected: [], tab: 0};
+        this.state = {selected: [], list: 0, tab: 0};
+
         this.select = this.select.bind(this);
+        this.setList = this.setList.bind(this);
         this.setTab = this.setTab.bind(this);
     }
 
@@ -91,9 +95,12 @@ export class DataTable extends React.Component {
     }
 
     select(model) {
-        console.log('before set state', model);
         var temp = model;
         this.setState({selected: temp});
+    }
+
+    setList(event, newVal) {
+        this.setState({selected: [], list: newVal});
     }
 
     setTab(event, newVal) {
@@ -115,6 +122,7 @@ export class DataTable extends React.Component {
                 ip: a.ip,
                 name: this.failSafe(a.sum) || a.sum.Hostname,
                 firmware: this.failSafe(a.sum) || a.sum.Software,
+                alg: this.failSafe(a.sum) || a.sum.Mining.Algorithm,
                 mode: this.failSafe(a.sum) || a.sum.Preset,
                 pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
                 user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
@@ -133,17 +141,37 @@ export class DataTable extends React.Component {
             })
         );
 
+        const sc200 = rows.filter(a => a.alg == 'Blake2b');
+        const ks200 = rows.filter(a => a.alg == 'Keccak');
+
         return (
             <div style={{ height: 500, maxWidth: '1400px', margin: '0 auto'}}>
-                <DataGrid rows={rows} columns={columns} checkboxSelection
-                    components={{Toolbar: Toolbar}}
-                    selectionModel={this.selected}
-                    rowHeight={32}
-                    onSelectionModelChange={sel => {
-                        this.select(sel.selectionModel);
-                        console.log(this.state.selected);
-                    }}
-                />
+                <Tabs value={this.state.list} onChange={this.setList} indicatorColor="primary"
+                    textColor="primary" centered
+                >
+                    <Tab id="minerTab" label="SC200"/>
+                    <Tab id="minerTab" label="KS200"/>
+                </Tabs>
+                <div hidden={this.state.list != 0} style={{ height: 500 }}>
+                    <DataGrid rows={sc200} columns={columns} checkboxSelection
+                        components={{Toolbar: Toolbar}}
+                        selectionModel={this.selected}
+                        rowHeight={32}
+                        onSelectionModelChange={sel => {
+                            this.select(sel.selectionModel);
+                        }}
+                    />
+                </div>
+                <div hidden={this.state.list != 1} style={{ height: 500 }}>
+                    <DataGrid rows={ks200} columns={columns} checkboxSelection
+                        components={{Toolbar: Toolbar}}
+                        selectionModel={this.selected}
+                        rowHeight={32}
+                        onSelectionModelChange={sel => {
+                            this.select(sel.selectionModel);
+                        }}
+                    />
+                </div>
                 <Tabs value={this.state.tab} onChange={this.setTab} indicatorColor="primary"
                     textColor="primary" scrollButtons="auto" variant="scrollable"
                 >
@@ -195,7 +223,11 @@ export class DataTable extends React.Component {
                         selected={this.state.selected}
                     /> }
                 { this.state.tab == 7 && <div>Seven</div> }
-                { this.state.tab == 8 && <div>Eight</div> }
+                { this.state.tab == 8 &&
+                    <RebootTab
+                        handleApi={this.props.handleApi}
+                        selected={this.state.selected}
+                    /> }
                 { this.state.tab == 9 && <div>Eight</div> }
             </div>
         );

@@ -64,8 +64,7 @@ class App extends React.Component {
             drawerOpen: true,
             page: 'main',
             miner_data: [],
-            modal: false,
-            snackbar: {open: false, sev: '', text: ''}
+            modal: false
         };
 
         this.addMiner = this.addMiner.bind(this);
@@ -80,22 +79,42 @@ class App extends React.Component {
         for (let miner of miners) {
             try {
                 const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
-                    timeout: 2000
+                    timeout: 1000
                 });
+                
                 if (init) {
-                    const history = await got(`http://${miner.address}:${miner.service.port}/history`);
-                    miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: JSON.parse(history.body).History});
+                    const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
+                        timeout: 1000
+                    });
+                    try {
+                        const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
+                            timeout: 1000
+                        });
+                        miner_data.push({
+                            ip: miner.address,
+                            sum: JSON.parse(summary.body),
+                            hist: JSON.parse(history.body).History,
+                            cap: JSON.parse(cap.body)
+                        });
+                    } catch(err) {
+                        miner_data.push({
+                            ip: miner.address,
+                            sum: JSON.parse(summary.body),
+                            hist: JSON.parse(history.body).History,
+                            cap: null
+                        });
+                    }
                 } else {
                     const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
                     
                     if (match.hist.length == 0 || lastMHs == null) {
-                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs]});
+                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs], cap: match.cap});
                     } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
                         match.hist.push(lastMHs);
-                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist});
+                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap});
                     } else {
-                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist});
+                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap});
                     }
                 }
             } catch(err) {
@@ -225,6 +244,9 @@ class App extends React.Component {
                 break;
             case '/password':
                 obj = {param: data.pass1, password: data.password};
+                break;
+            case '/reboot':
+                obj = {param: data.delay, password: data.password};
                 break;
         }
 

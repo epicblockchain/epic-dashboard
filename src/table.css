@@ -2,4 +2,7 @@
     button.MuiTab-root {
         min-width: 0;
     }
+    #minerTab {
+        min-width: 140px;
+    }
 }
