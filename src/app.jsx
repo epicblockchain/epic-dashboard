@@ -90,19 +90,16 @@ class App extends React.Component {
                         const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
                             timeout: 1000
                         });
+                        let content = JSON.parse(cap.body);
+
                         miner_data.push({
                             ip: miner.address,
                             sum: JSON.parse(summary.body),
                             hist: JSON.parse(history.body).History,
-                            cap: JSON.parse(cap.body)
+                            cap: content.Model ? content : null
                         });
                     } catch(err) {
-                        miner_data.push({
-                            ip: miner.address,
-                            sum: JSON.parse(summary.body),
-                            hist: JSON.parse(history.body).History,
-                            cap: null
-                        });
+                        console.log(err);
                     }
                 } else {
                     const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
