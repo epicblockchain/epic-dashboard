@@ -34,6 +34,32 @@ function formatHashrateString(totalHashrate){
     }
 }
 
+function isSameData(a, b){
+    for (let key in a) {
+        if (!(key in b)){
+            return false;
+        }
+        for (let subkey in a[key]) {
+            if (!(subkey) in b[key]){
+                return false;
+            }
+            switch (subkey) {
+                case 'ip':
+                    if (a[key]['ip'] !== b[key]['ip']){
+                        return false;
+                    }
+                case 'hist':
+                    if (a[key]['hist'].length !== b[key]['hist'].length){
+                        return false;
+                    }
+                default:
+                    ;
+            }
+        }
+    }
+    return true;
+}
+
 export class Dashboard extends React.Component {
     constructor(props) {
         super(props);
@@ -78,14 +104,12 @@ export class Dashboard extends React.Component {
         series.smoothing = "monotoneX";
         series.tooltipText = "Hashrate (TH/s): [bold]{valueY}[/]";
 
-        // let bullet = series.bullets.push(new am4charts.CircleBullet());
-        // bullet.scale = 0.6;
-        // bullet.fill = am4core.color("1b1d4d");
+        let bullet = series.bullets.push(new am4charts.CircleBullet());
+        bullet.scale = 0.6;
+        bullet.fill = am4core.color("1b1d4d");
 
         chart.data = chartHashrateData;
         this.chart = chart;
-        // force a rerender with the following
-        // this.setState({state: this.state});
     }
 
     componentDidUpdate(oldProps){
@@ -113,7 +137,9 @@ export class Dashboard extends React.Component {
                 "hashrate": hashrateData[seconds] / 1000000
             });
         };
-        this.chart.data = chartHashrateData;
+        if (!isSameData(this.props.data, oldProps.data)){
+            this.chart.data = chartHashrateData;
+        }
     }
 
     componentWillUnmount(){
