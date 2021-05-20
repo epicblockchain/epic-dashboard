@@ -7,6 +7,7 @@ import {
     GridDensitySelector } from '@material-ui/data-grid';
 import { Tabs, Tab } from '@material-ui/core';
 import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
+import { CoinTab } from './tabs/CoinTab.jsx';
 import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
 import { WalletAddrTab } from './tabs/WalletAddrTab.jsx';
 import { OpModeTab } from './tabs/OpModeTab.jsx';
@@ -210,7 +211,13 @@ export class DataTable extends React.Component {
                         selected={selected}
                         select={this.select}
                     /> }
-                { this.state.tab == 1 && <div>Coin</div> }
+                { this.state.tab == 1 && 
+                    <CoinTab
+                        handleApi={this.props.handleApi}
+                        list={this.state.list}
+                        selected={selected}
+                        data={this.props.data}
+                    /> }
                 { this.state.tab == 2 &&
                     <MinerPoolTab
                         handleApi={this.props.handleApi}
