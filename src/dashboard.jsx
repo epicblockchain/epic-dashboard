@@ -35,29 +35,34 @@ function formatHashrateString(totalHashrate){
 }
 
 function isSameData(a, b){
-    for (let key in a) {
-        if (!(key in b)){
-            return false;
-        }
-        for (let subkey in a[key]) {
-            if (!(subkey) in b[key]){
+    try {
+        for (let key in a) {
+            if (!(key in b)){
                 return false;
             }
-            switch (subkey) {
-                case 'ip':
-                    if (a[key]['ip'] !== b[key]['ip']){
-                        return false;
-                    }
-                case 'hist':
-                    if (a[key]['hist'].length !== b[key]['hist'].length){
-                        return false;
-                    }
-                default:
-                    ;
+            for (let subkey in a[key]) {
+                if (!(subkey) in b[key]){
+                    return false;
+                }
+                switch (subkey) {
+                    case 'ip':
+                        if (a[key]['ip'] !== b[key]['ip']){
+                            return false;
+                        }
+                    case 'hist':
+                        if (a[key]['hist'].length !== b[key]['hist'].length){
+                            return false;
+                        }
+                    default:
+                        ;
+                }
             }
         }
+        return true;
+    } catch (err) {
+        console.log(err);
+        return false;
     }
-    return true;
 }
 
 export class Dashboard extends React.Component {
