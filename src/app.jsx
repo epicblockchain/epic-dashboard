@@ -4,6 +4,7 @@ const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
 
+var FormData = require('form-data');
 var sha256 = require('sha256-file');
 
 import * as React from 'react';
@@ -278,23 +279,30 @@ class App extends React.Component {
     }
 
     async handleFormApi(api, data, selected) {
-        var f = {
+        /*var f = {
             'password': data.password,
             'checksum': sha256(data.filepath),
             'keepsettings': data.keep,
             'swupdate.swu': fs.createReadStream(data.filepath)
-        };
+        };*/
+        var f = new FormData();
+        f.append('password', data.password);
+        f.append('checksum', sha256(data.filepath));
+        f.append('keepsettings', data.keep.toString());
+        f.append('swupdate.swu', fs.createReadStream(data.filepath));
 
         console.log(f);
 
         for (let i of selected) {
             try {
                 const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
-                    form: f,
-                    headers: {'Content-Type': 'multipart/form-data'},
-                    responseType: 'json',
+                    body: f,
+                    //headers: {'Content-Type': 'multipart/form-data'},
+                    //responseType: 'json',
                     timeout: 7200000 // 2hrs?
                 });
+
+                console.log(body);
 
                 if (body.result) {
                     notify('success', `${miners[i].address}: updating in progress`);
