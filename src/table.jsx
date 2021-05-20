@@ -13,6 +13,7 @@ import { WalletAddrTab } from './tabs/WalletAddrTab.jsx';
 import { OpModeTab } from './tabs/OpModeTab.jsx';
 import { UniqueIDTab } from './tabs/UniqueIDTab.jsx';
 import { PasswordTab } from './tabs/PasswordTab.jsx';
+import { UpdateTab } from './tabs/UpdateTab.jsx';
 import { RebootTab } from './tabs/RebootTab.jsx';
 import { RecalibrateTab } from './tabs/RecalibrateTab.jsx';
 import './table.css';
@@ -249,7 +250,8 @@ export class DataTable extends React.Component {
                     <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/> }
                 { this.state.tab == 6 &&
                     <PasswordTab handleApi={this.props.handleApi} selected={selected}/> }
-                { this.state.tab == 7 && <div>Seven</div> }
+                { this.state.tab == 7 && 
+                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected}/>}
                 { this.state.tab == 8 &&
                     <RebootTab handleApi={this.props.handleApi} selected={selected}/> }
                 { this.state.tab == 9 &&

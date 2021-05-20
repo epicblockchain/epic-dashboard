@@ -3,6 +3,9 @@ const got = require('got');
 const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
+
+var sha256 = require('sha256-file');
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Dashboard } from './dashboard.jsx';
@@ -71,6 +74,7 @@ class App extends React.Component {
         this.delMiner = this.delMiner.bind(this);
         this.blacklist = this.blacklist.bind(this);
         this.handleApi = this.handleApi.bind(this);
+        this.handleFormApi = this.handleFormApi.bind(this);
     }
 
     async summary(init) {
@@ -272,6 +276,36 @@ class App extends React.Component {
             }
         }
     }
+
+    async handleFormApi(api, data, selected) {
+        var f = {
+            'password': data.password,
+            'checksum': sha256(data.filepath),
+            'keepsettings': data.keep,
+            'swupdate.swu': fs.createReadStream(data.filepath)
+        };
+
+        console.log(f);
+
+        for (let i of selected) {
+            try {
+                const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                    form: f,
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    responseType: 'json',
+                    timeout: 7200000 // 2hrs?
+                });
+
+                if (body.result) {
+                    notify('success', `${miners[i].address}: updating in progress`);
+                } else {
+                    notify('error', `${miners[i].address}: ${body.error}`);
+                }
+            } catch(err) {
+                console.log(err);
+            }
+        }   
+    }
  
     render() {
         return (
@@ -327,8 +361,8 @@ class App extends React.Component {
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
                 { this.state.page == 'table' &&
                     <DataTable data={this.state.miner_data} 
-                        addMiner={this.addMiner} delMiner={this.delMiner}
-                        handleApi={this.handleApi} blacklist={this.blacklist}
+                        addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
+                        handleApi={this.handleApi} handleFormApi={this.handleFormApi}
                     />
                 }
                 { this.state.page == 'support' && <Support data={this.state}/> }
