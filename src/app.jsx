@@ -246,6 +246,9 @@ class App extends React.Component {
             case '/reboot':
                 obj = {param: data.delay, password: data.password};
                 break;
+            case '/hwconfig':
+                obj = {param: true, password: data.password};
+                break;
         }
 
         for (let i of selected) {

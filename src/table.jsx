@@ -14,6 +14,7 @@ import { OpModeTab } from './tabs/OpModeTab.jsx';
 import { UniqueIDTab } from './tabs/UniqueIDTab.jsx';
 import { PasswordTab } from './tabs/PasswordTab.jsx';
 import { RebootTab } from './tabs/RebootTab.jsx';
+import { RecalibrateTab } from './tabs/RecalibrateTab.jsx';
 import './table.css';
 
 const columns = [
@@ -173,14 +174,14 @@ export class DataTable extends React.Component {
         }
 
         return (
-            <div style={{ height: 500, maxWidth: '1400px', margin: '0 auto'}}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto'}}>
                 <Tabs value={this.state.list} onChange={this.setList} indicatorColor="primary"
                     textColor="primary" centered
                 >
                     <Tab id="minerTab" label="SC200"/>
                     <Tab id="minerTab" label="KS200"/>
                 </Tabs>
-                <div hidden={this.state.list != 0} style={{ height: 500 }}>
+                <div hidden={this.state.list != 0} style={{ width: '100%', height: 500 }}>
                     <DataGrid rows={sc200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
                         selectionModel={this.state.selected.sc200}
@@ -190,7 +191,7 @@ export class DataTable extends React.Component {
                         }}
                     />
                 </div>
-                <div hidden={this.state.list != 1} style={{ height: 500 }}>
+                <div hidden={this.state.list != 1} style={{ width: '100%', height: 500 }}>
                     <DataGrid rows={ks200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
                         selectionModel={this.state.selected.ks200}
@@ -243,27 +244,16 @@ export class DataTable extends React.Component {
                         data={this.props.data}
                     /> }
                 { this.state.tab == 4 &&
-                    <OpModeTab
-                        handleApi={this.props.handleApi}
-                        selected={selected}
-                    /> }
+                    <OpModeTab handleApi={this.props.handleApi} selected={selected}/> }
                 { this.state.tab == 5 &&
-                    <UniqueIDTab
-                        handleApi={this.props.handleApi}
-                        selected={selected}
-                    /> }
+                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/> }
                 { this.state.tab == 6 &&
-                    <PasswordTab
-                        handleApi={this.props.handleApi}
-                        selected={selected}
-                    /> }
+                    <PasswordTab handleApi={this.props.handleApi} selected={selected}/> }
                 { this.state.tab == 7 && <div>Seven</div> }
                 { this.state.tab == 8 &&
-                    <RebootTab
-                        handleApi={this.props.handleApi}
-                        selected={selected}
-                    /> }
-                { this.state.tab == 9 && <div>Eight</div> }
+                    <RebootTab handleApi={this.props.handleApi} selected={selected}/> }
+                { this.state.tab == 9 &&
+                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/> }
             </div>
         );
     }
