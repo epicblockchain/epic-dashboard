@@ -33,7 +33,6 @@ export class PasswordTab extends React.Component {
                 <TextField variant="outlined" label="New Password" type="password" onChange={this.updatePass1}
                     value={this.state.pass1}
                 />
-                .
                 <TextField variant="outlined" label="Confirm New Password" type="password" onChange={this.checkMatch}
                     value={this.state.pass2} error={this.state.error}
                     helperText={this.state.error ? 'Passwords do not match' : ''}

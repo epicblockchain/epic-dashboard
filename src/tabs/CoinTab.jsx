@@ -14,7 +14,7 @@ export class CoinTab extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.selected != this.props.selected) {
+        if (!this.props.disabled && prevProps.selected != this.props.selected) {
             if (this.props.selected.length && this.props.data[this.props.selected[0]].sum) {
                 if(!prevProps.selected.length) {
                     var arr = this.props.data[this.props.selected[0]].sum.Stratum['Current User'].split('.');
@@ -61,7 +61,7 @@ export class CoinTab extends React.Component {
 
         return(
             <div style={{padding: '12px 0'}}>
-                <FormControl variant="outlined">
+                <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="coin">Coin</InputLabel>
                     <Select native id="coin" label="Coin" value={this.state.coin} onChange={this.updateCoin}>
                         {
@@ -73,23 +73,23 @@ export class CoinTab extends React.Component {
                 </FormControl>
                 <FormControlLabel control={
                     <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool}
-                        value={this.state.pool}
+                        value={this.state.pool} margin="dense" disabled={this.props.disabled}
                     />
                 } label="stratum+tcp://" labelPlacement="start"/>
-                
                 <br />
                 <TextField variant="outlined" label="Wallet Address" onChange={this.updateAddress}
-                    value={this.state.address}
+                    value={this.state.address} margin="dense" disabled={this.props.disabled}
                 />
                 .
                 <TextField variant="outlined" label="Worker Name" onChange={this.updateWorker}
-                    value={this.state.worker}
+                    value={this.state.worker} margin="dense" disabled={this.props.disabled}
                 />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/login', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
-                    disabled={!this.state.address || !this.state.worker || !this.state.password || !this.props.selected.length}
+                    }} variant="contained" color="primary" size="large"
+                    disabled={!this.state.pool || !this.state.address || !this.state.worker || !this.state.password
+                        || !this.props.selected.length || this.props.disabled}
                 >
                     Apply
                 </Button>

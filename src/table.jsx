@@ -35,7 +35,8 @@ const columns = [
     { field: 'rejected', headerName: 'Rejected Shares', width: 150, hide: true },
     { field: 'difficulty', headerName: 'Difficulty', width: 120, hide: true },
     { field: 'temperature', headerName: 'Temp \u00b0C', width: 110 },
-    { field: 'power', headerName: 'Power (W)', width: 110, hide: true }
+    { field: 'power', headerName: 'Power (W)', width: 110, hide: true },
+    { field: 'cap', hide: true }
 ];
 
 function Toolbar() {
@@ -141,7 +142,8 @@ export class DataTable extends React.Component {
                 rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
                 difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
                 temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
-                power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs)
+                power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
+                cap: a.cap
             })
         );
 
@@ -159,6 +161,15 @@ export class DataTable extends React.Component {
             selected = this.state.selected.sc200;
         } else {
             selected = this.state.selected.ks200;
+        }
+
+
+        var capApi = true;
+        for (let i of selected) {
+            if (!this.props.data[i].cap) {
+                capApi = false;
+                break;
+            }
         }
 
         return (
@@ -193,7 +204,7 @@ export class DataTable extends React.Component {
                     textColor="primary" scrollButtons="auto" variant="scrollable"
                 >
                     <Tab label="Add/Remove"/>
-                    <Tab label="Coin"/>
+                    <Tab label="Coin" disabled={!capApi}/>
                     <Tab label="Mining Pool"/>
                     <Tab label="Wallet Address"/>
                     <Tab label="Operating Mode"/>
@@ -215,6 +226,7 @@ export class DataTable extends React.Component {
                     <CoinTab
                         handleApi={this.props.handleApi}
                         list={this.state.list}
+                        disabled={!capApi}
                         selected={selected}
                         data={this.props.data}
                     /> }
