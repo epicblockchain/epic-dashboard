@@ -30,7 +30,14 @@ export class RebootTab extends React.Component {
                     }} variant="contained" color="primary"
                     disabled={!this.state.delay || !this.state.password || !this.props.selected.length}
                 >
-                    Apply
+                    Reboot
+                </Button>
+                <Button onClick={() => {
+                        this.props.handleApi('/softreboot', this.state, this.props.selected);
+                    }} variant="contained" color="secondary"
+                    disabled={!this.state.delay || !this.state.password || !this.props.selected.length}
+                >
+                    Soft Reboot
                 </Button>
             </div>
         );

@@ -90,7 +90,7 @@ class App extends React.Component {
                 
                 let match = this.state.miner_data.find(a => a.ip == miner.address);
 
-                if (init || match.sum == 'load') {
+                if (init || match.sum == 'load' || match.sum == null) {
                     const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
                         timeout: 1000
                     });
@@ -250,6 +250,7 @@ class App extends React.Component {
             case '/password':
                 obj = {param: data.pass1, password: data.password};
                 break;
+            case '/softreboot':
             case '/reboot':
                 obj = {param: data.delay, password: data.password};
                 break;
@@ -269,7 +270,7 @@ class App extends React.Component {
                 if (body.result) {
                     notify('success', `${miners[i].address}: ${body.result}`);
                     /*if (api == '/reboot') {
-                        var temp = this.state.miner;
+                        let match = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
                     }*/
                 } else {
                     notify('error', `${miners[i].address}: ${body.error}`);
