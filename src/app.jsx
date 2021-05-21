@@ -272,9 +272,13 @@ class App extends React.Component {
             case '/hwconfig':
                 obj = {param: true, password: data.password};
                 break;
+            case '/identify':
+                obj = {param: data.checked, password: data.password};
+                break;
         }
 
         for (let i of selected) {
+            (async () => {
             try {
                 const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                     json: obj,
@@ -297,6 +301,7 @@ class App extends React.Component {
             } catch(err) {
                 console.log(err);
             }
+            })();
         }
     }
 

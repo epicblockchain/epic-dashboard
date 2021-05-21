@@ -27,28 +27,30 @@ const createWindow = () => {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
 
-    ipcMain.on('form-post', async (event, miners, api, data, selected) => {
+    ipcMain.on('form-post', (event, miners, api, data, selected) => {
         for (let i of selected) {
-            var f = new FormData();
-            f.append('password', data.password);
-            f.append('checksum', sha256(data.filepath));
-            f.append('keepsettings', data.keep.toString());
-            f.append('swupdate.swu', fs.createReadStream(data.filepath));
+            async () => {
+                var f = new FormData();
+                f.append('password', data.password);
+                f.append('checksum', sha256(data.filepath));
+                f.append('keepsettings', data.keep.toString());
+                f.append('swupdate.swu', fs.createReadStream(data.filepath));
 
-            try {
-                const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
-                    body: f,
-                    responseType: 'json',
-                    timeout: 7200000 // 2hrs?
-                });
+                try {
+                    const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                        body: f,
+                        responseType: 'json',
+                        timeout: 7200000 // 2hrs?
+                    });
 
-                if (body.result) {
-                    event.reply('form-post-reply', i, 'success', `${miners[i].address}: updating in progress`);
-                } else {
-                    event.reply('form-post-reply', i, 'error', `${miners[i].address}: ${body.error}`);
+                    if (body.result) {
+                        event.reply('form-post-reply', i, 'success', `${miners[i].address}: updating in progress`);
+                    } else {
+                        event.reply('form-post-reply', i, 'error', `${miners[i].address}: ${body.error}`);
+                    }
+                } catch(err) {
+                    console.log(err);
                 }
-            } catch(err) {
-                console.log(err);
             }
         }
     });

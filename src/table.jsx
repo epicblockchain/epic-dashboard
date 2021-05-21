@@ -15,6 +15,7 @@ import { UniqueIDTab } from './tabs/UniqueIDTab.jsx';
 import { PasswordTab } from './tabs/PasswordTab.jsx';
 import { UpdateTab } from './tabs/UpdateTab.jsx';
 import { RebootTab } from './tabs/RebootTab.jsx';
+import { LedTab } from './tabs/LedTab.jsx';
 import { RecalibrateTab } from './tabs/RecalibrateTab.jsx';
 import './table.css';
 
@@ -215,6 +216,7 @@ export class DataTable extends React.Component {
                     <Tab label="Password"/>
                     <Tab label="Firmware"/>
                     <Tab label="Reboot"/>
+                    <Tab label="LED"/>
                     <Tab label="Recalibrate"/>
                 </Tabs>
                 { this.state.tab == 0 &&
@@ -256,6 +258,8 @@ export class DataTable extends React.Component {
                 { this.state.tab == 8 &&
                     <RebootTab handleApi={this.props.handleApi} selected={selected}/> }
                 { this.state.tab == 9 &&
+                    <LedTab handleApi={this.props.handleApi} selected={selected}/> }
+                { this.state.tab == 10 &&
                     <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/> }
             </div>
         );

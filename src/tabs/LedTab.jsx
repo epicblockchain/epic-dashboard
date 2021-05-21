@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, TextField, Switch, FormControl, FormControlLabel } from '@material-ui/core';
 
-export class UniqueIDTab extends React.Component {
+export class LedTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {checked: true, password: ''};
@@ -24,12 +24,12 @@ export class UniqueIDTab extends React.Component {
                 <FormControl>
                     <FormControlLabel
                         control={<Switch color="primary" checked={this.state.checked} onChange={this.updateCheck}/>}
-                        label="Append Unique ID to worker name"
+                        label="Turn on LED indicator"
                     />
                 </FormControl>
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
                 <Button onClick={() => {
-                        this.props.handleApi('/id', this.state, this.props.selected);
+                        this.props.handleApi('/identify', this.state, this.props.selected);
                     }} variant="contained" color="primary"
                     disabled={!this.state.password || !this.props.selected.length}
                 >
