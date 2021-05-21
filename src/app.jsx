@@ -81,14 +81,14 @@ class App extends React.Component {
         for (let miner of miners) {
             try {
                 const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
-                    timeout: 1000
+                    timeout: 2000
                 });
                 
                 let match = this.state.miner_data.find(a => a.ip == miner.address);
 
                 if (init || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
                     const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
-                        timeout: 1000
+                        timeout: 2000
                     });
                     try {
                         const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {

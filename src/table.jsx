@@ -184,7 +184,7 @@ export class DataTable extends React.Component {
                     <Tab id="minerTab" label="SC200"/>
                     <Tab id="minerTab" label="KS200"/>
                 </Tabs>
-                <div style={{ width: '100%', height: 500, display: this.state.list == 0 ? 'block': 'none'}}>
+                <div hidden={this.state.list != 0} style={{ width: '100%', height: 500 }}>
                     <DataGrid rows={sc200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
                         selectionModel={this.state.selected.sc200}
@@ -194,7 +194,7 @@ export class DataTable extends React.Component {
                         }}
                     />
                 </div>
-                <div style={{ width: '100%', height: 500, display: this.state.list == 1 ? 'block': 'none'}}>
+                <div hidden={this.state.list != 1} style={{ width: '100%', height: 500 }}>
                     <DataGrid rows={ks200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
                         selectionModel={this.state.selected.ks200}
@@ -219,48 +219,45 @@ export class DataTable extends React.Component {
                     <Tab label="LED"/>
                     <Tab label="Recalibrate"/>
                 </Tabs>
-                { this.state.tab == 0 &&
+                <div hidden={this.state.tab != 0}>
                     <AddRemoveTab
-                        addMiner={this.props.addMiner}
-                        delMiner={this.props.delMiner}
-                        blacklist={this.props.blacklist}
-                        selected={selected}
-                        select={this.select}
-                    /> }
-                { this.state.tab == 1 && 
+                        addMiner={this.props.addMiner} delMiner={this.props.delMiner}
+                        blacklist={this.props.blacklist} selected={selected} select={this.select}
+                    />
+                </div>
+                <div hidden={this.state.tab != 1}>
                     <CoinTab
-                        handleApi={this.props.handleApi}
-                        list={this.state.list}
-                        disabled={!capApi}
-                        selected={selected}
-                        data={this.props.data}
-                    /> }
-                { this.state.tab == 2 &&
-                    <MinerPoolTab
-                        handleApi={this.props.handleApi}
-                        selected={selected}
-                        data={this.props.data}
-                    /> }
-                { this.state.tab == 3 &&
-                    <WalletAddrTab
-                        handleApi={this.props.handleApi}
-                        selected={selected}
-                        data={this.props.data}
-                    /> }
-                { this.state.tab == 4 &&
-                    <OpModeTab handleApi={this.props.handleApi} selected={selected}/> }
-                { this.state.tab == 5 &&
-                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/> }
-                { this.state.tab == 6 &&
-                    <PasswordTab handleApi={this.props.handleApi} selected={selected}/> }
-                { this.state.tab == 7 && 
-                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected}/>}
-                { this.state.tab == 8 &&
-                    <RebootTab handleApi={this.props.handleApi} selected={selected}/> }
-                { this.state.tab == 9 &&
-                    <LedTab handleApi={this.props.handleApi} selected={selected}/> }
-                { this.state.tab == 10 &&
-                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/> }
+                        handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
+                        selected={selected} data={this.props.data}
+                    />
+                </div>
+                <div hidden={this.state.tab != 2}>
+                    <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
+                </div>
+                <div hidden={this.state.tab != 3}>
+                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
+                </div>
+                <div hidden={this.state.tab != 4}>
+                    <OpModeTab handleApi={this.props.handleApi} selected={selected}/>
+                </div>
+                <div hidden={this.state.tab != 5}>
+                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/>
+                </div>
+                <div hidden={this.state.tab != 6}>
+                    <PasswordTab handleApi={this.props.handleApi} selected={selected}/>
+                </div>
+                <div hidden={this.state.tab != 7}>
+                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected}/>
+                </div>
+                <div hidden={this.state.tab != 8}>
+                    <RebootTab handleApi={this.props.handleApi} selected={selected}/>
+                </div>
+                <div hidden={this.state.tab != 9}>
+                    <LedTab handleApi={this.props.handleApi} selected={selected}/> 
+                </div>
+                <div hidden={this.state.tab != 10}>
+                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/>
+                </div>
             </div>
         );
     }
