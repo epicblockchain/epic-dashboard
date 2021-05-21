@@ -43,9 +43,9 @@ const createWindow = () => {
                 });
 
                 if (body.result) {
-                    event.reply('form-post-reply', 'succes', `${miners[i].address}: updating in progress`);
+                    event.reply('form-post-reply', i, 'success', `${miners[i].address}: updating in progress`);
                 } else {
-                    event.reply('form-post-reply', 'error', `${miners[i].address}: ${body.error}`);
+                    event.reply('form-post-reply', i, 'error', `${miners[i].address}: ${body.error}`);
                 }
             } catch(err) {
                 console.log(err);

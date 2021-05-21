@@ -117,6 +117,7 @@ export class DataTable extends React.Component {
     failSafe(summary) {
         if (summary) {
             if (summary == 'load') return 'Loading';
+            if (summary == 'reboot') return 'Rebooting';
             return undefined;
         }
         return 'Error'
