@@ -22,7 +22,7 @@ const columns = [
     { field: 'ip', headerName: 'IP', width: 130 },
     { field: 'name', headerName: 'Name', width: 150 },
     { field: 'firmware', headerName: 'Firmware', width: 150 },
-    { field: 'alg', headerName: 'Algorithm', width: 115, hide: true},
+    { field: 'model', headerName: 'Model', width: 100, hide: true},
     { field: 'mode', headerName: 'Mode', width: 100 },
     { field: 'pool', headerName: 'Pool', width: 180 },
     { field: 'user', headerName: 'User', width: 180 },
@@ -130,7 +130,7 @@ export class DataTable extends React.Component {
                 ip: a.ip,
                 name: this.failSafe(a.sum) || a.sum.Hostname,
                 firmware: this.failSafe(a.sum) || a.sum.Software,
-                alg: this.failSafe(a.sum) || a.sum.Mining.Algorithm,
+                model: this.failSafe(a.cap) || a.cap.Model,
                 mode: this.failSafe(a.sum) || a.sum.Preset,
                 pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
                 user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
@@ -154,8 +154,8 @@ export class DataTable extends React.Component {
         var ks200 = [];
 
         for (let row of rows) {
-            if (row.alg == 'Blake2b') sc200.push(row);
-            else if (row.alg == 'Keccak') ks200.push(row);
+            if (row.model == 'SC200') sc200.push(row);
+            else if (row.model == 'KS200' || row.model == 'ENG_RIG') ks200.push(row);
             else sc200.push(row);
         }
 
@@ -183,7 +183,7 @@ export class DataTable extends React.Component {
                     <Tab id="minerTab" label="SC200"/>
                     <Tab id="minerTab" label="KS200"/>
                 </Tabs>
-                <div hidden={this.state.list != 0} style={{ width: '100%', height: 500 }}>
+                <div style={{ width: '100%', height: 500, display: this.state.list == 0 ? 'block': 'none'}}>
                     <DataGrid rows={sc200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
                         selectionModel={this.state.selected.sc200}
@@ -193,7 +193,7 @@ export class DataTable extends React.Component {
                         }}
                     />
                 </div>
-                <div hidden={this.state.list != 1} style={{ width: '100%', height: 500 }}>
+                <div style={{ width: '100%', height: 500, display: this.state.list == 1 ? 'block': 'none'}}>
                     <DataGrid rows={ks200} columns={columns} checkboxSelection
                         components={{Toolbar: Toolbar}}
                         selectionModel={this.state.selected.ks200}

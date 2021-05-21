@@ -160,7 +160,7 @@ class App extends React.Component {
     componentDidMount() {
         ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
             notify(sev, text);
-            if (true) {
+            if (sev == 'success') {
                 let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
                 var temp = this.state.miner_data;
                 temp[ind].sum = 'reboot';
