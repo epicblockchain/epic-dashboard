@@ -1,6 +1,6 @@
 {
   "name": "epic-dashboard",
-  "productName": "ePIC Dashboard",
+  "productName": "epic-dashboard",
   "version": "1.2.0",
   "description": "Dashboard for ePIC mining rigs.",
   "main": ".webpack/main",
@@ -24,7 +24,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "ePIC Dashboard"
+            "name": "epic-dashboard"
           }
         },
         {
