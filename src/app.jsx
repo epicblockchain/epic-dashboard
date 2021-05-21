@@ -4,9 +4,6 @@ const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
 
-const FormData = require('form-data');
-var sha256 = require('sha256-file');
-
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Dashboard } from './dashboard.jsx';
@@ -59,6 +56,10 @@ const notify = (sev, text) => {
         </Alert>
     ));
 }
+
+ipcRenderer.on('form-post-reply', (event, sev, text) => {
+    notify(sev, text);
+});
 
 class App extends React.Component {
     constructor(props) {
@@ -280,40 +281,7 @@ class App extends React.Component {
     }
 
     handleFormApi(api, data, selected) {
-        /*var form = {
-            'password': data.password,
-            'checksum': sha256(data.filepath),
-            'keepsettings': data.keep,
-            'swupdate.swu': fs.createReadStream(data.filepath)
-        };*/
-        (async () => {
-            for (let i of selected) {
-                var f = new FormData();
-                f.append('password', data.password);
-                //f.append('checksum', sha256(data.filepath));
-                //f.append('keepsettings', data.keep.toString());
-                //f.append('swupdate.swu', fs.createReadStream(data.filepath));
-
-                try {
-                    const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
-                        body: f
-                        //headers: {'Content-Type': 'multipart/form-data; charset=utf-8; boundary="jejfe"'},
-                        //responseType: 'json',
-                        //timeout: 7200000 // 2hrs?
-                    });
-    
-                    console.log(body);
-    
-                    if (body.result) {
-                        notify('success', `${miners[i].address}: updating in progress`);
-                    } else {
-                        notify('error', `${miners[i].address}: ${body.error}`);
-                    }
-                } catch(err) {
-                    console.log(err);
-                }
-            }
-        })();
+        ipcRenderer.send('form-post', miners, api, data, selected);
     }
  
     render() {

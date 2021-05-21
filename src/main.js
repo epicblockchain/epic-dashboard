@@ -1,29 +1,57 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
+const got = require('got');
 const fs = require('fs');
+const FormData = require('form-data');
+const sha256 = require('sha256-file');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
-  app.quit();
+    app.quit();
 }
 
 const createWindow = () => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 1536,
-    height: 864,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      enableRemoteModule: true
-    }
-  });
+    // Create the browser window.
+    const mainWindow = new BrowserWindow({
+        width: 1536,
+        height: 864,
+        webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: true
+        }
+    });
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    // and load the index.html of the app.
+    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+
+    ipcMain.on('form-post', async (event, miners, api, data, selected) => {
+        for (let i of selected) {
+            var f = new FormData();
+            f.append('password', data.password);
+            f.append('checksum', sha256(data.filepath));
+            f.append('keepsettings', data.keep.toString());
+            f.append('swupdate.swu', fs.createReadStream(data.filepath));
+
+            try {
+                const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                    body: f,
+                    responseType: 'json',
+                    timeout: 7200000 // 2hrs?
+                });
+
+                if (body.result) {
+                    event.reply('form-post-reply', 'succes', `${miners[i].address}: updating in progress`);
+                } else {
+                    event.reply('form-post-reply', 'error', `${miners[i].address}: ${body.error}`);
+                }
+            } catch(err) {
+                console.log(err);
+            }
+        }
+    });
 };
 
 // This method will be called when Electron has finished
@@ -35,17 +63,17 @@ app.on('ready', createWindow);
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
 });
 
 // In this file you can include the rest of your app's specific main process
