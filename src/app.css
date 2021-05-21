@@ -6,3 +6,7 @@ div.Toastify__toast--default {
 div.Toastify__toast-body {
     padding: 0;
 }
+
+body {
+    background-color: white;
+}
