@@ -57,10 +57,6 @@ const notify = (sev, text) => {
     ));
 }
 
-ipcRenderer.on('form-post-reply', (event, sev, text) => {
-    notify(sev, text);
-});
-
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -90,7 +86,7 @@ class App extends React.Component {
                 
                 let match = this.state.miner_data.find(a => a.ip == miner.address);
 
-                if (init || match.sum == 'load' || match.sum == null) {
+                if (init || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
                     const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
                         timeout: 1000
                     });
@@ -104,7 +100,8 @@ class App extends React.Component {
                             ip: miner.address,
                             sum: JSON.parse(summary.body),
                             hist: JSON.parse(history.body).History,
-                            cap: content.Model ? content : null
+                            cap: content.Model ? content : null,
+                            timer: 0
                         });
                     } catch(err) {
                         console.log(err);
@@ -122,7 +119,14 @@ class App extends React.Component {
                     }
                 }
             } catch(err) {
-                miner_data.push({ip: miner.address, sum: null, hist: null})
+                console.log(err);
+
+                let match = this.state.miner_data.find(a => a.ip == miner.address);
+                if (match && match.sum == 'reboot' && match.timer > 0) {
+                    miner_data.push({ip: miner.address, sum: 'reboot', hist: 'reboot', timer: match.timer - 1})
+                } else {
+                    miner_data.push({ip: miner.address, sum: null, hist: null, timer: 0});
+                }
             }
         }
         this.setState({miner_data: miner_data});
@@ -154,6 +158,17 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
+            notify(sev, text);
+            if (true) {
+                let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
+                var temp = this.state.miner_data;
+                temp[ind].sum = 'reboot';
+                temp[ind].timer = 10;
+                this.setState({miner_data: temp});
+            }
+        });
+
         mdns.discover({
             name: '_epicminer._tcp.local', wait: 2
         }).then((list) => {
@@ -269,9 +284,13 @@ class App extends React.Component {
                 
                 if (body.result) {
                     notify('success', `${miners[i].address}: ${body.result}`);
-                    /*if (api == '/reboot') {
-                        let match = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
-                    }*/
+                    if (api == '/reboot') {
+                        let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
+                        var temp = this.state.miner_data;
+                        temp[ind].sum = 'reboot';
+                        temp[ind].timer = 10;
+                        this.setState({miner_data: temp});
+                    }
                 } else {
                     notify('error', `${miners[i].address}: ${body.error}`);
                 }
