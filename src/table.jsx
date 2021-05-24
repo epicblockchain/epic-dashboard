@@ -17,6 +17,7 @@ import { UpdateTab } from './tabs/UpdateTab.jsx';
 import { RebootTab } from './tabs/RebootTab.jsx';
 import { LedTab } from './tabs/LedTab.jsx';
 import { RecalibrateTab } from './tabs/RecalibrateTab.jsx';
+import { CmdTab } from './tabs/CmdTab.jsx';
 import './table.css';
 
 const columns = [
@@ -72,7 +73,7 @@ export class DataTable extends React.Component {
         } catch {
             sum = 'N/A'
         }
-        return Math.round(sum / 10000) / 100;
+        return Math.round(sum / 100) / 10000;
     }
 
     secondsToHumanReadable(seconds){
@@ -138,7 +139,7 @@ export class DataTable extends React.Component {
                 start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
                 uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
                 hbs: this.failSafe(a.sum) || a.sum.Session['Active HBs'],
-                hashrate15min: this.failSafe(a.sum) || Math.round(a.sum.Session['Average MHs'] / 10000) / 100,
+                hashrate15min: this.failSafe(a.sum) || Math.round(a.sum.Session['Average MHs'] / 100) / 10000,
                 hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 1),
                 hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 6),
                 hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 24),
@@ -208,6 +209,7 @@ export class DataTable extends React.Component {
                     textColor="primary" scrollButtons="auto" variant="scrollable"
                 >
                     <Tab label="Add/Remove"/>
+                    <Tab label="CMD"/>
                     <Tab label="Coin" disabled={!capApi}/>
                     <Tab label="Mining Pool"/>
                     <Tab label="Wallet Address"/>
@@ -226,36 +228,39 @@ export class DataTable extends React.Component {
                     />
                 </div>
                 <div hidden={this.state.tab != 1}>
+                    <CmdTab handleApi={this.props.handleApi} selected={selected}/>
+                </div>
+                <div hidden={this.state.tab != 2}>
                     <CoinTab
                         handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
                         selected={selected} data={this.props.data}
                     />
                 </div>
-                <div hidden={this.state.tab != 2}>
+                <div hidden={this.state.tab != 3}>
                     <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
                 </div>
-                <div hidden={this.state.tab != 3}>
+                <div hidden={this.state.tab != 4}>
                     <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
                 </div>
-                <div hidden={this.state.tab != 4}>
+                <div hidden={this.state.tab != 5}>
                     <OpModeTab handleApi={this.props.handleApi} selected={selected}/>
                 </div>
-                <div hidden={this.state.tab != 5}>
+                <div hidden={this.state.tab != 6}>
                     <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/>
                 </div>
-                <div hidden={this.state.tab != 6}>
+                <div hidden={this.state.tab != 7}>
                     <PasswordTab handleApi={this.props.handleApi} selected={selected}/>
                 </div>
-                <div hidden={this.state.tab != 7}>
+                <div hidden={this.state.tab != 8}>
                     <UpdateTab handleApi={this.props.handleFormApi} selected={selected}/>
                 </div>
-                <div hidden={this.state.tab != 8}>
+                <div hidden={this.state.tab != 9}>
                     <RebootTab handleApi={this.props.handleApi} selected={selected}/>
                 </div>
-                <div hidden={this.state.tab != 9}>
+                <div hidden={this.state.tab != 10}>
                     <LedTab handleApi={this.props.handleApi} selected={selected}/> 
                 </div>
-                <div hidden={this.state.tab != 10}>
+                <div hidden={this.state.tab != 11}>
                     <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/>
                 </div>
             </div>

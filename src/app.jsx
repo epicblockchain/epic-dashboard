@@ -275,6 +275,9 @@ class App extends React.Component {
             case '/identify':
                 obj = {param: data.checked, password: data.password};
                 break;
+            case '/miner':
+                obj = {param: data.cmd, password: data.password};
+                break;
         }
 
         for (let i of selected) {

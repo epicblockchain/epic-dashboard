@@ -1,0 +1,49 @@
+import * as React from 'react';
+import { Button, TextField, Select, FormControl, FormControlLabel, InputLabel } from '@material-ui/core';
+
+export class CmdTab extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {cmd: 'start', password: ''};
+
+        this.updateCmd = this.updateCmd.bind(this);
+        this.updatePassword = this.updatePassword.bind(this);
+    }
+
+    updateCmd(e) {
+        this.setState({cmd: e.target.value});
+    }
+
+    updatePassword(e) {
+        this.setState({password: e.target.value});
+    }
+
+    render() {
+        let options = ['start', 'stop', 'autostart'];
+
+        return(
+            <div style={{padding: '12px 0'}}>
+                <FormControl variant="outlined" margin="dense">
+                    <InputLabel htmlFor="cmd">Command</InputLabel>
+                    <Select native id="cmd" label="Command" value={this.state.cmd} onChange={this.updateCmd}>
+                        {
+                            options.map((a, i) => {
+                                return <option key={i} value={a}>{a.charAt(0).toUpperCase() + a.slice(1)}</option>;
+                            })
+                        }
+                    </Select>
+                </FormControl>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <FormControl margin="dense">
+                    <Button onClick={() => {
+                            this.props.handleApi('/miner', this.state, this.props.selected);
+                        }} variant="contained" color="primary" size="large"
+                        disabled={!this.state.cmd || !this.state.password || !this.props.selected.length}
+                    >
+                        Send
+                    </Button>
+                </FormControl>
+            </div>
+        );
+    }
+}
