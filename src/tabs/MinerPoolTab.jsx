@@ -12,8 +12,8 @@ export class MinerPoolTab extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.selected != this.props.selected) {
-            if (this.props.selected.length && typeof this.props.data[this.props.selected[0]].sum == "object") {
-                if(!prevProps.selected.length)
+            if (this.props.selected.length && this.props.data[this.props.selected[0]].sum) {
+                if(!prevProps.selected.length && typeof this.props.data[this.props.selected[0]].sum == "object")
                     this.setState({pool: this.props.data[this.props.selected[0]].sum.Stratum['Current Pool']});
             } else {
                 this.setState({pool: ''});        
