@@ -35,39 +35,21 @@ function formatHashrateString(totalHashrate){
 }
 
 function isSameData(a, b){
-    try {
-        for (let key in a) {
-            if (!(key in b)){
-                return false;
-            }
-            for (let subkey in a[key]) {
-                if (!(subkey) in b[key]){
-                    return false;
-                }
-                switch (subkey) {
-                    case 'ip':
-                        if (a[key]['ip'] !== b[key]['ip']){
-                            return false;
-                        }
-                    case 'hist':
-                        if (a[key]['hist'].length !== b[key]['hist'].length){
-                            return false;
-                        }
-                    default:
-                        ;
-                }
-            }
-        }
-        return true;
-    } catch (err) {
-        console.log(err);
+    if (a.numMiners !== b.numMiners) {
+        return false;
+    } else if (a.totalHistHashrateSum !== b.totalHistHashrateSum){
         return false;
     }
+    return true;
 }
 
 export class Dashboard extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            numMiners: 0,
+            totalHistHashrateSum: 0
+        };
     }
 
     componentDidMount() {
@@ -90,11 +72,13 @@ export class Dashboard extends React.Component {
             }
         });
         let chartHashrateData = [];
+        let totalHashrate = 0;
         for (const seconds in hashrateData) {
             chartHashrateData.push({
                 "time": new Date(seconds * 1000),
                 "hashrate": hashrateData[seconds] / 1000000
             });
+            totalHashrate += hashrateData[seconds];
         };
 
         let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -115,6 +99,10 @@ export class Dashboard extends React.Component {
 
         chart.data = chartHashrateData;
         this.chart = chart;
+        this.setState({
+            numMiners: this.props.data.length,
+            totalHistHashrateSum: totalHashrate
+        });
     }
 
     componentDidUpdate(oldProps){
@@ -136,14 +124,22 @@ export class Dashboard extends React.Component {
             }
         });
         let chartHashrateData = [];
+        let totalHashrate = 0;
         for (const seconds in hashrateData) {
             chartHashrateData.push({
                 "time": new Date(seconds * 1000),
                 "hashrate": hashrateData[seconds] / 1000000
             });
+            totalHashrate += hashrateData[seconds];
         };
-        if (!isSameData(this.props.data, oldProps.data)){
+
+
+        if (!isSameData(this.state, {numMiners: this.props.data.length, totalHistHashrateSum: totalHashrate})){
             this.chart.data = chartHashrateData;
+            this.setState({
+                numMiners: this.props.data.length,
+                totalHistHashrateSum: totalHashrate
+            });
         }
     }
 
@@ -162,17 +158,17 @@ export class Dashboard extends React.Component {
         }
 
         this.props.data.forEach(miner => {
-            try {
-                if (!(miner.sum.Mining.Algorithm in modelData)) {
-                    modelData[miner.sum.Mining.Algorithm] = [];
+            if (miner.sum) {
+                try {
+                    if (!(miner.sum.Mining.Algorithm in modelData)) {
+                        modelData[miner.sum.Mining.Algorithm] = [];
+                    }
+                    modelData[miner.sum.Mining.Algorithm].push(miner.sum);
+                } catch (err) {
+                    console.log(err);
                 }
-                modelData[miner.sum.Mining.Algorithm].push(miner.sum);
-            } catch (err) {
-                console.log(err);
             }
         });
-
-        console.log(modelData);
 
         let rows = [];
         for (let algo in modelData) {
