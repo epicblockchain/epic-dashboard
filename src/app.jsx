@@ -307,6 +307,7 @@ class App extends React.Component {
                 }
             } catch(err) {
                 console.log(err);
+                notify('error', `${miners[i].address}: Request Failed`);
             }
             })();
         }
