@@ -249,6 +249,17 @@ class App extends React.Component {
     async handleApi(api, data, selected) {
         var obj;
         switch(api) {
+            case '/coin':
+                obj = {
+                    param: {
+                        coin: data.coin,
+                        pool_url: data.pool,
+                        login: data.address + '.' + data.worker,
+                        password: data.wallet_pass
+                    },
+                    password: data.password
+                };
+                break;
             case '/pool':
                 obj = {param: data.pool, password: data.password};
                 break;

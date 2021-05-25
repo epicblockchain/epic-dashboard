@@ -85,7 +85,7 @@ export class CoinTab extends React.Component {
                 />
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
-                        this.props.handleApi('/login', this.state, this.props.selected);
+                        this.props.handleApi('/coin', this.state, this.props.selected);
                     }} variant="contained" color="primary"
                     disabled={!this.state.coin || !this.state.pool || !this.state.address || !this.state.worker
                         || !this.state.password || !this.props.selected.length || this.props.disabled}
