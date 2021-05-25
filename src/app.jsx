@@ -81,14 +81,14 @@ class App extends React.Component {
         for (let miner of miners) {
             try {
                 const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
-                    timeout: 2000
+                    timeout: 1500
                 });
                 
                 let match = this.state.miner_data.find(a => a.ip == miner.address);
 
-                if (init || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
+                if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
                     const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
-                        timeout: 2000
+                        timeout: 1500
                     });
                     try {
                         const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
@@ -99,7 +99,7 @@ class App extends React.Component {
                         miner_data.push({
                             ip: miner.address,
                             sum: JSON.parse(summary.body),
-                            hist: JSON.parse(history.body).History,
+                            hist: JSON.parse(history.body).History.slice(-48),
                             cap: content.Model ? content : null,
                             timer: 0
                         });
@@ -112,6 +112,8 @@ class App extends React.Component {
                     if (match.hist.length == 0 || lastMHs == null) {
                         miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs], cap: match.cap});
                     } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
+                        if (match.hist.length >= 48)
+                            match.hist.slice(1);
                         match.hist.push(lastMHs);
                         miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap});
                     } else {
@@ -214,7 +216,7 @@ class App extends React.Component {
 
     delMiner(ids) {
         var temp = this.state.miner_data;
-        for (let id of ids.reverse()) {
+        for (let id of ids.sort(function(a, b){return b-a})) {
             miners.splice(id, 1);
             temp.splice(id, 1);
         }
@@ -226,7 +228,7 @@ class App extends React.Component {
 
     blacklist(ids) {
         var temp = this.state.miner_data;
-        for (let id of ids.reverse()) {
+        for (let id of ids.sort(function(a, b){return b-a})) {
             blacklist.push(miners[id].fqdn);
             miners.splice(id, 1);
             temp.splice(id, 1);
@@ -278,6 +280,8 @@ class App extends React.Component {
             case '/miner':
                 obj = {param: data.cmd, password: data.password};
                 break;
+            case '/fanspeed':
+                obj = {param: data.speed, password: data.password};
         }
 
         for (let i of selected) {

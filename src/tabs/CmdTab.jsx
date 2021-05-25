@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField, Select, FormControl, FormControlLabel, InputLabel } from '@material-ui/core';
+import { Button, TextField, Select, FormControl, InputLabel } from '@material-ui/core';
 
 export class CmdTab extends React.Component {
     constructor(props) {
@@ -34,15 +34,14 @@ export class CmdTab extends React.Component {
                     </Select>
                 </FormControl>
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
-                <FormControl margin="dense">
-                    <Button onClick={() => {
-                            this.props.handleApi('/miner', this.state, this.props.selected);
-                        }} variant="contained" color="primary" size="large"
-                        disabled={!this.state.cmd || !this.state.password || !this.props.selected.length}
-                    >
-                        Send
-                    </Button>
-                </FormControl>
+                <br />
+                <Button onClick={() => {
+                        this.props.handleApi('/miner', this.state, this.props.selected);
+                    }} variant="contained" color="primary" size="large"
+                    disabled={!this.state.cmd || !this.state.password || !this.props.selected.length}
+                >
+                    Send
+                </Button>
             </div>
         );
     }

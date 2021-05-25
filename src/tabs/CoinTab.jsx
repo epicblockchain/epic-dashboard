@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField, Select, FormControl, FormControlLabel, InputLabel } from '@material-ui/core';
+import { Button, TextField, Select, FormControl, InputLabel, InputAdornment } from '@material-ui/core';
 
 export class CoinTab extends React.Component {
     constructor(props) {
@@ -71,11 +71,10 @@ export class CoinTab extends React.Component {
                         }
                     </Select>
                 </FormControl>
-                <FormControlLabel control={
-                    <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool}
-                        value={this.state.pool} margin="dense" disabled={this.props.disabled}
-                    />
-                } label="stratum+tcp://" labelPlacement="start"/>
+                <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool}
+                    value={this.state.pool} margin="dense" disabled={this.props.disabled}
+                    InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
+                />
                 <br />
                 <TextField variant="outlined" label="Wallet Address" onChange={this.updateAddress}
                     value={this.state.address} margin="dense" disabled={this.props.disabled}
@@ -88,8 +87,8 @@ export class CoinTab extends React.Component {
                 <Button onClick={() => {
                         this.props.handleApi('/login', this.state, this.props.selected);
                     }} variant="contained" color="primary" size="large"
-                    disabled={!this.state.pool || !this.state.address || !this.state.worker || !this.state.password
-                        || !this.props.selected.length || this.props.disabled}
+                    disabled={!this.state.coin || !this.state.pool || !this.state.address || !this.state.worker
+                        || !this.state.password || !this.props.selected.length || this.props.disabled}
                 >
                     Apply
                 </Button>

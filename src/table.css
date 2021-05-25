@@ -6,3 +6,7 @@
         min-width: 140px;
     }
 }
+
+.MuiFormControl-root {
+    margin-right: 12px !important; 
+}

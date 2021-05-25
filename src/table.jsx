@@ -18,6 +18,7 @@ import { RebootTab } from './tabs/RebootTab.jsx';
 import { LedTab } from './tabs/LedTab.jsx';
 import { RecalibrateTab } from './tabs/RecalibrateTab.jsx';
 import { CmdTab } from './tabs/CmdTab.jsx';
+import { FanTab } from './tabs/FanTab.jsx';
 import './table.css';
 
 const columns = [
@@ -220,6 +221,7 @@ export class DataTable extends React.Component {
                     <Tab label="Reboot"/>
                     <Tab label="LED"/>
                     <Tab label="Recalibrate"/>
+                    <Tab label="Fans" disabled={!capApi}/>
                 </Tabs>
                 <div hidden={this.state.tab != 0}>
                     <AddRemoveTab
@@ -262,6 +264,9 @@ export class DataTable extends React.Component {
                 </div>
                 <div hidden={this.state.tab != 11}>
                     <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/>
+                </div>
+                <div hidden={this.state.tab != 12}> 
+                    <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi}/>
                 </div>
             </div>
         );

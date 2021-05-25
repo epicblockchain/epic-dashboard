@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, InputAdornment } from '@material-ui/core';
 
 export class MinerPoolTab extends React.Component {
     constructor(props) {
@@ -32,11 +32,12 @@ export class MinerPoolTab extends React.Component {
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                stratum+tcp://
                 <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool}
-                    value={this.state.pool}
+                    value={this.state.pool} margin="dense"
+                    InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
                 />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <br />
                 <Button onClick={() => {
                         this.props.handleApi('/pool', this.state, this.props.selected);
                     }} variant="contained" color="primary"

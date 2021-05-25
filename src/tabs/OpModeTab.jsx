@@ -9,17 +9,6 @@ export class OpModeTab extends React.Component {
         this.updateMode = this.updateMode.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
-
-    /*componentDidUpdate(prevProps, prevState) {
-        if (prevProps.selected != this.props.selected) {
-            if (this.props.selected.length) {
-                if(!prevProps.selected.length)
-                    this.setState({mode: this.props.data[this.props.selected[0]].sum.Preset});
-            } else {
-                this.setState({mode: ''});
-            }
-        }
-    }*/
     
     updateMode(e) {
         this.setState({mode: e.target.value});
