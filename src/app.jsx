@@ -254,7 +254,7 @@ class App extends React.Component {
                 break;
             case '/login':
                 obj = {
-                    param: {login: data.worker + '.' + data.password, password: data.wallet_pass},
+                    param: {login: data.address + '.' + data.worker, password: data.wallet_pass},
                     password: data.password
                 };
                 break;
