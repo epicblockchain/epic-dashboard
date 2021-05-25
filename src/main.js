@@ -29,7 +29,7 @@ const createWindow = () => {
 
     ipcMain.on('form-post', (event, miners, api, data, selected) => {
         for (let i of selected) {
-            async () => {
+            (async () => {
                 var f = new FormData();
                 f.append('password', data.password);
                 f.append('checksum', sha256(data.filepath));
@@ -40,7 +40,7 @@ const createWindow = () => {
                     const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                         body: f,
                         responseType: 'json',
-                        timeout: 7200000 // 2hrs?
+                        timeout: 5000
                     });
 
                     if (body.result) {
@@ -51,7 +51,7 @@ const createWindow = () => {
                 } catch(err) {
                     console.log(err);
                 }
-            }
+            })();
         }
     });
 };
