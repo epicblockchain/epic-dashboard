@@ -40,13 +40,13 @@ export class WalletAddrTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField variant="outlined" label="Wallet Address" onChange={this.updateAddress}
-                    value={this.state.address}
+                    value={this.state.address} margin="dense"
                 />
                 .
                 <TextField variant="outlined" label="Worker Name" onChange={this.updateWorker}
-                    value={this.state.worker}
+                    value={this.state.worker} margin="dense"
                 />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/login', this.state, this.props.selected);
                     }} variant="contained" color="primary"

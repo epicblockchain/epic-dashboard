@@ -16,7 +16,7 @@ export class RecalibrateTab extends React.Component {
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/hwconfig', this.state, this.props.selected);
                     }} variant="contained" color="primary"

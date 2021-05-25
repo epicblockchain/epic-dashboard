@@ -37,7 +37,7 @@ export class CmdTab extends React.Component {
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/miner', this.state, this.props.selected);
-                    }} variant="contained" color="primary" size="large"
+                    }} variant="contained" color="primary"
                     disabled={!this.state.cmd || !this.state.password || !this.props.selected.length}
                 >
                     Send

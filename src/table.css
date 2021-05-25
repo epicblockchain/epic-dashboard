@@ -10,3 +10,13 @@
 .MuiFormControl-root {
     margin-right: 12px !important; 
 }
+
+button.MuiButton-contained {
+    line-height: 2;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.MuiInputAdornment-root button {
+    margin: 0;
+}

@@ -27,7 +27,7 @@ export class LedTab extends React.Component {
                         label="Turn on LED indicator"
                     />
                 </FormControl>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/identify', this.state, this.props.selected);
                     }} variant="contained" color="primary"

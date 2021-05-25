@@ -22,9 +22,9 @@ export class RebootTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField variant="outlined" label="Reboot Delay" type="number" onChange={this.updateDelay}
-                    value={this.state.delay} helperText="(seconds)"
+                    value={this.state.delay} helperText="(seconds)" margin="dense"
                 />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/reboot', this.state, this.props.selected);
                     }} variant="contained" color="primary"

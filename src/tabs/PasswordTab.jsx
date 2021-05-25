@@ -31,13 +31,13 @@ export class PasswordTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField variant="outlined" label="New Password" type="password" onChange={this.updatePass1}
-                    value={this.state.pass1}
+                    value={this.state.pass1} margin="dense"
                 />
                 <TextField variant="outlined" label="Confirm New Password" type="password" onChange={this.checkMatch}
-                    value={this.state.pass2} error={this.state.error}
+                    value={this.state.pass2} error={this.state.error} margin="dense"
                     helperText={this.state.error ? 'Passwords do not match' : ''}
                 />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/password', this.state, this.props.selected);
                     }} variant="contained" color="primary"

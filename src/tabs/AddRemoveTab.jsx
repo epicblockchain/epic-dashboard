@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField } from '@material-ui/core'; 
+import { Button, TextField, FormControl, Divider } from '@material-ui/core'; 
 
 export class AddRemoveTab extends React.Component {
     constructor(props) {
@@ -16,12 +16,13 @@ export class AddRemoveTab extends React.Component {
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                <TextField id="ip" variant="outlined" label="Miner IP" onChange={this.updateIP}/>
+                <TextField id="ip" variant="outlined" label="Miner IP" onChange={this.updateIP} margin="dense"/>
                 <Button onClick={() => this.props.addMiner(this.state.ip)} variant="contained" color="primary"
                     disabled={!this.state.ip}
                 >
                     Add Miner via IP
                 </Button>
+                <Divider variant="middle" style={{margin: '8px'}}/>
                 <Button
                     onClick={() => {
                         this.props.delMiner(this.props.selected);

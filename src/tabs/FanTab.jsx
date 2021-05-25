@@ -54,7 +54,7 @@ export class FanTab extends React.Component {
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                    }} variant="contained" color="primary" size="large"
+                    }} variant="contained" color="primary"
                     disabled={!this.state.speed || !this.state.password || !this.props.selected.length || this.props.disabled}
                 >
                     Apply

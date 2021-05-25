@@ -35,7 +35,7 @@ export class OpModeTab extends React.Component {
                         labelPlacement="end"
                     />
                 </RadioGroup>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/mode', this.state, this.props.selected);
                     }} variant="contained" color="primary"

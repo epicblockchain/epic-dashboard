@@ -36,10 +36,12 @@ export class UpdateTab extends React.Component {
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                <TextField variant="outlined" label="Firmware file" value={this.state.filepath} disabled
+                <TextField variant="outlined" label="Firmware file" value={this.state.filepath} disabled margin="dense"
                     InputProps={{endAdornment:
                         <InputAdornment position="end">
-                            <Button onClick={this.updateFilepath} variant="contained" color="primary">Browse</Button>
+                            <Button onClick={this.updateFilepath} variant="contained" color="primary" size="small">
+                                Browse
+                            </Button>
                         </InputAdornment>}}
                 />
                 <FormControl>
@@ -48,7 +50,7 @@ export class UpdateTab extends React.Component {
                         label="Maintain config over update"
                     />
                 </FormControl>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword}/>
+                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/update', this.state, this.props.selected);
                     }} variant="contained" color="primary"
