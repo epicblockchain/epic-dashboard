@@ -306,7 +306,7 @@ class App extends React.Component {
                 msg = 'Sending command'
                 break;
             case '/fanspeed':
-                obj = {param: data.speed, password: data.password};
+                obj = {param: data.speed.toString(), password: data.password};
         }
         
         let slow_api = api == '/coin' || api == '/miner';
