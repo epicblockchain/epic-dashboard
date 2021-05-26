@@ -21,8 +21,8 @@ export class CoinTab extends React.Component {
                     this.setState({
                         coin: this.props.data[this.props.selected[0]].sum.Mining['Coin'],
                         pool: this.props.data[this.props.selected[0]].sum.Stratum['Current Pool'],
-                        address: arr[0],
-                        worker: arr[1]
+                        address: arr[0] || '',
+                        worker: arr[1] || ''
                     });
                 }
             } else {
