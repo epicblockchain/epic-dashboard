@@ -75,62 +75,61 @@ class App extends React.Component {
         this.handleFormApi = this.handleFormApi.bind(this);
     }
 
-    async summary(init) {
-        var miner_data = [];
-        
-        for (let miner of miners) {
-            try {
-                const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
-                    timeout: 1500
-                });
-                
-                let match = this.state.miner_data.find(a => a.ip == miner.address);
-
-                if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
-                    const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
-                        timeout: 1500
+    async summary(init) {        
+        let miner_data = await Promise.all(
+            miners.map(async miner => {
+                try {
+                    const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
+                        timeout: 1500, retry: 0
                     });
-                    try {
-                        const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
-                            timeout: 1000
-                        });
-                        let content = JSON.parse(cap.body);
 
-                        miner_data.push({
-                            ip: miner.address,
-                            sum: JSON.parse(summary.body),
-                            hist: JSON.parse(history.body).History.slice(-48),
-                            cap: content.Model ? content : null,
-                            timer: 0
+                    let match = this.state.miner_data.find(a => a.ip == miner.address);
+
+                    if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
+                        const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
+                            timeout: 1500, retry: 0
                         });
-                    } catch(err) {
-                        console.log(err);
-                    }
-                } else {
-                    const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
-                    
-                    if (match.hist.length == 0 || lastMHs == null) {
-                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs], cap: match.cap});
-                    } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
-                        if (match.hist.length >= 48)
-                            match.hist.slice(1);
-                        match.hist.push(lastMHs);
-                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap});
+                        try {
+                            const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
+                                timeout: 1000, retry: 0
+                            });
+                            let content = JSON.parse(cap.body);
+    
+                            return {
+                                ip: miner.address,
+                                sum: JSON.parse(summary.body),
+                                hist: JSON.parse(history.body).History.slice(-48),
+                                cap: content.Model ? content : null,
+                                timer: 0
+                            };
+                        } catch(err) {
+                            console.log(err);
+                        }
                     } else {
-                        miner_data.push({ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap});
+                        const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
+                        
+                        if (match.hist.length == 0 || lastMHs == null) {
+                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs], cap: match.cap};
+                        } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
+                            if (match.hist.length >= 48)
+                                match.hist.slice(1);
+                            match.hist.push(lastMHs);
+                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap};
+                        } else {
+                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap};
+                        }
+                    }
+                } catch(err) {
+                    let match = this.state.miner_data.find(a => a.ip == miner.address);
+                    
+                    if (match && match.sum == 'reboot' && match.timer > 0) {
+                        return {ip: miner.address, sum: 'reboot', hist: 'reboot', timer: match.timer - 1};
+                    } else {
+                        return {ip: miner.address, sum: null, hist: null, timer: 0};
                     }
                 }
-            } catch(err) {
-                console.log(err);
-
-                let match = this.state.miner_data.find(a => a.ip == miner.address);
-                if (match && match.sum == 'reboot' && match.timer > 0) {
-                    miner_data.push({ip: miner.address, sum: 'reboot', hist: 'reboot', timer: match.timer - 1})
-                } else {
-                    miner_data.push({ip: miner.address, sum: null, hist: null, timer: 0});
-                }
-            }
-        }
+            })
+        );
         this.setState({miner_data: miner_data});
     }
 
@@ -300,13 +299,16 @@ class App extends React.Component {
             try {
                 const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                     json: obj,
-                    timeout: 5000,
+                    timeout: 60000,
                     responseType: 'json'
                 });
                 
                 if (body.result) {
                     notify('success', `${miners[i].address}: ${body.result}`);
-                    if (api == '/reboot') {
+
+                    let soft_reboot = api == 'softreboot/' || api == 'coin/' || api == 'hwconfig/' || api == 'mode/';
+                    
+                    if (api == '/reboot' || soft_reboot) {
                         let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
                         var temp = this.state.miner_data;
                         temp[ind].sum = 'reboot';
