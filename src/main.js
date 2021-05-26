@@ -37,16 +37,18 @@ const createWindow = () => {
                 f.append('swupdate.swu', fs.createReadStream(data.filepath));
 
                 try {
+                    event.reply('form-post-reply', i, 'info', `${miners[i].address}: Updating in progress`);
+
                     const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                         body: f,
                         responseType: 'json',
-                        timeout: 5000
+                        timeout: 60000
                     });
 
                     if (body.result) {
-                        event.reply('form-post-reply', i, 'success', `${miners[i].address}: updating in progress`);
+                        mainWindow.webContents.send('form-result', i, 'success', `${miners[i].address}: Done firmware update`);
                     } else {
-                        event.reply('form-post-reply', i, 'error', `${miners[i].address}: ${body.error}`);
+                        mainWindow.webContents.send('form-result', i, 'error', `${miners[i].address}: ${body.error}`);
                     }
                 } catch(err) {
                     console.log(err);

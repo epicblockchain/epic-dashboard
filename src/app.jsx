@@ -20,6 +20,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import './app.css';
+import { totalmem } from 'os';
 
 var miners = [];
 var blacklist = [];
@@ -49,12 +50,12 @@ fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
     console.log(blacklist);
 });
 
-const notify = (sev, text) => {
+const notify = (sev, text, options) => {
     toast(({ closeToast }) => (
         <Alert elevation={6} variant="filled" onClose={closeToast} severity={sev}>
             {text}
         </Alert>
-    ));
+    ), options);
 }
 
 class App extends React.Component {
@@ -121,7 +122,7 @@ class App extends React.Component {
                     }
                 } catch(err) {
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
-                    
+
                     if (match && match.sum == 'reboot' && match.timer > 0) {
                         return {ip: miner.address, sum: 'reboot', hist: 'reboot', timer: match.timer - 1};
                     } else {
@@ -160,14 +161,23 @@ class App extends React.Component {
 
     componentDidMount() {
         ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
+            notify(sev, text, {
+                autoClose: 60000,
+                hideProgressBar: false,
+                pauseOnHover: false,
+                toastId: i
+            });
+            
+            let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
+            var temp = this.state.miner_data;
+            temp[ind].sum = 'reboot';
+            temp[ind].timer = 10;
+            this.setState({miner_data: temp});
+        });
+
+        ipcRenderer.on('form-result', (event, i, sev, text) => {
             notify(sev, text);
-            if (sev == 'success') {
-                let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
-                var temp = this.state.miner_data;
-                temp[ind].sum = 'reboot';
-                temp[ind].timer = 10;
-                this.setState({miner_data: temp});
-            }
+            toast.dismiss(i);
         });
 
         mdns.discover({
@@ -306,7 +316,7 @@ class App extends React.Component {
                 if (body.result) {
                     notify('success', `${miners[i].address}: ${body.result}`);
 
-                    let soft_reboot = api == 'softreboot/' || api == 'coin/' || api == 'hwconfig/' || api == 'mode/';
+                    let soft_reboot = api == 'softreboot/' || api == 'coin/';
                     
                     if (api == '/reboot' || soft_reboot) {
                         let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
