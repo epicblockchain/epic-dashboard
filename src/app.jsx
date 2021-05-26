@@ -108,8 +108,10 @@ class App extends React.Component {
                         }
                     } else {
                         const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
-                        
-                        if (match.hist.length == 0 || lastMHs == null) {
+
+                        if (lastMHs == null) {
+                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: [], cap: match.cap};
+                        } else if (match.hist.length == 0) {
                             return {ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs], cap: match.cap};
                         } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
                             if (match.hist.length >= 48)
