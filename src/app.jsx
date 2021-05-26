@@ -257,6 +257,7 @@ class App extends React.Component {
 
     async handleApi(api, data, selected) {
         var obj;
+        var msg;
         switch(api) {
             case '/coin':
                 obj = {
@@ -268,6 +269,7 @@ class App extends React.Component {
                     },
                     password: data.password
                 };
+                msg = 'Updating coin';
                 break;
             case '/pool':
                 obj = {param: data.pool, password: data.password};
@@ -299,24 +301,43 @@ class App extends React.Component {
                 break;
             case '/miner':
                 obj = {param: data.cmd, password: data.password};
+                msg = 'Sending command'
                 break;
             case '/fanspeed':
                 obj = {param: data.speed, password: data.password};
         }
+        
+        let slow_api = api == '/coin' || api == '/miner';
+        let soft_reboot = api == '/softreboot' || api == 'hwconfig' || api == '/mode';
 
         for (let i of selected) {
             (async () => {
             try {
+                if (slow_api) {
+                    notify('info', `${miners[i].address}: ${msg}`, {
+                        autoClose: 60000,
+                        hideProgressBar: false,
+                        pauseOnHover: false,
+                        toastId: i
+                    });
+
+                    let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
+                    var temp = this.state.miner_data;
+                    temp[ind].sum = 'reboot';
+                    temp[ind].timer = 10;
+                    this.setState({miner_data: temp});
+                }
+
                 const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                     json: obj,
-                    timeout: 60000,
+                    timeout: slow_api ? 60000 : 5000,
                     responseType: 'json'
                 });
                 
+                if (slow_api) toast.dismiss(i);
+
                 if (body.result) {
                     notify('success', `${miners[i].address}: ${body.result}`);
-
-                    let soft_reboot = api == 'softreboot/' || api == 'coin/';
                     
                     if (api == '/reboot' || soft_reboot) {
                         let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
