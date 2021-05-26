@@ -1,5 +1,4 @@
-// TODO: https://github.com/electron/remote or something different to remoev warning
-const { dialog } = require('electron').remote;
+const { dialog } = require('@electron/remote');
 const fs = require('fs');
 
 import * as React from 'react';

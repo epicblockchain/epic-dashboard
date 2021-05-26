@@ -1,4 +1,4 @@
-const { dialog } = require('electron').remote;
+const { dialog } = require('@electron/remote');
 import * as React from 'react';
 import { Button, TextField, InputAdornment, FormControl, FormControlLabel, Switch } from '@material-ui/core';
 
