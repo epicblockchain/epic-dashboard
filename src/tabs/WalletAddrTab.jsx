@@ -51,8 +51,8 @@ export class WalletAddrTab extends React.Component {
                 <TextField variant="outlined" label="Worker Name" onChange={this.updateWorker}
                     value={this.state.worker} margin="dense"
                 />
-                <TextField variant="outlined" label="Wallet Password" type="password" onChange={this.updateWalletPass}
-                    margin="dense"
+                <TextField variant="outlined" label="Stratum Password" type="password" onChange={this.updateWalletPass}
+                    value={this.state.wallet_pass} margin="dense" helperText="Leave unless qualified" className="stratum"
                 />
                 <br />
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>

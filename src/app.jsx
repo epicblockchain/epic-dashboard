@@ -394,7 +394,7 @@ class App extends React.Component {
                     <div onClick={() => this.toggleDrawer(false)}>
                         <List>
                             <ListItem>
-                                <img src={logo} alt="" />
+                                <img src={logo}/>
                             </ListItem>
                             <Divider variant="middle" light/>
                             <ListItem button onClick={() => this.toggleTheme()}>
