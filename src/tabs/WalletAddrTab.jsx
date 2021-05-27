@@ -8,6 +8,7 @@ export class WalletAddrTab extends React.Component {
 
         this.updateAddress = this.updateAddress.bind(this);
         this.updateWorker = this.updateWorker.bind(this);
+        this.updateWalletPass = this.updateWalletPass.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -32,6 +33,10 @@ export class WalletAddrTab extends React.Component {
         this.setState({worker: e.target.value});
     }
 
+    updateWalletPass(e) {
+        this.setState({wallet_pass: e.target.value});
+    }
+
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
@@ -40,17 +45,22 @@ export class WalletAddrTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField variant="outlined" label="Wallet Address" onChange={this.updateAddress}
-                    value={this.state.address} margin="dense"
+                    value={this.state.address} margin="dense" className="wallet"
                 />
-                .
+                <p className="period">.</p>
                 <TextField variant="outlined" label="Worker Name" onChange={this.updateWorker}
                     value={this.state.worker} margin="dense"
                 />
+                <TextField variant="outlined" label="Wallet Password" type="password" onChange={this.updateWalletPass}
+                    margin="dense"
+                />
+                <br />
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/login', this.state, this.props.selected);
                     }} variant="contained" color="primary"
-                    disabled={!this.state.address || !this.state.worker || !this.state.password || !this.props.selected.length}
+                    disabled={!this.state.address || !this.state.worker || !this.state.password || !this.state.wallet_pass
+                        || !this.props.selected.length}
                 >
                     Apply
                 </Button>

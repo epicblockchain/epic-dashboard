@@ -20,3 +20,21 @@ button.MuiButton-contained {
 .MuiInputAdornment-root button {
     margin: 0;
 }
+
+.period {
+    display: inline-block;
+    margin: 8px 1px 4px 1px;
+    padding: 15px 0 6px 0;
+    line-height: 1.1876em;
+}
+
+.wallet {
+    margin-right: 0 !important;
+    width: 100%;
+    max-width: 400px;
+}
+
+.pool {
+    width: 100%;
+    max-width: 400px;
+}

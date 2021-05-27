@@ -33,7 +33,7 @@ export class MinerPoolTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool}
-                    value={this.state.pool} margin="dense"
+                    value={this.state.pool} margin="dense" className="pool"
                     InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
                 />
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>

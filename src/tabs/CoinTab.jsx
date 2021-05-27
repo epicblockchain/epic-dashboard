@@ -10,6 +10,7 @@ export class CoinTab extends React.Component {
         this.updatePool = this.updatePool.bind(this);
         this.updateAddress = this.updateAddress.bind(this);
         this.updateWorker = this.updateWorker.bind(this);
+        this.updateWalletPass = this.updateWalletPass.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -47,6 +48,10 @@ export class CoinTab extends React.Component {
         this.setState({worker: e.target.value});
     }
 
+    updateWalletPass(e) {
+        this.setState({wallet_pass: e.target.value});
+    }
+
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
@@ -71,23 +76,27 @@ export class CoinTab extends React.Component {
                         }
                     </Select>
                 </FormControl>
-                <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool}
+                <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool} className="pool"
                     value={this.state.pool} margin="dense" disabled={this.props.disabled}
                     InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
                 />
                 <br />
                 <TextField variant="outlined" label="Wallet Address" onChange={this.updateAddress}
-                    value={this.state.address} margin="dense" disabled={this.props.disabled}
+                    value={this.state.address} margin="dense" disabled={this.props.disabled} className="wallet"
                 />
-                .
+                <p className="period">.</p>
                 <TextField variant="outlined" label="Worker Name" onChange={this.updateWorker}
-                    value={this.state.worker} margin="dense" disabled={this.props.disabled}
+                    value={this.state.worker} margin="dense" disabled={this.props.disabled} 
                 />
+                <TextField variant="outlined" label="Wallet Password" type="password" onChange={this.updateWalletPass}
+                    margin="dense"
+                />
+                <br />
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/coin', this.state, this.props.selected);
                     }} variant="contained" color="primary"
-                    disabled={!this.state.coin || !this.state.pool || !this.state.address || !this.state.worker
+                    disabled={!this.state.pool || !this.state.address || !this.state.wallet_pass || !this.state.worker
                         || !this.state.password || !this.props.selected.length || this.props.disabled}
                 >
                     Apply
