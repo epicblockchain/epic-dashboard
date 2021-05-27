@@ -17,6 +17,10 @@ body {
 }
 
 #menu-but {
+    position: fixed;
+    top: 0;
+    left: 8px;
+    z-index: 10;
     padding: 4px;
     min-width: 0;
 }

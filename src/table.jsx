@@ -225,8 +225,9 @@ export class DataTable extends React.Component {
                 </Tabs>
                 <div hidden={this.state.tab != 0}>
                     <AddRemoveTab
-                        addMiner={this.props.addMiner} delMiner={this.props.delMiner}
-                        blacklist={this.props.blacklist} selected={selected} select={this.select}
+                        addMiner={this.props.addMiner} delMiner={this.props.delMiner} blacklist={this.props.blacklist}
+                        saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners}
+                        selected={selected} select={this.select}
                     />
                 </div>
                 <div hidden={this.state.tab != 1}>

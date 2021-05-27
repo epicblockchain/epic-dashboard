@@ -22,6 +22,12 @@ export class AddRemoveTab extends React.Component {
                 >
                     Add Miner via IP
                 </Button>
+                <Button onClick={() => this.props.saveMiners()} variant="contained" color="secondary">
+                    Save Current Miners
+                </Button>
+                <Button onClick={() => this.props.loadMiners()} variant="contained" color="secondary">
+                    Load Saved Miners
+                </Button>
                 <Divider variant="middle" style={{margin: '8px'}}/>
                 <Button
                     onClick={() => {

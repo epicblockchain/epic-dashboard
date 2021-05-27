@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, app } = require('electron');
 const got = require('got');
 const mdns = require('node-dns-sd');
 const path = require('path');
@@ -85,11 +85,13 @@ class App extends React.Component {
             page: 'main',
             miner_data: [],
             modal: false,
-            theme: 'dark'
+            theme: 'light'
         };
 
         this.addMiner = this.addMiner.bind(this);
         this.delMiner = this.delMiner.bind(this);
+        this.saveMiners = this.saveMiners.bind(this);
+        this.loadMiners = this.loadMiners.bind(this);
         this.blacklist = this.blacklist.bind(this);
         this.handleApi = this.handleApi.bind(this);
         this.handleFormApi = this.handleFormApi.bind(this);
@@ -258,6 +260,40 @@ class App extends React.Component {
         console.log(miners);
         notify('success', 'Successfully removed miners');
         this.setState({miner_data: temp});
+    }
+
+    saveMiners() {
+        var string = '';
+        for (let miner of miners) {
+            string += miner.address + '\n';
+        }
+
+        fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
+        fs.writeFile(path.join(app_path, 'ipaddr.txt'), string, function (err) {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+        });
+
+        notify('success', 'Successfully saved miners');
+    }
+
+    loadMiners() {
+        fs.readFile(path.join(app_path, 'ipaddr.txt'), (err, data) => {
+            if (err) {
+                notify('error', 'No miners saved');
+                console.log(err);
+                return;
+            }
+            const ips = data.toString().split('\n');
+            const prev = miners.map(a => a.address);
+            for (let ip of ips) {
+                if (ip && !prev.includes(ip)) miners.push({address: ip, service: {port: 4028}});
+            }
+
+            notify('success', 'Successfully loaded miners');
+        });
     }
 
     blacklist(ids) {
@@ -453,6 +489,7 @@ class App extends React.Component {
                 { this.state.page == 'table' &&
                     <DataTable data={this.state.miner_data} 
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
+                        saveMiners={this.saveMiners} loadMiners={this.loadMiners}
                         handleApi={this.handleApi} handleFormApi={this.handleFormApi}
                     />
                 }

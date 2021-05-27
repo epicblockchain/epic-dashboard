@@ -13,8 +13,7 @@
 
 button.MuiButton-contained {
     line-height: 2;
-    margin-top: 8px;
-    margin-bottom: 4px;
+    margin: 8px 12px 4px 0;
 }
 
 .MuiInputAdornment-root button {
