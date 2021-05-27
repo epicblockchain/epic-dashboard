@@ -11,7 +11,7 @@ import { DataTable } from './table.jsx';
 import { Support } from './support.jsx';
 
 import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
-        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CssBaseline
     } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { ToastContainer, toast } from 'react-toastify';
@@ -19,8 +19,25 @@ import 'react-toastify/dist/ReactToastify.css';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
+import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import './app.css';
-import { totalmem } from 'os';
+import logo from './img/EpicLogo.png'
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+
+const light = createMuiTheme({
+    palette: {
+        primary: {main: '#1b1d4d'},
+        secondary: {main: '#ffc107'}
+    }
+})
+
+const dark = createMuiTheme({
+    palette: {
+        type: 'dark',
+        primary: {main: '#ffc107'},
+        secondary: {main: '#1b1d4d'}
+    }
+})
 
 var miners = [];
 var blacklist = [];
@@ -66,7 +83,8 @@ class App extends React.Component {
             drawerOpen: true,
             page: 'main',
             miner_data: [],
-            modal: false
+            modal: false,
+            theme: 'dark'
         };
 
         this.addMiner = this.addMiner.bind(this);
@@ -208,6 +226,10 @@ class App extends React.Component {
 
     setPage(page) {
         this.setState({page: page});
+    }
+
+    toggleTheme() {
+        this.setState({theme: this.state.theme == 'light' ? 'dark' : 'light'});
     }
 
     addMiner(ip) {
@@ -365,11 +387,21 @@ class App extends React.Component {
  
     render() {
         return (
-            <React.Fragment>
+            <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
+                <CssBaseline/>
                 <Button onClick={() => this.toggleDrawer(true)}>Open</Button>
                 <Drawer open={this.state.drawerOpen} onClose={() => this.toggleDrawer(false)}>
                     <div onClick={() => this.toggleDrawer(false)}>
                         <List>
+                            <ListItem>
+                                <img src={logo} alt="" />
+                            </ListItem>
+                            <Divider variant="middle" light/>
+                            <ListItem button onClick={() => this.toggleTheme()}>
+                                <InvertColorsIcon/>
+                                <ListItemText primary="Toggle Theme"/>
+                            </ListItem>
+                            <Divider variant="middle"/>
                             <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
                                 <AssessmentIcon/>
                                 <ListItemText primary="Dashboard"/>
@@ -422,7 +454,7 @@ class App extends React.Component {
                     />
                 }
                 { this.state.page == 'support' && <Support data={this.state}/> }
-            </React.Fragment>
+            </MuiThemeProvider>
         );
     }
 }

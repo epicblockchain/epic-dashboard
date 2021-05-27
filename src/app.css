@@ -7,10 +7,28 @@ div.Toastify__toast-body {
     padding: 0;
 }
 
-.Toastify__progress-bar {
-    
-}
+/*.Toastify__progress-bar {
+
+}*/
 
 body {
     background-color: white;
+    margin: 8px !important;
+}
+
+div.MuiDrawer-paper {
+    background-color: #1b1d4d;
+    color: #ffc107;
+}
+
+.MuiDrawer-paper img {
+    margin: 10px 0;
+}
+
+.MuiDrawer-paper .MuiDivider-root {
+    background-color: #ffc107;
+}
+
+.MuiDrawer-paper .MuiListItemText-primary {
+    color: white;
 }
