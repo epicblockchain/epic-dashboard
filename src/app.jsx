@@ -20,6 +20,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import './app.css';
 import logo from './img/EpicLogo.png'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
@@ -389,7 +390,9 @@ class App extends React.Component {
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
                 <CssBaseline/>
-                <Button onClick={() => this.toggleDrawer(true)}>Open</Button>
+                <Button onClick={() => this.toggleDrawer(true)} variant="contained" color="primary" id="menu-but">
+                    <MenuOpenIcon color="secondary"/>
+                </Button>
                 <Drawer open={this.state.drawerOpen} onClose={() => this.toggleDrawer(false)}>
                     <div onClick={() => this.toggleDrawer(false)}>
                         <List>

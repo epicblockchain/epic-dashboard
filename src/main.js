@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const got = require('got');
 const fs = require('fs');
 const FormData = require('form-data');
@@ -25,7 +25,7 @@ const createWindow = () => {
     // and load the index.html of the app.
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
     // Hide menu bar
-    Menu.setApplicationMenu(null);
+    mainWindow.setMenuBarVisibility(false);
 
     ipcMain.on('form-post', (event, miners, api, data, selected) => {
         for (let i of selected) {
