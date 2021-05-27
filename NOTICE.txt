@@ -1,0 +1,36 @@
+ePIC Mining Dashboard Credits
+
+This application uses Open Source components. You can find the source code of their open source projects along with license information inside of the node_modules folder as well as below. We acknowledge and are grateful to these developers for their contributions to open source.
+
+Electron
+https://www.electronjs.org/
+
+Electron Forge
+https://github.com/electron-userland/electron-forge
+
+React
+https://github.com/facebook/react
+
+Material-UI
+https://github.com/mui-org/material-ui
+
+React-Toastify
+https://github.com/fkhadra/react-toastify
+
+amCharts4
+https://github.com/amcharts/amcharts4
+
+Form-Data
+https://github.com/form-data/form-data
+
+got
+https://github.com/sindresorhus/got
+
+node-dns-sd
+https://github.com/futomi/node-dns-sd
+
+sha256-file
+https://github.com/so-ta/sha256-file
+
+file-loader
+https://github.com/webpack-contrib/file-loader
