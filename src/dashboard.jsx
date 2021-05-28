@@ -92,10 +92,15 @@ export class Dashboard extends React.Component {
         series.strokeWidth = 2;
         series.smoothing = "monotoneX";
         series.tooltipText = "Hashrate (TH/s): [bold]{valueY}[/]";
+        yAxis.title.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
+        yAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
+        yAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
+        dateAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
+        dateAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
 
         let bullet = series.bullets.push(new am4charts.CircleBullet());
         bullet.scale = 0.6;
-        bullet.fill = am4core.color("1b1d4d");
+        bullet.fill = am4core.color("#1b1d4d");
 
         chart.data = chartHashrateData;
         this.chart = chart;
@@ -140,6 +145,17 @@ export class Dashboard extends React.Component {
                 numMiners: this.props.data.length,
                 totalHistHashrateSum: totalHashrate
             });
+        }
+
+        let yAxes = this.chart.yAxes.values;
+        let dateAxes = this.chart.xAxes.values;
+
+        if (yAxes && dateAxes) {
+            yAxes[0].title.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
+            yAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
+            yAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
+            dateAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
+            dateAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
         }
     }
 

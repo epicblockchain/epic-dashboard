@@ -485,7 +485,7 @@ class App extends React.Component {
                     rtl={false}
                     pauseOnFocusLoss={false}
                 />
-                { this.state.page == 'main' && <Dashboard data={this.state.miner_data}/> }
+                { this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme}/> }
                 { this.state.page == 'table' &&
                     <DataTable data={this.state.miner_data} 
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
