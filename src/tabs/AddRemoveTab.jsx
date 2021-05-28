@@ -32,7 +32,7 @@ export class AddRemoveTab extends React.Component {
                 <Button
                     onClick={() => {
                         this.props.delMiner(this.props.selected);
-                        this.props.select([]);
+                        this.props.select([], this.props.models[this.props.list]);
                     }}
                     variant="contained" color="primary"
                     disabled={!this.props.selected.length}
@@ -42,7 +42,7 @@ export class AddRemoveTab extends React.Component {
                 <Button
                     onClick={() => {
                         this.props.blacklist(this.props.selected);
-                        this.props.select([]);
+                        this.props.select([], this.props.models[this.props.list]);
                     }}
                     variant="contained" color="secondary"
                     disabled={!this.props.selected.length}

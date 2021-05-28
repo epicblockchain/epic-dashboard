@@ -84,6 +84,7 @@ class App extends React.Component {
             drawerOpen: true,
             page: 'main',
             miner_data: [],
+            models: [],
             modal: false,
             theme: 'light'
         };
@@ -97,7 +98,8 @@ class App extends React.Component {
         this.handleFormApi = this.handleFormApi.bind(this);
     }
 
-    async summary(init) {        
+    async summary(init) {     
+        let models = new Set(); 
         let miner_data = await Promise.all(
             miners.map(async miner => {
                 try {
@@ -116,7 +118,8 @@ class App extends React.Component {
                                 timeout: 1000, retry: 0
                             });
                             let content = JSON.parse(cap.body);
-    
+                            
+                            if (content.Model && !this.state.models.includes(content.Model)) models.add(content.Model);
                             return {
                                 ip: miner.address,
                                 sum: JSON.parse(summary.body),
@@ -154,7 +157,11 @@ class App extends React.Component {
                 }
             })
         );
-        this.setState({miner_data: miner_data});
+
+        models = Array.from(models).sort();
+
+        if (models.length) this.setState({miner_data: miner_data, models: models});
+        else this.setState({miner_data: miner_data});
     }
 
     compare(a, b) {
@@ -487,7 +494,7 @@ class App extends React.Component {
                 />
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme}/> }
                 { this.state.page == 'table' &&
-                    <DataTable data={this.state.miner_data} 
+                    <DataTable data={this.state.miner_data} models={this.state.models}
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
                         saveMiners={this.saveMiners} loadMiners={this.loadMiners}
                         handleApi={this.handleApi} handleFormApi={this.handleFormApi}

@@ -57,12 +57,9 @@ export class CoinTab extends React.Component {
     }
 
     render() {
-        let options;
-        if (this.props.list == 0) {
-            options = ['Sia'];
-        } else {
-            options = ['Smartcash', 'Zenprotocol', 'Etc', 'Qitmeer'];
-        }
+        let options = [];
+        const target = this.props.miners[this.props.models[this.props.list]];
+        if (target) options = target[0].cap ? target[0].cap.Coins : ['Sia'];
 
         return(
             <div style={{padding: '12px 0'}}>

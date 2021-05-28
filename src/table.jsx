@@ -57,11 +57,27 @@ function Toolbar() {
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {selected: {sc200: [], ks200: []}, list: 0, tab: 0};
+        this.state = {models: ['Miners Loading...'], selected: {}, list: 0, tab: 0};
 
         this.select = this.select.bind(this);
         this.setList = this.setList.bind(this);
         this.setTab = this.setTab.bind(this);
+    }
+
+    componentDidMount() {
+        if (this.props.models && this.props.models.length) {
+            var sel = {};
+            this.props.models.forEach(key => sel[key] = []);
+            this.setState({models: this.props.models, selected: sel});
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.models != this.props.models) {
+            var sel = {};
+            this.props.models.forEach(key => sel[key] = []);
+            this.setState({models: this.props.models, selected: sel});
+        }
     }
 
     hashrate_x_hr(row, x) {
@@ -101,11 +117,9 @@ export class DataTable extends React.Component {
         return Math.round(sum);
     }
 
-    select(model) {
+    select(sel_model, model) {
         var temp = this.state.selected;
-        if (this.state.list == 0) temp.sc200 = model;
-        else temp.ks200 = model;
-
+        temp[model] = sel_model;
         this.setState({selected: temp});
     }
 
@@ -153,22 +167,18 @@ export class DataTable extends React.Component {
             })
         );
 
-        var sc200 = [];
-        var ks200 = [];
+        var miners = {};
 
         for (let row of rows) {
-            if (row.model == 'SC200') sc200.push(row);
-            else if (row.model == 'KS200' || row.model == 'ENG_RIG') ks200.push(row);
-            else sc200.push(row);
+            if (row.cap) {
+                if (miners[row.model]) miners[row.model].push(row);
+                else miners[row.model] = [row];
+            }
+            else miners['SC200'] ? miners['SC200'].push(row) : miners['SC200'] = [row];
         }
 
         var selected;
-        if (this.state.list == 0) {
-            selected = this.state.selected.sc200;
-        } else {
-            selected = this.state.selected.ks200;
-        }
-
+        selected = this.state.selected[this.state.models[this.state.list]] || [];
 
         var capApi = true;
         for (let i of selected) {
@@ -183,28 +193,23 @@ export class DataTable extends React.Component {
                 <Tabs value={this.state.list} onChange={this.setList} indicatorColor="primary"
                     textColor="primary" centered
                 >
-                    <Tab id="minerTab" label="SC200"/>
-                    <Tab id="minerTab" label="KS200"/>
+                    { this.state.models.map(model => {
+                        return <Tab id="minerTab" key={model} label={model}/>;
+                    })}
                 </Tabs>
-                <div hidden={this.state.list != 0} style={{ width: '100%', height: 500 }}>
-                    <DataGrid rows={sc200} columns={columns} checkboxSelection
-                        components={{Toolbar: Toolbar}}
-                        selectionModel={this.state.selected.sc200}
-                        rowHeight={32}
-                        onSelectionModelChange={sel => {
-                            this.select(sel.selectionModel);
-                        }}
-                    />
-                </div>
-                <div hidden={this.state.list != 1} style={{ width: '100%', height: 500 }}>
-                    <DataGrid rows={ks200} columns={columns} checkboxSelection
-                        components={{Toolbar: Toolbar}}
-                        selectionModel={this.state.selected.ks200}
-                        rowHeight={32}
-                        onSelectionModelChange={sel => {
-                            this.select(sel.selectionModel);
-                        }}
-                    />
+                <div style={{ width: '100%', height: 500 }}>
+                    { this.state.models.map((model, i) => {
+                        return this.state.list == i ? (
+                            <DataGrid rows={miners[model] || []} columns={columns} checkboxSelection
+                                components={{Toolbar: Toolbar}}
+                                selectionModel={this.state.selected[model]}
+                                rowHeight={32} key={model}
+                                onSelectionModelChange={sel => {
+                                    this.select(sel.selectionModel, model);
+                                }}
+                            />
+                        ) : null;
+                    })}
                 </div>
                 <Tabs value={this.state.tab} onChange={this.setTab} indicatorColor="primary"
                     textColor="primary" scrollButtons="auto" variant="scrollable"
@@ -226,8 +231,8 @@ export class DataTable extends React.Component {
                 <div hidden={this.state.tab != 0}>
                     <AddRemoveTab
                         addMiner={this.props.addMiner} delMiner={this.props.delMiner} blacklist={this.props.blacklist}
-                        saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners}
-                        selected={selected} select={this.select}
+                        saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners} list={this.state.list}
+                        models={this.state.models} selected={selected} select={this.select}
                     />
                 </div>
                 <div hidden={this.state.tab != 1}>
@@ -236,7 +241,8 @@ export class DataTable extends React.Component {
                 <div hidden={this.state.tab != 2}>
                     <CoinTab
                         handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
-                        selected={selected} data={this.props.data}
+                        selected={selected} data={this.props.data} miners={miners} list={this.state.list}
+                        models={this.state.models}
                     />
                 </div>
                 <div hidden={this.state.tab != 3}>
