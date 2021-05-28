@@ -32,5 +32,5 @@ https://github.com/futomi/node-dns-sd
 sha256-file
 https://github.com/so-ta/sha256-file
 
-file-loader
-https://github.com/webpack-contrib/file-loader
+url-loader
+https://github.com/webpack-contrib/url-loader

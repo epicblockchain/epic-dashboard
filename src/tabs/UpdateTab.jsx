@@ -44,12 +44,13 @@ export class UpdateTab extends React.Component {
                             </Button>
                         </InputAdornment>}}
                 />
-                <FormControl>
+                <FormControl margin="dense">
                     <FormControlLabel
                         control={<Switch color="primary" checked={this.state.keep} onChange={this.updateKeep}/>}
                         label="Maintain config over update"
                     />
                 </FormControl>
+                <br/>
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/update', this.state, this.props.selected);

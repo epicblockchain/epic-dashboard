@@ -21,7 +21,7 @@ export class LedTab extends React.Component {
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                <FormControl>
+                <FormControl margin="dense">
                     <FormControlLabel
                         control={<Switch color="primary" checked={this.state.checked} onChange={this.updateCheck}/>}
                         label="Turn on LED indicator"

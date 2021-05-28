@@ -38,6 +38,7 @@ div.MuiDrawer-paper {
     background-color: #ffc107;
 }
 
-.MuiDrawer-paper .MuiListItemText-primary {
+.MuiDrawer-paper .MuiListItemText-root {
     color: white;
+    margin-left: 4px;
 }

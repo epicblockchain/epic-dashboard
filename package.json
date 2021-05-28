@@ -91,6 +91,6 @@
     "react-toastify": "^7.0.4",
     "sha256-file": "^1.0.0",
     "@electron/remote": "^1.1.0",
-    "file-loader": "^6.2.0"
+    "url-loader": "^4.1.1"
   }
 }

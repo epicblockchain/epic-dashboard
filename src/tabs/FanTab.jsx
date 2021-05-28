@@ -49,9 +49,7 @@ export class FanTab extends React.Component {
                         />
                     </Grid>
                 </Grid>
-
                 <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
-                <br />
                 <Button onClick={() => {
                         this.props.handleApi('/fanspeed', this.state, this.props.selected);
                     }} variant="contained" color="primary"
