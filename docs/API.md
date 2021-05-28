@@ -193,7 +193,7 @@ Send a command to the mining software.
 Format of request body:
 ```
 {
-	"param": "{start|stop|autostart}",
+	"param": "{stop|autostart}",
 	"password": <string>
 }
 ```
