@@ -99,7 +99,7 @@ class App extends React.Component {
     }
 
     async summary(init) {     
-        let models = new Set(); 
+        let models = new Set(this.state.models);
         let miner_data = await Promise.all(
             miners.map(async miner => {
                 try {
@@ -119,7 +119,7 @@ class App extends React.Component {
                             });
                             let content = JSON.parse(cap.body);
                             
-                            if (content.Model && !this.state.models.includes(content.Model)) models.add(content.Model);
+                            if (content.Model) models.add(content.Model);
                             return {
                                 ip: miner.address,
                                 sum: JSON.parse(summary.body),
@@ -160,7 +160,7 @@ class App extends React.Component {
 
         models = Array.from(models).sort();
 
-        if (models.length) this.setState({miner_data: miner_data, models: models});
+        if (models != this.state.models) this.setState({miner_data: miner_data, models: models});
         else this.setState({miner_data: miner_data});
     }
 
