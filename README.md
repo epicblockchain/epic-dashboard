@@ -119,7 +119,7 @@ Use the interface in the Table page to add, save, blacklist and load miners. The
 ![add miner success](docs/images/add_miner1.png)
 #### Linux: 
 * ~/.ePIC-Dashboard/ipaddr.txt for saving miners
-* ~/.ePIC-Dashboard/blacklist.txt for blacklisting miners by their id and mdns broadcast: (e.g. "epicminer340035._epicminer._tcp.local")
+* ~/.ePIC-Dashboard/blacklist.txt for blacklisting miners by their hostname and mdns broadcast: (e.g. "epicminer340035._epicminer._tcp.local")
 #### Windows:
 * %APPDATA%/ePIC-Dashboard/ipaddr.txt
 * %APPDATA%/ePIC-Dashboard/blacklist.txt
