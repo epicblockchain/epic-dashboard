@@ -19,7 +19,7 @@ export class CmdTab extends React.Component {
     }
 
     render() {
-        let options = ['start', 'stop', 'autostart'];
+        let options = ['autostart', 'stop'];
 
         return(
             <div style={{padding: '12px 0'}}>
