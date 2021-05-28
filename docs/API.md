@@ -47,7 +47,10 @@ Sample response:
       "Temperature": <uint>,
       "Core Clock": <float>
     } [,<more Hashboards>]
-  ]
+  ],
+  "Fans": {
+      "Fans Speed": <uint>
+  }
 }
 ```
 **/history**
@@ -66,6 +69,21 @@ Sample response:
       "Timestamp": <uint>
     }
   ]
+}
+```
+**/capabilities**
+Provides the capabilities of the miner.
+Response type: application/json
+Sample response:
+```
+{
+    "Model": <string>,
+    "Presets": [
+        <string>,
+    ],
+    "Coins": [
+        <string>,
+    ]
 }
 ```
 ### POST
@@ -166,11 +184,11 @@ Format of request body:
 }
 ```
 **/fan**
-Change the fan speed, accepts values from "0" to "100" as a percentage of the max fan speed.
+Change the fan speed, accepts values from 0 to 100 as a percentage of the max fan speed.
 Format of request body:
 ```
 {
-	"param": <string>, //e.g. "100"
+	"param": <uint>
 	"password": <string>
 }
 ```
