@@ -95,8 +95,10 @@ export class Dashboard extends React.Component {
         yAxis.title.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
         yAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
         yAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
+        yAxis.renderer.grid.template.strokeOpacity = 0.4;
         dateAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
         dateAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
+        dateAxis.renderer.grid.template.strokeOpacity = 0.4;
 
         let bullet = series.bullets.push(new am4charts.CircleBullet());
         bullet.scale = 0.6;
