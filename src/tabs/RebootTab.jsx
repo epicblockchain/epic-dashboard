@@ -4,7 +4,7 @@ import { Button, TextField } from '@material-ui/core';
 export class RebootTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {delay: '', password: ''};
+        this.state = {delay: 0, password: ''};
 
         this.updateDelay = this.updateDelay.bind(this);
         this.updatePassword = this.updatePassword.bind(this);

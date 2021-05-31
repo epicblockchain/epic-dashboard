@@ -19,6 +19,9 @@ export class OpModeTab extends React.Component {
     }
 
     render() {
+        let options = [];
+        const target = this.props.miners[this.props.models[this.props.list]];
+
         return(
             <div style={{padding: '12px 0'}}>
                 <RadioGroup row onChange={this.updateMode} value={this.state.mode}>
