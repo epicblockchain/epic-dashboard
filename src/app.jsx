@@ -159,8 +159,7 @@ class App extends React.Component {
         );
 
         models = Array.from(models).sort();
-
-        if (models != this.state.models) this.setState({miner_data: miner_data, models: models});
+        if (models.length != this.state.models.length) this.setState({miner_data: miner_data, models: models});
         else this.setState({miner_data: miner_data});
     }
 
