@@ -120,6 +120,8 @@ class App extends React.Component {
                             let content = JSON.parse(cap.body);
                             
                             if (content.Model) models.add(content.Model);
+                            else models.add('undefined');
+
                             return {
                                 ip: miner.address,
                                 sum: JSON.parse(summary.body),
@@ -150,14 +152,14 @@ class App extends React.Component {
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
 
                     if (match && match.sum == 'reboot' && match.timer > 0) {
-                        return {ip: miner.address, sum: 'reboot', hist: 'reboot', timer: match.timer - 1};
+                        return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
                     } else {
                         return {ip: miner.address, sum: null, hist: null, timer: 0};
                     }
                 }
             })
         );
-
+        
         models = Array.from(models).sort();
         if (models.length != this.state.models.length) this.setState({miner_data: miner_data, models: models});
         else this.setState({miner_data: miner_data});

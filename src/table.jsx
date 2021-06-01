@@ -174,7 +174,7 @@ export class DataTable extends React.Component {
                 if (miners[row.model]) miners[row.model].push(row);
                 else miners[row.model] = [row];
             }
-            else miners['SC200'] ? miners['SC200'].push(row) : miners['SC200'] = [row];
+            else miners['undefined'] ? miners['undefined'].push(row) : miners['undefined'] = [row];
         }
 
         var selected;
