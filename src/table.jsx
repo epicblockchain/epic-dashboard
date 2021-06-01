@@ -252,7 +252,9 @@ export class DataTable extends React.Component {
                     <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
                 </div>
                 <div hidden={this.state.tab != 5}>
-                    <OpModeTab handleApi={this.props.handleApi} selected={selected}/>
+                    <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners}
+                        list={this.state.list} models={this.state.models}
+                    />
                 </div>
                 <div hidden={this.state.tab != 6}>
                     <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/>
