@@ -150,7 +150,7 @@ export class DataTable extends React.Component {
         const rows = this.props.data.map(
             (a, i) => ({
                 id: i,
-                ip: a.ip,
+                ip: a ? a.ip : '', //TODO: figure out why this is was falsey
                 name: this.failSafe(a.sum) || a.sum.Hostname,
                 firmware: this.failSafe(a.sum) || a.sum.Software,
                 model: this.failSafe(a.cap) || a.cap.Model,
