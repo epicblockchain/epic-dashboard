@@ -112,11 +112,12 @@ export class DataTable extends React.Component {
     totalPower(data) {
         const power = data.map(a => a['Input Power']);
         var sum;
-        if (!power.length) {
+        try {
             sum = power.reduce((total, num) => {
                 return total + num;
             });
-        } else {
+        } catch (err) {
+            console.log(err);
             sum = 'N/A';
         }
         return Math.round(sum);
