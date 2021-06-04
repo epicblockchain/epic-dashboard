@@ -5,7 +5,7 @@ import {
     GridFilterToolbarButton,
     GridColumnsToolbarButton,
     GridDensitySelector } from '@material-ui/data-grid';
-import { Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab, Paper } from '@material-ui/core';
 import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 import { CoinTab } from './tabs/CoinTab.jsx';
 import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
@@ -22,6 +22,7 @@ import { FanTab } from './tabs/FanTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
+import Table2 from './customTable2.jsx';
 
 const columns = [
     { accessor: 'ip', Header: 'IP', width: 130 },
@@ -161,7 +162,7 @@ export class DataTable extends React.Component {
 
         var sel = [];
         for (const i in newState.selectedRowIds) {
-            sel.push(data[i].id);
+            if (data[i]) sel.push(data[i].id);
         }
 
         temp[model] = sel;
@@ -241,23 +242,15 @@ export class DataTable extends React.Component {
                     }) */}
                     { this.state.models.map((model, i) => {
                         return this.state.list == i ? (
-                            <div
-                                style={{
-                                    width: "100%",
-                                    overflow: "hidden",
-                                    border: "1px solid rgb(81, 81, 81)",
-                                    borderRadius: "4px"
-                                }}
-                                key={model}
-                            >
+                            <Paper variant="outlined" className="datatable-wrap" style={{ width: "100%", overflow: "hidden" }} key={model}>
                                 <Table
                                     dataRaw={miners[model] || []}
                                     columnsRaw={columns}
-                                    initialState={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
+                                    extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
                                     update={this.update}
                                     model={model}
                                 />
-                            </div>
+                            </Paper>
                         ) : null;
                     })}
                 </div>

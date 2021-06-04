@@ -33,6 +33,9 @@ const light = createMuiTheme({
     overrides: {
         MuiCssBaseline: {
             "@global": {
+                ".datatable-wrap": {
+                    background: "#fafafa"
+                },
                 ".resizer": {
                     border: "8px solid #fafafa",
                     background: "#aaa",
@@ -83,6 +86,9 @@ const dark = createMuiTheme({
             },
             "*::-webkit-scrollbar-thumb:hover": {
               background: "#999"
+            },
+            ".datatable-wrap": {
+                background: "#303030"
             },
             ".resizer": {
               border: "8px solid #303030",
@@ -224,6 +230,7 @@ class App extends React.Component {
                     if (match && match.sum == 'reboot' && match.timer > 0) {
                         return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
                     } else {
+                        models.add('undefined');
                         return {ip: miner.address, sum: null, hist: null, timer: 0};
                     }
                 }

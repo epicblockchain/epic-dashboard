@@ -7,6 +7,27 @@
   padding: 4px 4px 0;
 }
 
+.col-header {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sort-icon {
+  position: relative;
+}
+
+.sort-icon .MuiSvgIcon-root {
+  position: absolute;
+}
+
+.filter {
+  position: absolute !important;
+  right: 8px;
+  top: 8px;
+  z-index: 2;
+}
+
 #simple-menu {
   max-height: 600px;
 }
@@ -20,9 +41,9 @@
   position: absolute;
 }
 
-#datatable .MuiTableBody-root {
+#list-wrapper {
   display: block !important;
-  height: 400px;
+  height: 419px;
 }
 
 #datatable .MuiTableRow-root {
@@ -34,13 +55,14 @@
   left: -6px;
   position: absolute;
   padding: 8px;
+  z-index: 2;
 }
 
 #datatable .MuiTableCell-root.MuiTableCell-head {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding: 10px 10px;
+  padding: 10px 30px 10px 10px;
 }
 
 #datatable .MuiTableCell-root.MuiTableCell-body {

@@ -4,6 +4,8 @@ const fs = require('fs');
 const FormData = require('form-data');
 const sha256 = require('sha256-file');
 require('@electron/remote/main').initialize();
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
