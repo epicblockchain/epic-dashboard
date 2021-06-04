@@ -42,7 +42,7 @@ const createWindow = () => {
                     const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                         body: f,
                         responseType: 'json',
-                        timeout: 60000
+                        timeout: 600000 //60000 was 1 min before
                     });
 
                     if (body.result) {
