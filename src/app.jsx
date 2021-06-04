@@ -131,6 +131,7 @@ class App extends React.Component {
                             };
                         } catch(err) {
                             console.log(err);
+                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: history, cap: null};
                         }
                     } else {
                         const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
