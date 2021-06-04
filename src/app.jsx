@@ -29,6 +29,33 @@ const light = createMuiTheme({
     palette: {
         primary: {main: '#1b1d4d'},
         secondary: {main: '#ffc107'}
+    },
+    overrides: {
+        MuiCssBaseline: {
+            "@global": {
+                ".resizer": {
+                    border: "8px solid #fafafa",
+                    background: "#aaa",
+                    "&.isResizing": {
+                      background: "#1b1d4d"
+                    }
+                },
+                ".MuiTableRow-root": {
+                    "&.MuiTableRow-head:hover": {
+                      backgroundColor: "inherit"
+                    },
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)"
+                    }
+                },
+                  ".MuiTableRow-root.Mui-selected": {
+                    backgroundColor: "rgba(255, 193, 7, 0.16) !important",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 193, 7, 0.24) !important"
+                    }
+                }
+            }
+        }
     }
 })
 
@@ -37,6 +64,49 @@ const dark = createMuiTheme({
         type: 'dark',
         primary: {main: '#ffc107'},
         secondary: {main: '#1b1d4d'}
+    },
+    overrides: {
+        MuiCssBaseline: {
+          "@global": {
+            "*::-webkit-scrollbar": {
+              width: "1.25em",
+              height: "1.25em",
+              background: "#202022"
+            },
+            "*::-webkit-scrollbar-corner": {
+              background: "#202022"
+            },
+            "*::-webkit-scrollbar-thumb": {
+              background: "#585859",
+              border: "3px solid #202022",
+              borderRadius: "8px"
+            },
+            "*::-webkit-scrollbar-thumb:hover": {
+              background: "#999"
+            },
+            ".resizer": {
+              border: "8px solid #303030",
+              background: "#aaa",
+              "&.isResizing": {
+                background: "#ffc107"
+              }
+            },
+            ".MuiTableRow-root": {
+              "&.MuiTableRow-head:hover": {
+                backgroundColor: "inherit"
+              },
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.08)"
+              }
+            },
+            ".MuiTableRow-root.Mui-selected": {
+              backgroundColor: "rgba(255, 193, 7, 0.16) !important",
+              "&:hover": {
+                backgroundColor: "rgba(255, 193, 7, 0.24) !important"
+              }
+            }
+          }
+        }
     }
 })
 
@@ -495,6 +565,7 @@ class App extends React.Component {
                 />
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme}/> }
                 { this.state.page == 'table' &&
+                    //<TestTable/>
                     <DataTable data={this.state.miner_data} models={this.state.models}
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
                         saveMiners={this.saveMiners} loadMiners={this.loadMiners}

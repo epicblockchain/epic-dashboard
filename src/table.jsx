@@ -21,28 +21,32 @@ import { CmdTab } from './tabs/CmdTab.jsx';
 import { FanTab } from './tabs/FanTab.jsx';
 import './table.css';
 
+import Table from './customTable.jsx';
+
 const columns = [
-    { field: 'ip', headerName: 'IP', width: 130 },
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'firmware', headerName: 'Firmware', width: 150 },
-    { field: 'model', headerName: 'Model', width: 100, hide: true},
-    { field: 'mode', headerName: 'Mode', width: 100 },
-    { field: 'pool', headerName: 'Pool', width: 180 },
-    { field: 'user', headerName: 'User', width: 180 },
-    { field: 'start', headerName: 'Started', width: 260, hide: true },
-    { field: 'uptime', headerName: 'Uptime', width: 135, hide: true },
-    { field: 'hbs', headerName: 'Active HBs', width: 120, type: 'number' },
-    { field: 'hashrate15min', headerName: 'Hashrate (15min)', width: 150, type: 'number' },
-    { field: 'hashrate1hr', headerName: 'Hashrate (1h)', width: 150, type: 'number', hide: true }, 
-    { field: 'hashrate6hr', headerName: 'Hashrate (6h)', width: 150, type: 'number', hide: true },
-    { field: 'hashrate24hr', headerName: 'Hashrate (24h)', width: 150, type: 'number', hide: true },
-    { field: 'accepted', headerName: 'Accepted Shares', width: 150, type: 'number', hide: true },
-    { field: 'rejected', headerName: 'Rejected Shares', width: 150, type: 'number', hide: true },
-    { field: 'difficulty', headerName: 'Difficulty', width: 120, type: 'number', hide: true },
-    { field: 'temperature', headerName: 'Temp \u00b0C', type: 'number', width: 110 },
-    { field: 'power', headerName: 'Power (W)', width: 110, type: 'number', hide: true },
-    { field: 'cap', hide: true }
+    { accessor: 'ip', Header: 'IP', width: 130 },
+    { accessor: 'name', Header: 'Name', width: 150 },
+    { accessor: 'firmware', Header: 'Firmware', width: 150 },
+    { accessor: 'model', Header: 'Model', width: 100},
+    { accessor: 'mode', Header: 'Mode', width: 100 },
+    { accessor: 'pool', Header: 'Pool', width: 180 },
+    { accessor: 'user', Header: 'User', width: 180 },
+    { accessor: 'start', Header: 'Started', width: 260 },
+    { accessor: 'uptime', Header: 'Uptime', width: 135 },
+    { accessor: 'hbs', Header: 'Active HBs', width: 120},
+    { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150},
+    { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150}, 
+    { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150},
+    { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150},
+    { accessor: 'accepted', Header: 'Accepted Shares', width: 150},
+    { accessor: 'rejected', Header: 'Rejected Shares', width: 150},
+    { accessor: 'difficulty', Header: 'Difficulty', width: 120},
+    { accessor: 'temperature', Header: 'Temp \u00b0C', width: 110 },
+    { accessor: 'power', Header: 'Power (W)', width: 110}
 ];
+
+const defaultHidden = ['model', 'start', 'uptime', 'hashrate1hr',
+    'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power'];
 
 function Toolbar() {
     return(
@@ -62,21 +66,32 @@ export class DataTable extends React.Component {
         this.select = this.select.bind(this);
         this.setList = this.setList.bind(this);
         this.setTab = this.setTab.bind(this);
+        this.update = this.update.bind(this);
     }
 
     componentDidMount() {
         if (this.props.models && this.props.models.length) {
             var sel = {};
-            this.props.models.forEach(key => sel[key] = []);
-            this.setState({models: this.props.models, selected: sel});
+            var newState = {models: this.props.models};
+            this.props.models.forEach(key => {
+                sel[key] = [];
+                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+            });
+            this.setState.selected = sel;
+            this.setState(newState);
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
             var sel = {};
-            this.props.models.forEach(key => sel[key] = []);
-            this.setState({models: this.props.models, selected: sel});
+            var newState = {models: this.props.models};
+            this.props.models.forEach(key => {
+                sel[key] = [];
+                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+            });
+            this.setState.selected = sel;
+            this.setState(newState);
         }
     }
 
@@ -140,6 +155,19 @@ export class DataTable extends React.Component {
         return 'Error'
     }
 
+    update(newState, action, prevState, data, model) {
+        console.log(newState, action, data);
+        var temp = Object.assign({}, this.state.selected);
+
+        var sel = [];
+        for (const i in newState.selectedRowIds) {
+            sel.push(data[i].id);
+        }
+
+        temp[model] = sel;
+        this.setState({ selected: temp, [model + '_state']: newState });
+    }
+
     render() {
         const rows = this.props.data.map(
             (a, i) => ({
@@ -197,8 +225,9 @@ export class DataTable extends React.Component {
                         return <Tab id="minerTab" key={model} label={model}/>;
                     })}
                 </Tabs>
+                <canvas id="canvas" hidden></canvas>
                 <div style={{ width: '100%', height: 500 }}>
-                    { this.state.models.map((model, i) => {
+                    { /*this.state.models.map((model, i) => {
                         return this.state.list == i ? (
                             <DataGrid rows={miners[model] || []} columns={columns} checkboxSelection
                                 components={{Toolbar: Toolbar}}
@@ -208,6 +237,27 @@ export class DataTable extends React.Component {
                                     this.select(sel.selectionModel, model);
                                 }}
                             />
+                        ) : null;
+                    }) */}
+                    { this.state.models.map((model, i) => {
+                        return this.state.list == i ? (
+                            <div
+                                style={{
+                                    width: "100%",
+                                    overflow: "hidden",
+                                    border: "1px solid rgb(81, 81, 81)",
+                                    borderRadius: "4px"
+                                }}
+                                key={model}
+                            >
+                                <Table
+                                    dataRaw={miners[model] || []}
+                                    columnsRaw={columns}
+                                    initialState={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
+                                    update={this.update}
+                                    model={model}
+                                />
+                            </div>
                         ) : null;
                     })}
                 </div>

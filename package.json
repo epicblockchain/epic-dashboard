@@ -89,5 +89,11 @@
     "sha256-file": "^1.0.0",
     "@electron/remote": "^1.1.0",
     "url-loader": "^4.1.1"
+  },
+  "dependencies": {
+    "namor": "^2.0.3",
+    "react-table": "^7.7.0",
+    "react-window": "^1.8.6",
+    "styled-components": "^5.3.0"
   }
 }
