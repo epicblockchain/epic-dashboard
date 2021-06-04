@@ -49,9 +49,9 @@ const light = createMuiTheme({
                     }
                 },
                   ".MuiTableRow-root.Mui-selected": {
-                    backgroundColor: "rgba(255, 193, 7, 0.16) !important",
+                    backgroundColor: "rgba(27, 29, 77, 0.08) !important",
                     "&:hover": {
-                      backgroundColor: "rgba(255, 193, 7, 0.24) !important"
+                      backgroundColor: "rgba(27, 29, 77, 0.12) !important"
                     }
                 }
             }

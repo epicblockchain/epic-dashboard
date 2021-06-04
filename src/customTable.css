@@ -7,9 +7,14 @@
   padding: 4px 4px 0;
 }
 
-#simple-menu .MuiListItem-root {
-  padding-left: 36px;
+#simple-menu {
+  max-height: 600px;
 }
+
+#simple-menu .MuiListItem-root {
+  padding: 2px 36px;
+}
+
 #simple-menu .MuiCheckbox-root {
   left: -4px;
   position: absolute;

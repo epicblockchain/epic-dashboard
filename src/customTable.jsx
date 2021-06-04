@@ -8,16 +8,18 @@ import MuiCheckbox from "@material-ui/core/Checkbox";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
+import ViewWeekIcon from '@material-ui/icons/ViewWeek';
 
 import {
   useTable,
   useBlockLayout,
   useResizeColumns,
-  useRowSelect
+  useRowSelect,
+  useSortBy
 } from "react-table";
 import { FixedSizeGrid } from "react-window";
 
-import "./index.css";
+import "./customTable.css";
 
 function getTextWidth(input, context) {
   return Math.ceil(context.measureText(input).width);
@@ -87,13 +89,14 @@ function Table({ dataRaw, columnsRaw, initialState, update, model }) {
         initialState,
         defaultColumn,
         stateReducer: (a, b, c) => {
-            if (b.type != "init" && b.type != "columnResizing" && b.type !='resetSelectedRows') {
+            if (b.type != "columnResizing" && b.type !='resetSelectedRows' && b.type !='resetSortBy') {
                 updateState(a, b, c, dataRaw, model);
             }
         }
     },
     useBlockLayout,
     useResizeColumns,
+    useSortBy,
     useRowSelect,
     (hooks) => {
         hooks.visibleColumns.push((columns) => [
@@ -152,7 +155,9 @@ function Table({ dataRaw, columnsRaw, initialState, update, model }) {
             <Button
                 aria-controls="simple-menu"
                 aria-haspopup="true"
+                startIcon={<ViewWeekIcon/>}
                 color="primary"
+                size="small"
                 onClick={handleClick}
             >
                 Columns
@@ -184,7 +189,16 @@ function Table({ dataRaw, columnsRaw, initialState, update, model }) {
                     <TableRow {...headerGroup.getHeaderGroupProps()} component="div">
                         {headerGroup.headers.map((column) => (
                             <TableCell {...column.getHeaderProps()} component="div">
-                                {column.render("Header")}
+                                <div {...column.getSortByToggleProps()}>
+                                    {column.render("Header")}
+                                    <span>
+                                        {column.isSorted
+                                            ? column.isSortedDesc
+                                            ? ' 🔽'
+                                            : ' 🔼'
+                                            : ''}
+                                    </span>
+                                </div>
                                 <div
                                     {...column.getResizerProps()}
                                     className={`resizer ${ column.isResizing ? "isResizing" : "" }`}
