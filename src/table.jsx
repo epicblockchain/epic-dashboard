@@ -76,7 +76,7 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             this.props.models.forEach(key => {
                 sel[key] = [];
-                newState[key + '_state'] = {sortBy: [], hiddenColumns: defaultHidden};
+                newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
             this.setState.selected = sel;
             this.setState(newState);
@@ -89,7 +89,7 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             this.props.models.forEach(key => {
                 sel[key] = [];
-                newState[key + '_state'] = {sortBy: [], hiddenColumns: defaultHidden};
+                newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
             this.setState.selected = sel;
             this.setState(newState);
@@ -157,16 +157,20 @@ export class DataTable extends React.Component {
     }
 
     update(newState, action, prevState, data, model) {
-        console.log(newState, action, data);
-        var temp = Object.assign({}, this.state.selected);
+        console.log(newState, action);
+        if (action.type == 'toggleRowSelected' || action.type == 'toggleAllRowsSelected') {
+            var temp = Object.assign({}, this.state.selected);
 
-        var sel = [];
-        for (const i in newState.selectedRowIds) {
-            if (data[i]) sel.push(data[i].id);
+            var sel = [];
+            for (const i in newState.selectedRowIds) {
+                if (data[i]) sel.push(data[i].id);
+            }
+
+            temp[model] = sel;
+            this.setState({ selected: temp, [model + '_state']: newState });
+        } else {
+            this.setState({ [model + '_state']: newState });
         }
-
-        temp[model] = sel;
-        this.setState({ selected: temp, [model + '_state']: newState });
     }
 
     render() {
@@ -228,18 +232,6 @@ export class DataTable extends React.Component {
                 </Tabs>
                 <canvas id="canvas" hidden></canvas>
                 <div style={{ width: '100%', height: 500 }}>
-                    { /*this.state.models.map((model, i) => {
-                        return this.state.list == i ? (
-                            <DataGrid rows={miners[model] || []} columns={columns} checkboxSelection
-                                components={{Toolbar: Toolbar}}
-                                selectionModel={this.state.selected[model]}
-                                rowHeight={32} key={model}
-                                onSelectionModelChange={sel => {
-                                    this.select(sel.selectionModel, model);
-                                }}
-                            />
-                        ) : null;
-                    }) */}
                     { this.state.models.map((model, i) => {
                         return this.state.list == i ? (
                             <Paper variant="outlined" className="datatable-wrap" style={{ width: "100%", overflow: "hidden" }} key={model}>

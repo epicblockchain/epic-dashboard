@@ -10,6 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import SvgIcon from "@material-ui/core/SvgIcon";
+import TextField from "@material-ui/core/TextField";
 import ViewWeekIcon from '@material-ui/icons/ViewWeek';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
@@ -77,7 +78,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
             <div>
                 <IconButton onClick={handleClick} size="small" className="filter">
                     { !filterValue && <FilterListIcon fontSize="small"/> }
-                    { filterValue && <FilterIcon fontSize="small"/> }
+                    { filterValue && <FilterIcon fontSize="small" color="primary"/> }
                 </IconButton>
                 <Menu
                     anchorEl={anchorEl}
@@ -86,13 +87,16 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                     onClose={handleClose}
                     transitionDuration={100}
                 >
-                    <input
+                    <TextField
                         value={value || ''}
                         onChange={e => {
                             setValue(e.target.value);
                             changeFilter(e.target.value);
                         }}
                         placeholder={'Filter...'}
+                        variant="outlined"
+                        size="small"
+                        color="primary"
                     />
                 </Menu>
             </div>
@@ -341,6 +345,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                     columnWidth={totalColumnsWidth + 24}
                     width={window.innerWidth - 18}
                     onScroll={scroll}
+                    style={{maxWidth: 1400}}
                 >
                     {RenderRow}
                 </FixedSizeGrid>
