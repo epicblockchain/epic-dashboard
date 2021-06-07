@@ -4,7 +4,7 @@ import { Button, TextField, FormControl, InputLabel, Select} from '@material-ui/
 export class OpModeTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {mode: 'normal', password: ''};
+        this.state = {mode: 'normal', password: this.props.sessionPass};
 
         this.updateMode = this.updateMode.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
@@ -35,7 +35,7 @@ export class OpModeTab extends React.Component {
                         }
                     </Select>
                 </FormControl>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/mode', this.state, this.props.selected);
                     }} variant="contained" color="primary"

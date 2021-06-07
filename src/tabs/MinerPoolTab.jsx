@@ -4,7 +4,7 @@ import { Button, TextField, InputAdornment } from '@material-ui/core';
 export class MinerPoolTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {pool: '', password: ''};
+        this.state = {pool: '', password: this.props.sessionPass};
 
         this.updatePool = this.updatePool.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
@@ -36,7 +36,7 @@ export class MinerPoolTab extends React.Component {
                     value={this.state.pool} margin="dense" className="pool"
                     InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
                 />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/pool', this.state, this.props.selected);

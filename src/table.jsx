@@ -61,7 +61,7 @@ export class DataTable extends React.Component {
                 sel[key] = [];
                 newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
-            this.setState.selected = sel;
+            newState.selected = sel;
             this.setState(newState);
         }
     }
@@ -74,7 +74,7 @@ export class DataTable extends React.Component {
                 sel[key] = [];
                 newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
-            this.setState.selected = sel;
+            newState.selected = sel;
             this.setState(newState);
         }
     }
@@ -125,7 +125,7 @@ export class DataTable extends React.Component {
     }
 
     select(sel_model, model) {
-        var temp = this.state.selected;
+        var temp = Object.assign({}, this.state.selected);
         temp[model] = sel_model;
         this.setState({selected: temp});
     }
@@ -148,7 +148,6 @@ export class DataTable extends React.Component {
     }
 
     update(newState, action, prevState, data, model) {
-        console.log(newState, action);
         if (action.type == 'toggleRowSelected' || action.type == 'toggleAllRowsSelected') {
             var temp = Object.assign({}, this.state.selected);
 
@@ -263,46 +262,46 @@ export class DataTable extends React.Component {
                     />
                 </div>
                 <div hidden={this.state.tab != 1}>
-                    <CmdTab handleApi={this.props.handleApi} selected={selected}/>
+                    <CmdTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 2}>
                     <CoinTab
                         handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
                         selected={selected} data={this.props.data} miners={miners} list={this.state.list}
-                        models={this.state.models}
+                        models={this.state.models} sessionPass={this.props.sessionPass}
                     />
                 </div>
                 <div hidden={this.state.tab != 3}>
-                    <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
+                    <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 4}>
-                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
+                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 5}>
                     <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners}
-                        list={this.state.list} models={this.state.models}
+                        list={this.state.list} models={this.state.models} sessionPass={this.props.sessionPass}
                     />
                 </div>
                 <div hidden={this.state.tab != 6}>
-                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/>
+                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 7}>
-                    <PasswordTab handleApi={this.props.handleApi} selected={selected}/>
+                    <PasswordTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 8}>
-                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected}/>
+                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 9}>
-                    <RebootTab handleApi={this.props.handleApi} selected={selected}/>
+                    <RebootTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 10}>
-                    <LedTab handleApi={this.props.handleApi} selected={selected}/> 
+                    <LedTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/> 
                 </div>
                 <div hidden={this.state.tab != 11}>
-                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/>
+                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 12}> 
-                    <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi}/>
+                    <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi} sessionPass={this.props.sessionPass}/>
                 </div>
             </div>
         );

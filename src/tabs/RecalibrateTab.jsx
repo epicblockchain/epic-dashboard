@@ -4,7 +4,7 @@ import { Button, TextField } from '@material-ui/core';
 export class RecalibrateTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {password: ''};
+        this.state = {password: this.props.sessionPass};
 
         this.updatePassword = this.updatePassword.bind(this);
     }
@@ -16,7 +16,7 @@ export class RecalibrateTab extends React.Component {
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/hwconfig', this.state, this.props.selected);
                     }} variant="contained" color="primary"

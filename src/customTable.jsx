@@ -4,6 +4,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import TableFooter from "@material-ui/core/TableFooter";
 import MuiCheckbox from "@material-ui/core/Checkbox";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -184,7 +185,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
             //console.log('stateChange', b);
             switch(b.type) {
                 case 'autoColSize':
-                    const clone = a.columnResizing;
+                    const clone = Object.assign({}, a.columnResizing);
                     clone.columnWidths[b.col] = b.val;
 
                     return {
@@ -337,7 +338,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                 ))}
             </TableHead>
             
-            <TableBody {...getTableBodyProps()} component="div" id="list-wrapper">
+            <TableBody {...getTableBodyProps()} component="div">
                 <FixedSizeGrid
                     height={380}
                     rowHeight={32}
@@ -347,10 +348,14 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                     width={window.innerWidth - 18}
                     onScroll={scroll}
                     style={{maxWidth: 1400}}
+                    className="grid"
                 >
                     {RenderRow}
                 </FixedSizeGrid>
             </TableBody>
+            <TableFooter component="div">
+                <span>Total Rows: {rows.length}</span>
+            </TableFooter>
         </MaUTable>
     </React.Fragment>
   );

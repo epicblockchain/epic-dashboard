@@ -41,11 +41,6 @@
   position: absolute;
 }
 
-#list-wrapper {
-  display: block !important;
-  height: 419px;
-}
-
 #datatable .MuiTableRow-root {
   width: initial !important;
 }
@@ -71,6 +66,12 @@
   white-space: nowrap;
   padding: 5px 10px;
   height: 32px;
+}
+
+.MuiTableFooter-root {
+  display: block !important;
+  line-height: 39px;
+  padding: 0 10px;
 }
 
 .resizer {

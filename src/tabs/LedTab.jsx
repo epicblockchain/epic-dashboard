@@ -4,7 +4,7 @@ import { Button, TextField, Switch, FormControl, FormControlLabel } from '@mater
 export class LedTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {checked: true, password: ''};
+        this.state = {checked: true, password: this.props.sessionPass};
 
         this.updateCheck = this.updateCheck.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
@@ -27,7 +27,7 @@ export class LedTab extends React.Component {
                         label="Turn on LED indicator"
                     />
                 </FormControl>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/identify', this.state, this.props.selected);
                     }} variant="contained" color="primary"

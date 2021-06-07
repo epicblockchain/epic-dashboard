@@ -10,8 +10,8 @@ import { Dashboard } from './dashboard.jsx';
 import { DataTable } from './table.jsx';
 import { Support } from './support.jsx';
 
-import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
-        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CssBaseline
+import { Drawer, ListItem, ListItemText, Button, List, Divider,
+        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CssBaseline, TextField
     } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { ToastContainer, toast } from 'react-toastify';
@@ -51,11 +51,14 @@ const light = createMuiTheme({
                       backgroundColor: "rgba(0, 0, 0, 0.04)"
                     }
                 },
-                  ".MuiTableRow-root.Mui-selected": {
+                ".MuiTableRow-root.Mui-selected": {
                     backgroundColor: "rgba(27, 29, 77, 0.08) !important",
                     "&:hover": {
                       backgroundColor: "rgba(27, 29, 77, 0.12) !important"
                     }
+                },
+                ".grid": {
+                    borderBottom: "1px solid rgba(0, 0, 0, 0.12)"
                 }
             }
         }
@@ -110,6 +113,9 @@ const dark = createMuiTheme({
               "&:hover": {
                 backgroundColor: "rgba(255, 193, 7, 0.24) !important"
               }
+            },
+            ".grid": {
+                borderBottom: "1px solid rgba(255, 255, 255, 0.12)"
             }
           }
         }
@@ -162,6 +168,7 @@ class App extends React.Component {
             miner_data: [],
             models: [],
             modal: false,
+            modal2: false,
             theme: 'light'
         };
 
@@ -265,6 +272,8 @@ class App extends React.Component {
                     this.summary(false);
                     console.log('update');
                 }, 3000);
+            }).catch(err => {
+                console.log(err);
             });
         }
     }
@@ -295,6 +304,7 @@ class App extends React.Component {
         }).then((list) => {
             list = list.filter(a => !blacklist.includes(a.fqdn));
 
+            this.setState({modal2: true})
             if (!list.length) {
                 this.toggleModal(true);
             } else {
@@ -318,6 +328,11 @@ class App extends React.Component {
         this.setState({page: page});
     }
 
+    setSessionPass() {
+        notify('success', 'Session password set');
+        this.setState({sessionPass: document.getElementById('sessionPass').value, modal2: false});
+    }
+
     toggleTheme() {
         this.setState({theme: this.state.theme == 'light' ? 'dark' : 'light'});
     }
@@ -330,8 +345,11 @@ class App extends React.Component {
             var temp = this.state.miner_data;
             temp.push({ip: ip, sum: 'load', hist: 'load'});
         
+            var models = Array.from(this.state.models);
+            if (!models.includes('undefined')) models.push('undefined');
+
             notify('success', `Successfully added ${ip}`);
-            this.setState({miner_data: temp});
+            this.setState({models: models, miner_data: temp});
         } else {
             notify('info', `${ip} already tracked`);
         }
@@ -543,7 +561,7 @@ class App extends React.Component {
                         </List>
                     </div>
                 </Drawer>
-                <Dialog open={this.state.modal} onClose={() => this.state.toggleModal(false)}>
+                <Dialog open={this.state.modal} onClose={() => this.toggleModal(false)}>
                     <DialogTitle>No Miners found</DialogTitle>
                     <DialogContent>
                         If you are connecting over a VPN, this software will not detect your miners.
@@ -561,6 +579,19 @@ class App extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
+                <Dialog open={this.state.modal2} onClose={() => this.setState({modal2: false})}>
+                    <DialogTitle>Set Session Password</DialogTitle>
+                    <DialogContent>
+                        Add a session password to be used by default for all settings:
+                        <TextField type="password" variant="outlined" margin="dense" label="Session Password" id="sessionPass"
+                            onKeyDown={(e) => e.keyCode == 13 ? this.setSessionPass() : null}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => this.setSessionPass()} color="primary">Set Password</Button>
+                        <Button onClick={() => this.setState({modal2: false})} color="secondary">Skip</Button>
+                    </DialogActions>
+                </Dialog>
                 <ToastContainer
                     position='top-right'
                     autoClose={5000}
@@ -575,7 +606,7 @@ class App extends React.Component {
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme}/> }
                 { this.state.page == 'table' &&
                     //<TestTable/>
-                    <DataTable data={this.state.miner_data} models={this.state.models}
+                    <DataTable data={this.state.miner_data} models={this.state.models} sessionPass={this.state.sessionPass}
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
                         saveMiners={this.saveMiners} loadMiners={this.loadMiners}
                         handleApi={this.handleApi} handleFormApi={this.handleFormApi}
