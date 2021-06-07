@@ -1,7 +1,6 @@
-build-job:
+build:
     stage: build
     image:
         name: node:14
-        entrypoint: ['/bin/sh', '-c']
     script:
         - make dist
