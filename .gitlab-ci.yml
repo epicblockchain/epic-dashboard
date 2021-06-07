@@ -1,7 +1,10 @@
 build-job:
   stage: build
+  image:
+    name: fedora:rawhide
+    entrypoint: ['/bin/sh', '-c']
   script:
-    - /usr/bin/echo "Hello, $GITLAB_USER_LOGIN!"
+    - echo "Hello, $GITLAB_USER_LOGIN!"
 
 test-job1:
   stage: test
