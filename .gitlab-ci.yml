@@ -1,7 +1,9 @@
-build-job:
-  stage: build
-  image:
-    name: fedora:rawhide
-    entrypoint: ['/bin/sh', '-c']
-  script:
-    - make dist
+build:
+    stage: build
+    image:
+        name: node:14
+        entrypoint: ['/bin/sh', '-c']
+    before_script:
+        - apt-get install --yes make
+    script:
+        - make dist
