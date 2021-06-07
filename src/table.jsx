@@ -76,7 +76,7 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             this.props.models.forEach(key => {
                 sel[key] = [];
-                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+                newState[key + '_state'] = {sortBy: [], hiddenColumns: defaultHidden};
             });
             this.setState.selected = sel;
             this.setState(newState);
@@ -89,7 +89,7 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             this.props.models.forEach(key => {
                 sel[key] = [];
-                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+                newState[key + '_state'] = {sortBy: [], hiddenColumns: defaultHidden};
             });
             this.setState.selected = sel;
             this.setState(newState);
@@ -245,10 +245,10 @@ export class DataTable extends React.Component {
                             <Paper variant="outlined" className="datatable-wrap" style={{ width: "100%", overflow: "hidden" }} key={model}>
                                 <Table
                                     dataRaw={miners[model] || []}
-                                    columnsRaw={columns}
+                                    //columnsRaw={columns}
                                     extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
                                     update={this.update}
-                                    model={model}
+                                    extmodel={model}
                                 />
                             </Paper>
                         ) : null;

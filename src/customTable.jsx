@@ -57,7 +57,7 @@ function FilterIcon(props) {
     );
 }
 
-function Table({ dataRaw, columnsRaw, extstate, update, model }) {
+function Table({ dataRaw, update, extstate, extmodel }) {
     const DefaultColumnFilter = React.useCallback(({column: { filterValue, preFilteredRows, setFilter }}) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const handleClick = (event) => {
@@ -110,8 +110,30 @@ function Table({ dataRaw, columnsRaw, extstate, update, model }) {
     );
 
     const data = React.useMemo(() => dataRaw, [dataRaw]);
-    const columns = React.useMemo(() => columnsRaw, []);
-    const initialState = React.useMemo(() => extstate, [extstate]);
+    const columns = React.useMemo(() => [
+        { accessor: 'ip', Header: 'IP', width: 130 },
+        { accessor: 'name', Header: 'Name', width: 150 },
+        { accessor: 'firmware', Header: 'Firmware', width: 150 },
+        { accessor: 'model', Header: 'Model', width: 100},
+        { accessor: 'mode', Header: 'Mode', width: 100 },
+        { accessor: 'pool', Header: 'Pool', width: 180 },
+        { accessor: 'user', Header: 'User', width: 180 },
+        { accessor: 'start', Header: 'Started', width: 260 },
+        { accessor: 'uptime', Header: 'Uptime', width: 135 },
+        { accessor: 'hbs', Header: 'Active HBs', width: 120},
+        { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150},
+        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150}, 
+        { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150},
+        { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150},
+        { accessor: 'accepted', Header: 'Accepted Shares', width: 150},
+        { accessor: 'rejected', Header: 'Rejected Shares', width: 150},
+        { accessor: 'difficulty', Header: 'Difficulty', width: 120},
+        { accessor: 'temperature', Header: 'Temp \u00b0C', width: 110 },
+        { accessor: 'power', Header: 'Power (W)', width: 110}
+    ], []);
+
+    const model = React.useMemo(() => extmodel, []);
+    const initialState = React.useMemo(() => extstate, []);
     const updateState = React.useCallback((a, b, c, data, model) => update(a, b, c, data, model));
 
     const getTextWidth = React.useCallback((input, context) => {
@@ -133,6 +155,7 @@ function Table({ dataRaw, columnsRaw, extstate, update, model }) {
         headerGroups,
         rows,
         prepareRow,
+        dispatch,
         allColumns,
         totalColumnsWidth,
         getToggleHideAllColumnsProps,
@@ -141,16 +164,31 @@ function Table({ dataRaw, columnsRaw, extstate, update, model }) {
         toggleHideColumn,
         toggleHideAllColumns,
         preGlobalFilteredRows,
-        setGlobalFilter,
+        setGlobalFilter
     } = useTable(
     {
         columns,
         data,
         initialState,
         defaultColumn,
+        autoResetSelectedRows: false,
+        autoResetSortBy: false,
+        autoResetFilters: false,
+        autoResetGlobalFilter: false,
         stateReducer: (a, b, c) => {
-            if (b.type !='init' && b.type !='columnResizing' && b.type !='resetSelectedRows' && b.type !='resetSortBy'
-                && b.type !='resetFilters' && b.type !='resetGlobalFilter' && b.type !='columnStartResizing') {
+            //console.log('stateChange', b);
+            switch(b.type) {
+                case 'autoColSize':
+                    const clone = a.columnResizing;
+                    clone.columnWidths[b.col] = b.val;
+
+                    return {
+                        ...a,
+                        columnResizing: clone
+                    };
+            }
+
+            if (b.type !='columnResizing' && b.type !='columnStartResizing') {
                 updateState(a, b, c, dataRaw, model);
             }
         }
@@ -271,19 +309,20 @@ function Table({ dataRaw, columnsRaw, extstate, update, model }) {
                                     onDoubleClick={() => {
                                         if (column.id != "selection") {
                                             let max = 0;
-                                            const start = Date.now();
+
                                             const context = document.getElementById('canvas').getContext('2d');
                                             context.font = '14px Helvetica';
+
                                             data.forEach((row) => {
                                                 const width = getTextWidth(row[column.id], context);
                                                 if (width > max) max = width;
                                             });
-                                            console.log('done calc', Date.now() - start);
-                                            state.columnResizing.columnWidths[column.id] = Math.max(max, getTextWidth(column.Header, context)) + 48;
-                                            console.log('done state', Date.now() - start);
-                                            column.toggleHidden();
-                                            column.toggleHidden();
-                                            console.log('done toggle', Date.now() - start);
+                                            
+                                            dispatch({
+                                                type: 'autoColSize',
+                                                col: column.id, 
+                                                val: Math.max(max, getTextWidth(column.Header, context)) + 48
+                                            });
                                         }
                                     }}
                                 />
