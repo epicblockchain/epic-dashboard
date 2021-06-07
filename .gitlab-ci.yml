@@ -1,9 +1,7 @@
-build:
+build-job:
     stage: build
     image:
         name: node:14
         entrypoint: ['/bin/sh', '-c']
-    before_script:
-        - apt-get install --yes make
     script:
         - make dist
