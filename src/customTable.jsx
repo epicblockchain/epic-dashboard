@@ -133,7 +133,8 @@ function Table({ dataRaw, update, extstate, extmodel }) {
         { accessor: 'rejected', Header: 'Rejected Shares', width: 150},
         { accessor: 'difficulty', Header: 'Difficulty', width: 120},
         { accessor: 'temperature', Header: 'Temp \u00b0C', width: 110 },
-        { accessor: 'power', Header: 'Power (W)', width: 110}
+        { accessor: 'power', Header: 'Power (W)', width: 110},
+        { accessor: 'fanspeed', Header: 'Fan Speed', width: 115}
     ], []);
 
     const model = React.useMemo(() => extmodel, []);

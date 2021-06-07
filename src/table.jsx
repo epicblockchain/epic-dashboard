@@ -1,10 +1,4 @@
 import * as React from 'react';
-import {
-    DataGrid,
-    GridToolbarContainer,
-    GridFilterToolbarButton,
-    GridColumnsToolbarButton,
-    GridDensitySelector } from '@material-ui/data-grid';
 import { Tabs, Tab, Paper } from '@material-ui/core';
 import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 import { CoinTab } from './tabs/CoinTab.jsx';
@@ -46,17 +40,7 @@ const columns = [
 ];
 
 const defaultHidden = ['model', 'start', 'uptime', 'hashrate1hr',
-    'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power'];
-
-function Toolbar() {
-    return(
-        <GridToolbarContainer>
-            <GridColumnsToolbarButton/>
-            <GridFilterToolbarButton/>
-            <GridDensitySelector/>
-        </GridToolbarContainer>
-    );
-}
+    'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power', 'fanspeed'];
 
 export class DataTable extends React.Component {
     constructor(props) {
@@ -203,6 +187,7 @@ export class DataTable extends React.Component {
                 difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
                 temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
                 power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
+                fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
                 cap: a.cap
             })
         );

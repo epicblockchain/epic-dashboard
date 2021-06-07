@@ -23,7 +23,7 @@ export class CoinTab extends React.Component {
                         coin: this.props.data[this.props.selected[0]].sum.Mining['Coin'],
                         pool: this.props.data[this.props.selected[0]].sum.Stratum['Current Pool'],
                         address: arr[0] || '',
-                        worker: arr[1] || ''
+                        worker: arr[1].split('-')[0] || ''
                     });
                 }
             } else {
