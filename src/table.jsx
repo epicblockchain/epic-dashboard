@@ -22,7 +22,6 @@ import { FanTab } from './tabs/FanTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
-import Table2 from './customTable2.jsx';
 
 const columns = [
     { accessor: 'ip', Header: 'IP', width: 130 },
