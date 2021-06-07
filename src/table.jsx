@@ -97,15 +97,22 @@ export class DataTable extends React.Component {
 
     hashrate_x_hr(row, x) {
         var sum = 0;
-        try {
-            for (let obj of this.props.data[row].hist.slice(-x)) {
-                sum += obj.Hashrate;
+        if (x) {
+            try {
+                for (let obj of row.hist.slice(-x)) {
+                    sum += obj.Hashrate;
+                }
+                sum /= x;
+            } catch {
+                sum = 'N/A'
             }
-            sum /= x;
-        } catch {
-            sum = 'N/A'
+        } else {
+            sum = row.sum.Session['Average MHs'];
         }
-        return Math.round(sum / 100) / 10000;
+
+        if (sum > 999999) return `${Math.round(sum / 10000) / 100} TH/s`;
+        if (sum > 999) return `${Math.round(sum / 10) / 100} GH/s`;
+        else return `${Math.round(sum * 100) / 100} MH/s`;
     }
 
     secondsToHumanReadable(seconds){
@@ -187,10 +194,10 @@ export class DataTable extends React.Component {
                 start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
                 uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
                 hbs: this.failSafe(a.sum) || a.sum.Session['Active HBs'],
-                hashrate15min: this.failSafe(a.sum) || Math.round(a.sum.Session['Average MHs'] / 100) / 10000,
-                hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 1),
-                hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 6),
-                hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 24),
+                hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null),
+                hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1),
+                hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6),
+                hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 24),
                 accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
                 rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
                 difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,

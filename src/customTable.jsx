@@ -126,7 +126,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
         { accessor: 'uptime', Header: 'Uptime', width: 135 },
         { accessor: 'hbs', Header: 'Active HBs', width: 120},
         { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150},
-        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150}, 
+        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150},
         { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150},
         { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150},
         { accessor: 'accepted', Header: 'Accepted Shares', width: 150},
