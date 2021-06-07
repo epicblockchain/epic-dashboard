@@ -11,7 +11,7 @@
     margin-right: 12px !important; 
 }
 
-button.MuiButton-contained {
+#table .MuiButton-contained {
     line-height: 2;
     margin: 8px 12px 4px 0;
 }

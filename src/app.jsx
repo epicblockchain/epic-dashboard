@@ -21,6 +21,7 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import './app.css';
 import logo from './img/EpicLogo.png'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
@@ -304,13 +305,14 @@ class App extends React.Component {
         }).then((list) => {
             list = list.filter(a => !blacklist.includes(a.fqdn));
 
-            this.setState({modal2: true})
             if (!list.length) {
                 this.toggleModal(true);
             } else {
                 console.log(list);
                 miners = list.sort(this.compare);
             }
+            this.setState({modal2: true})
+
             this.summary(true);
             console.log('mounted');
         });
@@ -554,6 +556,10 @@ class App extends React.Component {
                                 <ListAltIcon/>
                                 <ListItemText primary="Table"/>
                             </ListItem>
+                            <ListItem button key="Password" onClick={() => this.setState({modal2: true})}>
+                                <VpnKeyIcon/>
+                                <ListItemText primary="Session Password"/>
+                            </ListItem>
                             <ListItem button key="Support" onClick={() => this.setPage('support')}>
                                 <ContactSupportIcon/>
                                 <ListItemText primary="Support"/>
@@ -571,10 +577,10 @@ class App extends React.Component {
                         <Button onClick={() => {
                                     this.toggleModal(false);
                                     this.setPage('table');
-                                }} color="primary">
+                                }} color="primary" variant="contained">
                             Navigate to List
                         </Button>
-                        <Button onClick={() => this.toggleModal(false)} color="primary">
+                        <Button onClick={() => this.toggleModal(false)} color="primary" variant="outlined">
                             Dismiss
                         </Button>
                     </DialogActions>
@@ -584,12 +590,12 @@ class App extends React.Component {
                     <DialogContent>
                         Add a session password to be used by default for all settings:
                         <TextField type="password" variant="outlined" margin="dense" label="Session Password" id="sessionPass"
-                            onKeyDown={(e) => e.keyCode == 13 ? this.setSessionPass() : null}
+                            onKeyPress={(e) => e.key == 'Enter' ? this.setSessionPass() : null}
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => this.setSessionPass()} color="primary">Set Password</Button>
-                        <Button onClick={() => this.setState({modal2: false})} color="secondary">Skip</Button>
+                        <Button onClick={() => this.setSessionPass()} color="primary" variant="contained">Set Password</Button>
+                        <Button onClick={() => this.setState({modal2: false})} color="primary" variant="outlined">Skip</Button>
                     </DialogActions>
                 </Dialog>
                 <ToastContainer

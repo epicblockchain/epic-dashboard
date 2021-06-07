@@ -213,7 +213,7 @@ export class DataTable extends React.Component {
         }
 
         return (
-            <div style={{ maxWidth: '1400px', margin: '0 auto'}}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto'}} id="table">
                 <Tabs value={this.state.list} onChange={this.setList} indicatorColor="primary"
                     textColor="primary" centered
                 >
