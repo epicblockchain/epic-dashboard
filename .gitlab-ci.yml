@@ -3,4 +3,5 @@ build:
     image:
         name: node:14
     script:
+        - npm i -g @electron-forge/cli
         - make dist
