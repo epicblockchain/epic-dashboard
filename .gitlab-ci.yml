@@ -3,6 +3,6 @@ build:
     image:
         name: node:14
     script:
-        - npm i -g @electron-forge/cli
+        - sudo npm i -g @electron-forge/cli
         - npm i
         - make dist
