@@ -3,9 +3,11 @@ build:
     image:
         name: ubuntu:latest
     script:
+        - apt update
+        - apt install -y curl
         - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        - source ~/.bashrc
         - nvm install 14
-        - nvm use 14
         - npm i -g @electron-forge/cli
         - npm i
         - make dist
