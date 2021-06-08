@@ -4,7 +4,7 @@ build:
         name: ubuntu:latest
     script:
         - apt update
-        - apt install -y curl
+        - apt install -y curl make
         - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         - export NVM_DIR="$HOME/.nvm"
         - \. "$NVM_DIR/nvm.sh"
