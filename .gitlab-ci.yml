@@ -1,8 +1,9 @@
 build:
     stage: build
     image:
-        name: node:14
+        name: ubuntu:latest
     script:
+        - node -v
         - npm i -g @electron-forge/cli
         - npm i
         - make dist
