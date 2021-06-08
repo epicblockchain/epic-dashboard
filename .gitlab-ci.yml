@@ -6,8 +6,8 @@ build:
         - apt update
         - apt install -y curl
         - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-        - echo $HOME
-        - source $HOME/.bashrc
+        - export NVM_DIR="$HOME/.nvm"
+        - [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         - nvm install 14
         - npm i -g @electron-forge/cli
         - npm i
