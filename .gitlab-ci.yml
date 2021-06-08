@@ -9,6 +9,6 @@ build:
         - export NVM_DIR="$HOME/.nvm"
         - \. "$NVM_DIR/nvm.sh"
         - nvm install 14
-        - sudo npm i -g @electron-forge/cli
-        - sudo npm i
+        - npm i -g --unsafe-perm @electron-forge/cli
+        - npm i --unsafe-perm
         - make dist
