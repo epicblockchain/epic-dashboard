@@ -4,7 +4,6 @@ build:
         name: ubuntu:latest
     script:
         - apt update
-        - dpkg --version
         - export TZ="America/Toronto"
         - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
         - apt install -y curl make git wine mono-devel fakeroot zip
