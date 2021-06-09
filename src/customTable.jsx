@@ -279,13 +279,13 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                 transitionDuration={100}
             >
                 <MenuItem onClick={() => toggleHideAllColumns()}>
-                    <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
+                    <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} onChange={null}/>
                     Show/Hide All
                 </MenuItem>
                 {allColumns.map((col) => {
                     return col.id != "selection" ? (
                         <MenuItem key={col.id} onClick={() => toggleHideColumn(col.id)}>
-                            <IndeterminateCheckbox {...col.getToggleHiddenProps()} />
+                            <IndeterminateCheckbox {...col.getToggleHiddenProps()} onChange={null}/>
                             {col.Header}
                         </MenuItem>
                     ) : null;

@@ -45,7 +45,7 @@ const defaultHidden = ['model', 'start', 'uptime', 'hashrate1hr',
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {models: ['Miners Loading...'], selected: {}, list: 0, tab: 0};
+        this.state = {models: ['Miners Loading...'], selected: {}, hidden: defaultHidden, list: 0, tab: 0};
 
         this.select = this.select.bind(this);
         this.setList = this.setList.bind(this);
@@ -148,7 +148,15 @@ export class DataTable extends React.Component {
     }
 
     update(newState, action, prevState, data, model) {
-        if (action.type == 'toggleRowSelected' || action.type == 'toggleAllRowsSelected') {
+        if (action.type == 'toggleHideColumn' || action.type == 'toggleHideAllColumns') {
+            var temp = {};
+            this.props.models.forEach(mod => {
+                temp[mod + '_state'] = Object.assign({}, this.state[mod + '_state']);
+                temp[mod + '_state'].hiddenColumns = newState.hiddenColumns;
+            });
+
+            this.setState(temp);
+        } else if (action.type == 'toggleRowSelected' || action.type == 'toggleAllRowsSelected') {
             var temp = Object.assign({}, this.state.selected);
 
             var sel = [];
