@@ -6,7 +6,7 @@ build:
         - apt update
         - export TZ="America/Toronto"
         - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-        - apt install -y curl make git wine mono-devel
+        - apt install -y curl make git wine wine32 mono-devel
         - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         - export NVM_DIR="$HOME/.nvm"
         - \. "$NVM_DIR/nvm.sh"
