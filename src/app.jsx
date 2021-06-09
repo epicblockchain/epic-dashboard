@@ -475,8 +475,8 @@ class App extends React.Component {
                 obj = {param: data.speed.toString(), password: data.password};
         }
         
-        let slow_api = api == '/coin' || api == '/miner';
-        let soft_reboot = api == '/softreboot' || api == 'hwconfig' || api == '/mode';
+        let slow_api = api == '/coin' || api == '/miner'; //sends response after completed
+        let soft_reboot = api == '/softreboot' || api == 'hwconfig' || api == '/mode'; //sends response early
 
         for (let i of selected) {
             (async () => {
@@ -492,7 +492,7 @@ class App extends React.Component {
                     let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
                     var temp = this.state.miner_data;
                     temp[ind].sum = 'reboot';
-                    temp[ind].timer = 10;
+                    temp[ind].timer = 10; //10 * 6sec = 1min
                     this.setState({miner_data: temp});
                 }
 
@@ -505,7 +505,7 @@ class App extends React.Component {
                 if (slow_api) toast.dismiss(i);
 
                 if (body.result) {
-                    notify('success', `${miners[i].address}: ${body.result}`);
+                    notify('success', `${miners[i].address}: ${api} successful`);
                     
                     if (api == '/reboot' || soft_reboot) {
                         let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
@@ -611,7 +611,6 @@ class App extends React.Component {
                 />
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme}/> }
                 { this.state.page == 'table' &&
-                    //<TestTable/>
                     <DataTable data={this.state.miner_data} models={this.state.models} sessionPass={this.state.sessionPass}
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
                         saveMiners={this.saveMiners} loadMiners={this.loadMiners}
