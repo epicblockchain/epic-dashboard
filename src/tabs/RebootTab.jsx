@@ -4,13 +4,14 @@ import { Button, TextField } from '@material-ui/core';
 export class RebootTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {delay: 0, password: this.props.sessionPass};
+        this.state = {delay: '0', password: this.props.sessionPass};
 
         this.updateDelay = this.updateDelay.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
     
     updateDelay(e) {
+        console.log(typeof e.target.value);
         this.setState({delay: e.target.value});
     }
 
@@ -28,14 +29,14 @@ export class RebootTab extends React.Component {
                 <Button onClick={() => {
                         this.props.handleApi('/reboot', this.state, this.props.selected);
                     }} variant="contained" color="primary"
-                    disabled={this.state.delay < 0 || !this.state.password || !this.props.selected.length}
+                    disabled={this.state.delay < '0' || !this.state.password || !this.props.selected.length}
                 >
                     Reboot
                 </Button>
                 <Button onClick={() => {
                         this.props.handleApi('/softreboot', this.state, this.props.selected);
                     }} variant="contained" color="secondary"
-                    disabled={this.state.delay < 0 || !this.state.password || !this.props.selected.length}
+                    disabled={this.state.delay < '0' || !this.state.password || !this.props.selected.length}
                 >
                     Soft Reboot
                 </Button>
