@@ -282,7 +282,7 @@ class App extends React.Component {
     componentDidMount() {
         ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
             notify(sev, text, {
-                autoClose: 60000,
+                autoClose: 600000, //10 min
                 hideProgressBar: false,
                 pauseOnHover: false,
                 toastId: i
@@ -291,7 +291,7 @@ class App extends React.Component {
             let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
             var temp = this.state.miner_data;
             temp[ind].sum = 'reboot';
-            temp[ind].timer = 10;
+            temp[ind].timer = 100; // 100 * 6sec = 10min
             this.setState({miner_data: temp});
         });
 
