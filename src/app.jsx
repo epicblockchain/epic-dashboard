@@ -3,8 +3,9 @@ const got = require('got');
 const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
-const NetworkSpeed = require('network-speed');
-const testNetworkSpeed = new NetworkSpeed();
+// const NetworkSpeed = require('network-speed');
+// const testNetworkSpeed = new NetworkSpeed();
+const { createLogger, transports } = require('winston');
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -143,6 +144,18 @@ switch (process.platform) {
         console.log("Unsupported platform: " + process.platform);
         process.exit(1);
 }
+
+const logger = createLogger({
+    transports: [
+        new transports.File({ filename: path.join('combined.log') })
+    ],
+    exceptionHandlers: [
+        new transports.File({ filename: path.join(app_path, 'errors.log') })
+    ],
+    rejectionHandlers: [
+        new transports.File({ filename: path.join(app_path, 'errors.log') })
+    ]
+});
 
 fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
     if (err) {

@@ -17,28 +17,6 @@ import './table.css';
 
 import Table from './customTable.jsx';
 
-const columns = [
-    { accessor: 'ip', Header: 'IP', width: 130 },
-    { accessor: 'name', Header: 'Name', width: 150 },
-    { accessor: 'firmware', Header: 'Firmware', width: 150 },
-    { accessor: 'model', Header: 'Model', width: 100},
-    { accessor: 'mode', Header: 'Mode', width: 100 },
-    { accessor: 'pool', Header: 'Pool', width: 180 },
-    { accessor: 'user', Header: 'User', width: 180 },
-    { accessor: 'start', Header: 'Started', width: 260 },
-    { accessor: 'uptime', Header: 'Uptime', width: 135 },
-    { accessor: 'hbs', Header: 'Active HBs', width: 120},
-    { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150},
-    { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150}, 
-    { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150},
-    { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150},
-    { accessor: 'accepted', Header: 'Accepted Shares', width: 150},
-    { accessor: 'rejected', Header: 'Rejected Shares', width: 150},
-    { accessor: 'difficulty', Header: 'Difficulty', width: 120},
-    { accessor: 'temperature', Header: 'Temp \u00b0C', width: 110 },
-    { accessor: 'power', Header: 'Power (W)', width: 110}
-];
-
 const defaultHidden = ['model', 'start', 'uptime', 'hashrate1hr',
     'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power', 'fanspeed'];
 
@@ -167,7 +145,7 @@ export class DataTable extends React.Component {
                 var sel = [];
 
                 Object.keys(newState.selectedRowIds).forEach(id => {
-                    sel.push(data[id].id);
+                    if (data[id]) sel.push(data[id].id);
                 });
 
                 this.setState({ [model + '_sel']: sel, [model + '_state']: newState });
