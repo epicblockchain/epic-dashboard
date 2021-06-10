@@ -3,6 +3,8 @@ const got = require('got');
 const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
+const NetworkSpeed = require('network-speed');
+const testNetworkSpeed = new NetworkSpeed();
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -300,6 +302,22 @@ class App extends React.Component {
             toast.dismiss(i);
         });
 
+        /*(const options = {
+            hostname: '10.10.0.216',
+            port: 4000,
+            path: '/',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+
+        const start = Date.now();
+        testNetworkSpeed.checkUploadSpeed(options, 100000).then(result => {
+            console.log(result);
+            console.log(Date.now() - start);
+        });*/
+        
         mdns.discover({
             name: '_epicminer._tcp.local', wait: 2
         }).then((list) => {

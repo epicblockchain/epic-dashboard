@@ -15,7 +15,7 @@ export class WalletAddrTab extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.selected != this.props.selected) {
             if (this.props.selected.length && this.props.data[this.props.selected[0]].sum) {
-                if(!prevProps.selected.length && typeof this.props.data[this.props.selected[0]].sum == "object") {
+                if (prevProps.selected[0] != this.props.selected[0] && this.props.data[this.props.selected[0]].sum.Stratum) {
                     var arr = this.props.data[this.props.selected[0]].sum.Stratum['Current User'].split('.');
                     this.setState({address: arr[0] || '', worker: arr[1] ? arr[1].split('-')[0] : ''});
                 }

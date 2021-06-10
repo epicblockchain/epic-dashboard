@@ -45,7 +45,7 @@ const defaultHidden = ['model', 'start', 'uptime', 'hashrate1hr',
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {models: ['Miners Loading...'], selected: {}, hidden: defaultHidden, list: 0, tab: 0};
+        this.state = {models: ['Miners Loading...'], selected: {}, list: 0, tab: 0};
 
         this.select = this.select.bind(this);
         this.setList = this.setList.bind(this);
@@ -55,26 +55,24 @@ export class DataTable extends React.Component {
 
     componentDidMount() {
         if (this.props.models && this.props.models.length) {
-            var sel = {};
             var newState = {models: this.props.models};
             this.props.models.forEach(key => {
-                sel[key] = [];
+                newState[key + '_sel'] = [];
                 newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
-            newState.selected = sel;
+
             this.setState(newState);
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
-            var sel = {};
             var newState = {models: this.props.models};
             this.props.models.forEach(key => {
-                sel[key] = [];
+                newState[key + '_sel'] = [];
                 newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
-            newState.selected = sel;
+
             this.setState(newState);
         }
     }
@@ -125,9 +123,7 @@ export class DataTable extends React.Component {
     }
 
     select(sel_model, model) {
-        var temp = Object.assign({}, this.state.selected);
-        temp[model] = sel_model;
-        this.setState({selected: temp});
+        this.setState({[model + '_sel']: sel_model});
     }
 
     setList(event, newVal) {
@@ -156,16 +152,26 @@ export class DataTable extends React.Component {
             });
 
             this.setState(temp);
-        } else if (action.type == 'toggleRowSelected' || action.type == 'toggleAllRowsSelected') {
-            var temp = Object.assign({}, this.state.selected);
+        } else if (action.type == 'toggleRowSelected') {
+            var temp = Array.from(this.state[model + '_sel']);
 
-            var sel = [];
-            for (const i in newState.selectedRowIds) {
-                if (data[i]) sel.push(data[i].id);
+            if (action.value) {
+                temp.push(data[action.id].id);
+            } else {
+                temp.splice(temp.indexOf(data[action.id].id), 1);
             }
 
-            temp[model] = sel;
-            this.setState({ selected: temp, [model + '_state']: newState });
+            this.setState({ [model + '_sel']: temp, [model + '_state']: newState });
+        } else if (action.type == 'toggleAllRowsSelected') {
+            if (this.state[model + '_sel']) {
+                var sel = [];
+
+                Object.keys(newState.selectedRowIds).forEach(id => {
+                    sel.push(data[id].id);
+                });
+
+                this.setState({ [model + '_sel']: sel, [model + '_state']: newState });
+            }
         } else {
             this.setState({ [model + '_state']: newState });
         }
@@ -210,7 +216,7 @@ export class DataTable extends React.Component {
         }
 
         var selected;
-        selected = this.state.selected[this.state.models[this.state.list]] || [];
+        selected = this.state[this.state.models[this.state.list] + '_sel'] || [];
 
         var capApi = true;
         for (let i of selected) {
@@ -283,7 +289,7 @@ export class DataTable extends React.Component {
                     <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 4}>
-                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
+                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass} list={this.state.list}/>
                 </div>
                 <div hidden={this.state.tab != 5}>
                     <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners}
