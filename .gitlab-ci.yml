@@ -17,3 +17,10 @@ build:
         - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
         - make dist
+    artifacts:
+        paths:
+            - 'out/make/'
+        exclude:
+            - 'out/**/*.nupkg'
+            - 'out/**/RELEASES'
+        expire_in: 6 mos
