@@ -1,0 +1,26 @@
+build:
+    stage: build
+    image:
+        name: ubuntu:latest
+    script:
+        - apt update
+        - export TZ="America/Toronto"
+        - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+        - apt install -y curl make git wine mono-devel fakeroot zip
+        - dpkg --add-architecture i386
+        - apt update
+        - apt install -y wine32
+        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        - export NVM_DIR="$HOME/.nvm"
+        - \. "$NVM_DIR/nvm.sh"
+        - nvm install 14
+        - npm i -g --unsafe-perm @electron-forge/cli
+        - npm i --unsafe-perm
+        - make dist
+    artifacts:
+        paths:
+            - 'out/make/'
+        exclude:
+            - 'out/**/*.nupkg'
+            - 'out/**/RELEASES'
+        expire_in: 6 mos
