@@ -4,7 +4,7 @@ import { Button, TextField } from '@material-ui/core';
 export class PasswordTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {pass1: '', pass2: '', error: false, password: ''};
+        this.state = {pass1: '', pass2: '', error: false, password: this.props.sessionPass};
 
         this.updatePass1 = this.updatePass1.bind(this);
         this.checkMatch = this.checkMatch.bind(this);
@@ -37,7 +37,7 @@ export class PasswordTab extends React.Component {
                     value={this.state.pass2} error={this.state.error} margin="dense"
                     helperText={this.state.error ? 'Passwords do not match' : ''}
                 />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/password', this.state, this.props.selected);
                     }} variant="contained" color="primary"

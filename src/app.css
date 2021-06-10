@@ -18,7 +18,7 @@ body {
 
 #menu-but {
     position: fixed;
-    top: 0;
+    top: 8px;
     left: 8px;
     z-index: 10;
     padding: 4px;
@@ -27,6 +27,10 @@ body {
 
 div.MuiDrawer-paper {
     background-color: #1b1d4d;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.MuiDrawer-paper .MuiSvgIcon-root {
     color: #ffc107;
 }
 

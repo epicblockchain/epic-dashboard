@@ -6,6 +6,9 @@ dist: ## run the package and make for all platformas and architectures... requir
 	electron-forge make --targets="@electron-forge/maker-deb" --platform="linux" --arch="ia32","x64","arm64","armv7l"
 ##	electron-forge make --targets="@electron-forge/maker-rpm" --platform="linux" --arch="ia32","x64","arm64","armv7l"
 	electron-forge make --targets="@electron-forge/maker-zip" --platform="darwin" --arch="x64"
+
+armhf: ## for raspberry pi
+	electron-forge make --targets="@electron-forge/maker-deb" --platform="linux" --arch="armv7l"
 	
 clean: ## remove all built files
 	rm -rf out/*

@@ -4,7 +4,7 @@ import { Button, TextField, Select, FormControl, InputLabel } from '@material-ui
 export class CmdTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {cmd: 'start', password: ''};
+        this.state = {cmd: 'start', password: this.props.sessionPass};
 
         this.updateCmd = this.updateCmd.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
@@ -33,7 +33,7 @@ export class CmdTab extends React.Component {
                         }
                     </Select>
                 </FormControl>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/miner', this.state, this.props.selected);

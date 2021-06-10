@@ -4,6 +4,8 @@ const fs = require('fs');
 const FormData = require('form-data');
 const sha256 = require('sha256-file');
 require('@electron/remote/main').initialize();
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -42,7 +44,7 @@ const createWindow = () => {
                     const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                         body: f,
                         responseType: 'json',
-                        timeout: 60000
+                        timeout: 600000 //60000 was 1 min before
                     });
 
                     if (body.result) {

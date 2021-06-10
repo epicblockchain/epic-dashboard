@@ -10,8 +10,8 @@ import { Dashboard } from './dashboard.jsx';
 import { DataTable } from './table.jsx';
 import { Support } from './support.jsx';
 
-import { Drawer, ListItem, ListItemIcon, ListItemText, Button, List, Divider,
-        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CssBaseline
+import { Drawer, ListItem, ListItemText, Button, List, Divider,
+        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CssBaseline, TextField
     } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { ToastContainer, toast } from 'react-toastify';
@@ -21,6 +21,7 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import './app.css';
 import logo from './img/EpicLogo.png'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
@@ -29,6 +30,39 @@ const light = createMuiTheme({
     palette: {
         primary: {main: '#1b1d4d'},
         secondary: {main: '#ffc107'}
+    },
+    overrides: {
+        MuiCssBaseline: {
+            "@global": {
+                ".datatable-wrap": {
+                    background: "#fafafa"
+                },
+                ".resizer": {
+                    border: "8px solid #fafafa",
+                    background: "#aaa",
+                    "&.isResizing": {
+                      background: "#1b1d4d"
+                    }
+                },
+                ".MuiTableRow-root": {
+                    "&.MuiTableRow-head:hover": {
+                      backgroundColor: "inherit"
+                    },
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)"
+                    }
+                },
+                ".MuiTableRow-root.Mui-selected": {
+                    backgroundColor: "rgba(27, 29, 77, 0.08) !important",
+                    "&:hover": {
+                      backgroundColor: "rgba(27, 29, 77, 0.12) !important"
+                    }
+                },
+                ".grid": {
+                    borderBottom: "1px solid rgba(0, 0, 0, 0.12)"
+                }
+            }
+        }
     }
 })
 
@@ -37,6 +71,55 @@ const dark = createMuiTheme({
         type: 'dark',
         primary: {main: '#ffc107'},
         secondary: {main: '#1b1d4d'}
+    },
+    overrides: {
+        MuiCssBaseline: {
+          "@global": {
+            "*::-webkit-scrollbar": {
+              width: "1.25em",
+              height: "1.25em",
+              background: "#202022"
+            },
+            "*::-webkit-scrollbar-corner": {
+              background: "#202022"
+            },
+            "*::-webkit-scrollbar-thumb": {
+              background: "#585859",
+              border: "3px solid #202022",
+              borderRadius: "8px"
+            },
+            "*::-webkit-scrollbar-thumb:hover": {
+              background: "#999"
+            },
+            ".datatable-wrap": {
+                background: "#303030"
+            },
+            ".resizer": {
+              border: "8px solid #303030",
+              background: "#aaa",
+              "&.isResizing": {
+                background: "#ffc107"
+              }
+            },
+            ".MuiTableRow-root": {
+              "&.MuiTableRow-head:hover": {
+                backgroundColor: "inherit"
+              },
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.08)"
+              }
+            },
+            ".MuiTableRow-root.Mui-selected": {
+              backgroundColor: "rgba(255, 193, 7, 0.16) !important",
+              "&:hover": {
+                backgroundColor: "rgba(255, 193, 7, 0.24) !important"
+              }
+            },
+            ".grid": {
+                borderBottom: "1px solid rgba(255, 255, 255, 0.12)"
+            }
+          }
+        }
     }
 })
 
@@ -86,6 +169,7 @@ class App extends React.Component {
             miner_data: [],
             models: [],
             modal: false,
+            modal2: false,
             theme: 'light'
         };
 
@@ -131,6 +215,8 @@ class App extends React.Component {
                             };
                         } catch(err) {
                             console.log(err);
+                            models.add('undefined');
+                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: JSON.parse(history.body).History.slice(-48), cap: null};
                         }
                     } else {
                         const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
@@ -154,6 +240,7 @@ class App extends React.Component {
                     if (match && match.sum == 'reboot' && match.timer > 0) {
                         return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
                     } else {
+                        models.add('undefined');
                         return {ip: miner.address, sum: null, hist: null, timer: 0};
                     }
                 }
@@ -186,6 +273,8 @@ class App extends React.Component {
                     this.summary(false);
                     console.log('update');
                 }, 3000);
+            }).catch(err => {
+                console.log(err);
             });
         }
     }
@@ -222,6 +311,8 @@ class App extends React.Component {
                 console.log(list);
                 miners = list.sort(this.compare);
             }
+            this.setState({modal2: true})
+
             this.summary(true);
             console.log('mounted');
         });
@@ -239,6 +330,11 @@ class App extends React.Component {
         this.setState({page: page});
     }
 
+    setSessionPass() {
+        notify('success', 'Session password set');
+        this.setState({sessionPass: document.getElementById('sessionPass').value, modal2: false});
+    }
+
     toggleTheme() {
         this.setState({theme: this.state.theme == 'light' ? 'dark' : 'light'});
     }
@@ -251,8 +347,11 @@ class App extends React.Component {
             var temp = this.state.miner_data;
             temp.push({ip: ip, sum: 'load', hist: 'load'});
         
+            var models = Array.from(this.state.models);
+            if (!models.includes('undefined')) models.push('undefined');
+
             notify('success', `Successfully added ${ip}`);
-            this.setState({miner_data: temp});
+            this.setState({models: models, miner_data: temp});
         } else {
             notify('info', `${ip} already tracked`);
         }
@@ -457,6 +556,10 @@ class App extends React.Component {
                                 <ListAltIcon/>
                                 <ListItemText primary="Table"/>
                             </ListItem>
+                            <ListItem button key="Password" onClick={() => this.setState({modal2: true})}>
+                                <VpnKeyIcon/>
+                                <ListItemText primary="Session Password"/>
+                            </ListItem>
                             <ListItem button key="Support" onClick={() => this.setPage('support')}>
                                 <ContactSupportIcon/>
                                 <ListItemText primary="Support"/>
@@ -464,7 +567,7 @@ class App extends React.Component {
                         </List>
                     </div>
                 </Drawer>
-                <Dialog open={this.state.modal} onClose={() => this.state.toggleModal(false)}>
+                <Dialog open={this.state.modal} onClose={() => this.toggleModal(false)}>
                     <DialogTitle>No Miners found</DialogTitle>
                     <DialogContent>
                         If you are connecting over a VPN, this software will not detect your miners.
@@ -474,12 +577,25 @@ class App extends React.Component {
                         <Button onClick={() => {
                                     this.toggleModal(false);
                                     this.setPage('table');
-                                }} color="primary">
+                                }} color="primary" variant="contained">
                             Navigate to List
                         </Button>
-                        <Button onClick={() => this.toggleModal(false)} color="primary">
+                        <Button onClick={() => this.toggleModal(false)} color="primary" variant="outlined">
                             Dismiss
                         </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={this.state.modal2} onClose={() => this.setState({modal2: false})}>
+                    <DialogTitle>Set Session Password</DialogTitle>
+                    <DialogContent>
+                        Add a session password to be used by default for all settings:
+                        <TextField type="password" variant="outlined" margin="dense" label="Session Password" id="sessionPass"
+                            onKeyPress={(e) => e.key == 'Enter' ? this.setSessionPass() : null}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => this.setSessionPass()} color="primary" variant="contained">Set Password</Button>
+                        <Button onClick={() => this.setState({modal2: false})} color="primary" variant="outlined">Skip</Button>
                     </DialogActions>
                 </Dialog>
                 <ToastContainer
@@ -495,7 +611,8 @@ class App extends React.Component {
                 />
                 { this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme}/> }
                 { this.state.page == 'table' &&
-                    <DataTable data={this.state.miner_data} models={this.state.models}
+                    //<TestTable/>
+                    <DataTable data={this.state.miner_data} models={this.state.models} sessionPass={this.state.sessionPass}
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
                         saveMiners={this.saveMiners} loadMiners={this.loadMiners}
                         handleApi={this.handleApi} handleFormApi={this.handleFormApi}

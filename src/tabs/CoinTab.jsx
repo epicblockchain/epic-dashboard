@@ -4,7 +4,7 @@ import { Button, TextField, Select, FormControl, InputLabel, InputAdornment } fr
 export class CoinTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {coin: '', pool: '', address: '', worker: '', wallet_pass: 'x', password: ''};
+        this.state = {coin: '', pool: '', address: '', worker: '', wallet_pass: 'x', password: this.props.sessionPass};
 
         this.updateCoin = this.updateCoin.bind(this);
         this.updatePool = this.updatePool.bind(this);
@@ -23,7 +23,7 @@ export class CoinTab extends React.Component {
                         coin: this.props.data[this.props.selected[0]].sum.Mining['Coin'],
                         pool: this.props.data[this.props.selected[0]].sum.Stratum['Current Pool'],
                         address: arr[0] || '',
-                        worker: arr[1] || ''
+                        worker: arr[1].split('-')[0] || ''
                     });
                 }
             } else {
@@ -89,7 +89,7 @@ export class CoinTab extends React.Component {
                     value={this.state.wallet_pass} margin="dense" helperText="Leave unless qualified" className="stratum"
                 />
                 <br />
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/coin', this.state, this.props.selected);
                     }} variant="contained" color="primary"

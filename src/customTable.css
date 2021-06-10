@@ -1,0 +1,87 @@
+.check-wrap {
+  overflow: visible;
+  position: relative;
+}
+
+.toolbar {
+  padding: 4px 4px 0;
+}
+
+.col-header {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sort-icon {
+  position: relative;
+}
+
+.sort-icon .MuiSvgIcon-root {
+  position: absolute;
+}
+
+.filter {
+  position: absolute !important;
+  right: 8px;
+  top: 8px;
+  z-index: 2;
+}
+
+#simple-menu {
+  max-height: 600px;
+}
+
+#simple-menu .MuiListItem-root {
+  padding: 2px 36px;
+}
+
+#simple-menu .MuiCheckbox-root {
+  left: -4px;
+  position: absolute;
+}
+
+#datatable .MuiTableRow-root {
+  width: initial !important;
+}
+
+#datatable .MuiCheckbox-root {
+  top: -10px;
+  left: -6px;
+  position: absolute;
+  padding: 8px;
+  z-index: 2;
+}
+
+#datatable .MuiTableCell-root.MuiTableCell-head {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 10px 30px 10px 10px;
+}
+
+#datatable .MuiTableCell-root.MuiTableCell-body {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 5px 10px;
+  height: 32px;
+}
+
+.MuiTableFooter-root {
+  display: block !important;
+  line-height: 39px;
+  padding: 0 10px;
+}
+
+.resizer {
+  display: inline-block;
+  box-sizing: content-box;
+  width: 1px;
+  height: calc(100% - 16px);
+  position: absolute;
+  right: -8px;
+  top: 0;
+  position: absolute;
+  z-index: 1;
+}

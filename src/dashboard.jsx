@@ -14,8 +14,8 @@ import Paper from '@material-ui/core/Paper';
 
 am4core.useTheme(am4themes_animated);
 
-function createData(model, totalHashrate, activeMinerCount, acceptedRejectedString, timeSince) {
-    return { model, totalHashrate, activeMinerCount, acceptedRejectedString, timeSince };
+function createData(model, totalHashrate, totalPower, activeMinerCount, acceptedRejectedString, timeSince) {
+    return { model, totalHashrate, totalPower, activeMinerCount, acceptedRejectedString, timeSince };
 }
 
 function formatHashrateString(totalHashrate){
@@ -31,6 +31,16 @@ function formatHashrateString(totalHashrate){
         return `${(totalHashrate / 1e12).toFixed(2)} TH/s`;
     } else {
         return `${(totalHashrate / 1e15).toFixed(2)} PH/s`;
+    }
+}
+
+function formatPowerString(totalPower) {
+    if (totalPower < 1000) {
+        return `${(totalPower).toFixed(0)} W`;
+    } else if (totalPower < 1e6) {
+        return `${(totalPower / 1e3).toFixed(2)} kW`;
+    } else {
+        return `${(totalPower / 1e6).toFixed(2)} MW`;
     }
 }
 
@@ -191,6 +201,7 @@ export class Dashboard extends React.Component {
         let rows = [];
         for (let algo in modelData) {
             let totalHashrate = 0;
+            let totalPower = 0;
             let activeMinerCount = 0;
             let acceptedCount = 0;
             let rejectedCount = 0;
@@ -198,6 +209,9 @@ export class Dashboard extends React.Component {
 
             modelData[algo].forEach(miner => {
                     totalHashrate += miner["Session"]["Average MHs"];
+                    miner['HBs'].forEach(hb => {
+                        totalPower += hb['Input Power'];
+                    })
                     activeMinerCount += 1;
                     acceptedCount += miner["Session"]["Accepted"];
                     rejectedCount += miner["Session"]["Rejected"];
@@ -210,7 +224,8 @@ export class Dashboard extends React.Component {
 
             rows.push(createData(
                 algo,
-                formatHashrateString(totalHashrate),
+                formatHashrateString(totalHashrate * 1e6),
+                formatPowerString(totalPower),
                 activeMinerCount,
                 `${acceptedCount} / ${rejectedCount}`,
                 (new Date(timeSince * 1000)).toString()
@@ -231,6 +246,7 @@ export class Dashboard extends React.Component {
                         <TableRow>
                             <TableCell>Algorithm</TableCell>
                             <TableCell align="right">Total Hashrate</TableCell>
+                            <TableCell align="right">Total Power</TableCell>
                             <TableCell align="right">Active Miners</TableCell>
                             <TableCell align="right">Accepted / Rejected Shares</TableCell>
                             <TableCell align="right">Last Share Submition Time</TableCell>
@@ -243,6 +259,7 @@ export class Dashboard extends React.Component {
                                 {row.model}
                             </TableCell>
                             <TableCell align="right">{row.totalHashrate}</TableCell>
+                            <TableCell align="right">{row.totalPower}</TableCell>
                             <TableCell align="right">{row.activeMinerCount}</TableCell>
                             <TableCell align="right">{row.acceptedRejectedString}</TableCell>
                             <TableCell align="right">{row.timeSince}</TableCell>

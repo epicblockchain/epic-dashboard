@@ -5,7 +5,7 @@ import ToysIcon from '@material-ui/icons/Toys';
 export class FanTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {speed: 50, password: ''};
+        this.state = {speed: 50, password: this.props.sessionPass};
 
         this.handleSlider = this.handleSlider.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -49,7 +49,7 @@ export class FanTab extends React.Component {
                         />
                     </Grid>
                 </Grid>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/fanspeed', this.state, this.props.selected);
                     }} variant="contained" color="primary"

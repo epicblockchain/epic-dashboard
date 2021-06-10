@@ -5,7 +5,7 @@ import { Button, TextField, InputAdornment, FormControl, FormControlLabel, Switc
 export class UpdateTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {filepath: '', keep: true, password: ''};
+        this.state = {filepath: '', keep: true, password: this.props.sessionPass};
 
         this.updateFilepath = this.updateFilepath.bind(this);
         this.updateKeep = this.updateKeep.bind(this);
@@ -51,7 +51,7 @@ export class UpdateTab extends React.Component {
                     />
                 </FormControl>
                 <br/>
-                <TextField variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/update', this.state, this.props.selected);
                     }} variant="contained" color="primary"

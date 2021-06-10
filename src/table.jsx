@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-    DataGrid,
-    GridToolbarContainer,
-    GridFilterToolbarButton,
-    GridColumnsToolbarButton,
-    GridDensitySelector } from '@material-ui/data-grid';
-import { Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab, Paper } from '@material-ui/core';
 import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 import { CoinTab } from './tabs/CoinTab.jsx';
 import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
@@ -21,76 +15,88 @@ import { CmdTab } from './tabs/CmdTab.jsx';
 import { FanTab } from './tabs/FanTab.jsx';
 import './table.css';
 
+import Table from './customTable.jsx';
+
 const columns = [
-    { field: 'ip', headerName: 'IP', width: 130 },
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'firmware', headerName: 'Firmware', width: 150 },
-    { field: 'model', headerName: 'Model', width: 100, hide: true},
-    { field: 'mode', headerName: 'Mode', width: 100 },
-    { field: 'pool', headerName: 'Pool', width: 180 },
-    { field: 'user', headerName: 'User', width: 180 },
-    { field: 'start', headerName: 'Started', width: 260, hide: true },
-    { field: 'uptime', headerName: 'Uptime', width: 135, hide: true },
-    { field: 'hbs', headerName: 'Active HBs', width: 120, type: 'number' },
-    { field: 'hashrate15min', headerName: 'Hashrate (15min)', width: 150, type: 'number' },
-    { field: 'hashrate1hr', headerName: 'Hashrate (1h)', width: 150, type: 'number', hide: true }, 
-    { field: 'hashrate6hr', headerName: 'Hashrate (6h)', width: 150, type: 'number', hide: true },
-    { field: 'hashrate24hr', headerName: 'Hashrate (24h)', width: 150, type: 'number', hide: true },
-    { field: 'accepted', headerName: 'Accepted Shares', width: 150, type: 'number', hide: true },
-    { field: 'rejected', headerName: 'Rejected Shares', width: 150, type: 'number', hide: true },
-    { field: 'difficulty', headerName: 'Difficulty', width: 120, type: 'number', hide: true },
-    { field: 'temperature', headerName: 'Temp \u00b0C', type: 'number', width: 110 },
-    { field: 'power', headerName: 'Power (W)', width: 110, type: 'number', hide: true },
-    { field: 'cap', hide: true }
+    { accessor: 'ip', Header: 'IP', width: 130 },
+    { accessor: 'name', Header: 'Name', width: 150 },
+    { accessor: 'firmware', Header: 'Firmware', width: 150 },
+    { accessor: 'model', Header: 'Model', width: 100},
+    { accessor: 'mode', Header: 'Mode', width: 100 },
+    { accessor: 'pool', Header: 'Pool', width: 180 },
+    { accessor: 'user', Header: 'User', width: 180 },
+    { accessor: 'start', Header: 'Started', width: 260 },
+    { accessor: 'uptime', Header: 'Uptime', width: 135 },
+    { accessor: 'hbs', Header: 'Active HBs', width: 120},
+    { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150},
+    { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150}, 
+    { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150},
+    { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150},
+    { accessor: 'accepted', Header: 'Accepted Shares', width: 150},
+    { accessor: 'rejected', Header: 'Rejected Shares', width: 150},
+    { accessor: 'difficulty', Header: 'Difficulty', width: 120},
+    { accessor: 'temperature', Header: 'Temp \u00b0C', width: 110 },
+    { accessor: 'power', Header: 'Power (W)', width: 110}
 ];
 
-function Toolbar() {
-    return(
-        <GridToolbarContainer>
-            <GridColumnsToolbarButton/>
-            <GridFilterToolbarButton/>
-            <GridDensitySelector/>
-        </GridToolbarContainer>
-    );
-}
+const defaultHidden = ['model', 'start', 'uptime', 'hashrate1hr',
+    'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power', 'fanspeed'];
 
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {models: ['Miners Loading...'], selected: {}, list: 0, tab: 0};
+        this.state = {models: ['Miners Loading...'], selected: {}, hidden: defaultHidden, list: 0, tab: 0};
 
         this.select = this.select.bind(this);
         this.setList = this.setList.bind(this);
         this.setTab = this.setTab.bind(this);
+        this.update = this.update.bind(this);
     }
 
     componentDidMount() {
         if (this.props.models && this.props.models.length) {
             var sel = {};
-            this.props.models.forEach(key => sel[key] = []);
-            this.setState({models: this.props.models, selected: sel});
+            var newState = {models: this.props.models};
+            this.props.models.forEach(key => {
+                sel[key] = [];
+                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+            });
+            newState.selected = sel;
+            this.setState(newState);
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
             var sel = {};
-            this.props.models.forEach(key => sel[key] = []);
-            this.setState({models: this.props.models, selected: sel});
+            var newState = {models: this.props.models};
+            this.props.models.forEach(key => {
+                sel[key] = [];
+                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+            });
+            newState.selected = sel;
+            this.setState(newState);
         }
     }
 
     hashrate_x_hr(row, x) {
         var sum = 0;
-        try {
-            for (let obj of this.props.data[row].hist.slice(-x)) {
-                sum += obj.Hashrate;
+        if (x) {
+            try {
+                for (let obj of row.hist.slice(-x)) {
+                    sum += obj.Hashrate;
+                }
+                sum /= x;
+            } catch {
+                sum = 'N/A'
             }
-            sum /= x;
-        } catch {
-            sum = 'N/A'
+        } else {
+            sum = row.sum.Session['Average MHs'];
         }
-        return Math.round(sum / 100) / 10000;
+
+        if (sum > 999999) return `${Math.round(sum / 10000) / 100} TH/s`;
+        if (sum > 999) return `${Math.round(sum / 10) / 100} GH/s`;
+        else return `${Math.round(sum * 100) / 100} MH/s`;
     }
 
     secondsToHumanReadable(seconds){
@@ -111,14 +117,15 @@ export class DataTable extends React.Component {
 
     totalPower(data) {
         const power = data.map(a => a['Input Power']);
-        var sum = power.reduce((total, num) => {
+        var sum;
+        sum = power.reduce((total, num) => {
             return total + num;
-        });
+        }, 0);
         return Math.round(sum);
     }
 
     select(sel_model, model) {
-        var temp = this.state.selected;
+        var temp = Object.assign({}, this.state.selected);
         temp[model] = sel_model;
         this.setState({selected: temp});
     }
@@ -140,11 +147,35 @@ export class DataTable extends React.Component {
         return 'Error'
     }
 
+    update(newState, action, prevState, data, model) {
+        if (action.type == 'toggleHideColumn' || action.type == 'toggleHideAllColumns') {
+            var temp = {};
+            this.props.models.forEach(mod => {
+                temp[mod + '_state'] = Object.assign({}, this.state[mod + '_state']);
+                temp[mod + '_state'].hiddenColumns = newState.hiddenColumns;
+            });
+
+            this.setState(temp);
+        } else if (action.type == 'toggleRowSelected' || action.type == 'toggleAllRowsSelected') {
+            var temp = Object.assign({}, this.state.selected);
+
+            var sel = [];
+            for (const i in newState.selectedRowIds) {
+                if (data[i]) sel.push(data[i].id);
+            }
+
+            temp[model] = sel;
+            this.setState({ selected: temp, [model + '_state']: newState });
+        } else {
+            this.setState({ [model + '_state']: newState });
+        }
+    }
+
     render() {
         const rows = this.props.data.map(
             (a, i) => ({
                 id: i,
-                ip: a.ip,
+                ip: a ? a.ip : '', //TODO: figure out why this is was falsey
                 name: this.failSafe(a.sum) || a.sum.Hostname,
                 firmware: this.failSafe(a.sum) || a.sum.Software,
                 model: this.failSafe(a.cap) || a.cap.Model,
@@ -154,15 +185,16 @@ export class DataTable extends React.Component {
                 start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
                 uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
                 hbs: this.failSafe(a.sum) || a.sum.Session['Active HBs'],
-                hashrate15min: this.failSafe(a.sum) || Math.round(a.sum.Session['Average MHs'] / 100) / 10000,
-                hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 1),
-                hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 6),
-                hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(i, 24),
+                hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null),
+                hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1),
+                hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6),
+                hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 24),
                 accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
                 rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
                 difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
                 temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
                 power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
+                fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
                 cap: a.cap
             })
         );
@@ -189,7 +221,7 @@ export class DataTable extends React.Component {
         }
 
         return (
-            <div style={{ maxWidth: '1400px', margin: '0 auto'}}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto'}} id="table">
                 <Tabs value={this.state.list} onChange={this.setList} indicatorColor="primary"
                     textColor="primary" centered
                 >
@@ -197,17 +229,19 @@ export class DataTable extends React.Component {
                         return <Tab id="minerTab" key={model} label={model}/>;
                     })}
                 </Tabs>
+                <canvas id="canvas" hidden></canvas>
                 <div style={{ width: '100%', height: 500 }}>
                     { this.state.models.map((model, i) => {
                         return this.state.list == i ? (
-                            <DataGrid rows={miners[model] || []} columns={columns} checkboxSelection
-                                components={{Toolbar: Toolbar}}
-                                selectionModel={this.state.selected[model]}
-                                rowHeight={32} key={model}
-                                onSelectionModelChange={sel => {
-                                    this.select(sel.selectionModel, model);
-                                }}
-                            />
+                            <Paper variant="outlined" className="datatable-wrap" style={{ width: "100%", overflow: "hidden" }} key={model}>
+                                <Table
+                                    dataRaw={miners[model] || []}
+                                    //columnsRaw={columns}
+                                    extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
+                                    update={this.update}
+                                    extmodel={model}
+                                />
+                            </Paper>
                         ) : null;
                     })}
                 </div>
@@ -236,46 +270,46 @@ export class DataTable extends React.Component {
                     />
                 </div>
                 <div hidden={this.state.tab != 1}>
-                    <CmdTab handleApi={this.props.handleApi} selected={selected}/>
+                    <CmdTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 2}>
                     <CoinTab
                         handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
                         selected={selected} data={this.props.data} miners={miners} list={this.state.list}
-                        models={this.state.models}
+                        models={this.state.models} sessionPass={this.props.sessionPass}
                     />
                 </div>
                 <div hidden={this.state.tab != 3}>
-                    <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
+                    <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 4}>
-                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data}/>
+                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 5}>
                     <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners}
-                        list={this.state.list} models={this.state.models}
+                        list={this.state.list} models={this.state.models} sessionPass={this.props.sessionPass}
                     />
                 </div>
                 <div hidden={this.state.tab != 6}>
-                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected}/>
+                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 7}>
-                    <PasswordTab handleApi={this.props.handleApi} selected={selected}/>
+                    <PasswordTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 8}>
-                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected}/>
+                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 9}>
-                    <RebootTab handleApi={this.props.handleApi} selected={selected}/>
+                    <RebootTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 10}>
-                    <LedTab handleApi={this.props.handleApi} selected={selected}/> 
+                    <LedTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/> 
                 </div>
                 <div hidden={this.state.tab != 11}>
-                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected}/>
+                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
                 </div>
                 <div hidden={this.state.tab != 12}> 
-                    <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi}/>
+                    <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi} sessionPass={this.props.sessionPass}/>
                 </div>
             </div>
         );
