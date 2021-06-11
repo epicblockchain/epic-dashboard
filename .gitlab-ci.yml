@@ -1,8 +1,5 @@
 image: ubuntu:latest
 
-stages:
-    - build
-
 .build_base:
     script:
         - apt update
