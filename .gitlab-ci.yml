@@ -6,7 +6,7 @@ build:
         - apt update
         - export TZ="America/Toronto"
         - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-        - apt install -y curl make git wine mono-devel fakeroot zip
+        - apt install -y curl make git wine mono-devel fakeroot zip rpmbuild
         - dpkg --add-architecture i386
         - apt update
         - apt install -y wine32
@@ -17,10 +17,10 @@ build:
         - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
         - make dist
+        - PACKAGE_VERSION=$(grep -m1 version package.json | awk -F: '{ print $2 }' | sed 's/[", ]//g')
     artifacts:
         paths:
-            - 'out/make/'
-        exclude:
-            - 'out/**/*.nupkg'
-            - 'out/**/RELEASES'
+            - 'out/make/**/*.deb'
+            - 'out/make/**/*.exe'
+            - 'out/make/**/*.zip'
         expire_in: 6 mos
