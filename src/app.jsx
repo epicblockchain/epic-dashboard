@@ -146,15 +146,13 @@ switch (process.platform) {
 }
 
 const logger = createLogger({
-    transports: [
-        new transports.File({ filename: path.join('combined.log') })
-    ],
     exceptionHandlers: [
         new transports.File({ filename: path.join(app_path, 'errors.log') })
     ],
     rejectionHandlers: [
         new transports.File({ filename: path.join(app_path, 'errors.log') })
-    ]
+    ],
+    exitOnError: false
 });
 
 fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {

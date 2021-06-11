@@ -298,15 +298,15 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                     <TableRow {...headerGroup.getHeaderGroupProps()} component="div">
                         {headerGroup.headers.map((column) => (
                             <TableCell {...column.getHeaderProps()} component="div">
-                                <div {...column.getSortByToggleProps()} className={column.id != "selection" ? "col-header" : ""}>
-                                    {column.render("Header")}
-                                    <span className="sort-icon">
-                                        {column.isSorted
-                                            ? column.isSortedDesc
-                                            ? <ArrowDownwardIcon fontSize="small"/>
-                                            : <ArrowUpwardIcon fontSize="small"/>
-                                            : ''}
-                                    </span>
+                                <div {...column.getSortByToggleProps()} className="header-wrapper">
+                                    <div className={column.id != "selection" ? "col-header" : ""}>
+                                        {column.render("Header")}
+                                    </div>
+                                    {column.isSorted
+                                        ? column.isSortedDesc
+                                        ? <ArrowDownwardIcon fontSize="small"/>
+                                        : <ArrowUpwardIcon fontSize="small"/>
+                                        : ''}
                                 </div>
                                 { column.canFilter ? column.render('Filter') : null }
                                 <div

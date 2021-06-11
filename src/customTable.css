@@ -7,18 +7,14 @@
   padding: 4px 4px 0;
 }
 
-.col-header {
+.header-wrapper {
+  display: flex;
   width: 100%;
+}
+
+.col-header {
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.sort-icon {
-  position: relative;
-}
-
-.sort-icon .MuiSvgIcon-root {
-  position: absolute;
 }
 
 .filter {
@@ -53,14 +49,12 @@
   z-index: 2;
 }
 
-#datatable .MuiTableCell-root.MuiTableCell-head {
-  overflow: hidden;
-  text-overflow: ellipsis;
+#datatable .MuiTableCell-head {
   white-space: nowrap;
   padding: 10px 30px 10px 10px;
 }
 
-#datatable .MuiTableCell-root.MuiTableCell-body {
+#datatable .MuiTableCell-body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
