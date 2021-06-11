@@ -20,7 +20,6 @@ image: ubuntu:latest
 build:win64:
     extends: .build_base
     script:
-        - which electron-forge
         - make win64
         - electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
         - $HOME/.nvm/versions/node/v14.17.0/bin/electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
