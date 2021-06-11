@@ -17,10 +17,11 @@ build:
         - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
         - make dist
-        - PACKAGE_VERSION=$(grep -m1 version package.json | awk -F: '{ print $2 }' | sed 's/[", ]//g')
+        - mv out/make/* ./
+        - export VERSION=$(node -p "require('./package.json').version")
     artifacts:
         paths:
-            - 'out/make/**/*.deb'
-            - 'out/make/**/*.exe'
-            - 'out/make/**/*.zip'
-        expire_in: 6 mos
+            - '**/*.deb'
+            - '**/*.exe'
+            - '**/*.zip'
+        expire_in: 2 mos
