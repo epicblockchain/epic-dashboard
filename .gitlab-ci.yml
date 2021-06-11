@@ -1,6 +1,9 @@
 image: ubuntu:latest
 
-build_base:
+stages:
+    - build
+
+.build_base:
     script:
         - apt update
         - export TZ="America/Toronto"
@@ -18,7 +21,7 @@ build_base:
         - export VERSION=$(node -p "require('./package.json').version")
 
 build:win64:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make win64
         - mv out/make/squirrel.windows/x64/* ./
@@ -29,7 +32,7 @@ build:win64:
         expire_in: 2 mos
 
 build:win32:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make win32
         - mv out/make/squirrel.windows/ia32/* ./
