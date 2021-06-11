@@ -11,6 +11,12 @@ export class UpdateTab extends React.Component {
         this.updateKeep = this.updateKeep.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.sessionPass != this.props.sessionPass) {
+            this.setState({password: this.props.sessionPass});
+        }
+    }
     
     updateFilepath() {
         dialog.showOpenDialog({
@@ -51,7 +57,7 @@ export class UpdateTab extends React.Component {
                     />
                 </FormControl>
                 <br/>
-                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/update', this.state, this.props.selected);
                     }} variant="contained" color="primary"

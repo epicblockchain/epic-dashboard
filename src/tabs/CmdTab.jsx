@@ -10,6 +10,12 @@ export class CmdTab extends React.Component {
         this.updatePassword = this.updatePassword.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.sessionPass != this.props.sessionPass) {
+            this.setState({password: this.props.sessionPass});
+        }
+    }
+
     updateCmd(e) {
         this.setState({cmd: e.target.value});
     }
@@ -33,7 +39,7 @@ export class CmdTab extends React.Component {
                         }
                     </Select>
                 </FormControl>
-                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/miner', this.state, this.props.selected);

@@ -30,6 +30,9 @@ export class CoinTab extends React.Component {
                 this.setState({pool: '', address: '', worker: ''});
             }
         }
+        if (prevProps.sessionPass != this.props.sessionPass) {
+            this.setState({password: this.props.sessionPass});
+        }
     }
 
     updateCoin(e) {
@@ -89,7 +92,7 @@ export class CoinTab extends React.Component {
                     value={this.state.wallet_pass} margin="dense" helperText="Leave unless qualified" className="stratum"
                 />
                 <br />
-                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/coin', this.state, this.props.selected);
                     }} variant="contained" color="primary"

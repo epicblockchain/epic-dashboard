@@ -9,6 +9,12 @@ export class OpModeTab extends React.Component {
         this.updateMode = this.updateMode.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.sessionPass != this.props.sessionPass) {
+            this.setState({password: this.props.sessionPass});
+        }
+    }
     
     updateMode(e) {
         this.setState({mode: e.target.value});
@@ -26,7 +32,7 @@ export class OpModeTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <FormControl variant="outlined" margin="dense">
-                    <InputLabel htmlFor="mode">Coin</InputLabel>
+                    <InputLabel htmlFor="mode">Mode</InputLabel>
                     <Select native id="mode" label="Mode" value={this.state.mode} onChange={this.updateMode}>
                         {
                             options.map((a, i) => {
@@ -35,7 +41,7 @@ export class OpModeTab extends React.Component {
                         }
                     </Select>
                 </FormControl>
-                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/mode', this.state, this.props.selected);
                     }} variant="contained" color="primary"

@@ -534,7 +534,7 @@ class App extends React.Component {
                 if (slow_api) toast.dismiss(i);
 
                 if (body.result) {
-                    notify('success', `${miners[i].address}: ${api} successful`);
+                    notify('success', `${miners[i].address}: ${api.slice(1)} successful`);
                     
                     if (api == '/reboot' || soft_reboot) {
                         let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);

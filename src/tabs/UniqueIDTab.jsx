@@ -9,6 +9,12 @@ export class UniqueIDTab extends React.Component {
         this.updateCheck = this.updateCheck.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.sessionPass != this.props.sessionPass) {
+            this.setState({password: this.props.sessionPass});
+        }
+    }
     
     updateCheck(e) {
         this.setState({checked: e.target.checked});
@@ -27,7 +33,7 @@ export class UniqueIDTab extends React.Component {
                         label="Append Unique ID to worker name"
                     />
                 </FormControl>
-                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/id', this.state, this.props.selected);
                     }} variant="contained" color="primary"

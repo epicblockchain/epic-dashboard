@@ -19,6 +19,9 @@ export class MinerPoolTab extends React.Component {
                 this.setState({pool: ''});        
             }
         }
+        if (prevProps.sessionPass != this.props.sessionPass) {
+            this.setState({password: this.props.sessionPass});
+        }
     }
     
     updatePool(e) {
@@ -36,7 +39,7 @@ export class MinerPoolTab extends React.Component {
                     value={this.state.pool} margin="dense" className="pool"
                     InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
                 />
-                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/pool', this.state, this.props.selected);

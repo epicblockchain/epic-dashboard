@@ -13,6 +13,12 @@ export class FanTab extends React.Component {
         this.updatePassword = this.updatePassword.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.sessionPass != this.props.sessionPass) {
+            this.setState({password: this.props.sessionPass});
+        }
+    }
+
     handleSlider(e, newVal) {
         this.setState({speed: newVal});
     }
@@ -49,7 +55,7 @@ export class FanTab extends React.Component {
                         />
                     </Grid>
                 </Grid>
-                <TextField defaultValue={this.props.sessionPass} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
                 <Button onClick={() => {
                         this.props.handleApi('/fanspeed', this.state, this.props.selected);
                     }} variant="contained" color="primary"
