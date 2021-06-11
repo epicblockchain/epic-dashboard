@@ -1,7 +1,6 @@
-build:
-    stage: build
-    image:
-        name: ubuntu:latest
+image: ubuntu:latest
+
+build_base:
     script:
         - apt update
         - export TZ="America/Toronto"
@@ -16,11 +15,57 @@ build:
         - nvm install 14
         - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
-        - make dist
         - export VERSION=$(node -p "require('./package.json').version")
+
+build:win64:
+    extends: build_base
+    after_script:
+        - make win64
+        - mv out/make/squirrel.windows/x64/* ./
     artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
         paths:
-            - '**/*.deb'
-            - '**/*.exe'
-            - '**/*.zip'
-        expire_in: 2 mos
+            - 'out/make/**/*.exe'
+        expire_in:
+            - 2 mos
+            
+build:win32:
+    extends: build_base
+    after_script:
+        - make win32
+        - mv out/make/squirrel.windows/ia32/* ./
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
+        paths:
+            - 'out/make/**/*.exe'
+        expire_in:
+            - 2 mos
+
+# build:deb32:
+#     extends: build_base
+# build:deb64:
+#     extends: build_base
+# build:debarmhf:
+#     extends: build_base
+# build:debarm64:
+#     extends: build_base
+# build:rpm32:
+#     extends: build_base
+# build:rpm64:
+#     extends: build_base
+# build:mac:
+#     extends: build_base
+
+    # extends: build_base
+    # stage: build
+    # image:
+    #     name: ubuntu:latest
+    # script:
+    #     - make dist
+    #     - export VERSION=$(node -p "require('./package.json').version")
+    # artifacts:
+    #     paths:
+    #         - '**/*.deb'
+    #         - '**/*.exe'
+    #         - '**/*.zip'
+    #     expire_in: 2 mos
