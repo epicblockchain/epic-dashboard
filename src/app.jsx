@@ -212,7 +212,7 @@ class App extends React.Component {
                         });
                         try {
                             const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
-                                timeout: 1000, retry: 0
+                                timeout: 1500, retry: 0
                             });
                             let content = JSON.parse(cap.body);
                             
