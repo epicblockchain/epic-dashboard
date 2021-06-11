@@ -17,7 +17,6 @@ build:
         - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
         - make dist
-        - mv out/make/* ./
         - export VERSION=$(node -p "require('./package.json').version")
     artifacts:
         paths:
