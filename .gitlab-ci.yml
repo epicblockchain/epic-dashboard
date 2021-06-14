@@ -24,7 +24,7 @@ build:win64:
         - make win64
         - electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
         - $HOME/.nvm/versions/node/v14.17.0/bin/electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
-        - ll out/make/
+        - ls out/make/
     # artifacts:
     #     name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
     #     paths:
