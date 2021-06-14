@@ -10,12 +10,38 @@ npm install
 npm start
 ```
 After bundling a window should open with the app running.
-## Building from source
+## Building from source on a fresh machine
+
+### Dependencies
+
+Some dependencies are required to build the dashboard, this process has been tested on Ubuntu 20.04 with a 64 bit cpu
+```
+sudo apt update
+sudo apt install -y curl make git wine mono-devel fakeroot zip rpm
+# if you need to build for 32 bit architectures
+sudo dpkg --add-architecture i386
+sudo apt update
+sudo apt install -y wine32
+# end of building for 32 bit
+# or install the latest
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash nvm on your own
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# end of nvm stuff
+nvm install 14
+npm i -g @electron-forge/cli
+cd /path/to/epic-dashboard
+npm i
+```
+
+### Building
+
 To build all executables run
 ```
-npm run make
+make dist
+# see the makefile if you want to install for only one target+architecture
 ```
-To build only a specific executable open the makefile and run electron-forge make, editing --platform and --arch to your platform and architecture. You may need to install the electron-forge CLI: https://www.electronforge.io/cli
+To build only a specific executable open the makefile and run the appropriate command ensureing --platform and --arch match your desired platform and architecture to build for.
 
 # Usage
 
