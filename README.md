@@ -23,9 +23,11 @@ sudo dpkg --add-architecture i386
 sudo apt update
 sudo apt install -y wine32
 # end of building for 32 bit
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash     # or install the latest nvm on your own
+# or install the latest
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash nvm on your own
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# end of nvm stuff
 nvm install 14
 npm i -g @electron-forge/cli
 cd /path/to/epic-dashboard
