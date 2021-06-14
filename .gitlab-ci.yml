@@ -1,6 +1,10 @@
 image: ubuntu:latest
 
+stages:
+    - build
+
 .build_base:
+    stage: build
     before_script:
         - apt update
         - export TZ="America/Toronto"
