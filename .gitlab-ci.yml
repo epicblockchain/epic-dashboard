@@ -29,7 +29,7 @@ build:win64:
 
 build:win32:
     extends: .build_base
-    after_script:
+    script:
         - make win32
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
@@ -39,7 +39,7 @@ build:win32:
 
 build:deb32:
     extends: .build_base
-    after_script:
+    script:
         - make deb32
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
@@ -49,7 +49,7 @@ build:deb32:
 
 build:deb64:
     extends: .build_base
-    after_script:
+    script:
         - make deb64
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
@@ -59,7 +59,7 @@ build:deb64:
 
 build:debarmhf:
     extends: .build_base
-    after_script:
+    script:
         - make debarmhf
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
@@ -69,7 +69,7 @@ build:debarmhf:
 
 build:debarm64:
     extends: .build_base
-    after_script:
+    script:
         - make debarm64
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
@@ -79,7 +79,7 @@ build:debarm64:
 
 build:rpm32:
     extends: .build_base
-    after_script:
+    script:
         - make rpm32
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.rpm
@@ -89,7 +89,7 @@ build:rpm32:
 
 build:rpm64:
     extends: .build_base
-    after_script:
+    script:
         - make rpm64
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.rpm
@@ -99,7 +99,7 @@ build:rpm64:
 
 build:mac:
     extends: .build_base
-    after_script:
+    script:
         - make mac
     artifacts:
         name: epic-dashboard-mac-$VERSION-$CI_COMMIT_SHORT_SHA.zip
