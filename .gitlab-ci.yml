@@ -38,7 +38,7 @@ build:win32:
         expire_in: 2 mos
 
 build:deb32:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make deb32
     artifacts:
@@ -48,7 +48,7 @@ build:deb32:
         expire_in: 2 mos
 
 build:deb64:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make deb64
     artifacts:
@@ -58,7 +58,7 @@ build:deb64:
         expire_in: 2 mos
 
 build:debarmhf:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make debarmhf
     artifacts:
@@ -68,7 +68,7 @@ build:debarmhf:
         expire_in: 2 mos
 
 build:debarm64:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make debarm64
     artifacts:
@@ -78,7 +78,7 @@ build:debarm64:
         expire_in: 2 mos
 
 build:rpm32:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make rpm32
     artifacts:
@@ -88,7 +88,7 @@ build:rpm32:
         expire_in: 2 mos
 
 build:rpm64:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make rpm64
     artifacts:
@@ -98,7 +98,7 @@ build:rpm64:
         expire_in: 2 mos
 
 build:mac:
-    extends: build_base
+    extends: .build_base
     after_script:
         - make mac
     artifacts:
