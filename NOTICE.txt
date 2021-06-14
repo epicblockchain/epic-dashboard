@@ -2,35 +2,71 @@ ePIC Mining Dashboard Credits
 
 This application uses Open Source components. You can find the source code of their open source projects along with license information inside of the node_modules folder as well as below. We acknowledge and are grateful to these developers for their contributions to open source.
 
+amCharts
+https://www.amcharts.com/
+
+Babel
+https://babeljs.io/
+
+Electron Forge
+https://www.electronforge.io/
+
+@electron/remote
+https://www.npmjs.com/package/@electron/remote
+
+Asset Relocator Loader for Webpack
+https://www.npmjs.com/package/@marshallofsound/webpack-asset-relocator-loader
+
+Material-UI
+https://material-ui.com/
+
+Babel-Loader
+https://github.com/babel/babel-loader
+
+core-js
+https://github.com/zloirock/core-js
+
+css-loader
+https://www.npmjs.com/package/css-loader
+
 Electron
 https://www.electronjs.org/
 
-Electron Forge
-https://github.com/electron-userland/electron-forge
+electron-squirrel-startup
+https://www.npmjs.com/package/electron-squirrel-startup
 
-React
-https://github.com/facebook/react
-
-Material-UI
-https://github.com/mui-org/material-ui
-
-React-Toastify
-https://github.com/fkhadra/react-toastify
-
-amCharts4
-https://github.com/amcharts/amcharts4
-
-Form-Data
-https://github.com/form-data/form-data
+form-data
+https://www.npmjs.com/package/form-data
 
 got
-https://github.com/sindresorhus/got
+https://www.npmjs.com/package/got
 
 node-dns-sd
-https://github.com/futomi/node-dns-sd
+https://www.npmjs.com/package/node-dns-sd
+
+node-loader
+https://www.npmjs.com/package/node-loader
+
+React and ReactDOM
+https://reactjs.org/
+
+React Table
+https://react-table.tanstack.com/
+
+react-toastify
+https://www.npmjs.com/package/react-toastify
+
+react-window
+https://github.com/bvaughn/react-window
+
+regenerator-runtime
+https://www.npmjs.com/package/regenerator-runtime
 
 sha256-file
-https://github.com/so-ta/sha256-file
+https://www.npmjs.com/package/sha256-file
 
-url-loader
-https://github.com/webpack-contrib/url-loader
+style-loader and url-loader
+https://webpack.js.org/loaders/
+
+winston
+https://www.npmjs.com/package/winston
