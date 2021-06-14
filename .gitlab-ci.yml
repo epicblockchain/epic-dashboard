@@ -58,7 +58,7 @@ build:deb64:
     extends: .build_base
     script:
         - make deb64
-        - mv out/make/deb/x64/*.deb
+        - mv out/make/deb/x64/*.deb ./
     artifacts:
         name: epic-dashboard-deb64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
