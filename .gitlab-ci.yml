@@ -20,53 +20,89 @@ image: ubuntu:latest
 build:win64:
     extends: .build_base
     script:
-        - which electron-forge
         - make win64
-        - electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
-        - $HOME/.nvm/versions/node/v14.17.0/bin/electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
-        - ls out/make/squirrel.windows/
     artifacts:
         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
         paths:
             - 'out/make/**/*.exe'
         expire_in: 2 mos
 
-# build:win32:
-#     extends: .build_base
-#     after_script:
-#         - make win32
-#         - mv out/make/squirrel.windows/ia32/* ./
-#     artifacts:
-#         name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
-#         paths:
-#             - 'out/make/**/*.exe'
-#         expire_in: 2 mos
+build:win32:
+    extends: .build_base
+    after_script:
+        - make win32
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
+        paths:
+            - 'out/make/**/*.exe'
+        expire_in: 2 mos
 
-# build:deb32:
-#     extends: build_base
-# build:deb64:
-#     extends: build_base
-# build:debarmhf:
-#     extends: build_base
-# build:debarm64:
-#     extends: build_base
-# build:rpm32:
-#     extends: build_base
-# build:rpm64:
-#     extends: build_base
-# build:mac:
-#     extends: build_base
+build:deb32:
+    extends: build_base
+    after_script:
+        - make deb32
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        paths:
+            - 'out/make/**/*.deb'
+        expire_in: 2 mos
 
-    # extends: build_base
-    # stage: build
-    # image:
-    #     name: ubuntu:latest
-    # script:
-    #     - make dist
-    #     - export VERSION=$(node -p "require('./package.json').version")
-    # artifacts:
-    #     paths:
-    #         - '**/*.deb'
-    #         - '**/*.exe'
-    #         - '**/*.zip'
-    #     expire_in: 2 mos
+build:deb64:
+    extends: build_base
+    after_script:
+        - make deb64
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        paths:
+            - 'out/make/**/*.deb'
+        expire_in: 2 mos
+
+build:debarmhf:
+    extends: build_base
+    after_script:
+        - make debarmhf
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        paths:
+            - 'out/make/**/*.deb'
+        expire_in: 2 mos
+
+build:debarm64:
+    extends: build_base
+    after_script:
+        - make debarm64
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        paths:
+            - 'out/make/**/*.deb'
+        expire_in: 2 mos
+
+build:rpm32:
+    extends: build_base
+    after_script:
+        - make rpm32
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.rpm
+        paths:
+            - 'out/make/**/*.rpm'
+        expire_in: 2 mos
+
+build:rpm64:
+    extends: build_base
+    after_script:
+        - make rpm64
+    artifacts:
+        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.rpm
+        paths:
+            - 'out/make/**/*.rpm'
+        expire_in: 2 mos
+
+build:mac:
+    extends: build_base
+    after_script:
+        - make mac
+    artifacts:
+        name: epic-dashboard-mac-$VERSION-$CI_COMMIT_SHORT_SHA.zip
+        paths:
+            - 'out/make/**/*.zip'
+        expire_in: 2 mos
