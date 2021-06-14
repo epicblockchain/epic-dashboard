@@ -16,15 +16,17 @@ image: ubuntu:latest
         - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
         - export VERSION=$(node -p "require('./package.json').version")
+    after_script:
+        - mv out/make/ make/
 
 build:win64:
     extends: .build_base
     script:
         - make win64
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
+        name: epic-dashboard-win64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.exe'
+            - 'make/**/*.exe'
         expire_in: 2 mos
 
 build:win32:
@@ -32,9 +34,9 @@ build:win32:
     script:
         - make win32
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
+        name: epic-dashboard-win32-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.exe'
+            - 'make/**/*.exe'
         expire_in: 2 mos
 
 build:deb32:
@@ -42,9 +44,9 @@ build:deb32:
     script:
         - make deb32
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        name: epic-dashboard-deb32-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.deb'
+            - 'make/**/*.deb'
         expire_in: 2 mos
 
 build:deb64:
@@ -52,9 +54,9 @@ build:deb64:
     script:
         - make deb64
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        name: epic-dashboard-deb64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.deb'
+            - 'make/**/*.deb'
         expire_in: 2 mos
 
 build:debarmhf:
@@ -62,9 +64,9 @@ build:debarmhf:
     script:
         - make debarmhf
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        name: epic-dashboard-debarmhf-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.deb'
+            - 'make/**/*.deb'
         expire_in: 2 mos
 
 build:debarm64:
@@ -72,9 +74,9 @@ build:debarm64:
     script:
         - make debarm64
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.deb
+        name: epic-dashboard-debarm64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.deb'
+            - 'make/**/*.deb'
         expire_in: 2 mos
 
 build:rpm32:
@@ -82,9 +84,9 @@ build:rpm32:
     script:
         - make rpm32
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.rpm
+        name: epic-dashboard-rpm32-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.rpm'
+            - 'make/**/*.rpm'
         expire_in: 2 mos
 
 build:rpm64:
@@ -92,9 +94,9 @@ build:rpm64:
     script:
         - make rpm64
     artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.rpm
+        name: epic-dashboard-rpm64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.rpm'
+            - 'make/**/*.rpm'
         expire_in: 2 mos
 
 build:mac:
@@ -102,7 +104,7 @@ build:mac:
     script:
         - make mac
     artifacts:
-        name: epic-dashboard-mac-$VERSION-$CI_COMMIT_SHORT_SHA.zip
+        name: epic-dashboard-mac-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
-            - 'out/make/**/*.zip'
+            - 'make/**/*.zip'
         expire_in: 2 mos
