@@ -16,7 +16,7 @@
     "name": "ePIC Dashboard",
     "email": "support@epicblockchain.io"
   },
-  "license": "MIT",
+  "license": "GPlv3",
   "config": {
     "forge": {
       "packagerConfig": {},
