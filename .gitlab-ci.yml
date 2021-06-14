@@ -24,12 +24,12 @@ build:win64:
         - make win64
         - electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
         - $HOME/.nvm/versions/node/v14.17.0/bin/electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
-        - mv out/make/squirrel.windows/x64/* ./
-    artifacts:
-        name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
-        paths:
-            - 'out/make/**/*.exe'
-        expire_in: 2 mos
+        - ll out/make/
+    # artifacts:
+    #     name: epic-dashboard-$VERSION-$CI_COMMIT_SHORT_SHA.exe
+    #     paths:
+    #         - 'out/make/**/*.exe'
+    #     expire_in: 2 mos
 
 # build:win32:
 #     extends: .build_base
