@@ -347,7 +347,6 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                     columnWidth={totalColumnsWidth + 24}
                     width={window.innerWidth - 18}
                     onScroll={scroll}
-                    style={{maxWidth: 1400}}
                     className="grid"
                 >
                     {RenderRow}

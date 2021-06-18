@@ -101,7 +101,6 @@ export class Dashboard extends React.Component {
         series.name = "Hashrate";
         series.strokeWidth = 2;
         series.smoothing = "monotoneX";
-        series.tooltipText = "Hashrate (TH/s): [bold]{valueY}[/]";
         yAxis.title.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
         yAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
         yAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
@@ -113,6 +112,11 @@ export class Dashboard extends React.Component {
         let bullet = series.bullets.push(new am4charts.CircleBullet());
         bullet.scale = 0.6;
         bullet.fill = am4core.color("#1b1d4d");
+        bullet.tooltipText = "Hashrate: [bold]{valueY} TH/s[/]";
+        series.tooltip.getFillFromObject = false;
+        series.tooltip.label.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
+        series.tooltip.background.fill = am4core.color(this.props.theme == 'light' ? "#fafafa" : "#515151");
+        series.tooltip.background.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
 
         chart.data = chartHashrateData;
         this.chart = chart;
@@ -161,13 +165,17 @@ export class Dashboard extends React.Component {
 
         let yAxes = this.chart.yAxes.values;
         let dateAxes = this.chart.xAxes.values;
+        let series = this.chart.series.values;
 
-        if (yAxes && dateAxes) {
+        if (yAxes && dateAxes && series) {
             yAxes[0].title.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
             yAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
             yAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
             dateAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
             dateAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffffff");
+            series[0].tooltip.label.fill = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#fafafa");
+            series[0].tooltip.background.fill = am4core.color(this.props.theme == 'light' ? "#fafafa" : "#515151");
+            series[0].tooltip.background.stroke = am4core.color(this.props.theme == 'light' ? "#1b1d4d" : "#ffc107");
         }
     }
 

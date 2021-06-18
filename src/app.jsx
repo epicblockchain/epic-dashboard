@@ -3,8 +3,6 @@ const got = require('got');
 const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
-// const NetworkSpeed = require('network-speed');
-// const testNetworkSpeed = new NetworkSpeed();
 const { createLogger, transports } = require('winston');
 
 import * as React from 'react';
@@ -63,6 +61,9 @@ const light = createMuiTheme({
                 },
                 ".grid": {
                     borderBottom: "1px solid rgba(0, 0, 0, 0.12)"
+                },
+                ".MuiDrawer-root .MuiListItem-button:hover": {
+                    background: "rgba(255, 255, 255, 0.08)"
                 }
             }
         }

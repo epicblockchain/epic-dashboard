@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tabs, Tab, Paper } from '@material-ui/core';
+import { Tabs, Tab, Paper, debounce } from '@material-ui/core';
 import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
 import { CoinTab } from './tabs/CoinTab.jsx';
 import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
@@ -20,6 +20,14 @@ import Table from './customTable.jsx';
 const defaultHidden = ['model', 'start', 'uptime', 'hashrate1hr',
     'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power', 'fanspeed'];
 
+function debounce1(func, timeout = 300){
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
+
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
@@ -32,6 +40,8 @@ export class DataTable extends React.Component {
     }
 
     componentDidMount() {
+        window.onresize = debounce1(() => this.forceUpdate());
+
         if (this.props.models && this.props.models.length) {
             var newState = {models: this.props.models};
             this.props.models.forEach(key => {
@@ -205,7 +215,7 @@ export class DataTable extends React.Component {
         }
 
         return (
-            <div style={{ maxWidth: '1400px', margin: '0 auto'}} id="table">
+            <div id="table">
                 <Tabs value={this.state.list} onChange={this.setList} indicatorColor="primary"
                     textColor="primary" centered
                 >
@@ -220,7 +230,6 @@ export class DataTable extends React.Component {
                             <Paper variant="outlined" className="datatable-wrap" style={{ width: "100%", overflow: "hidden" }} key={model}>
                                 <Table
                                     dataRaw={miners[model] || []}
-                                    //columnsRaw={columns}
                                     extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
                                     update={this.update}
                                     extmodel={model}
@@ -229,71 +238,73 @@ export class DataTable extends React.Component {
                         ) : null;
                     })}
                 </div>
-                <Tabs value={this.state.tab} onChange={this.setTab} indicatorColor="primary"
-                    textColor="primary" scrollButtons="auto" variant="scrollable"
-                >
-                    <Tab label="Add/Remove"/>
-                    <Tab label="CMD"/>
-                    <Tab label="Coin" disabled={!capApi}/>
-                    <Tab label="Mining Pool"/>
-                    <Tab label="Wallet Address"/>
-                    <Tab label="Operating Mode"/>
-                    <Tab label="Unique ID"/>
-                    <Tab label="Password"/>
-                    <Tab label="Firmware"/>
-                    <Tab label="Reboot"/>
-                    <Tab label="LED"/>
-                    <Tab label="Recalibrate"/>
-                    <Tab label="Fans" disabled={!capApi}/>
-                </Tabs>
-                <div hidden={this.state.tab != 0}>
-                    <AddRemoveTab
-                        addMiner={this.props.addMiner} delMiner={this.props.delMiner} blacklist={this.props.blacklist}
-                        saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners} list={this.state.list}
-                        models={this.state.models} selected={selected} select={this.select}
-                    />
-                </div>
-                <div hidden={this.state.tab != 1}>
-                    <CmdTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
-                </div>
-                <div hidden={this.state.tab != 2}>
-                    <CoinTab
-                        handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
-                        selected={selected} data={this.props.data} miners={miners} list={this.state.list}
-                        models={this.state.models} sessionPass={this.props.sessionPass}
-                    />
-                </div>
-                <div hidden={this.state.tab != 3}>
-                    <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
-                </div>
-                <div hidden={this.state.tab != 4}>
-                    <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass} list={this.state.list}/>
-                </div>
-                <div hidden={this.state.tab != 5}>
-                    <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners}
-                        list={this.state.list} models={this.state.models} sessionPass={this.props.sessionPass}
-                    />
-                </div>
-                <div hidden={this.state.tab != 6}>
-                    <UniqueIDTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
-                </div>
-                <div hidden={this.state.tab != 7}>
-                    <PasswordTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
-                </div>
-                <div hidden={this.state.tab != 8}>
-                    <UpdateTab handleApi={this.props.handleFormApi} selected={selected} sessionPass={this.props.sessionPass}/>
-                </div>
-                <div hidden={this.state.tab != 9}>
-                    <RebootTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
-                </div>
-                <div hidden={this.state.tab != 10}>
-                    <LedTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/> 
-                </div>
-                <div hidden={this.state.tab != 11}>
-                    <RecalibrateTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
-                </div>
-                <div hidden={this.state.tab != 12}> 
-                    <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi} sessionPass={this.props.sessionPass}/>
+                <div style={{ maxWidth: '1400px', margin: '0 auto'}}>
+                    <Tabs value={this.state.tab} onChange={this.setTab} indicatorColor="primary"
+                        textColor="primary" scrollButtons="auto" variant="scrollable"
+                    >
+                        <Tab label="Add/Remove"/>
+                        <Tab label="CMD"/>
+                        <Tab label="Coin" disabled={!capApi}/>
+                        <Tab label="Mining Pool"/>
+                        <Tab label="Wallet Address"/>
+                        <Tab label="Operating Mode"/>
+                        <Tab label="Unique ID"/>
+                        <Tab label="Password"/>
+                        <Tab label="Firmware"/>
+                        <Tab label="Reboot"/>
+                        <Tab label="LED"/>
+                        <Tab label="Recalibrate"/>
+                        <Tab label="Fans" disabled={!capApi}/>
+                    </Tabs>
+                    <div hidden={this.state.tab != 0}>
+                        <AddRemoveTab
+                            addMiner={this.props.addMiner} delMiner={this.props.delMiner} blacklist={this.props.blacklist}
+                            saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners} list={this.state.list}
+                            models={this.state.models} selected={selected} select={this.select}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 1}>
+                        <CmdTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                    </div>
+                    <div hidden={this.state.tab != 2}>
+                        <CoinTab
+                            handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
+                            selected={selected} data={this.props.data} miners={miners} list={this.state.list}
+                            models={this.state.models} sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 3}>
+                        <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
+                    </div>
+                    <div hidden={this.state.tab != 4}>
+                        <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass} list={this.state.list}/>
+                    </div>
+                    <div hidden={this.state.tab != 5}>
+                        <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners}
+                            list={this.state.list} models={this.state.models} sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 6}>
+                        <UniqueIDTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                    </div>
+                    <div hidden={this.state.tab != 7}>
+                        <PasswordTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                    </div>
+                    <div hidden={this.state.tab != 8}>
+                        <UpdateTab handleApi={this.props.handleFormApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                    </div>
+                    <div hidden={this.state.tab != 9}>
+                        <RebootTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                    </div>
+                    <div hidden={this.state.tab != 10}>
+                        <LedTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/> 
+                    </div>
+                    <div hidden={this.state.tab != 11}>
+                        <RecalibrateTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                    </div>
+                    <div hidden={this.state.tab != 12}> 
+                        <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi} sessionPass={this.props.sessionPass}/>
+                    </div>
                 </div>
             </div>
         );
