@@ -205,6 +205,9 @@ class App extends React.Component {
                         timeout: 1500, retry: 0
                     });
 
+                    const sum = JSON.parse(summary.body);
+                    if (!sum.Hostname) sum = null;
+
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
 
                     if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
@@ -222,7 +225,7 @@ class App extends React.Component {
 
                             return {
                                 ip: miner.address,
-                                sum: JSON.parse(summary.body),
+                                sum: sum,
                                 hist: JSON.parse(history.body).History.slice(-48),
                                 cap: content.Model ? content : null,
                                 timer: 0
@@ -230,22 +233,22 @@ class App extends React.Component {
                         } catch(err) {
                             console.log(err);
                             models.add('undefined');
-                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: JSON.parse(history.body).History.slice(-48), cap: null};
+                            return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), cap: null};
                         }
                     } else {
-                        const lastMHs = JSON.parse(summary.body).Session.LastAverageMHs;
+                        const lastMHs = sum.Session.LastAverageMHs;
 
                         if (lastMHs == null) {
-                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: [], cap: match.cap};
+                            return {ip: miner.address, sum: sum, hist: [], cap: match.cap};
                         } else if (match.hist.length == 0) {
-                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: [lastMHs], cap: match.cap};
+                            return {ip: miner.address, sum: sum, hist: [lastMHs], cap: match.cap};
                         } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
                             if (match.hist.length >= 48)
                                 match.hist.slice(1);
                             match.hist.push(lastMHs);
-                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap};
+                            return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap};
                         } else {
-                            return {ip: miner.address, sum: JSON.parse(summary.body), hist: match.hist, cap: match.cap};
+                            return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap};
                         }
                     }
                 } catch(err) {
