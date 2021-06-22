@@ -205,7 +205,7 @@ class App extends React.Component {
                         timeout: 1500, retry: 0
                     });
 
-                    const sum = JSON.parse(summary.body);
+                    let sum = JSON.parse(summary.body);
                     if (!sum.Hostname) sum = null;
 
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
