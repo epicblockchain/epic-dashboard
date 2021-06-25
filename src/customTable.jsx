@@ -7,6 +7,11 @@ import TableRow from "@material-ui/core/TableRow";
 import TableFooter from "@material-ui/core/TableFooter";
 import MuiCheckbox from "@material-ui/core/Checkbox";
 import Menu from "@material-ui/core/Menu";
+import Popper from "@material-ui/core/Popper";
+import Paper from "@material-ui/core/Paper";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grow from "@material-ui/core/Grow";
+import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
@@ -146,14 +151,26 @@ function Table({ dataRaw, update, extstate, extmodel }) {
         return Math.ceil(context.measureText(input).width);
     });
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = React.useRef(null);
+    const handleToggle = () => {
+        setOpen((prevOpen) => !prevOpen);
+    };
+    
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+        setOpen(false);
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const prevOpen = React.useRef(open);
+    React.useEffect(() => {
+        if (prevOpen.current === true && open === false) {
+            anchorRef.current.focus();
+        }
+        prevOpen.current = open;
+    }, [open]);
 
     const {
         getTableProps,
@@ -261,36 +278,40 @@ function Table({ dataRaw, update, extstate, extmodel }) {
     <React.Fragment>
         <div className="toolbar">
             <Button
-                aria-controls="simple-menu"
-                aria-haspopup="true"
                 startIcon={<ViewWeekIcon/>}
                 color="primary"
                 size="small"
-                onClick={handleClick}
+                ref={anchorRef}
+                onClick={handleToggle}
             >
                 Columns
             </Button>
-            <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                transitionDuration={100}
+            <Popper open={open} anchorEl={anchorRef.current} placement="bottom-start"
+                transition disablePortal style={{zIndex: 1000}}
             >
-                <MenuItem onClick={() => toggleHideAllColumns()}>
-                    <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} onChange={null}/>
-                    Show/Hide All
-                </MenuItem>
-                {allColumns.map((col) => {
-                    return col.id != "selection" ? (
-                        <MenuItem key={col.id} onClick={() => toggleHideColumn(col.id)}>
-                            <IndeterminateCheckbox {...col.getToggleHiddenProps()} onChange={null}/>
-                            {col.Header}
-                        </MenuItem>
-                    ) : null;
-                })}
-            </Menu>
+            {({ TransitionProps }) => (
+                <Grow {...TransitionProps} {...({timeout: 100})}>
+                    <Paper elevation={8}>
+                        <ClickAwayListener onClickAway={handleClose}>
+                            <MenuList autoFocusItem={open} id="simple-menu">
+                                <MenuItem onClick={() => toggleHideAllColumns()}>
+                                    <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} onChange={null}/>
+                                    Show/Hide All
+                                </MenuItem>
+                                {allColumns.map((col) => {
+                                    return col.id != "selection" ? (
+                                        <MenuItem key={col.id} onClick={() => toggleHideColumn(col.id)}>
+                                            <IndeterminateCheckbox {...col.getToggleHiddenProps()} onChange={null}/>
+                                            {col.Header}
+                                        </MenuItem>
+                                    ) : null;
+                                })}
+                            </MenuList>
+                        </ClickAwayListener>
+                    </Paper>
+                </Grow>
+            )}
+            </Popper>
         </div>
         <MaUTable {...getTableProps()} component="div" id="datatable">
             <TableHead component="div" id="header">
