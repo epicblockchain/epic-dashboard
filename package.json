@@ -19,7 +19,9 @@
   "license": "GPLv3",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "src/img/epic"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
