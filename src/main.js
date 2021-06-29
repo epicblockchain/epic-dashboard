@@ -17,10 +17,11 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 1536,
         height: 864,
+        icon: __dirname + '/img/favicon.png',
         webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false,
-        enableRemoteModule: true
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
         }
     });
 
