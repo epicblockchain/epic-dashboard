@@ -233,6 +233,27 @@ class App extends React.Component {
                         } catch(err) {
                             console.log(err);
                             models.add('undefined');
+                            return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), cap: match ? match.sum : init ? 'init' : null};
+                        }
+                    } else if (match && (match.cap == 'init' || match.cap == 'load' || match.cap == 'reboot')) {
+                        try {
+                            const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
+                                timeout: 1500, retry: 0
+                            });
+                            let content = JSON.parse(cap.body);
+                            
+                            if (content.Model) models.add(content.Model);
+                            else models.add('undefined');
+
+                            return {
+                                ip: miner.address,
+                                sum: sum,
+                                hist: JSON.parse(history.body).History.slice(-48),
+                                cap: content.Model ? content : null,
+                                timer: 0
+                            };
+                        } catch(err) {
+                            models.add('undefined');
                             return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), cap: null};
                         }
                     } else {
