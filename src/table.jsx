@@ -110,6 +110,15 @@ export class DataTable extends React.Component {
         return Math.round(sum);
     }
 
+    activeHBs(hbs) {
+        if (hbs.length < 3) {
+            const active = hbs.map(a => a.Index);
+
+            return `${active.length} (${active.join(', ')})`;
+        }
+        return hbs.length;
+    }
+
     select(sel_model, model) {
         this.setState({[model + '_sel']: sel_model});
     }
@@ -178,7 +187,7 @@ export class DataTable extends React.Component {
                 user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
                 start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
                 uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
-                hbs: this.failSafe(a.sum) || a.sum.Session['Active HBs'],
+                hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
                 hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null),
                 hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1),
                 hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6),

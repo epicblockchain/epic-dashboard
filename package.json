@@ -1,7 +1,7 @@
 {
   "name": "epic-dashboard",
   "productName": "epic-dashboard",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Dashboard for ePIC mining rigs.",
   "main": ".webpack/main",
   "scripts": {
@@ -34,11 +34,19 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "options": {
+              "icon": "src/img/epic.png"
+            }
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "config": {
+            "options": {
+              "icon": "src/img/epic.png"
+            }
+          }
         }
       ],
       "plugins": [

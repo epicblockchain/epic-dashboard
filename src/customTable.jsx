@@ -23,14 +23,14 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
 import {
-  useTable,
-  useBlockLayout,
-  useResizeColumns,
-  useRowSelect,
-  useSortBy,
-  useFilters,
-  useGlobalFilter,
-  useAsyncDebounce
+    useTable,
+    useBlockLayout,
+    useResizeColumns,
+    useRowSelect,
+    useSortBy,
+    useFilters,
+    useGlobalFilter,
+    useAsyncDebounce
 } from "react-table";
 import { FixedSizeGrid } from "react-window";
 
@@ -42,7 +42,7 @@ const IndeterminateCheckbox = React.forwardRef(
         const resolvedRef = ref || defaultRef;
 
         React.useEffect(() => {
-        resolvedRef.current.indeterminate = indeterminate;
+            resolvedRef.current.indeterminate = indeterminate;
         }, [resolvedRef, indeterminate]);
 
         return (
@@ -59,13 +59,13 @@ const IndeterminateCheckbox = React.forwardRef(
 function FilterIcon(props) {
     return (
         <SvgIcon {...props}>
-            <path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39c.51-.66.04-1.61-.79-1.61H5.04c-.83 0-1.3.95-.79 1.61z"/>
+            <path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39c.51-.66.04-1.61-.79-1.61H5.04c-.83 0-1.3.95-.79 1.61z" />
         </SvgIcon>
     );
 }
 
 function Table({ dataRaw, update, extstate, extmodel }) {
-    const DefaultColumnFilter = React.useCallback(({column: { filterValue, preFilteredRows, setFilter }}) => {
+    const DefaultColumnFilter = React.useCallback(({ column: { filterValue, preFilteredRows, setFilter } }) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const handleClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -79,12 +79,12 @@ function Table({ dataRaw, update, extstate, extmodel }) {
         const changeFilter = useAsyncDebounce(value => {
             setFilter(value || undefined);
         }, 300);
-    
+
         return (
             <div>
                 <IconButton onClick={handleClick} size="small" className="filter">
-                    { !filterValue && <FilterListIcon fontSize="small"/> }
-                    { filterValue && <FilterIcon fontSize="small" color="primary"/> }
+                    {!filterValue && <FilterListIcon fontSize="small" />}
+                    {filterValue && <FilterIcon fontSize="small" color="primary" />}
                 </IconButton>
                 <Menu
                     anchorEl={anchorEl}
@@ -124,23 +124,23 @@ function Table({ dataRaw, update, extstate, extmodel }) {
         { accessor: 'ip', Header: 'IP', width: 130 },
         { accessor: 'name', Header: 'Name', width: 150 },
         { accessor: 'firmware', Header: 'Firmware', width: 150 },
-        { accessor: 'model', Header: 'Model', width: 100},
+        { accessor: 'model', Header: 'Model', width: 100 },
         { accessor: 'mode', Header: 'Mode', width: 100 },
         { accessor: 'pool', Header: 'Pool', width: 180 },
-        { accessor: 'user', Header: 'User', width: 180 },
+        { accessor: 'user', Header: 'User', width: 180, maxWidth: 700 },
         { accessor: 'start', Header: 'Started', width: 260 },
         { accessor: 'uptime', Header: 'Uptime', width: 135 },
-        { accessor: 'hbs', Header: 'Active HBs', width: 120},
-        { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150},
-        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150},
-        { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150},
-        { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150},
-        { accessor: 'accepted', Header: 'Accepted Shares', width: 150},
-        { accessor: 'rejected', Header: 'Rejected Shares', width: 150},
-        { accessor: 'difficulty', Header: 'Difficulty', width: 120},
+        { accessor: 'hbs', Header: 'Active HBs', width: 120 },
+        { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150 },
+        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150 },
+        { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150 },
+        { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150 },
+        { accessor: 'accepted', Header: 'Accepted Shares', width: 150 },
+        { accessor: 'rejected', Header: 'Rejected Shares', width: 150 },
+        { accessor: 'difficulty', Header: 'Difficulty', width: 120 },
         { accessor: 'temperature', Header: 'Temp \u00b0C', width: 110 },
-        { accessor: 'power', Header: 'Power (W)', width: 110},
-        { accessor: 'fanspeed', Header: 'Fan Speed', width: 115}
+        { accessor: 'power', Header: 'Power (W)', width: 110 },
+        { accessor: 'fanspeed', Header: 'Fan Speed', width: 115 }
     ], []);
 
     const model = React.useMemo(() => extmodel, []);
@@ -156,7 +156,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
     };
-    
+
     const handleClose = (event) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return;
@@ -189,196 +189,200 @@ function Table({ dataRaw, update, extstate, extmodel }) {
         preGlobalFilteredRows,
         setGlobalFilter
     } = useTable(
-    {
-        columns,
-        data,
-        initialState,
-        defaultColumn,
-        autoResetSelectedRows: false,
-        autoResetSortBy: false,
-        autoResetFilters: false,
-        autoResetGlobalFilter: false,
-        stateReducer: (a, b, c) => {
-            //console.log('stateChange', b);
-            switch(b.type) {
-                case 'autoColSize':
-                    const clone = Object.assign({}, a.columnResizing);
-                    clone.columnWidths[b.col] = b.val;
+        {
+            columns,
+            data,
+            initialState,
+            defaultColumn,
+            autoResetSelectedRows: false,
+            autoResetSortBy: false,
+            autoResetFilters: false,
+            autoResetGlobalFilter: false,
+            stateReducer: (a, b, c) => {
+                //console.log('stateChange', b);
+                switch (b.type) {
+                    case 'autoColSize':
+                        const clone = Object.assign({}, a.columnResizing);
+                        clone.columnWidths[b.col] = b.val;
 
-                    return {
-                        ...a,
-                        columnResizing: clone
-                    };
-            }
+                        return {
+                            ...a,
+                            columnResizing: clone
+                        };
+                }
 
-            if (b.type !='columnResizing' && b.type !='columnStartResizing') {
-                updateState(a, b, c, dataRaw, model);
+                if (b.type != 'columnResizing' && b.type != 'columnStartResizing') {
+                    updateState(a, b, c, dataRaw, model);
+                }
             }
+        },
+        useBlockLayout,
+        useResizeColumns,
+        useFilters,
+        useGlobalFilter,
+        useSortBy,
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    width: 50,
+                    disableResizing: true,
+                    disableFilters: true,
+                    Header: ({ getToggleAllRowsSelectedProps }) => (
+                        <div className="check-wrap">
+                            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div className="check-wrap">
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
         }
-    },
-    useBlockLayout,
-    useResizeColumns,
-    useFilters,
-    useGlobalFilter,
-    useSortBy,
-    useRowSelect,
-    (hooks) => {
-        hooks.visibleColumns.push((columns) => [
-            {
-                id: "selection",
-                width: 50,
-                disableResizing: true,
-                disableFilters: true,
-                Header: ({ getToggleAllRowsSelectedProps }) => (
-                    <div className="check-wrap">
-                        <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                    </div>
-                ),
-                Cell: ({ row }) => (
-                    <div className="check-wrap">
-                        <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                    </div>
-                )
-            },
-            ...columns
-        ]);
-    }
-  );
+    );
 
     const scroll = React.useCallback((obj) => {
         document.getElementById('header').style.transform = `translateX(${-obj.scrollLeft}px)`;
     });
 
-  const RenderRow = React.useCallback(
-    ({ columnIndex, rowIndex, style }) => {
-        const row = rows[rowIndex];
-        prepareRow(row);
-        return (
-            <TableRow
-                {...row.getRowProps({
-                    style
-                })}
-                component="div"
-                className={state.selectedRowIds[rowIndex] ? "Mui-selected" : ""}
-            >
-                {row.cells.map((cell) => {
-                    return (
-                        <TableCell {...cell.getCellProps()} component="div">
-                            {cell.render("Cell")}
-                        </TableCell>
-                    );
-                })}
-            </TableRow>
-        );
-    },
-    [prepareRow, rows, state.selectedRowIds, window.innerWidth]
-  );
-
-  return (
-    <React.Fragment>
-        <div className="toolbar">
-            <Button
-                startIcon={<ViewWeekIcon/>}
-                color="primary"
-                size="small"
-                ref={anchorRef}
-                onClick={handleToggle}
-            >
-                Columns
-            </Button>
-            <Popper open={open} anchorEl={anchorRef.current} placement="bottom-start"
-                transition disablePortal style={{zIndex: 1000}}
-            >
-            {({ TransitionProps }) => (
-                <Grow {...TransitionProps} {...({timeout: 100})}>
-                    <Paper elevation={8}>
-                        <ClickAwayListener onClickAway={handleClose}>
-                            <MenuList autoFocusItem={open} id="simple-menu">
-                                <MenuItem onClick={() => toggleHideAllColumns()}>
-                                    <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} onChange={null}/>
-                                    Show/Hide All
-                                </MenuItem>
-                                {allColumns.map((col) => {
-                                    return col.id != "selection" ? (
-                                        <MenuItem key={col.id} onClick={() => toggleHideColumn(col.id)}>
-                                            <IndeterminateCheckbox {...col.getToggleHiddenProps()} onChange={null}/>
-                                            {col.Header}
-                                        </MenuItem>
-                                    ) : null;
-                                })}
-                            </MenuList>
-                        </ClickAwayListener>
-                    </Paper>
-                </Grow>
-            )}
-            </Popper>
-        </div>
-        <MaUTable {...getTableProps()} component="div" id="datatable">
-            <TableHead component="div" id="header">
-                {headerGroups.map((headerGroup) => (
-                    <TableRow {...headerGroup.getHeaderGroupProps()} component="div">
-                        {headerGroup.headers.map((column) => (
-                            <TableCell {...column.getHeaderProps()} component="div">
-                                <div {...column.getSortByToggleProps()} className="header-wrapper">
-                                    <div className={column.id != "selection" ? "col-header" : ""}>
-                                        {column.render("Header")}
-                                    </div>
-                                    {column.isSorted
-                                        ? column.isSortedDesc
-                                        ? <ArrowDownwardIcon fontSize="small"/>
-                                        : <ArrowUpwardIcon fontSize="small"/>
-                                        : ''}
-                                </div>
-                                { column.canFilter ? column.render('Filter') : null }
-                                <div
-                                    {...(column.canResize ? column.getResizerProps() : [])}
-                                    className={`resizer ${ column.isResizing ? "isResizing" : "" }`}
-                                    onDoubleClick={() => {
-                                        if (column.id != "selection") {
-                                            let max = 0;
-
-                                            const context = document.getElementById('canvas').getContext('2d');
-                                            context.font = '14px Helvetica';
-
-                                            data.forEach((row) => {
-                                                const width = getTextWidth(row[column.id], context);
-                                                if (width > max) max = width;
-                                            });
-                                            
-                                            dispatch({
-                                                type: 'autoColSize',
-                                                col: column.id, 
-                                                val: Math.max(max, getTextWidth(column.Header, context)) + 48
-                                            });
-                                        }
-                                    }}
-                                />
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                ))}
-            </TableHead>
-            
-            <TableBody {...getTableBodyProps()} component="div">
-                <FixedSizeGrid
-                    height={380}
-                    rowHeight={32}
-                    rowCount={rows.length}
-                    columnCount={1}
-                    columnWidth={totalColumnsWidth + 24}
-                    width={window.innerWidth - 18}
-                    onScroll={scroll}
-                    className="grid"
+    const RenderRow = React.useCallback(
+        ({ columnIndex, rowIndex, style }) => {
+            const row = rows[rowIndex];
+            prepareRow(row);
+            return (
+                <TableRow
+                    {...row.getRowProps({
+                        style
+                    })}
+                    component="div"
+                    className={state.selectedRowIds[rowIndex] ? "Mui-selected" : ""}
                 >
-                    {RenderRow}
-                </FixedSizeGrid>
-            </TableBody>
-            <TableFooter component="div">
-                <span>Total Rows: {rows.length}</span>
-            </TableFooter>
-        </MaUTable>
-    </React.Fragment>
-  );
+                    {row.cells.map((cell) => {
+                        return (
+                            <TableCell
+                                {...cell.getCellProps()}
+                                component="div"
+                                className={cell.column ? cell.column.id === "hbs" ? cell.value === 3 ? "hb-good" : "hb-warn" : null : null}
+                            >
+                                {cell.render("Cell")}
+                            </TableCell>
+                        );
+                    })}
+                </TableRow>
+            );
+        },
+        [prepareRow, rows, state.selectedRowIds, window.innerWidth]
+    );
+
+    return (
+        <React.Fragment>
+            <div className="toolbar">
+                <Button
+                    startIcon={<ViewWeekIcon />}
+                    color="primary"
+                    size="small"
+                    ref={anchorRef}
+                    onClick={handleToggle}
+                >
+                    Columns
+                </Button>
+                <Popper open={open} anchorEl={anchorRef.current} placement="bottom-start"
+                    transition disablePortal style={{ zIndex: 1000 }}
+                >
+                    {({ TransitionProps }) => (
+                        <Grow {...TransitionProps} {...({ timeout: 100 })}>
+                            <Paper elevation={8}>
+                                <ClickAwayListener onClickAway={handleClose}>
+                                    <MenuList autoFocusItem={open} id="simple-menu">
+                                        <MenuItem onClick={() => toggleHideAllColumns()}>
+                                            <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} onChange={null} />
+                                            Show/Hide All
+                                        </MenuItem>
+                                        {allColumns.map((col) => {
+                                            return col.id != "selection" ? (
+                                                <MenuItem key={col.id} onClick={() => toggleHideColumn(col.id)}>
+                                                    <IndeterminateCheckbox {...col.getToggleHiddenProps()} onChange={null} />
+                                                    {col.Header}
+                                                </MenuItem>
+                                            ) : null;
+                                        })}
+                                    </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                    )}
+                </Popper>
+            </div>
+            <MaUTable {...getTableProps()} component="div" id="datatable">
+                <TableHead component="div" id="header">
+                    {headerGroups.map((headerGroup) => (
+                        <TableRow {...headerGroup.getHeaderGroupProps()} component="div">
+                            {headerGroup.headers.map((column) => (
+                                <TableCell {...column.getHeaderProps()} component="div">
+                                    <div {...column.getSortByToggleProps()} className="header-wrapper">
+                                        <div className={column.id != "selection" ? "col-header" : ""}>
+                                            {column.render("Header")}
+                                        </div>
+                                        {column.isSorted
+                                            ? column.isSortedDesc
+                                                ? <ArrowDownwardIcon fontSize="small" />
+                                                : <ArrowUpwardIcon fontSize="small" />
+                                            : ''}
+                                    </div>
+                                    {column.canFilter ? column.render('Filter') : null}
+                                    <div
+                                        {...(column.canResize ? column.getResizerProps() : [])}
+                                        className={`resizer ${column.isResizing ? "isResizing" : ""}`}
+                                        onDoubleClick={() => {
+                                            if (column.id != "selection") {
+                                                let max = 0;
+
+                                                const context = document.getElementById('canvas').getContext('2d');
+                                                context.font = '14px Helvetica';
+
+                                                data.forEach((row) => {
+                                                    const width = getTextWidth(row[column.id], context);
+                                                    if (width > max) max = width;
+                                                });
+
+                                                dispatch({
+                                                    type: 'autoColSize',
+                                                    col: column.id,
+                                                    val: Math.max(max, getTextWidth(column.Header, context)) + 48
+                                                });
+                                            }
+                                        }}
+                                    />
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableHead>
+
+                <TableBody {...getTableBodyProps()} component="div">
+                    <FixedSizeGrid
+                        height={380}
+                        rowHeight={32}
+                        rowCount={rows.length}
+                        columnCount={1}
+                        columnWidth={totalColumnsWidth + 24}
+                        width={window.innerWidth - 18}
+                        onScroll={scroll}
+                        className="grid"
+                    >
+                        {RenderRow}
+                    </FixedSizeGrid>
+                </TableBody>
+                <TableFooter component="div">
+                    <span>Total Rows: {rows.length}</span>
+                </TableFooter>
+            </MaUTable>
+        </React.Fragment>
+    );
 }
 
 export default Table;

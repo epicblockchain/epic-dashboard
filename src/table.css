@@ -41,3 +41,11 @@
 .stratum {
     height: 40px;
 }
+
+.hb-good {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+.hb-warn {
+    background: rgba(244, 67, 54, 0.3);
+}
