@@ -17,7 +17,7 @@ import './table.css';
 
 import Table from './customTable.jsx';
 
-const defaultHidden = ['model', 'start', 'hbs', 'hashrate1hr',
+const defaultHidden = ['model', 'start', 'hashrate1hr',
     'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power', 'fanspeed'];
 
 function debounce1(func, timeout = 300){
