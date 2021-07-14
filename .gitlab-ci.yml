@@ -4,8 +4,11 @@ stages:
     - dummy
 
 dummy:
+    stage: dummy
     script:
         - echo 'dummy job complete' 
+
+        
 #     - build
 
 # .build_base:
