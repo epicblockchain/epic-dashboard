@@ -2,6 +2,7 @@ image: ubuntu:latest
 
 stages:      
     - build
+    - release
 
 .build_base:
     stage: build
@@ -20,13 +21,18 @@ stages:
         - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
         - export VERSION=$(node -p "require('./package.json').version")
+        - echo "VERSION=$(node -p "require('./package.json').version")" >> variables.env
 
 build:win64:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make win64
-        - mv out/make/squirrel.windows/x64/*.exe ./
+        - mv out/make/squirrel.windows/x64/*.exe ./epic-dashboard-$VERSION-Setup-x64.exe
     artifacts:
+        reports:
+            dotenv: variables.env
         name: epic-dashboard-win64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.exe'
@@ -34,9 +40,11 @@ build:win64:
 
 build:win32:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make win32
-        - mv out/make/squirrel.windows/ia32/*.exe ./
+        - mv out/make/squirrel.windows/ia32/*.exe ./epic-dashboard-$VERSION-Setup-ia32.exe
     artifacts:
         name: epic-dashboard-win32-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -45,9 +53,11 @@ build:win32:
 
 build:deb32:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make deb32
-        - mv out/make/deb/ia32/*.deb ./
+        - mv out/make/deb/ia32/*.deb ./epic-dashboard-$VERSION-ia32.deb
     artifacts:
         name: epic-dashboard-deb32-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -56,9 +66,11 @@ build:deb32:
 
 build:deb64:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make deb64
-        - mv out/make/deb/x64/*.deb ./
+        - mv out/make/deb/x64/*.deb ./epic-dashboard-$VERSION-x64.deb
     artifacts:
         name: epic-dashboard-deb64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -67,9 +79,11 @@ build:deb64:
 
 build:debarmhf:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make debarmhf
-        - mv out/make/deb/armv7l/*.deb ./
+        - mv out/make/deb/armv7l/*.deb ./epic-dashboard-$VERSION-armhf.deb
     artifacts:
         name: epic-dashboard-debarmhf-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -78,9 +92,11 @@ build:debarmhf:
 
 build:debarm64:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make debarm64
-        - mv out/make/deb/arm64/*.deb ./
+        - mv out/make/deb/arm64/*.deb ./epic-dashboard-$VERSION-arm64.deb
     artifacts:
         name: epic-dashboard-debarm64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -89,9 +105,11 @@ build:debarm64:
 
 build:rpm32:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make rpm32
-        - mv out/make/rpm/ia32/*.rpm ./
+        - mv out/make/rpm/ia32/*.rpm ./epic-dashboard-$VERSION-ia32.rpm
     artifacts:
         name: epic-dashboard-rpm32-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -100,9 +118,11 @@ build:rpm32:
 
 build:rpm64:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make rpm64
-        - mv out/make/rpm/x64/*.rpm ./
+        - mv out/make/rpm/x64/*.rpm ./epic-dashboard-$VERSION-x64.rpm
     artifacts:
         name: epic-dashboard-rpm64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -111,11 +131,52 @@ build:rpm64:
 
 build:mac:
     extends: .build_base
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
     script:
         - make mac
-        - mv out/make/zip/darwin/x64/*.zip ./
+        - mv out/make/zip/darwin/x64/*.zip ./epic-dashboard-mac-$VERSION-x64.zip
     artifacts:
         name: epic-dashboard-mac-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.zip'
         expire_in: 2 mos
+<<<<<<< HEAD
+=======
+
+release:
+    stage: release
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
+    variables:
+        GIT_STRATEGY: clone
+    before_script:
+        - apt update
+        - apt install -y git openssh-client curl gpg
+        - curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
+        - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        - apt update
+        - apt install -y gh
+        - eval `ssh-agent -s`
+        - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - echo "$SSH_PUBLIC_KEY" >> ~/.ssh/id_rsa.pub
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    script:
+        - git checkout github
+        - git remote remove origin
+        - git filter-branch -- --all
+        - git remote add github git@github.com:epicblockchain/epic-dashboard.git
+        - git push -f github github:master
+        - gh release create v$VERSION --notes "Major revision/overhaul"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-x64.exe#Windows 64-bit"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-ia32.exe#Windows 32-bit"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-ia32.deb#Debian, Ubuntu 32-bit"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.deb#Debian, Ubuntu 64-bit"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-armhf.deb#Debian, Ubuntu ARM64"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-arm64.deb#Debian, Ubuntu ARMhf"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-ia32.rpm#Red Hat, Fedora 64-bit"
+        - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.rpm#Red Hat, Fedora 32-bit"
+        - gh release upload v$VERSION "epic-dashboard-mac-$VERSION-x64.zip#macOS 64-bit"
+>>>>>>> github
