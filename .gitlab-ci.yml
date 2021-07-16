@@ -141,8 +141,6 @@ build:mac:
         paths:
             - '*.zip'
         expire_in: 2 mos
-<<<<<<< HEAD
-=======
 
 release:
     stage: release
@@ -179,4 +177,3 @@ release:
         - gh release upload v$VERSION "epic-dashboard-$VERSION-ia32.rpm#Red Hat, Fedora 64-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.rpm#Red Hat, Fedora 32-bit"
         - gh release upload v$VERSION "epic-dashboard-mac-$VERSION-x64.zip#macOS 64-bit"
->>>>>>> github
