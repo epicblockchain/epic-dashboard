@@ -27,6 +27,7 @@ build:win64:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make win64
         - mv out/make/squirrel.windows/x64/*.exe ./epic-dashboard-$VERSION-Setup-x64.exe
@@ -42,6 +43,7 @@ build:win32:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make win32
         - mv out/make/squirrel.windows/ia32/*.exe ./epic-dashboard-$VERSION-Setup-ia32.exe
@@ -55,6 +57,7 @@ build:deb32:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make deb32
         - mv out/make/deb/ia32/*.deb ./epic-dashboard-$VERSION-ia32.deb
@@ -68,6 +71,7 @@ build:deb64:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make deb64
         - mv out/make/deb/x64/*.deb ./epic-dashboard-$VERSION-x64.deb
@@ -81,6 +85,7 @@ build:debarmhf:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make debarmhf
         - mv out/make/deb/armv7l/*.deb ./epic-dashboard-$VERSION-armhf.deb
@@ -94,6 +99,7 @@ build:debarm64:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make debarm64
         - mv out/make/deb/arm64/*.deb ./epic-dashboard-$VERSION-arm64.deb
@@ -107,6 +113,7 @@ build:rpm32:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make rpm32
         - mv out/make/rpm/ia32/*.rpm ./epic-dashboard-$VERSION-ia32.rpm
@@ -120,6 +127,7 @@ build:rpm64:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make rpm64
         - mv out/make/rpm/x64/*.rpm ./epic-dashboard-$VERSION-x64.rpm
@@ -133,9 +141,11 @@ build:mac:
     extends: .build_base
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /bump version to /
+        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make mac
         - mv out/make/zip/darwin/x64/*.zip ./epic-dashboard-mac-$VERSION-x64.zip
+        - mv out/make/zip/darwin/arm64/*.zip ./epic-dashboard-mac-$VERSION-ARM64.zip
     artifacts:
         name: epic-dashboard-mac-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
@@ -162,11 +172,11 @@ release:
         - echo "$SSH_PUBLIC_KEY" >> ~/.ssh/id_rsa.pub
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     script:
-        - git checkout github
+        - git checkout master
         - git remote remove origin
         - git filter-branch -- --all
         - git remote add github git@github.com:epicblockchain/epic-dashboard.git
-        - git push -f github github:master
+        - git push -f github master
         - gh release create v$VERSION -F changelog.md
         - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-x64.exe#Windows 64-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-ia32.exe#Windows 32-bit"
@@ -177,3 +187,4 @@ release:
         - gh release upload v$VERSION "epic-dashboard-$VERSION-ia32.rpm#Red Hat, Fedora 64-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.rpm#Red Hat, Fedora 32-bit"
         - gh release upload v$VERSION "epic-dashboard-mac-$VERSION-x64.zip#macOS 64-bit"
+        - gh release upload v$VERSION "epic-dashboard-mac-$VERSION-ARM64.zip#macOS ARM64"
