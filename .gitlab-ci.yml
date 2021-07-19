@@ -167,7 +167,7 @@ release:
         - git filter-branch -- --all
         - git remote add github git@github.com:epicblockchain/epic-dashboard.git
         - git push -f github github:master
-        - gh release create v$VERSION --notes "Major revision/overhaul"
+        - gh release create v$VERSION -F changelog.md
         - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-x64.exe#Windows 64-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-ia32.exe#Windows 32-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-ia32.deb#Debian, Ubuntu 32-bit"
