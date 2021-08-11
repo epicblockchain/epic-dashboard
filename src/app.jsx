@@ -10,6 +10,7 @@ import * as ReactDOM from 'react-dom';
 import { Dashboard } from './dashboard.jsx';
 import { DataTable } from './table.jsx';
 import { Support } from './support.jsx';
+import { Eula } from './eula.jsx';
 
 import { Drawer, ListItem, ListItemText, Button, List, Divider,
         Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CssBaseline, TextField
@@ -184,6 +185,7 @@ class App extends React.Component {
             models: [],
             modal: false,
             modal2: false,
+            eula: false,
             theme: 'light'
         };
 
@@ -353,6 +355,12 @@ class App extends React.Component {
             console.log(result);
             console.log(Date.now() - start);
         });*/
+
+        fs.readFile(path.join(app_path, 'eula.txt'), (err, data) => {
+            if (err) {
+                this.setState({eula: true});
+            }
+        });
         
         mdns.discover({
             name: '_epicminer._tcp.local', wait: 2
@@ -365,11 +373,25 @@ class App extends React.Component {
                 console.log(list);
                 miners = list.sort(this.compare);
             }
-            this.setState({modal2: true})
+            this.setState({modal2: true});
 
             this.summary(true);
             console.log('mounted');
         });
+    }
+
+    eula(bool) {
+        if (bool) {
+            this.setState({eula: false});
+            fs.writeFile(path.join(app_path, 'eula.txt'), "", function (err) {
+                if (err) {
+                    console.log(err);
+                    throw err;
+                }
+            });
+        } else {
+            ipcRenderer.send('eula-decline');
+        }
     }
 
     toggleDrawer(open) {
@@ -650,6 +672,15 @@ class App extends React.Component {
                     <DialogActions>
                         <Button onClick={() => this.setSessionPass()} color="primary" variant="contained">Set Password</Button>
                         <Button onClick={() => this.setState({modal2: false})} color="primary" variant="outlined">Skip</Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={this.state.eula} fullScreen>
+                    <DialogContent>
+                        <Eula/>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => this.eula(true)} color="primary" variant="contained">Accept</Button>
+                        <Button onClick={() => this.eula(false)} color="primary" variant="outlined">Decline</Button>
                     </DialogActions>
                 </Dialog>
                 <ToastContainer

@@ -59,6 +59,10 @@ const createWindow = () => {
             })();
         }
     });
+
+    ipcMain.on('eula-decline', () => {
+        process.exit(1);
+    });
 };
 
 // This method will be called when Electron has finished
