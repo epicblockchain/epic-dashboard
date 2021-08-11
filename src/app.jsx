@@ -359,12 +359,17 @@ class App extends React.Component {
         fs.readFile(path.join(app_path, 'eula.txt'), (err, data) => {
             if (err) {
                 this.setState({eula: true});
+            } else {
+                this.init();
             }
         });
-        
+    }
+
+    init() {
         mdns.discover({
             name: '_epicminer._tcp.local', wait: 2
         }).then((list) => {
+
             list = list.filter(a => !blacklist.includes(a.fqdn));
 
             if (!list.length) {
@@ -389,6 +394,7 @@ class App extends React.Component {
                     throw err;
                 }
             });
+            this.init();
         } else {
             ipcRenderer.send('eula-decline');
         }
