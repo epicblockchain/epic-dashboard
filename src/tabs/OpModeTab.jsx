@@ -17,7 +17,7 @@ export class OpModeTab extends React.Component {
     }
     
     updateMode(e) {
-        this.setState({mode: e.target.value});
+        this.setState({mode: e.target.value.toLowerCase()});
     }
 
     updatePassword(e) {
@@ -25,9 +25,19 @@ export class OpModeTab extends React.Component {
     }
 
     render() {
-        let options = [];
-        const target = this.props.miners[this.props.models[this.props.list]];
-        if (target) options = target[0].cap ? target[0].cap.Presets : ['normal', 'efficiency'];
+        let options = ['Normal', 'Efficiency'];
+
+        for (const selected of this.props.selected) {
+            if (this.props.data[selected].cap) {
+                for (const option of options) {
+                    if (!this.props.data[selected].cap.Presets.includes(option)) {
+                        options.splice(options.indexOf(option), 1);
+                    }
+                }
+            } else {
+                break;
+            }
+        }
 
         return(
             <div style={{padding: '12px 0'}}>
@@ -36,7 +46,7 @@ export class OpModeTab extends React.Component {
                     <Select native id="mode" label="Mode" value={this.state.mode} onChange={this.updateMode}>
                         {
                             options.map((a, i) => {
-                                return <option key={i} value={a}>{a.charAt(0).toUpperCase() + a.slice(1)}</option>;
+                                return <option key={i} value={a.toLowerCase()}>{a}</option>;
                             })
                         }
                     </Select>

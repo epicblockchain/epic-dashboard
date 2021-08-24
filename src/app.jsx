@@ -532,6 +532,7 @@ class App extends React.Component {
                 break;
             case '/mode':
                 obj = {param: data.mode, password: data.password};
+                msg = 'Updating operating mode';
                 break;
             case '/id':
                 obj = {param: data.checked, password: data.password};
@@ -557,8 +558,8 @@ class App extends React.Component {
                 obj = {param: data.speed.toString(), password: data.password};
         }
         
-        let slow_api = api == '/coin' || api == '/miner'; //sends response after completed
-        let soft_reboot = api == '/softreboot' || api == 'hwconfig' || api == '/mode'; //sends response early
+        let slow_api = api == '/coin' || api == '/miner' || api == '/mode'; //sends response after completed
+        let soft_reboot = api == '/softreboot' || api == 'hwconfig'; //sends response early
 
         for (let i of selected) {
             (async () => {

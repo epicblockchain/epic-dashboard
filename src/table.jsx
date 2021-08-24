@@ -278,8 +278,8 @@ export class DataTable extends React.Component {
                     <div hidden={this.state.tab != 2}>
                         <CoinTab
                             handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
-                            selected={selected} data={this.props.data} miners={miners} list={this.state.list}
-                            models={this.state.models} sessionPass={this.props.sessionPass}
+                            selected={selected} data={this.props.data} miners={miners} models={this.state.models}
+                            sessionPass={this.props.sessionPass}
                         />
                     </div>
                     <div hidden={this.state.tab != 3}>
@@ -289,7 +289,7 @@ export class DataTable extends React.Component {
                         <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass} list={this.state.list}/>
                     </div>
                     <div hidden={this.state.tab != 5}>
-                        <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners}
+                        <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners} data={this.props.data}
                             list={this.state.list} models={this.state.models} sessionPass={this.props.sessionPass}
                         />
                     </div>
