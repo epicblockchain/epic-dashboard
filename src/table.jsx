@@ -69,10 +69,14 @@ export class DataTable extends React.Component {
         var sum = 0;
         if (x) {
             try {
-                for (let obj of row.hist.slice(-x)) {
-                    sum += obj.Hashrate;
+                if (row.hist.length < x) {
+                    sum = 'N/A';
+                } else {
+                    for (let obj of row.hist.slice(-x)) {
+                        sum += obj.Hashrate;
+                    }
+                    sum /= x;
                 }
-                sum /= x;
             } catch {
                 sum = 'N/A'
             }
@@ -80,6 +84,7 @@ export class DataTable extends React.Component {
             sum = row.sum.Session['Average MHs'];
         }
 
+        if (sum == 'N/A') return sum;
         if (sum > 999999) return `${Math.round(sum / 10000) / 100} TH/s`;
         if (sum > 999) return `${Math.round(sum / 10) / 100} GH/s`;
         else return `${Math.round(sum * 100) / 100} MH/s`;
