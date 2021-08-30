@@ -25,10 +25,14 @@ export class OpModeTab extends React.Component {
     }
 
     render() {
-        let options = ['Normal', 'Efficiency'];
+        let options = null;
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
+                if (!options) {
+                    options = this.props.data[selected].cap.Presets;
+                    continue;
+                }
                 for (const option of options) {
                     if (!this.props.data[selected].cap.Presets.includes(option)) {
                         options.splice(options.indexOf(option), 1);
@@ -38,6 +42,7 @@ export class OpModeTab extends React.Component {
                 break;
             }
         }
+        if (!options) options = ['Normal', 'Efficiency'];
 
         return(
             <div style={{padding: '12px 0'}}>

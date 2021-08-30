@@ -60,10 +60,14 @@ export class CoinTab extends React.Component {
     }
 
     render() {
-        let options = ['Sia'];
+        let options = null;
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
+                if (!options) {
+                    options = this.props.data[selected].cap.Coins;
+                    continue;
+                }
                 for (const option of options) {
                     if (!this.props.data[selected].cap.Coins.includes(option)) {
                         options.splice(options.indexOf(option), 1);
@@ -73,6 +77,7 @@ export class CoinTab extends React.Component {
                 break;
             }
         }
+        if (!options) options = ['Sia'];
 
         return(
             <div style={{padding: '12px 0'}}>
