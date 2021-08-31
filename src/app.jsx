@@ -277,8 +277,11 @@ class App extends React.Component {
                 } catch(err) {
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
 
-                    if (match && match.sum == 'reboot' && match.timer > 0) {
-                        return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
+                    if (match) {
+                        if (match.sum == 'reboot' && match.timer > 0) {
+                            return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
+                        }
+                        return {ip: miner.address, sum: null, hist: null, cap: match.cap, timer: 0};
                     } else {
                         models.add('undefined');
                         return {ip: miner.address, sum: null, hist: null, timer: 0};
