@@ -1,5 +1,8 @@
+const { dialog } = require('@electron/remote');
+const got = require('got');
+const fs = require('fs');
 import * as React from 'react';
-import { Button, TextField, FormControl, Divider } from '@material-ui/core'; 
+import { Button, TextField, Typography, Divider } from '@material-ui/core'; 
 
 export class AddRemoveTab extends React.Component {
     constructor(props) {
@@ -11,6 +14,37 @@ export class AddRemoveTab extends React.Component {
 
     updateIP(e) {
         this.setState({ip: e.target.value});
+    }
+
+    saveLogs(test) {
+        dialog.showOpenDialog({
+            properties: ['openDirectory', 'createDirectory']
+        }).then(async arg => {
+            if (!arg.canceled){
+                for (const i of this.props.selected) {
+                    let ip = this.props.data[i].ip;
+                    let data = await got(`http://${ip}:4028/log`);
+            
+                    let body = JSON.parse(data.body);
+
+                    fs.mkdir(arg.filePaths[0] + `/${ip}`, {recursive: true}, (err) => console.log(err));
+                    for (let key of Object.keys(body)) {
+                        if (body[key]) {
+                            fs.writeFile(arg.filePaths[0] + `/${ip}/${ip}_${key}.log`, body[key], function (err) {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+                        }
+                    }
+
+                    this.props.notify('success', `Logs written to  ${arg.filePaths[0]}`);
+                }
+            }
+        }).catch(err => {
+            this.props.notify('error', String(err));
+            console.log(err);
+        });
     }
 
     render() {
@@ -48,6 +82,11 @@ export class AddRemoveTab extends React.Component {
                     disabled={!this.props.selected.length}
                 >
                     Blacklist Selected
+                </Button>
+                <Divider variant="middle" style={{margin: '8px'}}/>
+                <Button disableRipple style={{cursor: "default"}}>For Support: </Button>
+                <Button onClick={() => this.saveLogs()} variant="contained" color="primary" disabled={!this.props.selected.length}>
+                    Save Logs of Selected
                 </Button>
             </div>
         );

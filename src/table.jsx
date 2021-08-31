@@ -256,7 +256,7 @@ export class DataTable extends React.Component {
                     <Tabs value={this.state.tab} onChange={this.setTab} indicatorColor="primary"
                         textColor="primary" scrollButtons="auto" variant="scrollable"
                     >
-                        <Tab label="Add/Remove"/>
+                        <Tab label="Home"/>
                         <Tab label="CMD"/>
                         <Tab label="Coin" disabled={!capApi}/>
                         <Tab label="Mining Pool"/>
@@ -273,8 +273,8 @@ export class DataTable extends React.Component {
                     <div hidden={this.state.tab != 0}>
                         <AddRemoveTab
                             addMiner={this.props.addMiner} delMiner={this.props.delMiner} blacklist={this.props.blacklist}
-                            saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners} list={this.state.list}
-                            models={this.state.models} selected={selected} select={this.select}
+                            saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners} list={this.state.list} data={this.props.data}
+                            models={this.state.models} selected={selected} select={this.select} notify={this.props.notify}
                         />
                     </div>
                     <div hidden={this.state.tab != 1}>

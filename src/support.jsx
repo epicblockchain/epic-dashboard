@@ -2,7 +2,7 @@ const { dialog } = require('@electron/remote');
 const fs = require('fs');
 
 import * as React from 'react';
-import Button from '@material-ui/core/Button'
+import { Button, Divider, Typography } from '@material-ui/core'
 
 import './support.css';
 
@@ -33,10 +33,17 @@ export class Support extends React.Component {
     render(){
         return (
             <div className="supportContent">
-                <h3>Support</h3>
+                <Typography variant="h4" gutterBottom>Support</Typography>
                 <p><strong>support@epicblockchain.io</strong></p>
-                <p>Press the button below to create a log file which you can choose to attach to your support email.</p>
+                <Divider variant="middle" style={{margin: '8px'}}/>
+                <Typography variant="h5" gutterBottom>Dashboard Specific</Typography>
+                <p>For dashboard issues, use the button below to create a log file which you can choose to attach to your support email.</p>
                 <Button variant="outlined" onClick={this.writeLogs}>Generate Logs</Button>
+                <Divider variant="middle" style={{margin: '8px'}}/>
+                <Typography variant="h5" gutterBottom>Miner Specific</Typography>
+                <p>For miner issues, go to the table, select the miners with issues and use the "Save logs" button under the Home tab.
+                <br />Attach the saved logs to you support email.</p>
+                <Button variant="contained" color="primary" onClick={() => this.props.setPage('table')}>Take me there</Button>
             </div>
         );
     }

@@ -189,6 +189,7 @@ class App extends React.Component {
             theme: 'light'
         };
 
+        this.setPage = this.setPage.bind(this);
         this.addMiner = this.addMiner.bind(this);
         this.delMiner = this.delMiner.bind(this);
         this.saveMiners = this.saveMiners.bind(this);
@@ -708,11 +709,11 @@ class App extends React.Component {
                 { this.state.page == 'table' &&
                     <DataTable data={this.state.miner_data} models={this.state.models} sessionPass={this.state.sessionPass}
                         addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
-                        saveMiners={this.saveMiners} loadMiners={this.loadMiners}
+                        saveMiners={this.saveMiners} loadMiners={this.loadMiners} notify={notify}
                         handleApi={this.handleApi} handleFormApi={this.handleFormApi}
                     />
                 }
-                { this.state.page == 'support' && <Support data={this.state}/> }
+                { this.state.page == 'support' && <Support data={this.state} setPage={this.setPage}/> }
             </MuiThemeProvider>
         );
     }
