@@ -213,7 +213,7 @@ class App extends React.Component {
 
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
 
-                    if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null) {
+                    if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null || (match && !match.cap)) {
                         const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
                             timeout: 1500, retry: 0
                         });
@@ -236,27 +236,6 @@ class App extends React.Component {
                         } catch(err) {
                             console.log(err);
                             models.add('undefined');
-                            return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), cap: match ? match.sum : init ? 'init' : null};
-                        }
-                    } else if (match && (match.cap == 'init' || match.cap == 'load' || match.cap == 'reboot')) {
-                        try {
-                            const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
-                                timeout: 1500, retry: 0
-                            });
-                            let content = JSON.parse(cap.body);
-                            
-                            if (content.Model) models.add(content.Model);
-                            else models.add('undefined');
-
-                            return {
-                                ip: miner.address,
-                                sum: sum,
-                                hist: JSON.parse(history.body).History.slice(-48),
-                                cap: content.Model ? content : null,
-                                timer: 0
-                            };
-                        } catch(err) {
-                            models.add('undefined');
                             return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), cap: null};
                         }
                     } else {
@@ -270,10 +249,8 @@ class App extends React.Component {
                             if (match.hist.length >= 48)
                                 match.hist.slice(1);
                             match.hist.push(lastMHs);
-                            return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap};
-                        } else {
-                            return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap};
                         }
+                        return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap};
                     }
                 } catch(err) {
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
