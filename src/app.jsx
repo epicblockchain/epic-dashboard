@@ -202,7 +202,7 @@ class App extends React.Component {
     async summary(init) {     
         let models = new Set(this.state.models);
         let miner_data = await Promise.all(
-            miners.flatMap(async (miner, i) => {
+            miners.map(async (miner, i) => {
                 try {
                     const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
                         timeout: 1500, retry: 0
@@ -267,7 +267,7 @@ class App extends React.Component {
                             return {ip: miner.address, sum: null, hist: null, timer: 50}; // 5 minutes
                         } else {
                             miners.splice(i, 1);
-                            return [];
+                            return;
                         }
                     } else {
                         models.add('undefined');

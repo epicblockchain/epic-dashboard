@@ -181,8 +181,8 @@ export class DataTable extends React.Component {
     }
 
     render() {
-        const rows = this.props.data.map(
-            (a, i) => ({
+        const rows = this.props.data.flatMap(
+            (a, i) => a ? [{
                 id: i,
                 ip: a ? a.ip : '', //TODO: figure out why this is was falsey
                 name: this.failSafe(a.sum) || a.sum.Hostname,
@@ -205,7 +205,7 @@ export class DataTable extends React.Component {
                 power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
                 fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
                 cap: a.cap
-            })
+            }] : []
         );
 
         var miners = {};
