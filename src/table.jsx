@@ -55,8 +55,9 @@ export class DataTable extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
+            var newModels = this.props.models.filter(x => !prevProps.models.includes(x));
             var newState = {models: this.props.models};
-            this.props.models.forEach(key => {
+            newModels.forEach(key => {
                 newState[key + '_sel'] = [];
                 newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
