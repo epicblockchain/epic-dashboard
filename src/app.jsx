@@ -202,7 +202,7 @@ class App extends React.Component {
     async summary(init) {     
         let models = new Set(this.state.models);
         let miner_data = await Promise.all(
-            miners.map(async miner => {
+            miners.flatMap(async (miner, i) => {
                 try {
                     const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
                         timeout: 1500, retry: 0
@@ -230,39 +230,48 @@ class App extends React.Component {
                                 ip: miner.address,
                                 sum: sum,
                                 hist: JSON.parse(history.body).History.slice(-48),
-                                cap: content.Model ? content : null,
-                                timer: 0
+                                cap: content.Model ? content : undefined,
+                                timer: 10
                             };
                         } catch(err) {
                             console.log(err);
                             models.add('undefined');
-                            return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), cap: null};
+                            return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), timer: 10};
                         }
                     } else {
                         const lastMHs = sum.Session.LastAverageMHs;
 
                         if (lastMHs == null) {
-                            return {ip: miner.address, sum: sum, hist: [], cap: match.cap};
+                            return {ip: miner.address, sum: sum, hist: [], cap: match.cap, timer: 10};
                         } else if (match.hist.length == 0) {
-                            return {ip: miner.address, sum: sum, hist: [lastMHs], cap: match.cap};
+                            return {ip: miner.address, sum: sum, hist: [lastMHs], cap: match.cap, timer: 10};
                         } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
                             if (match.hist.length >= 48)
                                 match.hist.slice(1);
                             match.hist.push(lastMHs);
                         }
-                        return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap};
+                        return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap, timer: 10};
                     }
                 } catch(err) {
                     let match = this.state.miner_data.find(a => a.ip == miner.address);
 
                     if (match) {
-                        if (match.sum == 'reboot' && match.timer > 0) {
-                            return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
+                        if (match.timer > 0) {
+                            if (match.sum == 'reboot') return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
+                            else if (match.cap) return {ip: miner.address, sum: null, hist: null, cap: match.cap, timer: match.timer - 1};
+                            else return {ip: miner.address, sum: null, hist: null, timer: match.timer - 1};
                         }
-                        return {ip: miner.address, sum: null, hist: null, cap: match.cap, timer: 0};
+                        
+                        if (typeof match.cap === "object") {
+                            models.add('undefined');
+                            return {ip: miner.address, sum: null, hist: null, timer: 50}; // 5 minutes
+                        } else {
+                            miners.splice(i, 1);
+                            return [];
+                        }
                     } else {
                         models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, timer: 0};
+                        return {ip: miner.address, sum: null, hist: null, timer: 50}; // 5 minutes
                     }
                 }
             })
@@ -320,22 +329,6 @@ class App extends React.Component {
             notify(sev, text);
             toast.dismiss(i);
         });
-
-        /*(const options = {
-            hostname: '10.10.0.216',
-            port: 4000,
-            path: '/',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-
-        const start = Date.now();
-        testNetworkSpeed.checkUploadSpeed(options, 100000).then(result => {
-            console.log(result);
-            console.log(Date.now() - start);
-        });*/
 
         fs.readFile(path.join(app_path, 'eula.txt'), (err, data) => {
             if (err) {
@@ -408,7 +401,7 @@ class App extends React.Component {
             miners.push({address: ip, service: {port: 4028}});
 
             var temp = this.state.miner_data;
-            temp.push({ip: ip, sum: 'load', hist: 'load'});
+            temp.push({ip: ip, sum: 'load', hist: 'load', timer: 50});
         
             var models = Array.from(this.state.models);
             if (!models.includes('undefined')) models.push('undefined');
