@@ -275,7 +275,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                         style
                     })}
                     component="div"
-                    className={state.selectedRowIds[rowIndex] ? "Mui-selected" : ""}
+                    className={row.getToggleRowSelectedProps().checked ? "Mui-selected" : ""}
                 >
                     {row.cells.map((cell) => {
                         return (
