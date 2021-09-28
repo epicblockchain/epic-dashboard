@@ -181,8 +181,8 @@ export class DataTable extends React.Component {
     }
 
     render() {
-        const rows = this.props.data.flatMap(
-            (a, i) => a ? [{
+        const rows = this.props.data.map(
+            (a, i) => ({
                 id: i,
                 ip: a ? a.ip : '', //TODO: figure out why this is was falsey
                 name: this.failSafe(a.sum) || a.sum.Hostname,
@@ -205,7 +205,7 @@ export class DataTable extends React.Component {
                 power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
                 fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
                 cap: a.cap
-            }] : []
+            })
         );
 
         var miners = {};
@@ -218,12 +218,13 @@ export class DataTable extends React.Component {
             else miners['undefined'] ? miners['undefined'].push(row) : miners['undefined'] = [row];
         }
 
-        var selected;
-        selected = this.state[this.state.models[this.state.list] + '_sel'] || [];
+        var selected = this.state[this.state.models[this.state.list] + '_sel'] || [];
 
         var capApi = true;
         for (let i of selected) {
-            if (!this.props.data[i].cap) {
+            if (!this.props.data[i]) {
+                selected = selected.filter(x => x != i);
+            } else if (!this.props.data[i].cap) {
                 capApi = false;
                 break;
             }

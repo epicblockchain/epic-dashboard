@@ -64,6 +64,22 @@ function FilterIcon(props) {
     );
 }
 
+function hashrateSort(a, b, c, d) {
+    let a_split = a.values[c].split(" ");
+    let b_split = b.values[c].split(" ");
+    if (a_split[1] === b_split[1]) {
+        if (parseFloat(a_split[0]) > parseFloat(b_split[0])) return 1;
+        return -1;
+    } else if (a_split[1] === "TH/s") {
+        return 1;
+    } else if (a_split[1] === "GH/s") {
+        if (b_split === "TH/s") return -1;
+        return 1;
+    } else if (a_split[1] === "MH/s") {
+        return -1;
+    }
+}
+
 function Table({ dataRaw, update, extstate, extmodel }) {
     const DefaultColumnFilter = React.useCallback(({ column: { filterValue, preFilteredRows, setFilter } }) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
@@ -131,10 +147,10 @@ function Table({ dataRaw, update, extstate, extmodel }) {
         { accessor: 'start', Header: 'Started', width: 260 },
         { accessor: 'uptime', Header: 'Uptime', width: 135 },
         { accessor: 'hbs', Header: 'Active HBs', width: 118 },
-        { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150 },
-        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150 },
-        { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150 },
-        { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150 },
+        { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort },
+        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort },
+        { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort },
+        { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150, sortType: hashrateSort },
         { accessor: 'accepted', Header: 'Accepted Shares', width: 150 },
         { accessor: 'rejected', Header: 'Rejected Shares', width: 150 },
         { accessor: 'difficulty', Header: 'Difficulty', width: 120 },
