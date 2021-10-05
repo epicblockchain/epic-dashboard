@@ -385,8 +385,8 @@ function Table({ dataRaw, update, extstate, extmodel }) {
                         rowHeight={32}
                         rowCount={rows.length}
                         columnCount={1}
-                        columnWidth={totalColumnsWidth + 24}
-                        width={window.innerWidth - 18}
+                        columnWidth={totalColumnsWidth + 8}
+                        width={document.body.offsetWidth - 2}
                         onScroll={scroll}
                         className="grid"
                     >

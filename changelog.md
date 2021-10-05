@@ -1,9 +1,13 @@
-## Major revision
-This release has completely overhauled the user interface and introduced new features.
+## Small Update
+This release has a few new features and bug fixes.
 ### New Features
-- Separate tabs for different miner models (for future models)
-- Auto-filling fields after selecting a miner
-- Send start/stop commands to miner
-- Manually set fan speed
-- Update mining pool, user & coin (if supported by model) with one API call
-- Many other small quality of life changes
+- New miner log dump feature for customer support emails (ePIC Miner Firmware 2.0.29+ required)
+- Errored miners will stay for 1min before moving to undefined, and then remain for 5min before being removed
+- Improved Support page
+- EULA prompt on first opening
+### Bug Fixes
+- Selecting rows with sorted columns highlighting the wrong row
+- Correct sorting for hashrate columns
+- Showing incorrect hashrates if not enough data (now shows N/A)
+- Table state (shown columns, column sizes, etc.) will not reset when new miner types are detected
+- Vertical scrollbar on table not showing for lower resolutions

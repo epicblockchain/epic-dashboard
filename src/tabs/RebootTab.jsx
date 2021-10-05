@@ -17,7 +17,6 @@ export class RebootTab extends React.Component {
     }
     
     updateDelay(e) {
-        console.log(typeof e.target.value);
         this.setState({delay: e.target.value});
     }
 
