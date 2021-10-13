@@ -531,10 +531,14 @@ class App extends React.Component {
                 break;
             case '/fanspeed':
                 obj = {param: data.speed.toString(), password: data.password};
+                break;
+            case '/power':
+                obj = {param: data.power, password: data.password};
+                break;
         }
         
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode'; //sends response after completed
-        let soft_reboot = api == '/softreboot' || api == 'hwconfig'; //sends response early
+        let soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
 
         for (let i of selected) {
             (async () => {
