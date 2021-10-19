@@ -58,7 +58,11 @@ export class WalletAddrTab extends React.Component {
                     value={this.state.wallet_pass} margin="dense" helperText="Leave unless qualified" className="stratum"
                 />
                 <br />
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/login', this.state, this.props.selected);
+                    }
+                }}/>
                 <Button onClick={() => {
                         this.props.handleApi('/login', this.state, this.props.selected);
                     }} variant="contained" color="primary"

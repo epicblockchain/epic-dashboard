@@ -33,7 +33,11 @@ export class UniqueIDTab extends React.Component {
                         label="Append Unique ID to worker name"
                     />
                 </FormControl>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/id', this.state, this.props.selected);
+                    }
+                }}/>
                 <Button onClick={() => {
                         this.props.handleApi('/id', this.state, this.props.selected);
                     }} variant="contained" color="primary"

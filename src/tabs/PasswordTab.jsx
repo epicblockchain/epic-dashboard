@@ -43,7 +43,11 @@ export class PasswordTab extends React.Component {
                     value={this.state.pass2} error={this.state.error} margin="dense"
                     helperText={this.state.error ? 'Passwords do not match' : ''}
                 />
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/password', this.state, this.props.selected);
+                    }
+                }}/>
                 <Button onClick={() => {
                         this.props.handleApi('/password', this.state, this.props.selected);
                     }} variant="contained" color="primary"

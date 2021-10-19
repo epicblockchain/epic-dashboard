@@ -39,7 +39,11 @@ export class CmdTab extends React.Component {
                         }
                     </Select>
                 </FormControl>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/miner', this.state, this.props.selected);
+                    }
+                }}/>
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/miner', this.state, this.props.selected);

@@ -24,19 +24,26 @@ export class LedTab extends React.Component {
         this.setState({password: e.target.value});
     }
 
+
+    
     render() {
         return(
             <div style={{padding: '12px 0'}}>
-                <FormControl margin="dense">
+                <FormControl margin="dense" type="input">
                     <FormControlLabel
                         control={<Switch color="primary" checked={this.state.checked} onChange={this.updateCheck}/>}
                         label="Turn on LED indicator"
                     />
+                    
                 </FormControl>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/identify', this.state, this.props.selected);
+                    }
+                }}/>
                 <Button onClick={() => {
                         this.props.handleApi('/identify', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
+                    }} variant="contained" color="primary" type="submit"
                     disabled={!this.state.password || !this.props.selected.length}
                 >
                     Apply

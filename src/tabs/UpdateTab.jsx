@@ -57,7 +57,11 @@ export class UpdateTab extends React.Component {
                     />
                 </FormControl>
                 <br/>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/update', this.state, this.props.selected);
+                    }
+                }}/>
                 <Button onClick={() => {
                         this.props.handleApi('/update', this.state, this.props.selected);
                     }} variant="contained" color="primary"

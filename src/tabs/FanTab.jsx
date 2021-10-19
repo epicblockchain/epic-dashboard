@@ -50,12 +50,20 @@ export class FanTab extends React.Component {
                         />
                     </Grid>
                     <Grid item>
-                        <Input value={this.state.speed} margin="dense" onChange={this.handleInputChange} onBlur={this.handleInputBlur}
+                        <Input value={this.state.speed} margin="dense" onChange={this.handleInputChange} onBlur={this.handleInputBlur} onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                    }
+                }}
                             inputProps={{step: 10, min: 1, max: 100, type: 'number'}} disabled={this.props.disabled}
                         />
                     </Grid>
                 </Grid>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                    }
+                }}/>
                 <Button onClick={() => {
                         this.props.handleApi('/fanspeed', this.state, this.props.selected);
                     }} variant="contained" color="primary"

@@ -36,10 +36,18 @@ export class MinerPoolTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField variant="outlined" label="Mining Pool" onChange={this.updatePool}
-                    value={this.state.pool} margin="dense" className="pool"
+                    value={this.state.pool} margin="dense" className="pool" onKeyPress= {(e) => {
+                        if (e.key === 'Enter') {
+                            this.props.handleApi('/pool', this.state, this.props.selected);
+                        }
+                    }}
                     InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
                 />
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
+                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
+                    if (e.key === 'Enter') {
+                        this.props.handleApi('/pool', this.state, this.props.selected);
+                    }
+                }}/>
                 <br />
                 <Button onClick={() => {
                         this.props.handleApi('/pool', this.state, this.props.selected);
