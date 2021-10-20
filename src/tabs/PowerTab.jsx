@@ -30,7 +30,7 @@ export class PowerTab extends React.Component {
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
-
+    
     render() {
         return(
             <div style={{padding: '12px 0'}}>
