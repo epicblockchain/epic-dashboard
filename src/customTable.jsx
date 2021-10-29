@@ -80,7 +80,7 @@ function hashrateSort(a, b, c, d) {
     }
 }
 
-function Table({ dataRaw, update, extstate, extmodel }) {
+function Table({ dataRaw, update, extstate, extmodel, reset }) {
     const DefaultColumnFilter = React.useCallback(({ column: { filterValue, preFilteredRows, setFilter } }) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const handleClick = (event) => {
@@ -162,6 +162,7 @@ function Table({ dataRaw, update, extstate, extmodel }) {
     const model = React.useMemo(() => extmodel, []);
     const initialState = React.useMemo(() => extstate, []);
     const updateState = React.useCallback((a, b, c, data, model) => update(a, b, c, data, model));
+    const resetSelected = React.useMemo(() => reset, [reset]);
 
     const getTextWidth = React.useCallback((input, context) => {
         return Math.ceil(context.measureText(input).width);
@@ -210,12 +211,11 @@ function Table({ dataRaw, update, extstate, extmodel }) {
             data,
             initialState,
             defaultColumn,
-            autoResetSelectedRows: false,
+            autoResetSelectedRows: resetSelected,
             autoResetSortBy: false,
             autoResetFilters: false,
             autoResetGlobalFilter: false,
             stateReducer: (a, b, c) => {
-                //console.log('stateChange', b);
                 switch (b.type) {
                     case 'autoColSize':
                         const clone = Object.assign({}, a.columnResizing);

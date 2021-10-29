@@ -205,7 +205,7 @@ class App extends React.Component {
             miners.map(async (miner, i) => {
                 try {
                     const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
-                        timeout: 1500, retry: 0
+                        timeout: 2000, retry: 0
                     });
 
                     let sum = JSON.parse(summary.body);
@@ -215,11 +215,11 @@ class App extends React.Component {
 
                     if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null || (match && !match.cap)) {
                         const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
-                            timeout: 1500, retry: 0
+                            timeout: 2000, retry: 0
                         });
                         try {
                             const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
-                                timeout: 1500, retry: 0
+                                timeout: 2000, retry: 0
                             });
                             let content = JSON.parse(cap.body);
                             
@@ -289,27 +289,6 @@ class App extends React.Component {
         else return 0;
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.miner_data != this.state.miner_data) {
-            mdns.discover({
-                name: '_epicminer._tcp.local', wait: 2
-            }).then((list) => {
-                list = list.filter(a => !blacklist.includes(a.fqdn));
-                let prev = miners.map(a => a.address);
-                for (let miner of list) {
-                    if (!prev.includes(miner.address)) miners.push(miner);
-                }
-                
-                setTimeout(() => {
-                    this.summary(false);
-                    console.log('update');
-                }, 3000);
-            }).catch(err => {
-                console.log(err);
-            });
-        }
-    }
-
     componentDidMount() {
         ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
             notify(sev, text, {
@@ -320,7 +299,7 @@ class App extends React.Component {
             });
             
             let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
-            var temp = this.state.miner_data;
+            var temp = Array.from(this.state.miner_data);
             temp[ind].sum = 'reboot';
             temp[ind].timer = 100; // 100 * 6sec = 10min
             this.setState({miner_data: temp});
@@ -335,28 +314,34 @@ class App extends React.Component {
             if (err) {
                 this.setState({eula: true});
             } else {
-                this.init();
+                this.update(true);
+                this.setState({modal2: true});
+                console.log('mounted');
+                
+                setInterval(() => this.update(false), 6000);
             }
         });
     }
 
-    init() {
+    update(init) {
         mdns.discover({
             name: '_epicminer._tcp.local', wait: 2
         }).then((list) => {
-
             list = list.filter(a => !blacklist.includes(a.fqdn));
 
-            if (!list.length) {
-                this.toggleModal(true);
-            } else {
-                console.log(list);
+            if (init) {
+                if (!list.length) {
+                    this.toggleModal(true);
+                }     
                 miners = list.sort(this.compare);
+            } else {
+                let prev = miners.map(a => a.address);
+                for (let miner of list) {
+                    if (!prev.includes(miner.address)) miners.push(miner);
+                }
             }
-            this.setState({modal2: true});
 
-            this.summary(true);
-            console.log('mounted');
+            this.summary(init);
         });
     }
 
@@ -369,7 +354,7 @@ class App extends React.Component {
                     throw err;
                 }
             });
-            this.init();
+            this.update(true);
         } else {
             ipcRenderer.send('eula-decline');
         }
@@ -401,7 +386,7 @@ class App extends React.Component {
         if (!prev.includes(ip)) {
             miners.push({address: ip, service: {port: 4028}});
 
-            var temp = this.state.miner_data;
+            var temp = Array.from(this.state.miner_data);
             temp.push({ip: ip, sum: 'load', hist: 'load', timer: 50});
         
             var models = Array.from(this.state.models);
@@ -415,13 +400,12 @@ class App extends React.Component {
     }
 
     delMiner(ids) {
-        var temp = this.state.miner_data;
+        var temp = Array.from(this.state.miner_data);
         for (let id of ids.sort(function(a, b){return b-a})) {
             miners.splice(id, 1);
             temp.splice(id, 1);
         }
 
-        console.log(miners);
         notify('success', 'Successfully removed miners');
         this.setState({miner_data: temp});
     }
@@ -461,7 +445,7 @@ class App extends React.Component {
     }
 
     blacklist(ids) {
-        var temp = this.state.miner_data;
+        var temp = Array.from(this.state.miner_data);
         for (let id of ids.sort(function(a, b){return b-a})) {
             blacklist.push(miners[id].fqdn);
             miners.splice(id, 1);
@@ -552,7 +536,7 @@ class App extends React.Component {
                     });
 
                     let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
-                    var temp = this.state.miner_data;
+                    var temp = Array.from(this.state.miner_data);
                     temp[ind].sum = 'reboot';
                     temp[ind].timer = 10; //10 * 6sec = 1min
                     this.setState({miner_data: temp});
@@ -571,7 +555,7 @@ class App extends React.Component {
                     
                     if (api == '/reboot' || soft_reboot) {
                         let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
-                        var temp = this.state.miner_data;
+                        var temp = Array.from(this.state.miner_data);
                         temp[ind].sum = 'reboot';
                         temp[ind].timer = 10;
                         this.setState({miner_data: temp});

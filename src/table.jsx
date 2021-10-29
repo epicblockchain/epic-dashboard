@@ -32,7 +32,7 @@ function debounce1(func, timeout = 300){
 export class DataTable extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {models: ['Miners Loading...'], selected: {}, list: 0, tab: 0};
+        this.state = {models: ['Miners Loading...'], selected: {}, list: 0, tab: 0, reset: false};
 
         this.select = this.select.bind(this);
         this.setList = this.setList.bind(this);
@@ -64,6 +64,17 @@ export class DataTable extends React.Component {
             });
 
             this.setState(newState);
+        }
+        
+        if (this.props.data.length < prevProps.data.length) {
+            var newState = {reset: true};
+            this.props.models.forEach(key => {
+                newState[key + '_sel'] = [];
+            })
+
+            this.setState(newState);
+        } else if (this.state.reset) {
+            this.setState({reset: false});
         }
     }
 
@@ -250,6 +261,7 @@ export class DataTable extends React.Component {
                                     extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
                                     update={this.update}
                                     extmodel={model}
+                                    reset={this.state.reset}
                                 />
                             </Paper>
                         ) : null;
