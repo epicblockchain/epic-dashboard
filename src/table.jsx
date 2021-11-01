@@ -119,6 +119,16 @@ export class DataTable extends React.Component {
         return Math.max.apply(null, temps);
     }
 
+    avgVoltage(data){
+        const volt = data.map(a => a['Input Voltage']);
+        var sum;
+        sum = volt.reduce((total, num) => {
+            return total + num;
+        }, 0);
+        sum = sum/3;
+        return Math.round((sum + Number.EPSILON)*100)/100;
+    }
+
     totalPower(data) {
         const power = data.map(a => a['Input Power']);
         var sum;
@@ -216,7 +226,8 @@ export class DataTable extends React.Component {
                 temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
                 power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
                 fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
-                cap: a.cap
+                cap: a.cap,
+                voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs)
             })
         );
 

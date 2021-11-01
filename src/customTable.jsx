@@ -156,7 +156,8 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
         { accessor: 'difficulty', Header: 'Difficulty', width: 120 },
         { accessor: 'temperature', Header: 'Temp \u00b0C', width: 103 },
         { accessor: 'power', Header: 'Power (W)', width: 110 },
-        { accessor: 'fanspeed', Header: 'Fan Speed', width: 115 }
+        { accessor: 'fanspeed', Header: 'Fan Speed', width: 115 },
+        { accessor: 'voltage', Header: 'Voltage In', width: 115}
     ], []);
 
     const model = React.useMemo(() => extmodel, []);
