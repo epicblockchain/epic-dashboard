@@ -40,7 +40,7 @@ export class PowerTab extends React.Component {
                 />
                 <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
                     if (e.key === 'Enter') {
-                        this.props.handleApi('/hwconfig', this.state, this.props.selected);
+                        this.props.handleApi('/power', this.state, this.props.selected);
                     }
                 }}/>
                 <Button onClick={() => {
