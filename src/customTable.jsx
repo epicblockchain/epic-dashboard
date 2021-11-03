@@ -157,11 +157,7 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
         { accessor: 'temperature', Header: 'Temp \u00b0C', width: 103 },
         { accessor: 'power', Header: 'Power (W)', width: 110 },
         { accessor: 'fanspeed', Header: 'Fan Speed', width: 115 },
-<<<<<<< HEAD
-        { accessor: 'voltage', Header: 'Voltage In', width: 115}
-=======
         { accessor: 'voltage', Header: 'Input Voltage', width: 125, sortType: "number"}
->>>>>>> 406f432d (fixed sorting)
     ], []);
 
     const model = React.useMemo(() => extmodel, []);
@@ -287,7 +283,8 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                             <TableCell
                                 {...cell.getCellProps()}
                                 component="div"
-                                className={cell.column ? cell.column.id === "hbs" ? cell.value === 3 ? "hb-good" : "hb-warn" : null : null}
+                                className={cell.column ? (cell.column.id === "hbs" ? cell.value === 3 ? "hb-good" : "hb-warn" : cell.column.id === "voltage" ? cell.value <= 11.9 ? "hb-warn" : null : null) : null}
+                                
                             >
                                 {cell.render("Cell")}
                             </TableCell>
