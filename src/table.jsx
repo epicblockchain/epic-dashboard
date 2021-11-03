@@ -125,7 +125,7 @@ export class DataTable extends React.Component {
         sum = volt.reduce((total, num) => {
             return total + num;
         }, 0);
-        sum = sum/3;
+        sum = sum/data.length;
         return Math.round((sum + Number.EPSILON)*100)/100;
         
     }
