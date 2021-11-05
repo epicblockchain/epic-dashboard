@@ -73,7 +73,7 @@ function hashrateSort(a, b, c, d) {
     } else if (a_split[1] === "TH/s") {
         return 1;
     } else if (a_split[1] === "GH/s") {
-        if (b_split === "TH/s") return -1;
+        if (b_split[1] === "TH/s") return -1;
         return 1;
     } else if (a_split[1] === "MH/s") {
         return -1;
