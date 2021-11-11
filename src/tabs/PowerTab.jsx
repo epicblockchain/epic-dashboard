@@ -22,7 +22,7 @@ export class PowerTab extends React.Component {
     }
 
     updatePowerBlur(e) {
-        let power = this.state.power % 100 > 0 ? Math.round(this.state.power / 100) * 100 : this.state.power;
+        let power = this.state.power % 50 > 0 ? Math.round(this.state.power / 50) * 50 : this.state.power;
         power = Math.max(500, Math.min(1300, power));
         this.setState({power: power});
     }
@@ -35,8 +35,8 @@ export class PowerTab extends React.Component {
         return(
             <div style={{padding: '12px 0'}}>
                 <TextField variant="outlined" label="Set Power" type="number" onChange={this.updatePower} onBlur={this.updatePowerBlur}
-                    value={this.state.power} helperText=" Multiple of 100 (watts)" margin="dense"
-                    inputProps={{step: "100", min: "500", max: "1300"}}
+                    value={this.state.power} helperText="Steps of 50 (watts)" margin="dense"
+                    inputProps={{step: "50", min: "500", max: "1300"}}
                 />
                 <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
                     if (e.key === 'Enter') {

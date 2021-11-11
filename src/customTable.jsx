@@ -283,8 +283,8 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                             <TableCell
                                 {...cell.getCellProps()}
                                 component="div"
-                                className={cell.column ? (cell.column.id === "hbs" ? cell.value === 3 ? "hb-good" : "hb-warn" : cell.column.id === "voltage" ? cell.value <= 11.9 ? "hb-warn" : null : null) : null}
-                                
+                                className={cell.column ? (cell.column.id === "hbs" ? cell.value === 3 ? "hb-good" : "hb-warn"
+                                        : (cell.column.id === "voltage" ? cell.value <= 11.9 ? "hb-warn" : null : null)) : null}
                             >
                                 {cell.render("Cell")}
                             </TableCell>
@@ -395,10 +395,13 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                         {RenderRow}
                     </FixedSizeGrid>
                 </TableBody>
-                <TableFooter component="div">
-                    <span>Total Rows: {rows.length}</span>
-                </TableFooter>
             </MaUTable>
+            <TableFooter component="div">
+                {selectedFlatRows.length > 0 &&
+                    <span>{selectedFlatRows.length} row{selectedFlatRows.length > 1 ? 's' : ''} selected</span>
+                }
+                <span style={{float: 'right'}}>Total Rows: {rows.length}</span>
+            </TableFooter>
         </React.Fragment>
     );
 }

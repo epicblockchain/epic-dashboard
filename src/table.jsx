@@ -54,6 +54,15 @@ export class DataTable extends React.Component {
         }
     }
 
+    selectReset() {
+        var newState = {reset: true};
+        this.props.models.forEach(key => {
+            newState[key + '_sel'] = [];
+        })
+
+        this.setState(newState);
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
             var newModels = this.props.models.filter(x => !prevProps.models.includes(x));
@@ -65,14 +74,18 @@ export class DataTable extends React.Component {
 
             this.setState(newState);
         }
+
+        if (this.state.models && prevProps.data) {
+            let prev = prevProps.data.filter(x => x.cap && x.cap.Model == this.state.models[this.state.list]);
+            let curr = this.props.data.filter(x => x.cap && x.cap.Model == this.state.models[this.state.list]);
+            
+            if (curr.length < prev.length) {
+                this.selectReset();
+            }
+        }
         
         if (this.props.data.length < prevProps.data.length) {
-            var newState = {reset: true};
-            this.props.models.forEach(key => {
-                newState[key + '_sel'] = [];
-            })
-
-            this.setState(newState);
+            this.selectReset();
         } else if (this.state.reset) {
             this.setState({reset: false});
         }
