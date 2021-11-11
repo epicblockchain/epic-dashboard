@@ -173,8 +173,6 @@ release:
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     script:
         - git checkout master
-        - git remote remove origin
-        - git filter-branch -- --all
         - git remote add github git@github.com:epicblockchain/epic-dashboard.git
         - git push -f github master
         - gh release create v$VERSION -F changelog.md
