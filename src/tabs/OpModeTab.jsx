@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField, FormControl, InputLabel, Select} from '@material-ui/core';
+import {Button, TextField, FormControl, InputLabel, Select} from '@material-ui/core';
 
 export class OpModeTab extends React.Component {
     constructor(props) {
@@ -15,7 +15,7 @@ export class OpModeTab extends React.Component {
             this.setState({password: this.props.sessionPass});
         }
     }
-    
+
     updateMode(e) {
         this.setState({mode: e.target.value.toLowerCase()});
     }
@@ -44,30 +44,50 @@ export class OpModeTab extends React.Component {
         }
         if (!options) options = ['Normal', 'Efficiency'];
 
-        return(
+        return (
             <div style={{padding: '12px 0'}}>
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="mode">Mode</InputLabel>
-                    <Select native id="mode" label="Mode" value={this.state.mode} onKeyPress= {(e) => {
-                    if (e.key === 'Enter') {
-                        this.props.handleApi('/mode', this.state, this.props.selected);
-                    }
-                    }} onChange={this.updateMode}>
-                        {
-                            options.map((a, i) => {
-                                return <option key={i} value={a.toLowerCase()}>{a}</option>;
-                            })
-                        }
+                    <Select
+                        native
+                        id="mode"
+                        label="Mode"
+                        value={this.state.mode}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                this.props.handleApi('/mode', this.state, this.props.selected);
+                            }
+                        }}
+                        onChange={this.updateMode}
+                    >
+                        {options.map((a, i) => {
+                            return (
+                                <option key={i} value={a.toLowerCase()}>
+                                    {a}
+                                </option>
+                            );
+                        })}
                     </Select>
                 </FormControl>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
-                    if (e.key === 'Enter') {
+                <TextField
+                    value={this.state.password || ''}
+                    variant="outlined"
+                    label="Password"
+                    type="password"
+                    onChange={this.updatePassword}
+                    margin="dense"
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            this.props.handleApi('/mode', this.state, this.props.selected);
+                        }
+                    }}
+                />
+                <Button
+                    onClick={() => {
                         this.props.handleApi('/mode', this.state, this.props.selected);
-                    }
-                }}/>
-                <Button onClick={() => {
-                        this.props.handleApi('/mode', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
+                    }}
+                    variant="contained"
+                    color="primary"
                     disabled={!this.state.mode || !this.state.password || !this.props.selected.length}
                 >
                     Apply

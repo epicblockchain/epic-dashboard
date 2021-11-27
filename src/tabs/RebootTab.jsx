@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField } from '@material-ui/core';
+import {Button, TextField} from '@material-ui/core';
 
 export class RebootTab extends React.Component {
     constructor(props) {
@@ -15,7 +15,7 @@ export class RebootTab extends React.Component {
             this.setState({password: this.props.sessionPass});
         }
     }
-    
+
     updateDelay(e) {
         this.setState({delay: e.target.value});
     }
@@ -25,22 +25,41 @@ export class RebootTab extends React.Component {
     }
 
     render() {
-        return(
+        return (
             <div style={{padding: '12px 0'}}>
-                <TextField variant="outlined" label="Reboot Delay" type="number" onChange={this.updateDelay}
-                    value={this.state.delay} helperText="(seconds)" margin="dense"
+                <TextField
+                    variant="outlined"
+                    label="Reboot Delay"
+                    type="number"
+                    onChange={this.updateDelay}
+                    value={this.state.delay}
+                    helperText="(seconds)"
+                    margin="dense"
                 />
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense"/>
-                <Button onClick={() => {
+                <TextField
+                    value={this.state.password || ''}
+                    variant="outlined"
+                    label="Password"
+                    type="password"
+                    onChange={this.updatePassword}
+                    margin="dense"
+                />
+                <Button
+                    onClick={() => {
                         this.props.handleApi('/reboot', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
+                    }}
+                    variant="contained"
+                    color="primary"
                     disabled={this.state.delay < '0' || !this.state.password || !this.props.selected.length}
                 >
                     Reboot
                 </Button>
-                <Button onClick={() => {
+                <Button
+                    onClick={() => {
                         this.props.handleApi('/softreboot', this.state, this.props.selected);
-                    }} variant="contained" color="secondary"
+                    }}
+                    variant="contained"
+                    color="secondary"
                     disabled={this.state.delay < '0' || !this.state.password || !this.props.selected.length}
                 >
                     Soft Reboot

@@ -1,20 +1,29 @@
 # How to Get Started
+
 Please read COPYING and EULA before proceeding
+
 ## Getting started from a binary
-Download the appropriate zip/installer file for the OS you would like to run the program on. 
+
+Download the appropriate zip/installer file for the OS you would like to run the program on.
+
 ## Getting started from source
+
 Clone this repo
+
 ```
 git clone https://github.com/epicblockchain/epic-dashboard.git
 npm install
 npm start
 ```
+
 After bundling a window should open with the app running.
+
 ## Building from source on a fresh machine
 
 ### Dependencies
 
 Some dependencies are required to build the dashboard, this process has been tested on Ubuntu 20.04 with a 64 bit cpu
+
 ```
 sudo apt update
 sudo apt install -y curl make git wine mono-devel fakeroot zip rpm
@@ -37,10 +46,12 @@ npm i
 ### Building
 
 To build all executables run
+
 ```
 make dist
 # see the makefile if you want to install for only one target+architecture
 ```
+
 To build only a specific executable open the makefile and run the appropriate command ensureing --platform and --arch match your desired platform and architecture to build for.
 
 # Usage
@@ -140,26 +151,37 @@ Click on the "CMD" tab. Fill out the fields and click apply.
 ![command](docs/images/cmd.png)
 
 ## Adding/Removing/Blacklisting Miners
+
 Use the interface in the Table page to add, save, blacklist and load miners. These will be stored in a line seperated text file:
 ![add miner](docs/images/add_miner0.png)
 ![add miner success](docs/images/add_miner1.png)
-#### Linux: 
-* ~/.ePIC-Dashboard/ipaddr.txt for saving miners
-* ~/.ePIC-Dashboard/blacklist.txt for blacklisting miners by their hostname and mdns broadcast: (e.g. "epicminer340035._epicminer._tcp.local")
+
+#### Linux:
+
+-   ~/.ePIC-Dashboard/ipaddr.txt for saving miners
+-   ~/.ePIC-Dashboard/blacklist.txt for blacklisting miners by their hostname and mdns broadcast: (e.g. "epicminer340035.\_epicminer.\_tcp.local")
+
 #### Windows:
-* %APPDATA%/ePIC-Dashboard/ipaddr.txt
-* %APPDATA%/ePIC-Dashboard/blacklist.txt
+
+-   %APPDATA%/ePIC-Dashboard/ipaddr.txt
+-   %APPDATA%/ePIC-Dashboard/blacklist.txt
+
 #### Mac:
-* ~/Library/Application Support/ePIC-Dashboard/ipaddr.txt
-* ~/Library/Application Support/ePIC-Dashboard/blacklist.txt
+
+-   ~/Library/Application Support/ePIC-Dashboard/ipaddr.txt
+-   ~/Library/Application Support/ePIC-Dashboard/blacklist.txt
 
 ## API
+
 Api requests are documented as follows. Under each METHOD are the endpoint and expected values that are returned or should be provided.
+
 ### GET
+
 **/summary**
 Provides generic readable data for the miner.
 Response type: application/json
 Sample response:
+
 ```
 {
   "Hostname": <string>,
@@ -207,10 +229,12 @@ Sample response:
   ]
 }
 ```
+
 **/history**
 Provides hashrate data polled every 15min for up to the past 48 hrs.
 Response type: application/json
 Sample response:
+
 ```
 {
   "History": [
@@ -225,10 +249,12 @@ Sample response:
   ]
 }
 ```
+
 **/capabilities**
 Provides miner model and all available coins and operating modes.
 Response type: application/json
 Sample response:
+
 ```
 {
   "Model": <string>
@@ -242,10 +268,13 @@ Sample response:
   ]
 }
 ```
+
 ### POST
+
 All POST requests will respond the same way.
 POST requests expect json data in the body, except for file uploads.
 Response should look like the following if the provided password was accepted, (an error string may be provided in some cases case):
+
 ```
 {
 	"result": <bool>
@@ -256,16 +285,19 @@ Response should look like the following if the provided password was accepted, (
 **/pool**
 Changes the mining pool of the miner.
 Format of request body:
+
 ```
 {
 	"param": <string>,
 	"password": <string>
 }
 ```
+
 **/login**
 param.login contains the mining updated mining address. Seperate the worker name from the miner with a period as is common.
-param.password typically contains "x". Note that this is not the password to your miner. 
+param.password typically contains "x". Note that this is not the password to your miner.
 Format of request body:
+
 ```
 {
 	"param": {
@@ -275,8 +307,10 @@ Format of request body:
 	"password": <string>
 }
 ```
+
 **/coin**
 Combines the /pool and /login api calls into one.
+
 ```
 {
 	"param": {
@@ -288,73 +322,89 @@ Combines the /pool and /login api calls into one.
 	"password": <string>
 }
 ```
+
 **/miner**
 Autostart or stop the mining program.
 Format of request body:
+
 ```
 {
 	"param": <string>,
 	"password": <string>
 }
 ```
+
 **/reboot, /softreboot**
 Provide unsigned integer to specify a delay in seconds before the reboot. Provide 0 to reboot instantly. Soft reboot only restarts the mining program.
 Format of request body:
+
 ```
 {
 	"param": <uint>,
 	"password": <string>
 }
 ```
+
 **/mode**
 Set the miner to run in normal or efficiency mode. Provide the exact string "normal" or "efficiency".
 Format of request body:
+
 ```
 {
 	"param": "{normal|efficiency}",
 	"password": <string>
 }
 ```
+
 **/password**
 Set a new password for the miner. param contains the new password. password contains the old one.
 Format of request body:
+
 ```
 {
 	"param": <string>,
 	"password": <string>
 }
 ```
+
 **/hwconfig**
 Recalibrate the miner.
 param should be set to true.
 Format of request body:
+
 ```
 {
 	"param": bool,
 	"password": <string>
 }
 ```
+
 **/id**
 Have each miner add a unique identifier to its worker name. This will change how it shows up on mining pools.
 Format of request body:
+
 ```
 {
 	"param": bool,
 	"password": <string>
 }
 ```
+
 **/identify**
 Toggle the miner LED for easier identification.
 Format of request body:
+
 ```
 {
     "param": bool,
     "password": <string>
 }
 ```
+
 **/fanspeed**
 Manually set the fan speed of the miner. Provide a string from 1-100. Note: if the speed sent is too low, it will automatically be set to the minimum of the current operating mode.
 Format of request body:
+
 ```
 {
     "param": <string>,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField } from '@material-ui/core';
+import {Button, TextField} from '@material-ui/core';
 
 export class RecalibrateTab extends React.Component {
     constructor(props) {
@@ -20,16 +20,27 @@ export class RecalibrateTab extends React.Component {
     }
 
     render() {
-        return(
+        return (
             <div style={{padding: '12px 0'}}>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
-                    if (e.key === 'Enter') {
+                <TextField
+                    value={this.state.password || ''}
+                    variant="outlined"
+                    label="Password"
+                    type="password"
+                    onChange={this.updatePassword}
+                    margin="dense"
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            this.props.handleApi('/hwconfig', this.state, this.props.selected);
+                        }
+                    }}
+                />
+                <Button
+                    onClick={() => {
                         this.props.handleApi('/hwconfig', this.state, this.props.selected);
-                    }
-                }}/>
-                <Button onClick={() => {
-                        this.props.handleApi('/hwconfig', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
+                    }}
+                    variant="contained"
+                    color="primary"
                     disabled={!this.state.password || !this.props.selected.length}
                 >
                     Recalibrate Hardware

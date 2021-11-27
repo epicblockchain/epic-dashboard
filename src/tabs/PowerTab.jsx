@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField } from '@material-ui/core';
+import {Button, TextField} from '@material-ui/core';
 
 export class PowerTab extends React.Component {
     constructor(props) {
@@ -7,7 +7,7 @@ export class PowerTab extends React.Component {
         this.state = {power: 1000, password: this.props.sessionPass};
 
         this.updatePower = this.updatePower.bind(this);
-        this.updatePowerBlur =this.updatePowerBlur.bind(this);
+        this.updatePowerBlur = this.updatePowerBlur.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -16,7 +16,7 @@ export class PowerTab extends React.Component {
             this.setState({password: this.props.sessionPass});
         }
     }
-    
+
     updatePower(e) {
         this.setState({power: parseInt(e.target.value) || ''});
     }
@@ -30,22 +30,40 @@ export class PowerTab extends React.Component {
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
-    
+
     render() {
-        return(
+        return (
             <div style={{padding: '12px 0'}}>
-                <TextField variant="outlined" label="Set Power" type="number" onChange={this.updatePower} onBlur={this.updatePowerBlur}
-                    value={this.state.power} helperText="Steps of 50 (watts)" margin="dense"
-                    inputProps={{step: "50", min: "500", max: "1300"}}
+                <TextField
+                    variant="outlined"
+                    label="Set Power"
+                    type="number"
+                    onChange={this.updatePower}
+                    onBlur={this.updatePowerBlur}
+                    value={this.state.power}
+                    helperText="Steps of 50 (watts)"
+                    margin="dense"
+                    inputProps={{step: '50', min: '500', max: '1300'}}
                 />
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
-                    if (e.key === 'Enter') {
+                <TextField
+                    value={this.state.password || ''}
+                    variant="outlined"
+                    label="Password"
+                    type="password"
+                    onChange={this.updatePassword}
+                    margin="dense"
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            this.props.handleApi('/power', this.state, this.props.selected);
+                        }
+                    }}
+                />
+                <Button
+                    onClick={() => {
                         this.props.handleApi('/power', this.state, this.props.selected);
-                    }
-                }}/>
-                <Button onClick={() => {
-                        this.props.handleApi('/power', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
+                    }}
+                    variant="contained"
+                    color="primary"
                     disabled={!this.state.power || !this.state.password || !this.props.selected.length}
                 >
                     Change Power

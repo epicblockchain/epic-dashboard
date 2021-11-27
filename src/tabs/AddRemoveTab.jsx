@@ -1,8 +1,8 @@
-const { dialog } = require('@electron/remote');
+const {dialog} = require('@electron/remote');
 const got = require('got');
 const fs = require('fs');
 import * as React from 'react';
-import { Button, TextField, Typography, Divider } from '@material-ui/core'; 
+import {Button, TextField, Typography, Divider} from '@material-ui/core';
 
 export class AddRemoveTab extends React.Component {
     constructor(props) {
@@ -17,41 +17,47 @@ export class AddRemoveTab extends React.Component {
     }
 
     saveLogs(test) {
-        dialog.showOpenDialog({
-            properties: ['openDirectory', 'createDirectory']
-        }).then(async arg => {
-            if (!arg.canceled){
-                for (const i of this.props.selected) {
-                    let ip = this.props.data[i].ip;
-                    let data = await got(`http://${ip}:4028/log`);
-            
-                    let body = JSON.parse(data.body);
+        dialog
+            .showOpenDialog({
+                properties: ['openDirectory', 'createDirectory'],
+            })
+            .then(async (arg) => {
+                if (!arg.canceled) {
+                    for (const i of this.props.selected) {
+                        let ip = this.props.data[i].ip;
+                        let data = await got(`http://${ip}:4028/log`);
 
-                    fs.mkdir(arg.filePaths[0] + `/${ip}`, {recursive: true}, (err) => console.log(err));
-                    for (let key of Object.keys(body)) {
-                        if (body[key]) {
-                            fs.writeFile(arg.filePaths[0] + `/${ip}/${ip}_${key}.log`, body[key], function (err) {
-                                if (err) {
-                                    throw err;
-                                }
-                            });
+                        let body = JSON.parse(data.body);
+
+                        fs.mkdir(arg.filePaths[0] + `/${ip}`, {recursive: true}, (err) => console.log(err));
+                        for (let key of Object.keys(body)) {
+                            if (body[key]) {
+                                fs.writeFile(arg.filePaths[0] + `/${ip}/${ip}_${key}.log`, body[key], function (err) {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                });
+                            }
                         }
-                    }
 
-                    this.props.notify('success', `Logs written to  ${arg.filePaths[0]}`);
+                        this.props.notify('success', `Logs written to  ${arg.filePaths[0]}`);
+                    }
                 }
-            }
-        }).catch(err => {
-            this.props.notify('error', String(err));
-            console.log(err);
-        });
+            })
+            .catch((err) => {
+                this.props.notify('error', String(err));
+                console.log(err);
+            });
     }
 
     render() {
-        return(
+        return (
             <div style={{padding: '12px 0'}}>
-                <TextField id="ip" variant="outlined" label="Miner IP" onChange={this.updateIP} margin="dense"/>
-                <Button onClick={() => this.props.addMiner(this.state.ip)} variant="contained" color="primary"
+                <TextField id="ip" variant="outlined" label="Miner IP" onChange={this.updateIP} margin="dense" />
+                <Button
+                    onClick={() => this.props.addMiner(this.state.ip)}
+                    variant="contained"
+                    color="primary"
                     disabled={!this.state.ip}
                 >
                     Add Miner via IP
@@ -62,13 +68,14 @@ export class AddRemoveTab extends React.Component {
                 <Button onClick={() => this.props.loadMiners()} variant="contained" color="secondary">
                     Load Saved Miners
                 </Button>
-                <Divider variant="middle" style={{margin: '8px'}}/>
+                <Divider variant="middle" style={{margin: '8px'}} />
                 <Button
                     onClick={() => {
                         this.props.delMiner(this.props.selected);
                         this.props.select([], this.props.models[this.props.list]);
                     }}
-                    variant="contained" color="primary"
+                    variant="contained"
+                    color="primary"
                     disabled={!this.props.selected.length}
                 >
                     Remove Selected
@@ -78,14 +85,22 @@ export class AddRemoveTab extends React.Component {
                         this.props.blacklist(this.props.selected);
                         this.props.select([], this.props.models[this.props.list]);
                     }}
-                    variant="contained" color="secondary"
+                    variant="contained"
+                    color="secondary"
                     disabled={!this.props.selected.length}
                 >
                     Blacklist Selected
                 </Button>
-                <Divider variant="middle" style={{margin: '8px'}}/>
-                <Button disableRipple style={{cursor: "default"}}>For Support: </Button>
-                <Button onClick={() => this.saveLogs()} variant="contained" color="primary" disabled={!this.props.selected.length}>
+                <Divider variant="middle" style={{margin: '8px'}} />
+                <Button disableRipple style={{cursor: 'default'}}>
+                    For Support:{' '}
+                </Button>
+                <Button
+                    onClick={() => this.saveLogs()}
+                    variant="contained"
+                    color="primary"
+                    disabled={!this.props.selected.length}
+                >
                     Save Logs of Selected
                 </Button>
             </div>

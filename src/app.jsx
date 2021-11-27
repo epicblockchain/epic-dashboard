@@ -1,22 +1,34 @@
-const { ipcRenderer, app } = require('electron');
+const {ipcRenderer, app} = require('electron');
 const got = require('got');
 const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
-const { createLogger, transports } = require('winston');
+const {createLogger, transports} = require('winston');
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Dashboard } from './dashboard.jsx';
-import { DataTable } from './table.jsx';
-import { Support } from './support.jsx';
-import { Eula } from './eula.jsx';
+import {Dashboard} from './dashboard.jsx';
+import {DataTable} from './table.jsx';
+import {Support} from './support.jsx';
+import {Eula} from './eula.jsx';
 
-import { Drawer, ListItem, ListItemText, Button, List, Divider,
-        Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CssBaseline, TextField
-    } from '@material-ui/core';
+import {
+    Drawer,
+    ListItem,
+    ListItemText,
+    Button,
+    List,
+    Divider,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    CssBaseline,
+    TextField,
+} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import { ToastContainer, toast } from 'react-toastify';
+import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
@@ -25,136 +37,132 @@ import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import './app.css';
-import logo from './img/EpicLogo.png'
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import logo from './img/EpicLogo.png';
+import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 
 const light = createMuiTheme({
     palette: {
         primary: {main: '#1b1d4d'},
-        secondary: {main: '#ffc107'}
+        secondary: {main: '#ffc107'},
     },
     overrides: {
         MuiCssBaseline: {
-            "@global": {
-                ".datatable-wrap": {
-                    background: "#fafafa"
+            '@global': {
+                '.datatable-wrap': {
+                    background: '#fafafa',
                 },
-                ".resizer": {
-                    border: "8px solid #fafafa",
-                    background: "#aaa",
-                    "&.isResizing": {
-                      background: "#1b1d4d"
-                    }
-                },
-                ".MuiTableRow-root": {
-                    "&.MuiTableRow-head:hover": {
-                      backgroundColor: "inherit"
+                '.resizer': {
+                    border: '8px solid #fafafa',
+                    background: '#aaa',
+                    '&.isResizing': {
+                        background: '#1b1d4d',
                     },
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.04)"
-                    }
                 },
-                ".MuiTableRow-root.Mui-selected": {
-                    backgroundColor: "rgba(27, 29, 77, 0.08) !important",
-                    "&:hover": {
-                      backgroundColor: "rgba(27, 29, 77, 0.12) !important"
-                    }
+                '.MuiTableRow-root': {
+                    '&.MuiTableRow-head:hover': {
+                        backgroundColor: 'inherit',
+                    },
+                    '&:hover': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    },
                 },
-                ".grid": {
-                    borderBottom: "1px solid rgba(0, 0, 0, 0.12)"
+                '.MuiTableRow-root.Mui-selected': {
+                    backgroundColor: 'rgba(27, 29, 77, 0.08) !important',
+                    '&:hover': {
+                        backgroundColor: 'rgba(27, 29, 77, 0.12) !important',
+                    },
                 },
-                ".MuiDrawer-root .MuiListItem-button:hover": {
-                    background: "rgba(255, 255, 255, 0.08)"
-                }
-            }
-        }
-    }
-})
+                '.grid': {
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                },
+                '.MuiDrawer-root .MuiListItem-button:hover': {
+                    background: 'rgba(255, 255, 255, 0.08)',
+                },
+            },
+        },
+    },
+});
 
 const dark = createMuiTheme({
     palette: {
         type: 'dark',
         primary: {main: '#ffc107'},
-        secondary: {main: '#1b1d4d'}
+        secondary: {main: '#1b1d4d'},
     },
     overrides: {
         MuiCssBaseline: {
-          "@global": {
-            "*::-webkit-scrollbar": {
-              width: "1.25em",
-              height: "1.25em",
-              background: "#202022"
+            '@global': {
+                '*::-webkit-scrollbar': {
+                    width: '1.25em',
+                    height: '1.25em',
+                    background: '#202022',
+                },
+                '*::-webkit-scrollbar-corner': {
+                    background: '#202022',
+                },
+                '*::-webkit-scrollbar-thumb': {
+                    background: '#585859',
+                    border: '3px solid #202022',
+                    borderRadius: '8px',
+                },
+                '*::-webkit-scrollbar-thumb:hover': {
+                    background: '#999',
+                },
+                '.datatable-wrap': {
+                    background: '#303030',
+                },
+                '.resizer': {
+                    border: '8px solid #303030',
+                    background: '#aaa',
+                    '&.isResizing': {
+                        background: '#ffc107',
+                    },
+                },
+                '.MuiTableRow-root': {
+                    '&.MuiTableRow-head:hover': {
+                        backgroundColor: 'inherit',
+                    },
+                    '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    },
+                },
+                '.MuiTableRow-root.Mui-selected': {
+                    backgroundColor: 'rgba(255, 193, 7, 0.16) !important',
+                    '&:hover': {
+                        backgroundColor: 'rgba(255, 193, 7, 0.24) !important',
+                    },
+                },
+                '.grid': {
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+                },
             },
-            "*::-webkit-scrollbar-corner": {
-              background: "#202022"
-            },
-            "*::-webkit-scrollbar-thumb": {
-              background: "#585859",
-              border: "3px solid #202022",
-              borderRadius: "8px"
-            },
-            "*::-webkit-scrollbar-thumb:hover": {
-              background: "#999"
-            },
-            ".datatable-wrap": {
-                background: "#303030"
-            },
-            ".resizer": {
-              border: "8px solid #303030",
-              background: "#aaa",
-              "&.isResizing": {
-                background: "#ffc107"
-              }
-            },
-            ".MuiTableRow-root": {
-              "&.MuiTableRow-head:hover": {
-                backgroundColor: "inherit"
-              },
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.08)"
-              }
-            },
-            ".MuiTableRow-root.Mui-selected": {
-              backgroundColor: "rgba(255, 193, 7, 0.16) !important",
-              "&:hover": {
-                backgroundColor: "rgba(255, 193, 7, 0.24) !important"
-              }
-            },
-            ".grid": {
-                borderBottom: "1px solid rgba(255, 255, 255, 0.12)"
-            }
-          }
-        }
-    }
-})
+        },
+    },
+});
 
 var miners = [];
 var blacklist = [];
 var app_path = '';
 
 switch (process.platform) {
-    case "darwin":
-        app_path = path.join(process.env.HOME, "Library", "Application Support", "ePIC-Dashboard");
+    case 'darwin':
+        app_path = path.join(process.env.HOME, 'Library', 'Application Support', 'ePIC-Dashboard');
         break;
-    case "win32":
-        app_path = path.join(process.env.APPDATA, "ePIC-Dashboard");
+    case 'win32':
+        app_path = path.join(process.env.APPDATA, 'ePIC-Dashboard');
         break;
-    case "linux":
-        app_path = path.join(process.env.HOME, ".ePIC-Dashboard");
+    case 'linux':
+        app_path = path.join(process.env.HOME, '.ePIC-Dashboard');
         break;
     default:
-        console.log("Unsupported platform: " + process.platform);
+        console.log('Unsupported platform: ' + process.platform);
         process.exit(1);
 }
 
 const logger = createLogger({
-    exceptionHandlers: [
-        new transports.File({ filename: path.join(app_path, 'errors.log') })
-    ],
-    rejectionHandlers: [
-        new transports.File({ filename: path.join(app_path, 'errors.log') })
-    ],
-    exitOnError: false
+    exceptionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
+    rejectionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
+    exitOnError: false,
 });
 
 fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
@@ -167,12 +175,15 @@ fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
 });
 
 const notify = (sev, text, options) => {
-    toast(({ closeToast }) => (
-        <Alert elevation={6} variant="filled" onClose={closeToast} severity={sev}>
-            {text}
-        </Alert>
-    ), options);
-}
+    toast(
+        ({closeToast}) => (
+            <Alert elevation={6} variant="filled" onClose={closeToast} severity={sev}>
+                {text}
+            </Alert>
+        ),
+        options
+    );
+};
 
 class App extends React.Component {
     constructor(props) {
@@ -186,7 +197,7 @@ class App extends React.Component {
             modal: false,
             modal2: false,
             eula: false,
-            theme: 'light'
+            theme: 'light',
         };
 
         this.setPage = this.setPage.bind(this);
@@ -199,30 +210,40 @@ class App extends React.Component {
         this.handleFormApi = this.handleFormApi.bind(this);
     }
 
-    async summary(init) {     
+    async summary(init) {
         let models = new Set(this.state.models);
         let miner_data = await Promise.all(
             miners.map(async (miner, i) => {
                 try {
                     const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
-                        timeout: 2000, retry: 0
+                        timeout: 2000,
+                        retry: 0,
                     });
 
                     let sum = JSON.parse(summary.body);
                     if (!sum.Hostname) sum = null;
 
-                    let match = this.state.miner_data.find(a => a.ip == miner.address);
+                    let match = this.state.miner_data.find((a) => a.ip == miner.address);
 
-                    if (init || !match || match.sum == 'load' || match.sum == 'reboot' || match.sum == null || (match && !match.cap)) {
+                    if (
+                        init ||
+                        !match ||
+                        match.sum == 'load' ||
+                        match.sum == 'reboot' ||
+                        match.sum == null ||
+                        (match && !match.cap)
+                    ) {
                         const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
-                            timeout: 2000, retry: 0
+                            timeout: 2000,
+                            retry: 0,
                         });
                         try {
                             const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
-                                timeout: 2000, retry: 0
+                                timeout: 2000,
+                                retry: 0,
                             });
                             let content = JSON.parse(cap.body);
-                            
+
                             if (content.Model) models.add(content.Model);
                             else models.add('undefined');
 
@@ -231,12 +252,17 @@ class App extends React.Component {
                                 sum: sum,
                                 hist: JSON.parse(history.body).History.slice(-48),
                                 cap: content.Model ? content : undefined,
-                                timer: 10
+                                timer: 10,
                             };
-                        } catch(err) {
+                        } catch (err) {
                             console.log(err);
                             models.add('undefined');
-                            return {ip: miner.address, sum: sum, hist: JSON.parse(history.body).History.slice(-48), timer: 10};
+                            return {
+                                ip: miner.address,
+                                sum: sum,
+                                hist: JSON.parse(history.body).History.slice(-48),
+                                timer: 10,
+                            };
                         }
                     } else {
                         const lastMHs = sum.Session.LastAverageMHs;
@@ -245,24 +271,37 @@ class App extends React.Component {
                             return {ip: miner.address, sum: sum, hist: [], cap: match.cap, timer: 10};
                         } else if (match.hist.length == 0) {
                             return {ip: miner.address, sum: sum, hist: [lastMHs], cap: match.cap, timer: 10};
-                        } else if (!match.hist.map(a => a.Timestamp).includes(lastMHs.Timestamp)) {
-                            if (match.hist.length >= 48)
-                                match.hist.slice(1);
+                        } else if (!match.hist.map((a) => a.Timestamp).includes(lastMHs.Timestamp)) {
+                            if (match.hist.length >= 48) match.hist.slice(1);
                             match.hist.push(lastMHs);
                         }
                         return {ip: miner.address, sum: sum, hist: match.hist, cap: match.cap, timer: 10};
                     }
-                } catch(err) {
-                    let match = this.state.miner_data.find(a => a.ip == miner.address);
+                } catch (err) {
+                    let match = this.state.miner_data.find((a) => a.ip == miner.address);
 
                     if (match) {
                         if (match.timer > 0) {
-                            if (match.sum == 'reboot') return {ip: miner.address, sum: 'reboot', hist: 'reboot', cap: match.cap, timer: match.timer - 1};
-                            else if (match.cap) return {ip: miner.address, sum: null, hist: null, cap: match.cap, timer: match.timer - 1};
+                            if (match.sum == 'reboot')
+                                return {
+                                    ip: miner.address,
+                                    sum: 'reboot',
+                                    hist: 'reboot',
+                                    cap: match.cap,
+                                    timer: match.timer - 1,
+                                };
+                            else if (match.cap)
+                                return {
+                                    ip: miner.address,
+                                    sum: null,
+                                    hist: null,
+                                    cap: match.cap,
+                                    timer: match.timer - 1,
+                                };
                             else return {ip: miner.address, sum: null, hist: null, timer: match.timer - 1};
                         }
-                        
-                        if (typeof match.cap === "object") {
+
+                        if (typeof match.cap === 'object') {
                             models.add('undefined');
                             return {ip: miner.address, sum: null, hist: null, timer: 50}; // 5 minutes
                         } else {
@@ -276,9 +315,9 @@ class App extends React.Component {
                 }
             })
         );
-        
+
         models = Array.from(models).sort();
-        miner_data = miner_data.filter(x => x !== undefined);
+        miner_data = miner_data.filter((x) => x !== undefined);
         if (models.length != this.state.models.length) this.setState({miner_data: miner_data, models: models});
         else this.setState({miner_data: miner_data});
     }
@@ -295,10 +334,10 @@ class App extends React.Component {
                 autoClose: 600000, //10 min
                 hideProgressBar: false,
                 pauseOnHover: false,
-                toastId: i
+                toastId: i,
             });
-            
-            let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
+
+            let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
             var temp = Array.from(this.state.miner_data);
             temp[ind].sum = 'reboot';
             temp[ind].timer = 100; // 100 * 6sec = 10min
@@ -317,7 +356,7 @@ class App extends React.Component {
                 this.update(true);
                 this.setState({modal2: true});
                 console.log('mounted');
-                
+
                 setInterval(() => this.update(false), 6000);
             }
         });
@@ -325,17 +364,18 @@ class App extends React.Component {
 
     update(init) {
         mdns.discover({
-            name: '_epicminer._tcp.local', wait: 2
+            name: '_epicminer._tcp.local',
+            wait: 2,
         }).then((list) => {
-            list = list.filter(a => !blacklist.includes(a.fqdn));
+            list = list.filter((a) => !blacklist.includes(a.fqdn));
 
             if (init) {
                 if (!list.length) {
                     this.toggleModal(true);
-                }     
+                }
                 miners = list.sort(this.compare);
             } else {
-                let prev = miners.map(a => a.address);
+                let prev = miners.map((a) => a.address);
                 for (let miner of list) {
                     if (!prev.includes(miner.address)) miners.push(miner);
                 }
@@ -348,7 +388,7 @@ class App extends React.Component {
     eula(bool) {
         if (bool) {
             this.setState({eula: false});
-            fs.writeFile(path.join(app_path, 'eula.txt'), "", function (err) {
+            fs.writeFile(path.join(app_path, 'eula.txt'), '', function (err) {
                 if (err) {
                     console.log(err);
                     throw err;
@@ -362,7 +402,7 @@ class App extends React.Component {
 
     toggleDrawer(open) {
         this.setState({drawerOpen: open});
-    };
+    }
 
     toggleModal(open) {
         this.setState({modal: open});
@@ -382,13 +422,13 @@ class App extends React.Component {
     }
 
     addMiner(ip) {
-        let prev = miners.map(a => a.address);
+        let prev = miners.map((a) => a.address);
         if (!prev.includes(ip)) {
             miners.push({address: ip, service: {port: 4028}});
 
             var temp = Array.from(this.state.miner_data);
             temp.push({ip: ip, sum: 'load', hist: 'load', timer: 50});
-        
+
             var models = Array.from(this.state.models);
             if (!models.includes('undefined')) models.push('undefined');
 
@@ -401,7 +441,9 @@ class App extends React.Component {
 
     delMiner(ids) {
         var temp = Array.from(this.state.miner_data);
-        for (let id of ids.sort(function(a, b){return b-a})) {
+        for (let id of ids.sort(function (a, b) {
+            return b - a;
+        })) {
             miners.splice(id, 1);
             temp.splice(id, 1);
         }
@@ -435,7 +477,7 @@ class App extends React.Component {
                 return;
             }
             const ips = data.toString().split('\n');
-            const prev = miners.map(a => a.address);
+            const prev = miners.map((a) => a.address);
             for (let ip of ips) {
                 if (ip && !prev.includes(ip)) miners.push({address: ip, service: {port: 4028}});
             }
@@ -446,7 +488,9 @@ class App extends React.Component {
 
     blacklist(ids) {
         var temp = Array.from(this.state.miner_data);
-        for (let id of ids.sort(function(a, b){return b-a})) {
+        for (let id of ids.sort(function (a, b) {
+            return b - a;
+        })) {
             blacklist.push(miners[id].fqdn);
             miners.splice(id, 1);
             temp.splice(id, 1);
@@ -467,16 +511,16 @@ class App extends React.Component {
     async handleApi(api, data, selected) {
         var obj;
         var msg;
-        switch(api) {
+        switch (api) {
             case '/coin':
                 obj = {
                     param: {
                         coin: data.coin,
                         pool_url: data.pool,
                         login: data.address + '.' + data.worker,
-                        password: data.wallet_pass
+                        password: data.wallet_pass,
                     },
-                    password: data.password
+                    password: data.password,
                 };
                 msg = 'Updating coin';
                 break;
@@ -486,7 +530,7 @@ class App extends React.Component {
             case '/login':
                 obj = {
                     param: {login: data.address + '.' + data.worker, password: data.wallet_pass},
-                    password: data.password
+                    password: data.password,
                 };
                 break;
             case '/mode':
@@ -511,7 +555,7 @@ class App extends React.Component {
                 break;
             case '/miner':
                 obj = {param: data.cmd, password: data.password};
-                msg = 'Sending command'
+                msg = 'Sending command';
                 break;
             case '/fanspeed':
                 obj = {param: data.speed.toString(), password: data.password};
@@ -520,53 +564,53 @@ class App extends React.Component {
                 obj = {param: data.power, password: data.password};
                 break;
         }
-        
+
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode'; //sends response after completed
         let soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
 
         for (let i of selected) {
             (async () => {
-            try {
-                if (slow_api) {
-                    notify('info', `${miners[i].address}: ${msg}`, {
-                        autoClose: 60000,
-                        hideProgressBar: false,
-                        pauseOnHover: false,
-                        toastId: i
-                    });
+                try {
+                    if (slow_api) {
+                        notify('info', `${miners[i].address}: ${msg}`, {
+                            autoClose: 60000,
+                            hideProgressBar: false,
+                            pauseOnHover: false,
+                            toastId: i,
+                        });
 
-                    let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
-                    var temp = Array.from(this.state.miner_data);
-                    temp[ind].sum = 'reboot';
-                    temp[ind].timer = 10; //10 * 6sec = 1min
-                    this.setState({miner_data: temp});
-                }
-
-                const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
-                    json: obj,
-                    timeout: slow_api ? 60000 : 5000,
-                    responseType: 'json'
-                });
-                
-                if (slow_api) toast.dismiss(i);
-
-                if (body.result) {
-                    notify('success', `${miners[i].address}: ${api.slice(1)} successful`);
-                    
-                    if (api == '/reboot' || soft_reboot) {
-                        let ind = this.state.miner_data.findIndex(a => a.ip == miners[i].address);
+                        let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
                         var temp = Array.from(this.state.miner_data);
                         temp[ind].sum = 'reboot';
-                        temp[ind].timer = 10;
+                        temp[ind].timer = 10; //10 * 6sec = 1min
                         this.setState({miner_data: temp});
                     }
-                } else {
-                    notify('error', `${miners[i].address}: ${body.error}`);
+
+                    const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                        json: obj,
+                        timeout: slow_api ? 60000 : 5000,
+                        responseType: 'json',
+                    });
+
+                    if (slow_api) toast.dismiss(i);
+
+                    if (body.result) {
+                        notify('success', `${miners[i].address}: ${api.slice(1)} successful`);
+
+                        if (api == '/reboot' || soft_reboot) {
+                            let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
+                            var temp = Array.from(this.state.miner_data);
+                            temp[ind].sum = 'reboot';
+                            temp[ind].timer = 10;
+                            this.setState({miner_data: temp});
+                        }
+                    } else {
+                        notify('error', `${miners[i].address}: ${body.error}`);
+                    }
+                } catch (err) {
+                    console.log(err);
+                    notify('error', `${miners[i].address}: Request Failed`);
                 }
-            } catch(err) {
-                console.log(err);
-                notify('error', `${miners[i].address}: Request Failed`);
-            }
             })();
         }
     }
@@ -574,41 +618,41 @@ class App extends React.Component {
     handleFormApi(api, data, selected) {
         ipcRenderer.send('form-post', miners, api, data, selected);
     }
- 
+
     render() {
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
-                <CssBaseline/>
+                <CssBaseline />
                 <Button onClick={() => this.toggleDrawer(true)} variant="contained" color="primary" id="menu-but">
-                    <MenuOpenIcon color="secondary"/>
+                    <MenuOpenIcon color="secondary" />
                 </Button>
                 <Drawer open={this.state.drawerOpen} onClose={() => this.toggleDrawer(false)}>
                     <div onClick={() => this.toggleDrawer(false)}>
                         <List>
                             <ListItem>
-                                <img src={logo}/>
+                                <img src={logo} />
                             </ListItem>
-                            <Divider variant="middle" light/>
+                            <Divider variant="middle" light />
                             <ListItem button onClick={() => this.toggleTheme()}>
-                                <InvertColorsIcon/>
-                                <ListItemText primary="Toggle Theme"/>
+                                <InvertColorsIcon />
+                                <ListItemText primary="Toggle Theme" />
                             </ListItem>
-                            <Divider variant="middle"/>
+                            <Divider variant="middle" />
                             <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
-                                <AssessmentIcon/>
-                                <ListItemText primary="Dashboard"/>
+                                <AssessmentIcon />
+                                <ListItemText primary="Dashboard" />
                             </ListItem>
                             <ListItem button key="Table" onClick={() => this.setPage('table')}>
-                                <ListAltIcon/>
-                                <ListItemText primary="Table"/>
+                                <ListAltIcon />
+                                <ListItemText primary="Table" />
                             </ListItem>
                             <ListItem button key="Password" onClick={() => this.setState({modal2: true})}>
-                                <VpnKeyIcon/>
-                                <ListItemText primary="Session Password"/>
+                                <VpnKeyIcon />
+                                <ListItemText primary="Session Password" />
                             </ListItem>
                             <ListItem button key="Support" onClick={() => this.setPage('support')}>
-                                <ContactSupportIcon/>
-                                <ListItemText primary="Support"/>
+                                <ContactSupportIcon />
+                                <ListItemText primary="Support" />
                             </ListItem>
                         </List>
                     </div>
@@ -616,14 +660,18 @@ class App extends React.Component {
                 <Dialog open={this.state.modal} onClose={() => this.toggleModal(false)}>
                     <DialogTitle>No Miners found</DialogTitle>
                     <DialogContent>
-                        If you are connecting over a VPN, this software will not detect your miners.
-                        You must manually add miners by IP in the Miner List tab.
+                        If you are connecting over a VPN, this software will not detect your miners. You must manually
+                        add miners by IP in the Miner List tab.
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => {
-                                    this.toggleModal(false);
-                                    this.setPage('table');
-                                }} color="primary" variant="contained">
+                        <Button
+                            onClick={() => {
+                                this.toggleModal(false);
+                                this.setPage('table');
+                            }}
+                            color="primary"
+                            variant="contained"
+                        >
                             Navigate to List
                         </Button>
                         <Button onClick={() => this.toggleModal(false)} color="primary" variant="outlined">
@@ -635,26 +683,39 @@ class App extends React.Component {
                     <DialogTitle>Set Session Password</DialogTitle>
                     <DialogContent>
                         Add a session password to be used by default for all settings:
-                        <TextField type="password" variant="outlined" margin="dense" label="Session Password" id="sessionPass"
-                            onKeyPress={(e) => e.key == 'Enter' ? this.setSessionPass() : null}
+                        <TextField
+                            type="password"
+                            variant="outlined"
+                            margin="dense"
+                            label="Session Password"
+                            id="sessionPass"
+                            onKeyPress={(e) => (e.key == 'Enter' ? this.setSessionPass() : null)}
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => this.setSessionPass()} color="primary" variant="contained">Set Password</Button>
-                        <Button onClick={() => this.setState({modal2: false})} color="primary" variant="outlined">Skip</Button>
+                        <Button onClick={() => this.setSessionPass()} color="primary" variant="contained">
+                            Set Password
+                        </Button>
+                        <Button onClick={() => this.setState({modal2: false})} color="primary" variant="outlined">
+                            Skip
+                        </Button>
                     </DialogActions>
                 </Dialog>
                 <Dialog open={this.state.eula} fullScreen>
                     <DialogContent>
-                        <Eula/>
+                        <Eula />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => this.eula(true)} color="primary" variant="contained">Accept</Button>
-                        <Button onClick={() => this.eula(false)} color="primary" variant="outlined">Decline</Button>
+                        <Button onClick={() => this.eula(true)} color="primary" variant="contained">
+                            Accept
+                        </Button>
+                        <Button onClick={() => this.eula(false)} color="primary" variant="outlined">
+                            Decline
+                        </Button>
                     </DialogActions>
                 </Dialog>
                 <ToastContainer
-                    position='top-right'
+                    position="top-right"
                     autoClose={5000}
                     hideProgressBar
                     newestOnTop={false}
@@ -664,18 +725,26 @@ class App extends React.Component {
                     rtl={false}
                     pauseOnFocusLoss={false}
                 />
-                { this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme}/> }
-                { this.state.page == 'table' &&
-                    <DataTable data={this.state.miner_data} models={this.state.models} sessionPass={this.state.sessionPass}
-                        addMiner={this.addMiner} delMiner={this.delMiner} blacklist={this.blacklist}
-                        saveMiners={this.saveMiners} loadMiners={this.loadMiners} notify={notify}
-                        handleApi={this.handleApi} handleFormApi={this.handleFormApi}
+                {this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme} />}
+                {this.state.page == 'table' && (
+                    <DataTable
+                        data={this.state.miner_data}
+                        models={this.state.models}
+                        sessionPass={this.state.sessionPass}
+                        addMiner={this.addMiner}
+                        delMiner={this.delMiner}
+                        blacklist={this.blacklist}
+                        saveMiners={this.saveMiners}
+                        loadMiners={this.loadMiners}
+                        notify={notify}
+                        handleApi={this.handleApi}
+                        handleFormApi={this.handleFormApi}
                     />
-                }
-                { this.state.page == 'support' && <Support data={this.state} setPage={this.setPage}/> }
+                )}
+                {this.state.page == 'support' && <Support data={this.state} setPage={this.setPage} />}
             </MuiThemeProvider>
         );
     }
 }
 
-ReactDOM.render(<App/>, document.getElementById("react"));
+ReactDOM.render(<App />, document.getElementById('react'));

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 const got = require('got');
 const fs = require('fs');
 const FormData = require('form-data');
@@ -8,7 +8,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
+if (require('electron-squirrel-startup')) {
+    // eslint-disable-line global-require
     app.quit();
 }
 
@@ -21,8 +22,8 @@ const createWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            enableRemoteModule: true
-        }
+            enableRemoteModule: true,
+        },
     });
 
     // and load the index.html of the app.
@@ -31,9 +32,9 @@ const createWindow = () => {
     mainWindow.setMenuBarVisibility(false);
 
     ipcMain.on('form-post', (event, miners, api, data, selected) => {
-        for (let i of selected) {
+        for (const i of selected) {
             (async () => {
-                var f = new FormData();
+                const f = new FormData();
                 f.append('password', data.password);
                 f.append('checksum', sha256(data.filepath));
                 f.append('keepsettings', data.keep.toString());
@@ -45,15 +46,20 @@ const createWindow = () => {
                     const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                         body: f,
                         responseType: 'json',
-                        timeout: 600000 //60000 was 1 min before
+                        timeout: 600000, // 60000 was 1 min before
                     });
 
                     if (body.result) {
-                        mainWindow.webContents.send('form-result', i, 'success', `${miners[i].address}: Done firmware update`);
+                        mainWindow.webContents.send(
+                            'form-result',
+                            i,
+                            'success',
+                            `${miners[i].address}: Done firmware update`
+                        );
                     } else {
                         mainWindow.webContents.send('form-result', i, 'error', `${miners[i].address}: ${body.error}`);
                     }
-                } catch(err) {
+                } catch (err) {
                     console.log(err);
                 }
             })();

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField } from '@material-ui/core';
+import {Button, TextField} from '@material-ui/core';
 
 export class WalletAddrTab extends React.Component {
     constructor(props) {
@@ -15,7 +15,10 @@ export class WalletAddrTab extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.selected != this.props.selected) {
             if (this.props.selected.length && this.props.data[this.props.selected[0]].sum) {
-                if (prevProps.selected[0] != this.props.selected[0] && this.props.data[this.props.selected[0]].sum.Stratum) {
+                if (
+                    prevProps.selected[0] != this.props.selected[0] &&
+                    this.props.data[this.props.selected[0]].sum.Stratum
+                ) {
                     var arr = this.props.data[this.props.selected[0]].sum.Stratum['Current User'].split('.');
                     this.setState({address: arr[0] || '', worker: arr[1] ? arr[1].split('-')[0] : ''});
                 }
@@ -27,7 +30,7 @@ export class WalletAddrTab extends React.Component {
             this.setState({password: this.props.sessionPass});
         }
     }
-    
+
     updateAddress(e) {
         this.setState({address: e.target.value});
     }
@@ -45,29 +48,60 @@ export class WalletAddrTab extends React.Component {
     }
 
     render() {
-        return(
+        return (
             <div style={{padding: '12px 0'}}>
-                <TextField variant="outlined" label="Wallet Address" onChange={this.updateAddress}
-                    value={this.state.address} margin="dense" className="wallet"
+                <TextField
+                    variant="outlined"
+                    label="Wallet Address"
+                    onChange={this.updateAddress}
+                    value={this.state.address}
+                    margin="dense"
+                    className="wallet"
                 />
                 <p className="period">.</p>
-                <TextField variant="outlined" label="Worker Name" onChange={this.updateWorker}
-                    value={this.state.worker} margin="dense"
+                <TextField
+                    variant="outlined"
+                    label="Worker Name"
+                    onChange={this.updateWorker}
+                    value={this.state.worker}
+                    margin="dense"
                 />
-                <TextField variant="outlined" label="Stratum Password" onChange={this.updateWalletPass}
-                    value={this.state.wallet_pass} margin="dense" helperText="Leave unless qualified" className="stratum"
+                <TextField
+                    variant="outlined"
+                    label="Stratum Password"
+                    onChange={this.updateWalletPass}
+                    value={this.state.wallet_pass}
+                    margin="dense"
+                    helperText="Leave unless qualified"
+                    className="stratum"
                 />
                 <br />
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
-                    if (e.key === 'Enter') {
+                <TextField
+                    value={this.state.password || ''}
+                    variant="outlined"
+                    label="Password"
+                    type="password"
+                    onChange={this.updatePassword}
+                    margin="dense"
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            this.props.handleApi('/login', this.state, this.props.selected);
+                        }
+                    }}
+                />
+                <Button
+                    onClick={() => {
                         this.props.handleApi('/login', this.state, this.props.selected);
+                    }}
+                    variant="contained"
+                    color="primary"
+                    disabled={
+                        !this.state.address ||
+                        !this.state.worker ||
+                        !this.state.password ||
+                        !this.state.wallet_pass ||
+                        !this.props.selected.length
                     }
-                }}/>
-                <Button onClick={() => {
-                        this.props.handleApi('/login', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
-                    disabled={!this.state.address || !this.state.worker || !this.state.password || !this.state.wallet_pass
-                        || !this.props.selected.length}
                 >
                     Apply
                 </Button>

@@ -1,37 +1,50 @@
 import * as React from 'react';
-import { Tabs, Tab, Paper, debounce } from '@material-ui/core';
-import { AddRemoveTab } from './tabs/AddRemoveTab.jsx';
-import { CoinTab } from './tabs/CoinTab.jsx';
-import { MinerPoolTab } from './tabs/MinerPoolTab.jsx';
-import { WalletAddrTab } from './tabs/WalletAddrTab.jsx';
-import { OpModeTab } from './tabs/OpModeTab.jsx';
-import { UniqueIDTab } from './tabs/UniqueIDTab.jsx';
-import { PasswordTab } from './tabs/PasswordTab.jsx';
-import { UpdateTab } from './tabs/UpdateTab.jsx';
-import { RebootTab } from './tabs/RebootTab.jsx';
-import { LedTab } from './tabs/LedTab.jsx';
-import { RecalibrateTab } from './tabs/RecalibrateTab.jsx';
-import { CmdTab } from './tabs/CmdTab.jsx';
-import { FanTab } from './tabs/FanTab.jsx';
-import { PowerTab } from './tabs/PowerTab.jsx';
+import {Tabs, Tab, Paper, debounce} from '@material-ui/core';
+import {AddRemoveTab} from './tabs/AddRemoveTab.jsx';
+import {CoinTab} from './tabs/CoinTab.jsx';
+import {MinerPoolTab} from './tabs/MinerPoolTab.jsx';
+import {WalletAddrTab} from './tabs/WalletAddrTab.jsx';
+import {OpModeTab} from './tabs/OpModeTab.jsx';
+import {UniqueIDTab} from './tabs/UniqueIDTab.jsx';
+import {PasswordTab} from './tabs/PasswordTab.jsx';
+import {UpdateTab} from './tabs/UpdateTab.jsx';
+import {RebootTab} from './tabs/RebootTab.jsx';
+import {LedTab} from './tabs/LedTab.jsx';
+import {RecalibrateTab} from './tabs/RecalibrateTab.jsx';
+import {CmdTab} from './tabs/CmdTab.jsx';
+import {FanTab} from './tabs/FanTab.jsx';
+import {PowerTab} from './tabs/PowerTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
 
-const defaultHidden = ['model', 'start', 'hashrate1hr',
-    'hashrate6hr', 'hashrate24hr', 'accepted', 'rejected', 'difficulty', 'power', 'fanspeed', 'voltage'];
+const defaultHidden = [
+    'model',
+    'start',
+    'hashrate1hr',
+    'hashrate6hr',
+    'hashrate24hr',
+    'accepted',
+    'rejected',
+    'difficulty',
+    'power',
+    'fanspeed',
+    'voltage',
+];
 
-function debounce1(func, timeout = 300){
+function debounce1(func, timeout = 300) {
     let timer;
     return (...args) => {
         clearTimeout(timer);
-        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, timeout);
     };
 }
 
 export class DataTable extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {models: ['Miners Loading...'], selected: {}, list: 0, tab: 0, reset: false};
 
         this.select = this.select.bind(this);
@@ -45,7 +58,7 @@ export class DataTable extends React.Component {
 
         if (this.props.models && this.props.models.length) {
             var newState = {models: this.props.models};
-            this.props.models.forEach(key => {
+            this.props.models.forEach((key) => {
                 newState[key + '_sel'] = [];
                 newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
@@ -56,18 +69,18 @@ export class DataTable extends React.Component {
 
     selectReset() {
         var newState = {reset: true};
-        this.props.models.forEach(key => {
+        this.props.models.forEach((key) => {
             newState[key + '_sel'] = [];
-        })
+        });
 
         this.setState(newState);
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
-            var newModels = this.props.models.filter(x => !prevProps.models.includes(x));
+            var newModels = this.props.models.filter((x) => !prevProps.models.includes(x));
             var newState = {models: this.props.models};
-            newModels.forEach(key => {
+            newModels.forEach((key) => {
                 newState[key + '_sel'] = [];
                 newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
@@ -76,14 +89,14 @@ export class DataTable extends React.Component {
         }
 
         if (this.state.models && prevProps.data) {
-            let prev = prevProps.data.filter(x => x.cap && x.cap.Model == this.state.models[this.state.list]);
-            let curr = this.props.data.filter(x => x.cap && x.cap.Model == this.state.models[this.state.list]);
-            
+            let prev = prevProps.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
+            let curr = this.props.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
+
             if (curr.length < prev.length) {
                 this.selectReset();
             }
         }
-        
+
         if (this.props.data.length < prevProps.data.length) {
             this.selectReset();
         } else if (this.state.reset) {
@@ -104,7 +117,7 @@ export class DataTable extends React.Component {
                     sum /= x;
                 }
             } catch {
-                sum = 'N/A'
+                sum = 'N/A';
             }
         } else {
             sum = row.sum.Session['Average MHs'];
@@ -116,35 +129,34 @@ export class DataTable extends React.Component {
         else return `${Math.round(sum * 100) / 100} MH/s`;
     }
 
-    secondsToHumanReadable(seconds){
+    secondsToHumanReadable(seconds) {
         let mutSeconds = seconds;
-        const days = Math.floor(seconds / 86400)
+        const days = Math.floor(seconds / 86400);
         mutSeconds -= days * 86400;
-        const hours = Math.floor(mutSeconds / 3600)
+        const hours = Math.floor(mutSeconds / 3600);
         mutSeconds -= hours * 3600;
-        const minutes = Math.floor(mutSeconds / 60)
+        const minutes = Math.floor(mutSeconds / 60);
         mutSeconds -= minutes * 60;
-        return days+'d '+hours+'h '+minutes+'m '+mutSeconds+'s';
+        return days + 'd ' + hours + 'h ' + minutes + 'm ' + mutSeconds + 's';
     }
 
     maxTemp(data) {
-        const temps = data.map(a => a.Temperature);
+        const temps = data.map((a) => a.Temperature);
         return Math.max.apply(null, temps);
     }
 
-    avgVoltage(data){
-        const volt = data.map(a => a['Input Voltage']);
+    avgVoltage(data) {
+        const volt = data.map((a) => a['Input Voltage']);
         var sum;
         sum = volt.reduce((total, num) => {
             return total + num;
         }, 0);
-        sum = sum/data.length;
-        return Math.round((sum + Number.EPSILON)*100)/100;
-        
+        sum = sum / data.length;
+        return Math.round((sum + Number.EPSILON) * 100) / 100;
     }
 
     totalPower(data) {
-        const power = data.map(a => a['Input Power']);
+        const power = data.map((a) => a['Input Power']);
         var sum;
         sum = power.reduce((total, num) => {
             return total + num;
@@ -154,7 +166,7 @@ export class DataTable extends React.Component {
 
     activeHBs(hbs) {
         if (hbs.length < 3) {
-            const active = hbs.map(a => a.Index);
+            const active = hbs.map((a) => a.Index);
 
             return `${active.length} (${active.join(', ')})`;
         }
@@ -172,20 +184,20 @@ export class DataTable extends React.Component {
     setTab(event, newVal) {
         this.setState({tab: newVal});
     }
-    
+
     failSafe(summary) {
         if (summary) {
             if (summary == 'load') return 'Loading';
             if (summary == 'reboot') return 'Rebooting';
             return undefined;
         }
-        return 'Error'
+        return 'Error';
     }
 
     update(newState, action, prevState, data, model) {
         if (action.type == 'toggleHideColumn' || action.type == 'toggleHideAllColumns') {
             var temp = {};
-            this.props.models.forEach(mod => {
+            this.props.models.forEach((mod) => {
                 temp[mod + '_state'] = Object.assign({}, this.state[mod + '_state']);
                 temp[mod + '_state'].hiddenColumns = newState.hiddenColumns;
             });
@@ -200,50 +212,48 @@ export class DataTable extends React.Component {
                 temp.splice(temp.indexOf(data[action.id].id), 1);
             }
 
-            this.setState({ [model + '_sel']: temp, [model + '_state']: newState });
+            this.setState({[model + '_sel']: temp, [model + '_state']: newState});
         } else if (action.type == 'toggleAllRowsSelected') {
             if (this.state[model + '_sel']) {
                 var sel = [];
 
-                Object.keys(newState.selectedRowIds).forEach(id => {
+                Object.keys(newState.selectedRowIds).forEach((id) => {
                     if (data[id]) sel.push(data[id].id);
                 });
 
-                this.setState({ [model + '_sel']: sel, [model + '_state']: newState });
+                this.setState({[model + '_sel']: sel, [model + '_state']: newState});
             }
         } else {
-            this.setState({ [model + '_state']: newState });
+            this.setState({[model + '_state']: newState});
         }
     }
 
     render() {
-        const rows = this.props.data.map(
-            (a, i) => ({
-                id: i,
-                ip: a ? a.ip : '', //TODO: figure out why this is was falsey
-                name: this.failSafe(a.sum) || a.sum.Hostname,
-                firmware: this.failSafe(a.sum) || a.sum.Software,
-                model: this.failSafe(a.cap) || a.cap.Model,
-                mode: this.failSafe(a.sum) || a.sum.Preset,
-                pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
-                user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
-                start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
-                uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
-                hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
-                hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null),
-                hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1),
-                hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6),
-                hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 24),
-                accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
-                rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
-                difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
-                temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
-                power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
-                fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
-                cap: a.cap,
-                voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs)
-            })
-        );
+        const rows = this.props.data.map((a, i) => ({
+            id: i,
+            ip: a ? a.ip : '', //TODO: figure out why this is was falsey
+            name: this.failSafe(a.sum) || a.sum.Hostname,
+            firmware: this.failSafe(a.sum) || a.sum.Software,
+            model: this.failSafe(a.cap) || a.cap.Model,
+            mode: this.failSafe(a.sum) || a.sum.Preset,
+            pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
+            user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
+            start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
+            uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
+            hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
+            hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null),
+            hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1),
+            hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6),
+            hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 24),
+            accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
+            rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
+            difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
+            temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
+            power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
+            fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
+            cap: a.cap,
+            voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
+        }));
 
         var miners = {};
 
@@ -251,8 +261,7 @@ export class DataTable extends React.Component {
             if (row.cap) {
                 if (miners[row.model]) miners[row.model].push(row);
                 else miners[row.model] = [row];
-            }
-            else miners['undefined'] ? miners['undefined'].push(row) : miners['undefined'] = [row];
+            } else miners['undefined'] ? miners['undefined'].push(row) : (miners['undefined'] = [row]);
         }
 
         var selected = this.state[this.state.models[this.state.list] + '_sel'] || [];
@@ -260,7 +269,7 @@ export class DataTable extends React.Component {
         var capApi = true;
         for (let i of selected) {
             if (!this.props.data[i]) {
-                selected = selected.filter(x => x != i);
+                selected = selected.filter((x) => x != i);
             } else if (!this.props.data[i].cap) {
                 capApi = false;
                 break;
@@ -269,18 +278,27 @@ export class DataTable extends React.Component {
 
         return (
             <div id="table">
-                <Tabs value={this.state.list} onChange={this.setList} indicatorColor="primary"
-                    textColor="primary" centered
+                <Tabs
+                    value={this.state.list}
+                    onChange={this.setList}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered
                 >
-                    { this.state.models.map(model => {
-                        return <Tab id="minerTab" key={model} label={model}/>;
+                    {this.state.models.map((model) => {
+                        return <Tab id="minerTab" key={model} label={model} />;
                     })}
                 </Tabs>
                 <canvas id="canvas" hidden></canvas>
-                <div style={{ width: '100%', height: 500 }}>
-                    { this.state.models.map((model, i) => {
+                <div style={{width: '100%', height: 500}}>
+                    {this.state.models.map((model, i) => {
                         return this.state.list == i ? (
-                            <Paper variant="outlined" className="datatable-wrap" style={{ width: "100%", overflow: "hidden" }} key={model}>
+                            <Paper
+                                variant="outlined"
+                                className="datatable-wrap"
+                                style={{width: '100%', overflow: 'hidden'}}
+                                key={model}
+                            >
                                 <Table
                                     dataRaw={miners[model] || []}
                                     extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
@@ -292,76 +310,148 @@ export class DataTable extends React.Component {
                         ) : null;
                     })}
                 </div>
-                <div style={{ maxWidth: '1400px', margin: '0 auto'}}>
-                    <Tabs value={this.state.tab} onChange={this.setTab} indicatorColor="primary"
-                        textColor="primary" scrollButtons="auto" variant="scrollable"
+                <div style={{maxWidth: '1400px', margin: '0 auto'}}>
+                    <Tabs
+                        value={this.state.tab}
+                        onChange={this.setTab}
+                        indicatorColor="primary"
+                        textColor="primary"
+                        scrollButtons="auto"
+                        variant="scrollable"
                     >
-                        <Tab label="Home"/>
-                        <Tab label="CMD"/>
-                        <Tab label="Coin" disabled={!capApi}/>
-                        <Tab label="Mining Pool"/>
-                        <Tab label="Wallet Address"/>
-                        <Tab label="Operating Mode"/>
-                        <Tab label="Unique ID"/>
-                        <Tab label="Password"/>
-                        <Tab label="Firmware"/>
-                        <Tab label="Reboot"/>
-                        <Tab label="LED"/>
-                        <Tab label="Recalibrate"/>
-                        <Tab label="Fans" disabled={!capApi}/>
-                        <Tab label="Power"/>
+                        <Tab label="Home" />
+                        <Tab label="CMD" />
+                        <Tab label="Coin" disabled={!capApi} />
+                        <Tab label="Mining Pool" />
+                        <Tab label="Wallet Address" />
+                        <Tab label="Operating Mode" />
+                        <Tab label="Unique ID" />
+                        <Tab label="Password" />
+                        <Tab label="Firmware" />
+                        <Tab label="Reboot" />
+                        <Tab label="LED" />
+                        <Tab label="Recalibrate" />
+                        <Tab label="Fans" disabled={!capApi} />
+                        <Tab label="Power" />
                     </Tabs>
                     <div hidden={this.state.tab != 0}>
                         <AddRemoveTab
-                            addMiner={this.props.addMiner} delMiner={this.props.delMiner} blacklist={this.props.blacklist}
-                            saveMiners={this.props.saveMiners} loadMiners={this.props.loadMiners} list={this.state.list} data={this.props.data}
-                            models={this.state.models} selected={selected} select={this.select} notify={this.props.notify}
+                            addMiner={this.props.addMiner}
+                            delMiner={this.props.delMiner}
+                            blacklist={this.props.blacklist}
+                            saveMiners={this.props.saveMiners}
+                            loadMiners={this.props.loadMiners}
+                            list={this.state.list}
+                            data={this.props.data}
+                            models={this.state.models}
+                            selected={selected}
+                            select={this.select}
+                            notify={this.props.notify}
                         />
                     </div>
                     <div hidden={this.state.tab != 1}>
-                        <CmdTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                        <CmdTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                     <div hidden={this.state.tab != 2}>
                         <CoinTab
-                            handleApi={this.props.handleApi} list={this.state.list} disabled={!capApi}
-                            selected={selected} data={this.props.data} miners={miners} models={this.state.models}
+                            handleApi={this.props.handleApi}
+                            list={this.state.list}
+                            disabled={!capApi}
+                            selected={selected}
+                            data={this.props.data}
+                            miners={miners}
+                            models={this.state.models}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
                     <div hidden={this.state.tab != 3}>
-                        <MinerPoolTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass}/>
+                        <MinerPoolTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            data={this.props.data}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                     <div hidden={this.state.tab != 4}>
-                        <WalletAddrTab handleApi={this.props.handleApi} selected={selected} data={this.props.data} sessionPass={this.props.sessionPass} list={this.state.list}/>
+                        <WalletAddrTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            data={this.props.data}
+                            sessionPass={this.props.sessionPass}
+                            list={this.state.list}
+                        />
                     </div>
                     <div hidden={this.state.tab != 5}>
-                        <OpModeTab handleApi={this.props.handleApi} selected={selected} miners={miners} data={this.props.data}
-                            list={this.state.list} models={this.state.models} sessionPass={this.props.sessionPass}
+                        <OpModeTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            miners={miners}
+                            data={this.props.data}
+                            list={this.state.list}
+                            models={this.state.models}
+                            sessionPass={this.props.sessionPass}
                         />
                     </div>
                     <div hidden={this.state.tab != 6}>
-                        <UniqueIDTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                        <UniqueIDTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                     <div hidden={this.state.tab != 7}>
-                        <PasswordTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                        <PasswordTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                     <div hidden={this.state.tab != 8}>
-                        <UpdateTab handleApi={this.props.handleFormApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                        <UpdateTab
+                            handleApi={this.props.handleFormApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                     <div hidden={this.state.tab != 9}>
-                        <RebootTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                        <RebootTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                     <div hidden={this.state.tab != 10}>
-                        <LedTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/> 
+                        <LedTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                     <div hidden={this.state.tab != 11}>
-                        <RecalibrateTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                        <RecalibrateTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
-                    <div hidden={this.state.tab != 12}> 
-                        <FanTab handleApi={this.props.handleApi} selected={selected} disabled={!capApi} sessionPass={this.props.sessionPass}/>
+                    <div hidden={this.state.tab != 12}>
+                        <FanTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            disabled={!capApi}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
-                    <div hidden={this.state.tab != 13}> 
-                        <PowerTab handleApi={this.props.handleApi} selected={selected} sessionPass={this.props.sessionPass}/>
+                    <div hidden={this.state.tab != 13}>
+                        <PowerTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            sessionPass={this.props.sessionPass}
+                        />
                     </div>
                 </div>
             </div>

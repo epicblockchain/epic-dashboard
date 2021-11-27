@@ -1,22 +1,22 @@
-import React from "react";
-import MaUTable from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableFooter from "@material-ui/core/TableFooter";
-import MuiCheckbox from "@material-ui/core/Checkbox";
-import Menu from "@material-ui/core/Menu";
-import Popper from "@material-ui/core/Popper";
-import Paper from "@material-ui/core/Paper";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Grow from "@material-ui/core/Grow";
-import MenuList from "@material-ui/core/MenuList";
-import MenuItem from "@material-ui/core/MenuItem";
-import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import TextField from "@material-ui/core/TextField";
+import React from 'react';
+import MaUTable from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableFooter from '@material-ui/core/TableFooter';
+import MuiCheckbox from '@material-ui/core/Checkbox';
+import Menu from '@material-ui/core/Menu';
+import Popper from '@material-ui/core/Popper';
+import Paper from '@material-ui/core/Paper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import MenuList from '@material-ui/core/MenuList';
+import MenuItem from '@material-ui/core/MenuItem';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import SvgIcon from '@material-ui/core/SvgIcon';
+import TextField from '@material-ui/core/TextField';
 import ViewWeekIcon from '@material-ui/icons/ViewWeek';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
@@ -30,31 +30,22 @@ import {
     useSortBy,
     useFilters,
     useGlobalFilter,
-    useAsyncDebounce
-} from "react-table";
-import { FixedSizeGrid } from "react-window";
+    useAsyncDebounce,
+} from 'react-table';
+import {FixedSizeGrid} from 'react-window';
 
-import "./customTable.css";
+import './customTable.css';
 
-const IndeterminateCheckbox = React.forwardRef(
-    ({ indeterminate, ...rest }, ref) => {
-        const defaultRef = React.useRef();
-        const resolvedRef = ref || defaultRef;
+const IndeterminateCheckbox = React.forwardRef(({indeterminate, ...rest}, ref) => {
+    const defaultRef = React.useRef();
+    const resolvedRef = ref || defaultRef;
 
-        React.useEffect(() => {
-            resolvedRef.current.indeterminate = indeterminate;
-        }, [resolvedRef, indeterminate]);
+    React.useEffect(() => {
+        resolvedRef.current.indeterminate = indeterminate;
+    }, [resolvedRef, indeterminate]);
 
-        return (
-            <MuiCheckbox
-                color="primary"
-                indeterminate={Boolean(indeterminate)}
-                ref={resolvedRef}
-                {...rest}
-            />
-        );
-    }
-);
+    return <MuiCheckbox color="primary" indeterminate={Boolean(indeterminate)} ref={resolvedRef} {...rest} />;
+});
 
 function FilterIcon(props) {
     return (
@@ -65,23 +56,23 @@ function FilterIcon(props) {
 }
 
 function hashrateSort(a, b, c, d) {
-    let a_split = a.values[c].split(" ");
-    let b_split = b.values[c].split(" ");
+    let a_split = a.values[c].split(' ');
+    let b_split = b.values[c].split(' ');
     if (a_split[1] === b_split[1]) {
         if (parseFloat(a_split[0]) > parseFloat(b_split[0])) return 1;
         return -1;
-    } else if (a_split[1] === "TH/s") {
+    } else if (a_split[1] === 'TH/s') {
         return 1;
-    } else if (a_split[1] === "GH/s") {
-        if (b_split[1] === "TH/s") return -1;
+    } else if (a_split[1] === 'GH/s') {
+        if (b_split[1] === 'TH/s') return -1;
         return 1;
-    } else if (a_split[1] === "MH/s") {
+    } else if (a_split[1] === 'MH/s') {
         return -1;
     }
 }
 
-function Table({ dataRaw, update, extstate, extmodel, reset }) {
-    const DefaultColumnFilter = React.useCallback(({ column: { filterValue, preFilteredRows, setFilter } }) => {
+function Table({dataRaw, update, extstate, extmodel, reset}) {
+    const DefaultColumnFilter = React.useCallback(({column: {filterValue, preFilteredRows, setFilter}}) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const handleClick = (event) => {
             setAnchorEl(event.currentTarget);
@@ -92,7 +83,7 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
 
         const [value, setValue] = React.useState(filterValue);
 
-        const changeFilter = useAsyncDebounce(value => {
+        const changeFilter = useAsyncDebounce((value) => {
             setFilter(value || undefined);
         }, 300);
 
@@ -111,7 +102,7 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                 >
                     <TextField
                         value={value || ''}
-                        onChange={e => {
+                        onChange={(e) => {
                             setValue(e.target.value);
                             changeFilter(e.target.value);
                         }}
@@ -122,7 +113,7 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                     />
                 </Menu>
             </div>
-        )
+        );
     });
 
     const defaultColumn = React.useMemo(
@@ -130,35 +121,38 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
             minWidth: 50,
             width: 150,
             maxWidth: 500,
-            Filter: DefaultColumnFilter
+            Filter: DefaultColumnFilter,
         }),
         []
     );
 
     const data = React.useMemo(() => dataRaw, [dataRaw]);
-    const columns = React.useMemo(() => [
-        { accessor: 'ip', Header: 'IP', width: 130 },
-        { accessor: 'name', Header: 'Name', width: 150 },
-        { accessor: 'firmware', Header: 'Firmware', width: 150 },
-        { accessor: 'model', Header: 'Model', width: 100 },
-        { accessor: 'mode', Header: 'Mode', width: 90 },
-        { accessor: 'pool', Header: 'Pool', width: 180 },
-        { accessor: 'user', Header: 'User', width: 210, maxWidth: 700 },
-        { accessor: 'start', Header: 'Started', width: 260 },
-        { accessor: 'uptime', Header: 'Uptime', width: 135 },
-        { accessor: 'hbs', Header: 'Active HBs', width: 118 },
-        { accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort },
-        { accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort },
-        { accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort },
-        { accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150, sortType: hashrateSort },
-        { accessor: 'accepted', Header: 'Accepted Shares', width: 150 },
-        { accessor: 'rejected', Header: 'Rejected Shares', width: 150 },
-        { accessor: 'difficulty', Header: 'Difficulty', width: 120 },
-        { accessor: 'temperature', Header: 'Temp \u00b0C', width: 103 },
-        { accessor: 'power', Header: 'Power (W)', width: 110 },
-        { accessor: 'fanspeed', Header: 'Fan Speed', width: 115 },
-        { accessor: 'voltage', Header: 'Input Voltage', width: 125, sortType: "number"}
-    ], []);
+    const columns = React.useMemo(
+        () => [
+            {accessor: 'ip', Header: 'IP', width: 130},
+            {accessor: 'name', Header: 'Name', width: 150},
+            {accessor: 'firmware', Header: 'Firmware', width: 150},
+            {accessor: 'model', Header: 'Model', width: 100},
+            {accessor: 'mode', Header: 'Mode', width: 90},
+            {accessor: 'pool', Header: 'Pool', width: 180},
+            {accessor: 'user', Header: 'User', width: 210, maxWidth: 700},
+            {accessor: 'start', Header: 'Started', width: 260},
+            {accessor: 'uptime', Header: 'Uptime', width: 135},
+            {accessor: 'hbs', Header: 'Active HBs', width: 118},
+            {accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort},
+            {accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort},
+            {accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort},
+            {accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150, sortType: hashrateSort},
+            {accessor: 'accepted', Header: 'Accepted Shares', width: 150},
+            {accessor: 'rejected', Header: 'Rejected Shares', width: 150},
+            {accessor: 'difficulty', Header: 'Difficulty', width: 120},
+            {accessor: 'temperature', Header: 'Temp \u00b0C', width: 103},
+            {accessor: 'power', Header: 'Power (W)', width: 110},
+            {accessor: 'fanspeed', Header: 'Fan Speed', width: 115},
+            {accessor: 'voltage', Header: 'Input Voltage', width: 125, sortType: 'number'},
+        ],
+        []
+    );
 
     const model = React.useMemo(() => extmodel, []);
     const initialState = React.useMemo(() => extstate, []);
@@ -205,7 +199,7 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
         toggleHideColumn,
         toggleHideAllColumns,
         preGlobalFilteredRows,
-        setGlobalFilter
+        setGlobalFilter,
     } = useTable(
         {
             columns,
@@ -224,14 +218,14 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
 
                         return {
                             ...a,
-                            columnResizing: clone
+                            columnResizing: clone,
                         };
                 }
 
                 if (b.type != 'columnResizing' && b.type != 'columnStartResizing') {
                     updateState(a, b, c, dataRaw, model);
                 }
-            }
+            },
         },
         useBlockLayout,
         useResizeColumns,
@@ -242,22 +236,22 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
         (hooks) => {
             hooks.visibleColumns.push((columns) => [
                 {
-                    id: "selection",
+                    id: 'selection',
                     width: 50,
                     disableResizing: true,
                     disableFilters: true,
-                    Header: ({ getToggleAllRowsSelectedProps }) => (
+                    Header: ({getToggleAllRowsSelectedProps}) => (
                         <div className="check-wrap">
                             <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
                         </div>
                     ),
-                    Cell: ({ row }) => (
+                    Cell: ({row}) => (
                         <div className="check-wrap">
                             <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                         </div>
-                    )
+                    ),
                 },
-                ...columns
+                ...columns,
             ]);
         }
     );
@@ -267,26 +261,37 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
     });
 
     const RenderRow = React.useCallback(
-        ({ columnIndex, rowIndex, style }) => {
+        ({columnIndex, rowIndex, style}) => {
             const row = rows[rowIndex];
             prepareRow(row);
             return (
                 <TableRow
                     {...row.getRowProps({
-                        style
+                        style,
                     })}
                     component="div"
-                    className={row.getToggleRowSelectedProps().checked ? "Mui-selected" : ""}
+                    className={row.getToggleRowSelectedProps().checked ? 'Mui-selected' : ''}
                 >
                     {row.cells.map((cell) => {
                         return (
                             <TableCell
                                 {...cell.getCellProps()}
                                 component="div"
-                                className={cell.column ? (cell.column.id === "hbs" ? cell.value === 3 ? "hb-good" : "hb-warn"
-                                        : (cell.column.id === "voltage" ? cell.value <= 11.9 ? "hb-warn" : null : null)) : null}
+                                className={
+                                    cell.column
+                                        ? cell.column.id === 'hbs'
+                                            ? cell.value === 3
+                                                ? 'hb-good'
+                                                : 'hb-warn'
+                                            : cell.column.id === 'voltage'
+                                            ? cell.value <= 11.9
+                                                ? 'hb-warn'
+                                                : null
+                                            : null
+                                        : null
+                                }
                             >
-                                {cell.render("Cell")}
+                                {cell.render('Cell')}
                             </TableCell>
                         );
                     })}
@@ -308,22 +313,33 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                 >
                     Columns
                 </Button>
-                <Popper open={open} anchorEl={anchorRef.current} placement="bottom-start"
-                    transition disablePortal style={{ zIndex: 1000 }}
+                <Popper
+                    open={open}
+                    anchorEl={anchorRef.current}
+                    placement="bottom-start"
+                    transition
+                    disablePortal
+                    style={{zIndex: 1000}}
                 >
-                    {({ TransitionProps }) => (
-                        <Grow {...TransitionProps} {...({ timeout: 100 })}>
+                    {({TransitionProps}) => (
+                        <Grow {...TransitionProps} {...{timeout: 100}}>
                             <Paper elevation={8}>
                                 <ClickAwayListener onClickAway={handleClose}>
                                     <MenuList autoFocusItem={open} id="simple-menu">
                                         <MenuItem onClick={() => toggleHideAllColumns()}>
-                                            <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} onChange={null} />
+                                            <IndeterminateCheckbox
+                                                {...getToggleHideAllColumnsProps()}
+                                                onChange={null}
+                                            />
                                             Show/Hide All
                                         </MenuItem>
                                         {allColumns.map((col) => {
-                                            return col.id != "selection" ? (
+                                            return col.id != 'selection' ? (
                                                 <MenuItem key={col.id} onClick={() => toggleHideColumn(col.id)}>
-                                                    <IndeterminateCheckbox {...col.getToggleHiddenProps()} onChange={null} />
+                                                    <IndeterminateCheckbox
+                                                        {...col.getToggleHiddenProps()}
+                                                        onChange={null}
+                                                    />
                                                     {col.Header}
                                                 </MenuItem>
                                             ) : null;
@@ -342,21 +358,25 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                             {headerGroup.headers.map((column) => (
                                 <TableCell {...column.getHeaderProps()} component="div">
                                     <div {...column.getSortByToggleProps()} className="header-wrapper">
-                                        <div className={column.id != "selection" ? "col-header" : ""}>
-                                            {column.render("Header")}
+                                        <div className={column.id != 'selection' ? 'col-header' : ''}>
+                                            {column.render('Header')}
                                         </div>
-                                        {column.isSorted
-                                            ? column.isSortedDesc
-                                                ? <ArrowDownwardIcon fontSize="small" />
-                                                : <ArrowUpwardIcon fontSize="small" />
-                                            : ''}
+                                        {column.isSorted ? (
+                                            column.isSortedDesc ? (
+                                                <ArrowDownwardIcon fontSize="small" />
+                                            ) : (
+                                                <ArrowUpwardIcon fontSize="small" />
+                                            )
+                                        ) : (
+                                            ''
+                                        )}
                                     </div>
                                     {column.canFilter ? column.render('Filter') : null}
                                     <div
                                         {...(column.canResize ? column.getResizerProps() : [])}
-                                        className={`resizer ${column.isResizing ? "isResizing" : ""}`}
+                                        className={`resizer ${column.isResizing ? 'isResizing' : ''}`}
                                         onDoubleClick={() => {
-                                            if (column.id != "selection") {
+                                            if (column.id != 'selection') {
                                                 let max = 0;
 
                                                 const context = document.getElementById('canvas').getContext('2d');
@@ -370,7 +390,7 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                                                 dispatch({
                                                     type: 'autoColSize',
                                                     col: column.id,
-                                                    val: Math.max(max, getTextWidth(column.Header, context)) + 48
+                                                    val: Math.max(max, getTextWidth(column.Header, context)) + 48,
                                                 });
                                             }
                                         }}
@@ -397,9 +417,11 @@ function Table({ dataRaw, update, extstate, extmodel, reset }) {
                 </TableBody>
             </MaUTable>
             <TableFooter component="div">
-                {selectedFlatRows.length > 0 &&
-                    <span>{selectedFlatRows.length} row{selectedFlatRows.length > 1 ? 's' : ''} selected</span>
-                }
+                {selectedFlatRows.length > 0 && (
+                    <span>
+                        {selectedFlatRows.length} row{selectedFlatRows.length > 1 ? 's' : ''} selected
+                    </span>
+                )}
                 <span style={{float: 'right'}}>Total Rows: {rows.length}</span>
             </TableFooter>
         </React.Fragment>

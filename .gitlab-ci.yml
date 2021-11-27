@@ -1,6 +1,6 @@
 image: ubuntu:latest
 
-stages:      
+stages:
     - build
     - release
 

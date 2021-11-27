@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, TextField, Slider, Input, Typography, Grid } from '@material-ui/core';
+import {Button, TextField, Slider, Input, Typography, Grid} from '@material-ui/core';
 import ToysIcon from '@material-ui/icons/Toys';
 
 export class FanTab extends React.Component {
@@ -42,32 +42,55 @@ export class FanTab extends React.Component {
                 <Typography gutterBottom>Fan Speed</Typography>
                 <Grid container spacing={2} alignItems="center">
                     <Grid item>
-                        <ToysIcon/>
+                        <ToysIcon />
                     </Grid>
                     <Grid item>
-                        <Slider value={typeof this.state.speed === 'number' ? this.state.speed : 1} min={1}
-                            onChange={this.handleSlider} style={{width: '250px'}} disabled={this.props.disabled}
+                        <Slider
+                            value={typeof this.state.speed === 'number' ? this.state.speed : 1}
+                            min={1}
+                            onChange={this.handleSlider}
+                            style={{width: '250px'}}
+                            disabled={this.props.disabled}
                         />
                     </Grid>
                     <Grid item>
-                        <Input value={this.state.speed} margin="dense" onChange={this.handleInputChange} onBlur={this.handleInputBlur} onKeyPress= {(e) => {
-                    if (e.key === 'Enter') {
-                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                    }
-                }}
-                            inputProps={{step: 10, min: 1, max: 100, type: 'number'}} disabled={this.props.disabled}
+                        <Input
+                            value={this.state.speed}
+                            margin="dense"
+                            onChange={this.handleInputChange}
+                            onBlur={this.handleInputBlur}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                    this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                                }
+                            }}
+                            inputProps={{step: 10, min: 1, max: 100, type: 'number'}}
+                            disabled={this.props.disabled}
                         />
                     </Grid>
                 </Grid>
-                <TextField value={this.state.password || ''} variant="outlined" label="Password" type="password" onChange={this.updatePassword} margin="dense" onKeyPress= {(e) => {
-                    if (e.key === 'Enter') {
+                <TextField
+                    value={this.state.password || ''}
+                    variant="outlined"
+                    label="Password"
+                    type="password"
+                    onChange={this.updatePassword}
+                    margin="dense"
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                        }
+                    }}
+                />
+                <Button
+                    onClick={() => {
                         this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                    }}
+                    variant="contained"
+                    color="primary"
+                    disabled={
+                        !this.state.speed || !this.state.password || !this.props.selected.length || this.props.disabled
                     }
-                }}/>
-                <Button onClick={() => {
-                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                    }} variant="contained" color="primary"
-                    disabled={!this.state.speed || !this.state.password || !this.props.selected.length || this.props.disabled}
                 >
                     Apply
                 </Button>
