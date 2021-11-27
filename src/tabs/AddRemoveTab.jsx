@@ -30,17 +30,19 @@ export class AddRemoveTab extends React.Component {
                         let body = JSON.parse(data.body);
 
                         fs.mkdir(arg.filePaths[0] + `/${ip}`, {recursive: true}, (err) => console.log(err));
-                        for (let key of Object.keys(body)) {
-                            if (body[key]) {
-                                fs.writeFile(arg.filePaths[0] + `/${ip}/${ip}_${key}.log`, body[key], function (err) {
+                        for (let tuple of body) {
+                            fs.writeFile(
+                                arg.filePaths[0] + `/${ip}/${ip}_${tuple[0].secs_since_epoch}.log`,
+                                tuple[1],
+                                function (err) {
                                     if (err) {
                                         throw err;
                                     }
-                                });
-                            }
+                                }
+                            );
                         }
 
-                        this.props.notify('success', `Logs written to  ${arg.filePaths[0]}`);
+                        this.props.notify('success', `${ip}: Logs written to  ${arg.filePaths[0]}`);
                     }
                 }
             })

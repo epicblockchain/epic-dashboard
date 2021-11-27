@@ -563,9 +563,13 @@ class App extends React.Component {
             case '/power':
                 obj = {param: data.power, password: data.password};
                 break;
+            case '/test':
+                obj = {param: {test: data.test, miner_type: data.type}, password: data.password};
+                msg = `Running debug test: ${data.test}`;
+                break;
         }
 
-        let slow_api = api == '/coin' || api == '/miner' || api == '/mode'; //sends response after completed
+        let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test'; //sends response after completed
         let soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
 
         for (let i of selected) {
@@ -573,22 +577,24 @@ class App extends React.Component {
                 try {
                     if (slow_api) {
                         notify('info', `${miners[i].address}: ${msg}`, {
-                            autoClose: 60000,
+                            autoClose: api === '/test' ? (data.test !== 'Ft4' ? 220000 : 1000000) : 60000,
                             hideProgressBar: false,
                             pauseOnHover: false,
                             toastId: i,
                         });
 
-                        let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
-                        var temp = Array.from(this.state.miner_data);
-                        temp[ind].sum = 'reboot';
-                        temp[ind].timer = 10; //10 * 6sec = 1min
-                        this.setState({miner_data: temp});
+                        if (api !== '/test') {
+                            let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
+                            var temp = Array.from(this.state.miner_data);
+                            temp[ind].sum = 'reboot';
+                            temp[ind].timer = 10; //10 * 6sec = 1min
+                            this.setState({miner_data: temp});
+                        }
                     }
 
                     const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
                         json: obj,
-                        timeout: slow_api ? 60000 : 5000,
+                        timeout: slow_api ? (api === '/test' ? (data.test !== 'Ft4' ? 220000 : 1000000) : 60000) : 5000,
                         responseType: 'json',
                     });
 

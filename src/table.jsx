@@ -14,6 +14,7 @@ import {RecalibrateTab} from './tabs/RecalibrateTab.jsx';
 import {CmdTab} from './tabs/CmdTab.jsx';
 import {FanTab} from './tabs/FanTab.jsx';
 import {PowerTab} from './tabs/PowerTab.jsx';
+import {DebugTab} from './tabs/DebugTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
@@ -267,12 +268,18 @@ export class DataTable extends React.Component {
         var selected = this.state[this.state.models[this.state.list] + '_sel'] || [];
 
         var capApi = true;
+        var eng_rig = true;
         for (let i of selected) {
             if (!this.props.data[i]) {
                 selected = selected.filter((x) => x != i);
             } else if (!this.props.data[i].cap) {
                 capApi = false;
+                eng_rig = false;
                 break;
+            } else {
+                if (this.props.data[i].cap.Model != 'ENG_RIG') {
+                    eng_rig = false;
+                }
             }
         }
 
@@ -333,6 +340,7 @@ export class DataTable extends React.Component {
                         <Tab label="Recalibrate" />
                         <Tab label="Fans" disabled={!capApi} />
                         <Tab label="Power" />
+                        {this.state.models[this.state.list] == 'ENG_RIG' && <Tab label="Debug" />}
                     </Tabs>
                     <div hidden={this.state.tab != 0}>
                         <AddRemoveTab
@@ -451,6 +459,15 @@ export class DataTable extends React.Component {
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 14}>
+                        <DebugTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            notify={this.props.notify}
+                            data={this.props.data}
+                            disabled={!eng_rig}
                         />
                     </div>
                 </div>
