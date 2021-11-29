@@ -25,7 +25,10 @@ const createWindow = () => {
             enableRemoteModule: true,
         },
     });
-
+    // scrolls log file to bottom of page
+    mainWindow.webContents.on('did-create-window', (childWindow) => {
+        childWindow.webContents.executeJavaScript('window.scrollTo(0, document.body.scrollHeight)');
+    });
     // and load the index.html of the app.
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
     // Hide menu bar

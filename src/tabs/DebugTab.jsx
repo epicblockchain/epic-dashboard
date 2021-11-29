@@ -93,7 +93,7 @@ export class DebugTab extends React.Component {
                     onClick={() => {
                         for (const i of this.props.selected) {
                             let ip = this.props.data[i].ip;
-                            window.open(`http://${ip}/FT3.log`, `FT3 Log for ${ip}`);
+                            window.open(`http://${ip}/FT3.log`);
                         }
                     }}
                     variant="contained"
@@ -114,7 +114,7 @@ export class DebugTab extends React.Component {
                     onClick={() => {
                         for (const i of this.props.selected) {
                             let ip = this.props.data[i].ip;
-                            window.open(`http://${ip}/FT4.log`, `FT4 Log for ${ip}`);
+                            window.open(`http://${ip}/FT4.log`);
                         }
                     }}
                     variant="contained"
