@@ -49,7 +49,24 @@ export class DebugTab extends React.Component {
     }
 
     render() {
-        let options = ['Ft3Seq', 'Ft3', 'Ft4'];
+        let options = null;
+
+        for (const selected of this.props.selected) {
+            if (this.props.data[selected].cap && this.props.data[selected].cap.TestModes) {
+                if (!options) {
+                    options = this.props.data[selected].cap.TestModes;
+                    continue;
+                }
+                for (const option of options) {
+                    if (!this.props.data[selected].cap.TestModes.includes(option)) {
+                        options.splice(options.indexOf(option), 1);
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        if (!options) options = ['Select miners'];
         let types = ['Sphinx', 'Ra'];
 
         return (
