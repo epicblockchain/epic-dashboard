@@ -1,13 +1,13 @@
-const { dialog } = require('@electron/remote');
+const {dialog} = require('@electron/remote');
 const got = require('got');
 const fs = require('fs');
 import * as React from 'react';
-import { Button, FormControl, InputLabel, Select } from '@material-ui/core';
+import {Button, FormControl, InputLabel, Select} from '@material-ui/core';
 
 export class DebugTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { test: 'Ft3Seq', type: 'Sphinx', password: 'welcome' };
+        this.state = {test: '', type: 'Sphinx', password: 'welcome'};
 
         this.updateTest = this.updateTest.bind(this);
         this.updateType = this.updateType.bind(this);
@@ -15,11 +15,11 @@ export class DebugTab extends React.Component {
     }
 
     updateTest(e) {
-        this.setState({ test: e.target.value });
+        this.setState({test: e.target.value});
     }
 
     updateType(e) {
-        this.setState({ type: e.target.value });
+        this.setState({type: e.target.value});
     }
 
     saveLogs(test) {
@@ -55,6 +55,7 @@ export class DebugTab extends React.Component {
             if (this.props.data[selected].cap && this.props.data[selected].cap.TestModes) {
                 if (!options) {
                     options = this.props.data[selected].cap.TestModes;
+                    if (this.state.test == '') this.setState({test: options[0]});
                     continue;
                 }
                 for (const option of options) {
@@ -70,7 +71,7 @@ export class DebugTab extends React.Component {
         let types = ['Sphinx', 'Ra'];
 
         return (
-            <div style={{ padding: '12px 0' }}>
+            <div style={{padding: '12px 0'}}>
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="test">Test</InputLabel>
                     <Select native id="test" label="Test" value={this.state.test} onChange={this.updateTest}>

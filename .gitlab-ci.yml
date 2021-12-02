@@ -14,11 +14,10 @@ stages:
         - dpkg --add-architecture i386
         - apt update
         - apt install -y wine32
-        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
         - export NVM_DIR="$HOME/.nvm"
         - \. "$NVM_DIR/nvm.sh"
         - nvm install 16
-        - npm i -g --unsafe-perm @electron-forge/cli
         - npm i --unsafe-perm
         - export VERSION=$(node -p "require('./package.json').version")
         - echo "VERSION=$(node -p "require('./package.json').version")" >> variables.env
