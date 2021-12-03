@@ -16,13 +16,51 @@ body {
     margin: 0 8px !important;
 }
 
-#menu-but {
-    position: fixed;
+.main {
+    margin-left: 57px;
+    width: calc(100% - 57px);
+    transition: ease 0.25s !important;
+}
+
+.mainShift {
+    margin-left: 214px;
+    width: calc(100% - 214px);
+}
+
+.drawer {
+    width: 214px;
+    white-space: nowrap;
+    transition: ease 0.25s !important;
+}
+
+.drawerClose {
+    width: 57px;
+    overflow-x: hidden;
+}
+
+.logo {
+    opacity: 0;
+    height: 48px;
+    transition: 0.25s;
+}
+
+.logoOpen {
+    height: 105px;
+    opacity: 1;
+}
+
+.menuBut {
+    position: fixed !important;
     top: 8px;
-    left: 8px;
-    z-index: 10;
-    padding: 4px;
-    min-width: 0;
+    left: 12px;
+    z-index: 2000 !important;
+    padding: 4px !important;
+    min-width: 0 !important;
+    transition: 0.25s !important;
+}
+
+.menuButOpen {
+    left: 222px;
 }
 
 div.MuiDrawer-paper {
@@ -44,5 +82,5 @@ div.MuiDrawer-paper {
 
 .MuiDrawer-paper .MuiListItemText-root {
     color: white;
-    margin-left: 4px;
+    margin-left: 16px;
 }

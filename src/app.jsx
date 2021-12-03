@@ -34,7 +34,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import MenuIcon from '@material-ui/icons/Menu';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import './app.css';
 import logo from './img/EpicLogo.png';
@@ -629,39 +629,41 @@ class App extends React.Component {
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
                 <CssBaseline />
-                <Button onClick={() => this.toggleDrawer(true)} variant="contained" color="primary" id="menu-but">
-                    <MenuOpenIcon color="secondary" />
+                <Button onClick={() => this.toggleDrawer(!this.state.drawerOpen)} variant="contained" color="primary" className={this.state.drawerOpen ? "menuBut menuButOpen" : "menuBut"}>
+                    <MenuIcon color="secondary" />
                 </Button>
-                <Drawer open={this.state.drawerOpen} onClose={() => this.toggleDrawer(false)}>
-                    <div onClick={() => this.toggleDrawer(false)}>
-                        <List>
-                            <ListItem>
-                                <img src={logo} />
-                            </ListItem>
-                            <Divider variant="middle" light />
-                            <ListItem button onClick={() => this.toggleTheme()}>
-                                <InvertColorsIcon />
-                                <ListItemText primary="Toggle Theme" />
-                            </ListItem>
-                            <Divider variant="middle" />
-                            <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
-                                <AssessmentIcon />
-                                <ListItemText primary="Dashboard" />
-                            </ListItem>
-                            <ListItem button key="Table" onClick={() => this.setPage('table')}>
-                                <ListAltIcon />
-                                <ListItemText primary="Table" />
-                            </ListItem>
-                            <ListItem button key="Password" onClick={() => this.setState({modal2: true})}>
-                                <VpnKeyIcon />
-                                <ListItemText primary="Session Password" />
-                            </ListItem>
-                            <ListItem button key="Support" onClick={() => this.setPage('support')}>
-                                <ContactSupportIcon />
-                                <ListItemText primary="Support" />
-                            </ListItem>
-                        </List>
-                    </div>
+                <Drawer
+                    variant="permanent"
+                    className={this.state.drawerOpen ? 'drawer' : 'drawer drawerClose'}
+                    classes={{paper: this.state.drawerOpen ? 'drawer' : 'drawer drawerClose'}}
+                >
+                    <List>
+                        <ListItem className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'}>
+                            <img src={logo} />
+                        </ListItem>
+                        <Divider variant="middle" light />
+                        <ListItem button onClick={() => this.toggleTheme()}>
+                            <InvertColorsIcon />
+                            <ListItemText primary="Toggle Theme" />
+                        </ListItem>
+                        <Divider variant="middle" />
+                        <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
+                            <AssessmentIcon />
+                            <ListItemText primary="Dashboard" />
+                        </ListItem>
+                        <ListItem button key="Table" onClick={() => this.setPage('table')}>
+                            <ListAltIcon />
+                            <ListItemText primary="Table" />
+                        </ListItem>
+                        <ListItem button key="Password" onClick={() => this.setState({modal2: true})}>
+                            <VpnKeyIcon />
+                            <ListItemText primary="Session Password" />
+                        </ListItem>
+                        <ListItem button key="Support" onClick={() => this.setPage('support')}>
+                            <ContactSupportIcon />
+                            <ListItemText primary="Support" />
+                        </ListItem>
+                    </List>
                 </Drawer>
                 <Dialog open={this.state.modal} onClose={() => this.toggleModal(false)}>
                     <DialogTitle>No Miners found</DialogTitle>
@@ -731,23 +733,25 @@ class App extends React.Component {
                     rtl={false}
                     pauseOnFocusLoss={false}
                 />
-                {this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme} />}
-                {this.state.page == 'table' && (
-                    <DataTable
-                        data={this.state.miner_data}
-                        models={this.state.models}
-                        sessionPass={this.state.sessionPass}
-                        addMiner={this.addMiner}
-                        delMiner={this.delMiner}
-                        blacklist={this.blacklist}
-                        saveMiners={this.saveMiners}
-                        loadMiners={this.loadMiners}
-                        notify={notify}
-                        handleApi={this.handleApi}
-                        handleFormApi={this.handleFormApi}
-                    />
-                )}
-                {this.state.page == 'support' && <Support data={this.state} setPage={this.setPage} />}
+                <div className={this.state.drawerOpen ? 'main mainShift' : 'main'}>
+                    {this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme} />}
+                    {this.state.page == 'table' && (
+                        <DataTable
+                            data={this.state.miner_data}
+                            models={this.state.models}
+                            sessionPass={this.state.sessionPass}
+                            addMiner={this.addMiner}
+                            delMiner={this.delMiner}
+                            blacklist={this.blacklist}
+                            saveMiners={this.saveMiners}
+                            loadMiners={this.loadMiners}
+                            notify={notify}
+                            handleApi={this.handleApi}
+                            handleFormApi={this.handleFormApi}
+                        />
+                    )}
+                    {this.state.page == 'support' && <Support data={this.state} setPage={this.setPage} />}
+                </div>
             </MuiThemeProvider>
         );
     }
