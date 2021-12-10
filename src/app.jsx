@@ -753,6 +753,7 @@ class App extends React.Component {
                             notify={notify}
                             handleApi={this.handleApi}
                             handleFormApi={this.handleFormApi}
+                            drawerOpen={this.state.drawerOpen}
                         />
                     )}
                     {this.state.page == 'support' && <Support data={this.state} setPage={this.setPage} />}

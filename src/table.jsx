@@ -312,6 +312,7 @@ export class DataTable extends React.Component {
                                     update={this.update}
                                     extmodel={model}
                                     reset={this.state.reset}
+                                    drawerOpen={this.props.drawerOpen}
                                 />
                             </Paper>
                         ) : null;
