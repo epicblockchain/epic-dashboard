@@ -629,7 +629,12 @@ class App extends React.Component {
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
                 <CssBaseline />
-                <Button onClick={() => this.toggleDrawer(!this.state.drawerOpen)} variant="contained" color="primary" className={this.state.drawerOpen ? "menuBut menuButOpen" : "menuBut"}>
+                <Button
+                    onClick={() => this.toggleDrawer(!this.state.drawerOpen)}
+                    variant="contained"
+                    color="primary"
+                    className={this.state.drawerOpen ? 'menuBut menuButOpen' : 'menuBut'}
+                >
                     <MenuIcon color="secondary" />
                 </Button>
                 <Drawer
