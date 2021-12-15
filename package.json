@@ -99,6 +99,7 @@
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^8.3.0",
         "form-data": "^4.0.0",
+        "geoip-lite": "^1.4.2",
         "got": "^11.8.2",
         "node-dns-sd": "^0.4.2",
         "node-loader": "^1.0.3",
