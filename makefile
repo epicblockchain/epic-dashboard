@@ -6,7 +6,7 @@ all: ## run the package and make for all platformas and architectures... require
 	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="ia32","x64"
 	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-deb" --platform="linux" --arch="ia32","x64","arm64","armv7l"
 	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-rpm" --platform="linux" --arch="ia32","x64"
-	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-zip" --platform="darwin" --arch="x64,arm64"
+	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-zip" --platform="darwin" --arch="x64","arm64"
 
 win64: ## 64 bit windows
 	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-squirrel" --platform="win32" --arch="x64"
@@ -33,7 +33,7 @@ rpm64: ## 64 bit rpm
 	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-rpm" --platform="linux" --arch="x64"
 
 mac: ## mac build
-	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-zip" --platform="darwin" --arch="x64,arm64"
+	node_modules/.bin/electron-forge make --targets="@electron-forge/maker-zip" --platform="darwin" --arch="x64","arm64"
 	
 clean: ## remove all built files
 	rm -rf out/*
