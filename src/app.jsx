@@ -23,10 +23,10 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogContentText,
     DialogActions,
     CssBaseline,
     TextField,
+    Select, FormControl, InputLabel
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {ToastContainer, toast} from 'react-toastify';
@@ -736,19 +736,20 @@ class App extends React.Component {
                             onChange={(e) => this.setScan(e, 'scanIp')}
                             value={this.state.scanIp}
                         />
-                        <TextField
-                            variant="outlined"
-                            margin="dense"
-                            label="IP Range"
-                            onChange={(e) => this.setScan(e, 'scanRange')}
-                            value={this.state.scanRange}
-                        />
+                        <FormControl variant="outlined" margin="dense">
+                            <InputLabel htmlFor="ipRange">IP Range</InputLabel>
+                            <Select native id="ipRange" label="Command" value={this.state.scanRange} onChange={(e) => this.setScan(e, 'scanRange')}>
+                                <option>16</option>
+                                <option>24</option>
+                            </Select>
+                        </FormControl>
                         <TextField
                             variant="outlined"
                             margin="dense"
                             label="Timeout"
                             onChange={(e) => this.setScan(e, 'scanTimeout')}
                             value={this.state.scanTimeout}
+                            style={{width: '100px'}}
                         />
                         <br />
                         IP Range: Use 24 for yourip.yourip.yourip.0-255, and 16 for yourip.yourip.0-255.0-255 Timeout:

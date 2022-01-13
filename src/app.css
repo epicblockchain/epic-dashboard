@@ -84,3 +84,7 @@ div.MuiDrawer-paper {
     color: white;
     margin-left: 16px;
 }
+
+#ipRange {
+    width: 50px;
+}

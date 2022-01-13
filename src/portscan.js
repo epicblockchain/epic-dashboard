@@ -40,9 +40,9 @@ parentPort.on('message', async ({ip, range, timeout}) => {
 
     const ips = [];
 
-    for (let i = 0; i < 256; i++) {
+    for (let i = 0; i < (range === '16' ? 256 : 1); i++) {
         for (let j = 0; j < 256; j++) {
-            ips.push(`${split[0]}.${split[1]}.${i}.${j}`);
+            ips.push(`${split[0]}.${split[1]}.${range === '16' ? i : split[2]}.${j}`);
         }
     }
 
