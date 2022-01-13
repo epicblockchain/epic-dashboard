@@ -1,6 +1,7 @@
 const {app, BrowserWindow, ipcMain, dialog} = require('electron');
 const got = require('got');
 const fs = require('fs');
+const path = require('path');
 const FormData = require('form-data');
 const sha256 = require('sha256-file');
 const {Worker} = require('worker_threads');
@@ -35,7 +36,7 @@ const createWindow = () => {
 
     ipcMain.handle('portscan', (event, ip, range, timeout) => {
         return new Promise((resolve, reject) => {
-            const worker = new Worker('./src/portscan.js');
+            const worker = new Worker(path.resolve(__dirname, 'portscan.js'));
             worker.postMessage({ip: ip, range: range, timeout: timeout});
             worker.on('message', (ips) => {
                 resolve(ips);
