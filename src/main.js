@@ -1,9 +1,9 @@
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, dialog} = require('electron');
 const got = require('got');
 const fs = require('fs');
 const FormData = require('form-data');
 const sha256 = require('sha256-file');
-require('@electron/remote/main').initialize();
+const {Worker} = require('worker_threads');
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -22,7 +22,6 @@ const createWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            enableRemoteModule: true,
         },
     });
     // scrolls log file to bottom of page
@@ -33,6 +32,20 @@ const createWindow = () => {
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
     // Hide menu bar
     mainWindow.setMenuBarVisibility(false);
+
+    ipcMain.handle('portscan', (event, ip, range, timeout) => {
+        return new Promise((resolve, reject) => {
+            const worker = new Worker('./src/portscan.js');
+            worker.postMessage({ip: ip, range: range, timeout: timeout});
+            worker.on('message', (ips) => {
+                resolve(ips);
+            });
+        });
+    });
+
+    ipcMain.handle('dialog-open', (event, properties) => {
+        return dialog.showOpenDialog(properties);
+    });
 
     ipcMain.on('form-post', (event, miners, api, data, selected) => {
         for (const i of selected) {
@@ -67,10 +80,6 @@ const createWindow = () => {
                 }
             })();
         }
-    });
-
-    ipcMain.on('eula-decline', () => {
-        process.exit(1);
     });
 };
 

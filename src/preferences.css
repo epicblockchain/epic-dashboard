@@ -1,0 +1,23 @@
+#preferences {
+    margin: 8px auto;
+}
+
+#preferences .MuiFormControl-root {
+    width: 100%;
+}
+
+#preferences .MuiFormControlLabel-label {
+    position: relative;
+    left: 17px;
+    font-weight: bold;
+}
+
+#preferences .description {
+    position: relative;
+    left: 64px;
+}
+
+#preferences #save {
+    margin-top: 16px;
+    float: right;
+}

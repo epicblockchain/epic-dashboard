@@ -1,4 +1,4 @@
-const {dialog} = require('@electron/remote');
+const {ipcRenderer} = require('electron');
 const fs = require('fs');
 
 import * as React from 'react';
@@ -14,8 +14,8 @@ export class Support extends React.Component {
     }
 
     writeLogs() {
-        dialog
-            .showOpenDialog({
+        ipcRenderer
+            .invoke('dialog-open', {
                 properties: ['openDirectory', 'createDirectory'],
             })
             .then((arg) => {

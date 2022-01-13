@@ -1,4 +1,4 @@
-const {dialog} = require('@electron/remote');
+const {ipcRenderer} = require('electron');
 import * as React from 'react';
 import {Button, TextField, InputAdornment, FormControl, FormControlLabel, Switch} from '@material-ui/core';
 
@@ -19,8 +19,8 @@ export class UpdateTab extends React.Component {
     }
 
     updateFilepath() {
-        dialog
-            .showOpenDialog({
+        ipcRenderer
+            .invoke('dialog-open', {
                 filters: [{name: '.swu files', extensions: ['swu']}],
                 properties: ['openFile'],
             })

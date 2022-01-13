@@ -1,4 +1,4 @@
-const {dialog} = require('@electron/remote');
+const {ipcRenderer} = require('electron');
 const got = require('got');
 const fs = require('fs');
 import * as React from 'react';
@@ -17,8 +17,8 @@ export class AddRemoveTab extends React.Component {
     }
 
     saveLogs(test) {
-        dialog
-            .showOpenDialog({
+        ipcRenderer
+            .invoke('dialog-open', {
                 properties: ['openDirectory', 'createDirectory'],
             })
             .then(async (arg) => {

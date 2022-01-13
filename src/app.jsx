@@ -1,14 +1,15 @@
-const {ipcRenderer, app} = require('electron');
+const {ipcRenderer} = require('electron');
 const got = require('got');
-const mdns = require('node-dns-sd');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const {createLogger, transports} = require('winston');
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Dashboard} from './dashboard.jsx';
 import {DataTable} from './table.jsx';
+import {Preferences} from './preferences.jsx';
 import {Support} from './support.jsx';
 import {Eula} from './eula.jsx';
 
@@ -33,8 +34,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import MenuIcon from '@material-ui/icons/Menu';
+import PermScanWifiIcon from '@material-ui/icons/PermScanWifi';
+import SettingsIcon from '@material-ui/icons/Settings';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import './app.css';
 import logo from './img/EpicLogo.png';
@@ -140,9 +142,10 @@ const dark = createMuiTheme({
     },
 });
 
-var miners = [];
-var blacklist = [];
-var app_path = '';
+const miners = [];
+const blacklist = [];
+let app_path = '';
+const networks = {};
 
 switch (process.platform) {
     case 'darwin':
@@ -164,6 +167,20 @@ const logger = createLogger({
     rejectionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
     exitOnError: false,
 });
+
+const nets = os.networkInterfaces();
+
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+        if (net.family === 'IPv4' && !net.internal) {
+            if (!networks[name]) {
+                networks[name] = [];
+            }
+            networks[name].push(net.address);
+        }
+    }
+}
 
 fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
     if (err) {
@@ -194,20 +211,25 @@ class App extends React.Component {
             page: 'main',
             miner_data: [],
             models: [],
+            portscan: false,
             modal: false,
-            modal2: false,
             eula: false,
             theme: 'light',
+            scanIp: '',
+            scanRange: 16,
+            scanTimeout: 200,
         };
 
         this.setPage = this.setPage.bind(this);
         this.addMiner = this.addMiner.bind(this);
         this.delMiner = this.delMiner.bind(this);
+        this.savePreferences = this.savePreferences.bind(this);
         this.saveMiners = this.saveMiners.bind(this);
         this.loadMiners = this.loadMiners.bind(this);
         this.blacklist = this.blacklist.bind(this);
         this.handleApi = this.handleApi.bind(this);
         this.handleFormApi = this.handleFormApi.bind(this);
+        this.setScan = this.setScan.bind(this);
     }
 
     async summary(init) {
@@ -215,7 +237,7 @@ class App extends React.Component {
         let miner_data = await Promise.all(
             miners.map(async (miner, i) => {
                 try {
-                    const summary = await got(`http://${miner.address}:${miner.service.port}/summary`, {
+                    const summary = await got(`http://${miner.address}:4028/summary`, {
                         timeout: 2000,
                         retry: 0,
                     });
@@ -233,12 +255,12 @@ class App extends React.Component {
                         match.sum == null ||
                         (match && !match.cap)
                     ) {
-                        const history = await got(`http://${miner.address}:${miner.service.port}/history`, {
+                        const history = await got(`http://${miner.address}:4028/history`, {
                             timeout: 2000,
                             retry: 0,
                         });
                         try {
-                            const cap = await got(`http://${miner.address}:${miner.service.port}/capabilities`, {
+                            const cap = await got(`http://${miner.address}:4028/capabilities`, {
                                 timeout: 2000,
                                 retry: 0,
                             });
@@ -282,35 +304,20 @@ class App extends React.Component {
 
                     if (match) {
                         if (match.timer > 0) {
-                            if (match.sum == 'reboot')
-                                return {
-                                    ip: miner.address,
-                                    sum: 'reboot',
-                                    hist: 'reboot',
-                                    cap: match.cap,
-                                    timer: match.timer - 1,
-                                };
-                            else if (match.cap)
-                                return {
-                                    ip: miner.address,
-                                    sum: null,
-                                    hist: null,
-                                    cap: match.cap,
-                                    timer: match.timer - 1,
-                                };
-                            else return {ip: miner.address, sum: null, hist: null, timer: match.timer - 1};
+                            return {
+                                ip: miner.address,
+                                sum: match.sum == 'reboot' ? 'reboot' : null,
+                                hist: match.sum == 'reboot' ? 'reboot' : null,
+                                cap: match.cap ? match.cap : null,
+                                timer: match.timer - 1,
+                            };
                         }
 
-                        if (typeof match.cap === 'object') {
-                            models.add('undefined');
-                            return {ip: miner.address, sum: null, hist: null, timer: 50}; // 5 minutes
-                        } else {
-                            miners.splice(i, 1);
-                            return;
-                        }
+                        models.add('undefined');
+                        return {ip: miner.address, sum: null, hist: null, timer: 0};
                     } else {
                         models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, timer: 50}; // 5 minutes
+                        return {ip: miner.address, sum: null, hist: null, timer: 0};
                     }
                 }
             })
@@ -326,6 +333,28 @@ class App extends React.Component {
         if (a.address > b.address) return 1;
         else if (a.address < b.address) return -1;
         else return 0;
+    }
+
+    async portscan(ip, range, timeout) {
+        notify('info', 'Scanning for miners...', {
+            autoClose: 30000,
+            hideProgressBar: false,
+            pauseOnHover: false,
+            toastId: 'scan',
+        });
+
+        let scan_results = await ipcRenderer.invoke('portscan', ip, range, timeout);
+        scan_results = scan_results.filter((a) => !blacklist.includes(a.name));
+
+        let prev = miners.map((a) => a.address);
+        for (const obj of scan_results) {
+            if (!prev.includes(obj.ip)) {
+                miners.push({address: obj.ip, name: obj.name});
+            }
+        }
+
+        toast.dismiss('scan');
+        notify('success', `Scan complete, ${scan_results.length} miner(s) found.`);
     }
 
     componentDidMount() {
@@ -349,54 +378,39 @@ class App extends React.Component {
             toast.dismiss(i);
         });
 
-        fs.readFile(path.join(app_path, 'eula.txt'), (err, data) => {
+        fs.readFile(path.join(app_path, 'settings.json'), (err, data) => {
             if (err) {
                 this.setState({eula: true});
             } else {
-                this.update(true);
-                this.setState({modal2: true});
-                console.log('mounted');
+                const settings = JSON.parse(data);
+                this.setState(Object.assign(this.state, settings, {scanIp: networks[Object.keys(networks)[0]][0]}));
 
-                setInterval(() => this.update(false), 6000);
-            }
-        });
-    }
-
-    update(init) {
-        mdns.discover({
-            name: '_epicminer._tcp.local',
-            wait: 2,
-        }).then((list) => {
-            list = list.filter((a) => !blacklist.includes(a.fqdn));
-
-            if (init) {
-                if (!list.length) {
+                if (settings.sessionpass) {
                     this.toggleModal(true);
                 }
-                miners = list.sort(this.compare);
-            } else {
-                let prev = miners.map((a) => a.address);
-                for (let miner of list) {
-                    if (!prev.includes(miner.address)) miners.push(miner);
+                if (settings.autoload) {
+                    this.loadMiners();
                 }
-            }
 
-            this.summary(init);
+                this.summary(true);
+                setInterval(() => this.summary(false), 6000);
+            }
         });
     }
 
     eula(bool) {
         if (bool) {
             this.setState({eula: false});
-            fs.writeFile(path.join(app_path, 'eula.txt'), '', function (err) {
+
+            fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
+            fs.writeFile(path.join(app_path, 'settings.json'), '{}', function (err) {
                 if (err) {
                     console.log(err);
                     throw err;
                 }
             });
-            this.update(true);
         } else {
-            ipcRenderer.send('eula-decline');
+            process.exit(1);
         }
     }
 
@@ -408,13 +422,17 @@ class App extends React.Component {
         this.setState({modal: open});
     }
 
+    setScan(e, key) {
+        this.setState({[key]: e.target.value});
+    }
+
     setPage(page) {
         this.setState({page: page});
     }
 
     setSessionPass() {
         notify('success', 'Session password set');
-        this.setState({sessionPass: document.getElementById('sessionPass').value, modal2: false});
+        this.setState({sessionPass: document.getElementById('sessionPass').value, modal: false});
     }
 
     toggleTheme() {
@@ -424,10 +442,10 @@ class App extends React.Component {
     addMiner(ip) {
         let prev = miners.map((a) => a.address);
         if (!prev.includes(ip)) {
-            miners.push({address: ip, service: {port: 4028}});
+            miners.push({address: ip});
 
             var temp = Array.from(this.state.miner_data);
-            temp.push({ip: ip, sum: 'load', hist: 'load', timer: 50});
+            temp.push({ip: ip, sum: 'load', hist: 'load', timer: 0});
 
             var models = Array.from(this.state.models);
             if (!models.includes('undefined')) models.push('undefined');
@@ -450,6 +468,18 @@ class App extends React.Component {
 
         notify('success', 'Successfully removed miners');
         this.setState({miner_data: temp});
+    }
+
+    savePreferences(json) {
+        if (json.theme !== this.state.theme) this.toggleTheme();
+        fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
+        fs.writeFile(path.join(app_path, 'settings.json'), JSON.stringify(json), function (err) {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+            notify('success', 'Preferences saved');
+        });
     }
 
     saveMiners() {
@@ -479,7 +509,7 @@ class App extends React.Component {
             const ips = data.toString().split('\n');
             const prev = miners.map((a) => a.address);
             for (let ip of ips) {
-                if (ip && !prev.includes(ip)) miners.push({address: ip, service: {port: 4028}});
+                if (ip && !prev.includes(ip)) miners.push({address: ip});
             }
 
             notify('success', 'Successfully loaded miners');
@@ -487,11 +517,12 @@ class App extends React.Component {
     }
 
     blacklist(ids) {
+        console.log(ids, miners);
         var temp = Array.from(this.state.miner_data);
         for (let id of ids.sort(function (a, b) {
             return b - a;
         })) {
-            blacklist.push(miners[id].fqdn);
+            blacklist.push(miners[id].name);
             miners.splice(id, 1);
             temp.splice(id, 1);
         }
@@ -592,7 +623,7 @@ class App extends React.Component {
                         }
                     }
 
-                    const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                    const {body} = await got.post(`http://${miners[i].address}:4028${api}`, {
                         json: obj,
                         timeout: slow_api ? (api === '/test' ? (data.test !== 'Ft4' ? 220000 : 1000000) : 60000) : 5000,
                         responseType: 'json',
@@ -646,11 +677,6 @@ class App extends React.Component {
                         <ListItem className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'}>
                             <img src={logo} />
                         </ListItem>
-                        <Divider variant="middle" light />
-                        <ListItem button onClick={() => this.toggleTheme()}>
-                            <InvertColorsIcon />
-                            <ListItemText primary="Toggle Theme" />
-                        </ListItem>
                         <Divider variant="middle" />
                         <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
                             <AssessmentIcon />
@@ -660,9 +686,17 @@ class App extends React.Component {
                             <ListAltIcon />
                             <ListItemText primary="Table" />
                         </ListItem>
-                        <ListItem button key="Password" onClick={() => this.setState({modal2: true})}>
+                        <ListItem button key="Scan for Miners" onClick={() => this.setState({portscan: true})}>
+                            <PermScanWifiIcon />
+                            <ListItemText primary="Scan for Miners" />
+                        </ListItem>
+                        <ListItem button key="Password" onClick={() => this.toggleModal(true)}>
                             <VpnKeyIcon />
                             <ListItemText primary="Session Password" />
+                        </ListItem>
+                        <ListItem button key="Preferences" onClick={() => this.setPage('preferences')}>
+                            <SettingsIcon />
+                            <ListItemText primary="Preferences" />
                         </ListItem>
                         <ListItem button key="Support" onClick={() => this.setPage('support')}>
                             <ContactSupportIcon />
@@ -671,28 +705,6 @@ class App extends React.Component {
                     </List>
                 </Drawer>
                 <Dialog open={this.state.modal} onClose={() => this.toggleModal(false)}>
-                    <DialogTitle>No Miners found</DialogTitle>
-                    <DialogContent>
-                        If you are connecting over a VPN, this software will not detect your miners. You must manually
-                        add miners by IP in the Miner List tab.
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() => {
-                                this.toggleModal(false);
-                                this.setPage('table');
-                            }}
-                            color="primary"
-                            variant="contained"
-                        >
-                            Navigate to List
-                        </Button>
-                        <Button onClick={() => this.toggleModal(false)} color="primary" variant="outlined">
-                            Dismiss
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog open={this.state.modal2} onClose={() => this.setState({modal2: false})}>
                     <DialogTitle>Set Session Password</DialogTitle>
                     <DialogContent>
                         Add a session password to be used by default for all settings:
@@ -709,8 +721,48 @@ class App extends React.Component {
                         <Button onClick={() => this.setSessionPass()} color="primary" variant="contained">
                             Set Password
                         </Button>
-                        <Button onClick={() => this.setState({modal2: false})} color="primary" variant="outlined">
+                        <Button onClick={() => this.toggleModal(false)} color="primary" variant="outlined">
                             Skip
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={this.state.portscan} onClose={() => this.setState({portscan: false})}>
+                    <DialogTitle>Scan network for miners</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            variant="outlined"
+                            margin="dense"
+                            label="IP Address"
+                            onChange={(e) => this.setScan(e, 'scanIp')}
+                            value={this.state.scanIp}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="dense"
+                            label="IP Range"
+                            onChange={(e) => this.setScan(e, 'scanRange')}
+                            value={this.state.scanRange}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="dense"
+                            label="Timeout"
+                            onChange={(e) => this.setScan(e, 'scanTimeout')}
+                            value={this.state.scanTimeout}
+                        />
+                        <br />
+                        IP Range: Use 24 for yourip.yourip.yourip.0-255, and 16 for yourip.yourip.0-255.0-255 Timeout:
+                        If no miners are found, try increasing the timeout
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() =>
+                                this.portscan(this.state.scanIp, this.state.scanRange, this.state.scanTimeout)
+                            }
+                            color="primary"
+                            variant="contained"
+                        >
+                            Scan
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -740,7 +792,7 @@ class App extends React.Component {
                 />
                 <div className={this.state.drawerOpen ? 'main mainShift' : 'main'}>
                     {this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme} />}
-                    {this.state.page == 'table' && (
+                    <div hidden={this.state.page !== 'table'}>
                         <DataTable
                             data={this.state.miner_data}
                             models={this.state.models}
@@ -754,6 +806,16 @@ class App extends React.Component {
                             handleApi={this.handleApi}
                             handleFormApi={this.handleFormApi}
                             drawerOpen={this.state.drawerOpen}
+                        />
+                    </div>
+                    {this.state.page == 'preferences' && (
+                        <Preferences
+                            settings={{
+                                sessionpass: this.state.sessionpass,
+                                autoload: this.state.autoload,
+                                theme: this.state.theme,
+                            }}
+                            savePreferences={this.savePreferences}
                         />
                     )}
                     {this.state.page == 'support' && <Support data={this.state} setPage={this.setPage} />}
