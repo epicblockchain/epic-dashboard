@@ -26,7 +26,9 @@ import {
     DialogActions,
     CssBaseline,
     TextField,
-    Select, FormControl, InputLabel
+    Select,
+    FormControl,
+    InputLabel,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {ToastContainer, toast} from 'react-toastify';
@@ -216,8 +218,8 @@ class App extends React.Component {
             eula: false,
             theme: 'light',
             scanIp: '',
-            scanRange: 16,
-            scanTimeout: 200,
+            scanRange: '16',
+            scanTimeout: '200',
         };
 
         this.setPage = this.setPage.bind(this);
@@ -401,14 +403,7 @@ class App extends React.Component {
     eula(bool) {
         if (bool) {
             this.setState({eula: false});
-
-            fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
-            fs.writeFile(path.join(app_path, 'settings.json'), '{}', function (err) {
-                if (err) {
-                    console.log(err);
-                    throw err;
-                }
-            });
+            this.savePreferences({theme: 'light', sessionpass: true, autoload: false}, false);
         } else {
             process.exit(1);
         }
@@ -470,15 +465,18 @@ class App extends React.Component {
         this.setState({miner_data: temp});
     }
 
-    savePreferences(json) {
+    savePreferences(json, notif) {
         if (json.theme !== this.state.theme) this.toggleTheme();
+        if (json.sessionpass !== this.state.sessionpass) this.setState({sessionpass: json.sessionpass});
+        if (json.autoload !== this.state.autoload) this.setState({autoload: json.autoload});
+
         fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
         fs.writeFile(path.join(app_path, 'settings.json'), JSON.stringify(json), function (err) {
             if (err) {
                 console.log(err);
                 throw err;
             }
-            notify('success', 'Preferences saved');
+            if (notif) notify('success', 'Preferences saved');
         });
     }
 
@@ -738,7 +736,13 @@ class App extends React.Component {
                         />
                         <FormControl variant="outlined" margin="dense">
                             <InputLabel htmlFor="ipRange">IP Range</InputLabel>
-                            <Select native id="ipRange" label="Command" value={this.state.scanRange} onChange={(e) => this.setScan(e, 'scanRange')}>
+                            <Select
+                                native
+                                id="ipRange"
+                                label="Command"
+                                value={this.state.scanRange}
+                                onChange={(e) => this.setScan(e, 'scanRange')}
+                            >
                                 <option>16</option>
                                 <option>24</option>
                             </Select>

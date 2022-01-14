@@ -64,7 +64,7 @@ export class Preferences extends React.Component {
                     </Typography>
                 </FormControl>
                 <Button
-                    onClick={() => this.props.savePreferences(this.state)}
+                    onClick={() => this.props.savePreferences(this.state, true)}
                     variant="contained"
                     color="primary"
                     id="save"

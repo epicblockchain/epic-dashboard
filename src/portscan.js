@@ -51,7 +51,7 @@ parentPort.on('message', async ({ip, range, timeout}) => {
 
     await Promise.allSettled(workers);
 
-    const finalResults = await Promise.all(
+    let finalResults = await Promise.allSettled(
         results.map((ip) => {
             return new Promise((resolve, reject) => {
                 const options = {
@@ -59,9 +59,6 @@ parentPort.on('message', async ({ip, range, timeout}) => {
                     port: 4028,
                     path: '/summary',
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     timeout: gtimeout + 300,
                 };
                 http.get(options, (res) => {
@@ -71,13 +68,25 @@ parentPort.on('message', async ({ip, range, timeout}) => {
                         body += chunk;
                     });
                     res.on('end', () => {
-                        resolve({ip: ip, name: JSON.parse(body).Hostname});
+                        try {
+                            resolve({ip: ip, name: JSON.parse(body).Hostname});
+                        } catch (err) {
+                            reject(err);
+                        }
                     });
+                }).on('error', (err) => {
+                    reject(err);
                 });
             });
         })
     );
 
     console.log(`Portscan done. Took ${Date.now() - start}ms`);
+    finalResults = finalResults.reduce((filtered, result) => {
+        if (result.status === 'fulfilled') {
+            filtered.push(result.value);
+        }
+        return filtered;
+    }, []);
     parentPort.postMessage(finalResults);
 });
