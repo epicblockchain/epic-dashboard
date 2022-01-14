@@ -44,6 +44,8 @@ const createWindow = () => {
         });
     });
 
+    ipcMain.handle('version', () => app.getVersion());
+
     ipcMain.handle('dialog-open', (event, properties) => {
         return dialog.showOpenDialog(properties);
     });

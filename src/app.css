@@ -31,11 +31,11 @@ body {
     width: 214px;
     white-space: nowrap;
     transition: ease 0.25s !important;
+    overflow-x: hidden;
 }
 
 .drawerClose {
     width: 57px;
-    overflow-x: hidden;
 }
 
 .logo {
@@ -47,6 +47,13 @@ body {
 .logoOpen {
     height: 105px;
     opacity: 1;
+}
+
+#version {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    height: initial;
 }
 
 .menuBut {

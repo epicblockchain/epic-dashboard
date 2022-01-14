@@ -147,6 +147,7 @@ const dark = createMuiTheme({
 const miners = [];
 const blacklist = [];
 let app_path = '';
+let version = 'ePIC Dashboard v';
 const networks = {};
 
 switch (process.platform) {
@@ -339,7 +340,7 @@ class App extends React.Component {
 
     async portscan(ip, range, timeout) {
         notify('info', 'Scanning for miners...', {
-            autoClose: 30000,
+            autoClose: range === '16' ? 30000 + parseInt(timeout) : 2000 + parseInt(timeout),
             hideProgressBar: false,
             pauseOnHover: false,
             toastId: 'scan',
@@ -359,7 +360,7 @@ class App extends React.Component {
         notify('success', `Scan complete, ${scan_results.length} miner(s) found.`);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
             notify(sev, text, {
                 autoClose: 600000, //10 min
@@ -379,6 +380,8 @@ class App extends React.Component {
             notify(sev, text);
             toast.dismiss(i);
         });
+
+        version += await ipcRenderer.invoke('version');
 
         fs.readFile(path.join(app_path, 'settings.json'), (err, data) => {
             if (err) {
@@ -701,6 +704,9 @@ class App extends React.Component {
                             <ListItemText primary="Support" />
                         </ListItem>
                     </List>
+                    <div id="version" className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'}>
+                        {version}
+                    </div>
                 </Drawer>
                 <Dialog open={this.state.modal} onClose={() => this.toggleModal(false)}>
                     <DialogTitle>Set Session Password</DialogTitle>
