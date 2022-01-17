@@ -233,6 +233,7 @@ class App extends React.Component {
         this.handleApi = this.handleApi.bind(this);
         this.handleFormApi = this.handleFormApi.bind(this);
         this.setScan = this.setScan.bind(this);
+        this.clearUndefined = this.clearUndefined.bind(this);
     }
 
     async summary(init) {
@@ -465,6 +466,19 @@ class App extends React.Component {
         }
 
         notify('success', 'Successfully removed miners');
+        this.setState({miner_data: temp});
+    }
+
+    clearUndefined() {
+        var temp = Array.from(this.state.miner_data);
+        temp.forEach((miner, i) => {
+            if (!miner.sum && !miner.timer) {
+                miners.splice(i, 1);
+                temp.splice(i, 1);
+            }
+        });
+
+        notify('success', 'Successfully cleared miners');
         this.setState({miner_data: temp});
     }
 
@@ -762,8 +776,9 @@ class App extends React.Component {
                             style={{width: '100px'}}
                         />
                         <br />
-                        IP Range: Use 24 for yourip.yourip.yourip.0-255, and 16 for yourip.yourip.0-255.0-255 Timeout:
-                        If no miners are found, try increasing the timeout
+                        IP Range: Use 24 for yourip.yourip.yourip.0-255, and 16 for yourip.yourip.0-255.0-255
+                        <br />
+                        Timeout: If no miners are found, try increasing the timeout
                     </DialogContent>
                     <DialogActions>
                         <Button
@@ -817,6 +832,7 @@ class App extends React.Component {
                             handleApi={this.handleApi}
                             handleFormApi={this.handleFormApi}
                             drawerOpen={this.state.drawerOpen}
+                            clear={this.clearUndefined}
                         />
                     </div>
                     {this.state.page == 'preferences' && (

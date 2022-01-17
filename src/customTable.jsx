@@ -21,6 +21,7 @@ import ViewWeekIcon from '@material-ui/icons/ViewWeek';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 
 import {
     useTable,
@@ -71,7 +72,7 @@ function hashrateSort(a, b, c, d) {
     }
 }
 
-function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen}) {
+function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear}) {
     const DefaultColumnFilter = React.useCallback(({column: {filterValue, preFilteredRows, setFilter}}) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const handleClick = (event) => {
@@ -314,6 +315,11 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen}) {
                 >
                     Columns
                 </Button>
+                {clear && (
+                    <Button startIcon={<DeleteSweepIcon />} color="primary" size="small" onClick={() => clear()}>
+                        Clear Miners
+                    </Button>
+                )}
                 <Popper
                     open={open}
                     anchorEl={anchorRef.current}
