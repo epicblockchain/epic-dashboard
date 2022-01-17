@@ -29,6 +29,7 @@ import {
     Select,
     FormControl,
     InputLabel,
+    Typography,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {ToastContainer, toast} from 'react-toastify';
@@ -672,6 +673,8 @@ class App extends React.Component {
     }
 
     render() {
+        const split = this.state.scanIp.split('.');
+
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
                 <CssBaseline />
@@ -750,7 +753,7 @@ class App extends React.Component {
                         <TextField
                             variant="outlined"
                             margin="dense"
-                            label="IP Address"
+                            label="IP Search Range"
                             onChange={(e) => this.setScan(e, 'scanIp')}
                             value={this.state.scanIp}
                         />
@@ -770,15 +773,22 @@ class App extends React.Component {
                         <TextField
                             variant="outlined"
                             margin="dense"
-                            label="Timeout"
+                            label="Timeout (ms)"
                             onChange={(e) => this.setScan(e, 'scanTimeout')}
                             value={this.state.scanTimeout}
                             style={{width: '100px'}}
                         />
                         <br />
-                        IP Range: Use 24 for yourip.yourip.yourip.0-255, and 16 for yourip.yourip.0-255.0-255
+                        <Typography display="inline" variant="overline" color="primary">
+                            IP Range:{' '}
+                        </Typography>
+                        24 searches {split[0]}.{split[1]}.{split[2]}.0-255, 16 searches {split[0]}.{split[1]}
+                        .0-255.0-255
                         <br />
-                        Timeout: If no miners are found, try increasing the timeout
+                        <Typography display="inline" variant="overline" color="primary">
+                            Timeout:{' '}
+                        </Typography>
+                        If no miners are found, try increasing the timeout.
                     </DialogContent>
                     <DialogActions>
                         <Button
