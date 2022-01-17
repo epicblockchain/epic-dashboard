@@ -11,7 +11,8 @@
         "publish": "electron-forge publish",
         "prestart": "npm run lint -- --fix",
         "lint": "eslint --ignore-path .gitignore .",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "prepare": "husky install"
     },
     "keywords": [],
     "author": {
@@ -99,6 +100,7 @@
         "eslint-config-prettier": "^8.3.0",
         "form-data": "^4.0.0",
         "got": "^11.8.2",
+        "husky": "^7.0.4",
         "node-loader": "^1.0.3",
         "prettier": "2.4.1",
         "react": "^17.0.2",
