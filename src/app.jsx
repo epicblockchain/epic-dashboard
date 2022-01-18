@@ -30,6 +30,7 @@ import {
     FormControl,
     InputLabel,
     Typography,
+    Tooltip,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {ToastContainer, toast} from 'react-toastify';
@@ -696,30 +697,42 @@ class App extends React.Component {
                             <img src={logo} />
                         </ListItem>
                         <Divider variant="middle" />
-                        <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
-                            <AssessmentIcon />
-                            <ListItemText primary="Dashboard" />
-                        </ListItem>
-                        <ListItem button key="Table" onClick={() => this.setPage('table')}>
-                            <ListAltIcon />
-                            <ListItemText primary="Table" />
-                        </ListItem>
-                        <ListItem button key="Scan for Miners" onClick={() => this.setState({portscan: true})}>
-                            <PermScanWifiIcon />
-                            <ListItemText primary="Scan for Miners" />
-                        </ListItem>
-                        <ListItem button key="Password" onClick={() => this.toggleModal(true)}>
-                            <VpnKeyIcon />
-                            <ListItemText primary="Session Password" />
-                        </ListItem>
-                        <ListItem button key="Preferences" onClick={() => this.setPage('preferences')}>
-                            <SettingsIcon />
-                            <ListItemText primary="Preferences" />
-                        </ListItem>
-                        <ListItem button key="Support" onClick={() => this.setPage('support')}>
-                            <ContactSupportIcon />
-                            <ListItemText primary="Support" />
-                        </ListItem>
+                        <Tooltip title="Dashboard" placement="right" arrow>
+                            <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
+                                <AssessmentIcon />
+                                <ListItemText primary="Dashboard" />
+                            </ListItem>
+                        </Tooltip>
+                        <Tooltip title="Table" placement="right" arrow>
+                            <ListItem button key="Table" onClick={() => this.setPage('table')}>
+                                <ListAltIcon />
+                                <ListItemText primary="Table" />
+                            </ListItem>
+                        </Tooltip>
+                        <Tooltip title="Scan" placement="right" arrow>
+                            <ListItem button key="Scan for Miners" onClick={() => this.setState({portscan: true})}>
+                                <PermScanWifiIcon />
+                                <ListItemText primary="Scan for Miners" />
+                            </ListItem>
+                        </Tooltip>
+                        <Tooltip title="Session Password" placement="right" arrow>
+                            <ListItem button key="Password" onClick={() => this.toggleModal(true)}>
+                                <VpnKeyIcon />
+                                <ListItemText primary="Session Password" />
+                            </ListItem>
+                        </Tooltip>
+                        <Tooltip title="Preferences" placement="right" arrow>
+                            <ListItem button key="Preferences" onClick={() => this.setPage('preferences')}>
+                                <SettingsIcon />
+                                <ListItemText primary="Preferences" />
+                            </ListItem>
+                        </Tooltip>
+                        <Tooltip title="Support" placement="right" arrow>
+                            <ListItem button key="Support" onClick={() => this.setPage('support')}>
+                                <ContactSupportIcon />
+                                <ListItemText primary="Support" />
+                            </ListItem>
+                        </Tooltip>
                     </List>
                     <div id="version" className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'}>
                         {version}
