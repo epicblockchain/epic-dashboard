@@ -62,7 +62,7 @@ const createWindow = () => {
                 try {
                     event.reply('form-post-reply', i, 'info', `${miners[i].address}: Updating in progress`);
 
-                    const {body} = await got.post(`http://${miners[i].address}:${miners[i].service.port}${api}`, {
+                    const {body} = await got.post(`http://${miners[i].address}:4028${api}`, {
                         body: f,
                         responseType: 'json',
                         timeout: 600000, // 60000 was 1 min before
