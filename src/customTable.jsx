@@ -59,7 +59,7 @@ function FilterIcon(props) {
 function hashrateSort(a, b, c, d) {
     let a_split = a.values[c].split(' ');
     let b_split = b.values[c].split(' ');
-    if (a_split[1] === b_split[1]) {
+    if (a_split[1] === b_split[1] && a.values[c] !== 'N/A') {
         if (parseFloat(a_split[0]) > parseFloat(b_split[0])) return 1;
         return -1;
     } else if (a_split[1] === 'TH/s') {
@@ -68,6 +68,9 @@ function hashrateSort(a, b, c, d) {
         if (b_split[1] === 'TH/s') return -1;
         return 1;
     } else if (a_split[1] === 'MH/s') {
+        if (b.values[c] === 'N/A') return 1;
+        return -1;
+    } else if (a.values[c] === 'N/A') {
         return -1;
     }
 }
@@ -130,6 +133,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear}) 
     const data = React.useMemo(() => dataRaw, [dataRaw]);
     const columns = React.useMemo(
         () => [
+            {accessor: 'status', Header: 'Status', width: 110},
             {accessor: 'ip', Header: 'IP', width: 130},
             {accessor: 'name', Header: 'Name', width: 150},
             {accessor: 'firmware', Header: 'Firmware', width: 150},

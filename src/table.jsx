@@ -254,6 +254,7 @@ export class DataTable extends React.Component {
             fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
             cap: a.cap,
             voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
+            status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A')
         }));
 
         var miners = {};

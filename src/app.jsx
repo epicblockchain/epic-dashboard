@@ -634,9 +634,11 @@ class App extends React.Component {
                         if (api !== '/test') {
                             let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
                             var temp = Array.from(this.state.miner_data);
-                            temp[ind].sum = 'reboot';
-                            temp[ind].timer = 10; //10 * 6sec = 1min
-                            this.setState({miner_data: temp});
+                            if (!temp[ind].sum.Status) {
+                                temp[ind].sum = 'reboot';
+                                temp[ind].timer = 10; //10 * 6sec = 1min
+                                this.setState({miner_data: temp});
+                            }
                         }
                     }
 
@@ -654,9 +656,11 @@ class App extends React.Component {
                         if (api == '/reboot' || soft_reboot) {
                             let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
                             var temp = Array.from(this.state.miner_data);
-                            temp[ind].sum = 'reboot';
-                            temp[ind].timer = 10;
-                            this.setState({miner_data: temp});
+                            if (!temp[ind].sum.Status) {
+                                temp[ind].sum = 'reboot';
+                                temp[ind].timer = 10; //10 * 6sec = 1min
+                                this.setState({miner_data: temp});
+                            }
                         }
                     } else {
                         notify('error', `${miners[i].address}: ${body.error}`);
@@ -766,7 +770,7 @@ class App extends React.Component {
                         <TextField
                             variant="outlined"
                             margin="dense"
-                            label="IP Search Range"
+                            label="IP Address Range"
                             onChange={(e) => this.setScan(e, 'scanIp')}
                             value={this.state.scanIp}
                         />
