@@ -234,7 +234,7 @@ export class DataTable extends React.Component {
             id: i,
             ip: a ? a.ip : '', //TODO: figure out why this is was falsey
             name: this.failSafe(a.sum) || a.sum.Hostname,
-            firmware: this.failSafe(a.sum) || a.sum.Software,
+            firmware: this.failSafe(a.sum) || a.sum.Software.split(' ')[1],
             model: this.failSafe(a.cap) || a.cap.Model,
             mode: this.failSafe(a.sum) || a.sum.Preset,
             pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
@@ -249,7 +249,7 @@ export class DataTable extends React.Component {
             accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
             rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
             difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
-            temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs),
+            temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs) + ' \u00b0C',
             power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
             fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
             cap: a.cap,

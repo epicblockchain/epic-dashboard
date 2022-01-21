@@ -557,8 +557,7 @@ class App extends React.Component {
     }
 
     async handleApi(api, data, selected) {
-        var obj;
-        var msg;
+        var obj, msg, success;
         switch (api) {
             case '/coin':
                 obj = {
@@ -571,6 +570,7 @@ class App extends React.Component {
                     password: data.password,
                 };
                 msg = 'Updating coin';
+                success = 'Mining config updated successfully';
                 break;
             case '/pool':
                 obj = {param: data.pool, password: data.password};
@@ -584,37 +584,47 @@ class App extends React.Component {
             case '/mode':
                 obj = {param: data.mode, password: data.password};
                 msg = 'Updating operating mode';
+                success = `Operating mode set to ${data.mode}`;
                 break;
             case '/id':
                 obj = {param: data.checked, password: data.password};
+                success = `${data.checked ? 'Appended' : 'Removed'} unique ID on worker name`;
                 break;
             case '/password':
                 obj = {param: data.pass1, password: data.password};
+                success = 'Changed miner password';
                 break;
             case '/softreboot':
             case '/reboot':
                 obj = {param: data.delay, password: data.password};
+                success = `${api.splice(1)} successful`;
                 break;
             case '/hwconfig':
                 obj = {param: true, password: data.password};
+                success = 'Recalibrate started successfully';
                 break;
             case '/identify':
                 obj = {param: data.checked, password: data.password};
+                success = `LED turned ${data.checked ? 'on' : 'off'}`;
                 break;
             case '/miner':
                 obj = {param: data.cmd, password: data.password};
                 msg = 'Sending command';
+                success = `${data.cmd} sent successfully`;
                 break;
             case '/fanspeed':
                 obj = {param: data.speed.toString(), password: data.password};
+                success = `Fan speed set to ${data.speed}%`;
                 break;
             case '/power':
                 obj = {param: data.power, password: data.password};
+                success = `Target power set to ${data.power}W`;
                 break;
             case '/test':
                 obj = {param: {test: data.test, miner_type: data.type}, password: data.password};
                 msg = `Running debug test: ${data.test}`;
-                break;
+                success = `${data.test} debug test completed`;
+                break
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test'; //sends response after completed
@@ -651,7 +661,7 @@ class App extends React.Component {
                     if (slow_api) toast.dismiss(i);
 
                     if (body.result) {
-                        notify('success', `${miners[i].address}: ${api.slice(1)} successful`);
+                        notify('success', `${miners[i].address}: ${success}`);
 
                         if (api == '/reboot' || soft_reboot) {
                             let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
