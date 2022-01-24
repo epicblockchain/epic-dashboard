@@ -603,7 +603,7 @@ class App extends React.Component {
             case '/softreboot':
             case '/reboot':
                 obj = {param: data.delay, password: data.password};
-                success = `${api.splice(1)} successful`;
+                success = `${api.slice(1)} successful`;
                 break;
             case '/hwconfig':
                 obj = {param: true, password: data.password};
