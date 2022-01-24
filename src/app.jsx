@@ -362,6 +362,20 @@ class App extends React.Component {
         toast.dismiss('scan');
         notify('success', `Scan complete, ${scan_results.length} miner(s) found.`);
     }
+    
+    init(settings) {
+        this.setState(Object.assign(this.state, settings, {scanIp: networks[Object.keys(networks)[0]][0]}));
+
+        if (settings.sessionpass) {
+            this.toggleModal(true);
+        }
+        if (settings.autoload) {
+            this.loadMiners();
+        }
+
+        this.summary(true);
+        setInterval(() => this.summary(false), 6000);
+    }
 
     async componentDidMount() {
         ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
@@ -390,26 +404,18 @@ class App extends React.Component {
             if (err) {
                 this.setState({eula: true});
             } else {
-                const settings = JSON.parse(data);
-                this.setState(Object.assign(this.state, settings, {scanIp: networks[Object.keys(networks)[0]][0]}));
-
-                if (settings.sessionpass) {
-                    this.toggleModal(true);
-                }
-                if (settings.autoload) {
-                    this.loadMiners();
-                }
-
-                this.summary(true);
-                setInterval(() => this.summary(false), 6000);
+                this.init(JSON.parse(data));
             }
         });
     }
 
     eula(bool) {
         if (bool) {
-            this.setState({eula: false});
-            this.savePreferences({theme: 'light', sessionpass: true, autoload: false}, false);
+            const settings = {theme: 'light', sessionpass: true, autoload: false};
+            this.savePreferences(settings, false);
+            this.setState({eula: false}, () => {
+                this.init(settings);
+            });
         } else {
             process.exit(1);
         }
