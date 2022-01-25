@@ -1,16 +1,17 @@
 import * as React from 'react';
-import {Button, TextField, Select, FormControl, InputLabel, InputAdornment} from '@material-ui/core';
+import {Button, TextField, Select, FormControl, InputLabel, InputAdornment, Switch, FormControlLabel} from '@material-ui/core';
 
 export class CoinTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {coin: '', pool: '', address: '', worker: '', wallet_pass: 'x', password: this.props.sessionPass};
+        this.state = {coin: '', pool: '', address: '', worker: '', wallet_pass: 'x', checked: true, password: this.props.sessionPass};
 
         this.updateCoin = this.updateCoin.bind(this);
         this.updatePool = this.updatePool.bind(this);
         this.updateAddress = this.updateAddress.bind(this);
         this.updateWorker = this.updateWorker.bind(this);
         this.updateWalletPass = this.updateWalletPass.bind(this);
+        this.updateCheck = this.updateCheck.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -58,6 +59,10 @@ export class CoinTab extends React.Component {
         this.setState({wallet_pass: e.target.value});
     }
 
+    updateCheck(e) {
+        this.setState({checked: e.target.checked});
+    }
+
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
@@ -84,57 +89,61 @@ export class CoinTab extends React.Component {
 
         return (
             <div style={{padding: '12px 0'}}>
-                <FormControl variant="outlined" margin="dense">
-                    <InputLabel htmlFor="coin">Coin</InputLabel>
-                    <Select native id="coin" label="Coin" value={this.state.coin} onChange={this.updateCoin}>
-                        {options.map((a, i) => {
-                            return (
-                                <option key={i} value={a}>
-                                    {a}
-                                </option>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-                <TextField
-                    variant="outlined"
-                    label="Mining Pool"
-                    onChange={this.updatePool}
-                    className="pool"
-                    value={this.state.pool}
-                    margin="dense"
-                    disabled={this.props.disabled}
-                    InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
-                />
-                <br />
-                <TextField
-                    variant="outlined"
-                    label="Wallet Address"
-                    onChange={this.updateAddress}
-                    value={this.state.address}
-                    margin="dense"
-                    disabled={this.props.disabled}
-                    className="wallet"
-                />
-                <p className="period">.</p>
-                <TextField
-                    variant="outlined"
-                    label="Worker Name"
-                    onChange={this.updateWorker}
-                    value={this.state.worker}
-                    margin="dense"
-                    disabled={this.props.disabled}
-                />
-                <TextField
-                    variant="outlined"
-                    label="Stratum Password"
-                    onChange={this.updateWalletPass}
-                    value={this.state.wallet_pass}
-                    margin="dense"
-                    helperText="Leave unless qualified"
-                    className="stratum"
-                />
-                <br />
+                <div className="flex-line">
+                    <FormControl variant="outlined" margin="dense">
+                        <InputLabel htmlFor="coin">Coin</InputLabel>
+                        <Select native id="coin" label="Coin" value={this.state.coin} onChange={this.updateCoin}>
+                            {options.map((a, i) => {
+                                return (
+                                    <option key={i} value={a}>
+                                        {a}
+                                    </option>
+                                );
+                            })}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        variant="outlined"
+                        label="Mining Pool"
+                        onChange={this.updatePool}
+                        className="pool"
+                        value={this.state.pool}
+                        margin="dense"
+                        disabled={this.props.disabled}
+                        InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
+                    />
+                    <TextField
+                        variant="outlined"
+                        label="Wallet Address"
+                        onChange={this.updateAddress}
+                        value={this.state.address}
+                        margin="dense"
+                        disabled={this.props.disabled}
+                        className="wallet"
+                    />
+                    <p className="period">.</p>
+                    <TextField
+                        variant="outlined"
+                        label="Worker Name"
+                        onChange={this.updateWorker}
+                        value={this.state.worker}
+                        margin="dense"
+                        disabled={this.props.disabled}
+                        className="worker"
+                    />
+                    <TextField
+                        variant="outlined"
+                        label="Stratum Password"
+                        onChange={this.updateWalletPass}
+                        value={this.state.wallet_pass}
+                        margin="dense"
+                        className="stratum"
+                    />
+                    <FormControl margin="dense" style={{height: '40px'}}>
+                        <div className="unique-id-label">Unique ID</div>
+                        <Switch color="primary" className="unique-id" checked={this.state.checked} onChange={this.updateCheck} />
+                    </FormControl>
+                </div>
                 <TextField
                     value={this.state.password || ''}
                     variant="outlined"

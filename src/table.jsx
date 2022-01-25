@@ -1,11 +1,8 @@
 import * as React from 'react';
-import {Tabs, Tab, Paper, debounce} from '@material-ui/core';
+import {Tabs, Tab, Paper} from '@material-ui/core';
 import {AddRemoveTab} from './tabs/AddRemoveTab.jsx';
 import {CoinTab} from './tabs/CoinTab.jsx';
-import {MinerPoolTab} from './tabs/MinerPoolTab.jsx';
-import {WalletAddrTab} from './tabs/WalletAddrTab.jsx';
 import {OpModeTab} from './tabs/OpModeTab.jsx';
-import {UniqueIDTab} from './tabs/UniqueIDTab.jsx';
 import {PasswordTab} from './tabs/PasswordTab.jsx';
 import {UpdateTab} from './tabs/UpdateTab.jsx';
 import {RebootTab} from './tabs/RebootTab.jsx';
@@ -331,11 +328,8 @@ export class DataTable extends React.Component {
                     >
                         <Tab label="Home" />
                         <Tab label="CMD" />
-                        <Tab label="Coin" disabled={!capApi} />
-                        <Tab label="Mining Pool" />
-                        <Tab label="Wallet Address" />
+                        <Tab label="Mining Config" disabled={!capApi} />
                         <Tab label="Operating Mode" />
-                        <Tab label="Unique ID" />
                         <Tab label="Password" />
                         <Tab label="Firmware" />
                         <Tab label="Reboot" />
@@ -380,23 +374,6 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 3}>
-                        <MinerPoolTab
-                            handleApi={this.props.handleApi}
-                            selected={selected}
-                            data={this.props.data}
-                            sessionPass={this.props.sessionPass}
-                        />
-                    </div>
-                    <div hidden={this.state.tab != 4}>
-                        <WalletAddrTab
-                            handleApi={this.props.handleApi}
-                            selected={selected}
-                            data={this.props.data}
-                            sessionPass={this.props.sessionPass}
-                            list={this.state.list}
-                        />
-                    </div>
-                    <div hidden={this.state.tab != 5}>
                         <OpModeTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -407,49 +384,42 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 6}>
-                        <UniqueIDTab
-                            handleApi={this.props.handleApi}
-                            selected={selected}
-                            sessionPass={this.props.sessionPass}
-                        />
-                    </div>
-                    <div hidden={this.state.tab != 7}>
+                    <div hidden={this.state.tab != 4}>
                         <PasswordTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 8}>
+                    <div hidden={this.state.tab != 5}>
                         <UpdateTab
                             handleApi={this.props.handleFormApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 9}>
+                    <div hidden={this.state.tab != 6}>
                         <RebootTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 10}>
+                    <div hidden={this.state.tab != 7}>
                         <LedTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 11}>
+                    <div hidden={this.state.tab != 8}>
                         <RecalibrateTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 12}>
+                    <div hidden={this.state.tab != 9}>
                         <FanTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -457,14 +427,14 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 13}>
+                    <div hidden={this.state.tab != 10}>
                         <PowerTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 14}>
+                    <div hidden={this.state.tab != 11}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}

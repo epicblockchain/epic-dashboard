@@ -84,6 +84,9 @@ const light = createMuiTheme({
                 '.MuiDrawer-root .MuiListItem-button:hover': {
                     background: 'rgba(255, 255, 255, 0.08)',
                 },
+                '.unique-id-label': {
+                    color: 'rgba(0, 0, 0, 0.54)',
+                },
             },
         },
     },
@@ -140,6 +143,9 @@ const dark = createMuiTheme({
                 },
                 '.grid': {
                     borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+                },
+                '.unique-id-label': {
+                    color: 'rgba(255, 255, 255, 0.7)',
                 },
             },
         },
@@ -221,7 +227,7 @@ class App extends React.Component {
             eula: false,
             theme: 'light',
             scanIp: '',
-            scanRange: '16',
+            scanRange: '24',
             scanTimeout: '200',
         };
 
@@ -571,6 +577,7 @@ class App extends React.Component {
                         coin: data.coin,
                         pool_url: data.pool,
                         login: data.address + '.' + data.worker,
+                        unique_id: data.checked,
                         password: data.wallet_pass,
                     },
                     password: data.password,
@@ -578,23 +585,10 @@ class App extends React.Component {
                 msg = 'Updating coin';
                 success = 'Mining config updated successfully';
                 break;
-            case '/pool':
-                obj = {param: data.pool, password: data.password};
-                break;
-            case '/login':
-                obj = {
-                    param: {login: data.address + '.' + data.worker, password: data.wallet_pass},
-                    password: data.password,
-                };
-                break;
             case '/mode':
                 obj = {param: data.mode, password: data.password};
                 msg = 'Updating operating mode';
                 success = `Operating mode set to ${data.mode}`;
-                break;
-            case '/id':
-                obj = {param: data.checked, password: data.password};
-                success = `${data.checked ? 'Appended' : 'Removed'} unique ID on worker name`;
                 break;
             case '/password':
                 obj = {param: data.pass1, password: data.password};

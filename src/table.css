@@ -20,6 +20,19 @@
     margin: 0;
 }
 
+.pool {
+    width: 100%;
+    max-width: 400px;
+    flex-shrink: 1 !important;
+}
+
+.wallet {
+    margin-right: 0 !important;
+    width: 100%;
+    max-width: 400px;
+    flex-shrink: 1 !important;
+}
+
 .period {
     display: inline-block;
     margin: 8px 1px 4px 1px;
@@ -27,19 +40,29 @@
     line-height: 1.1876em;
 }
 
-.wallet {
-    margin-right: 0 !important;
-    width: 100%;
-    max-width: 400px;
-}
-
-.pool {
-    width: 100%;
-    max-width: 400px;
+.worker {
+    width: 150px;
 }
 
 .stratum {
-    height: 40px;
+    width: 134px;
+}
+
+.unique-id {
+    top: -12px;
+}
+
+.unique-id-label {
+    font-size: 12px;
+    transform: translateY(-8px);
+}
+
+.flex-line {
+    display: flex;
+}
+
+.flex-line > div {
+    flex-shrink: 0;
 }
 
 .hb-good {
