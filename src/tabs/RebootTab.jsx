@@ -35,6 +35,7 @@ export class RebootTab extends React.Component {
                     value={this.state.delay}
                     helperText="(seconds)"
                     margin="dense"
+                    inputProps={{min: '0'}}
                 />
                 <TextField
                     value={this.state.password || ''}

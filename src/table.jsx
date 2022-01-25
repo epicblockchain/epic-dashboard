@@ -7,7 +7,6 @@ import {PasswordTab} from './tabs/PasswordTab.jsx';
 import {UpdateTab} from './tabs/UpdateTab.jsx';
 import {RebootTab} from './tabs/RebootTab.jsx';
 import {LedTab} from './tabs/LedTab.jsx';
-import {RecalibrateTab} from './tabs/RecalibrateTab.jsx';
 import {CmdTab} from './tabs/CmdTab.jsx';
 import {FanTab} from './tabs/FanTab.jsx';
 import {PowerTab} from './tabs/PowerTab.jsx';
@@ -333,8 +332,7 @@ export class DataTable extends React.Component {
                         <Tab label="Password" />
                         <Tab label="Firmware" />
                         <Tab label="Reboot" />
-                        <Tab label="LED" />
-                        <Tab label="Recalibrate" />
+                        <Tab label="Identify" />
                         <Tab label="Fans" disabled={!capApi} />
                         <Tab label="Power" />
                         {this.state.models[this.state.list] == 'ENG_RIG' && <Tab label="Debug" />}
@@ -413,13 +411,6 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 8}>
-                        <RecalibrateTab
-                            handleApi={this.props.handleApi}
-                            selected={selected}
-                            sessionPass={this.props.sessionPass}
-                        />
-                    </div>
-                    <div hidden={this.state.tab != 9}>
                         <FanTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -427,14 +418,14 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 10}>
+                    <div hidden={this.state.tab != 9}>
                         <PowerTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 11}>
+                    <div hidden={this.state.tab != 10}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}
