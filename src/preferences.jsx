@@ -6,9 +6,10 @@ export class Preferences extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {theme: 'light', sessionpass: true, autoload: true};
+        this.state = {theme: 'light', drawer: true, sessionpass: true, autoload: true};
 
         this.toggleTheme = this.toggleTheme.bind(this);
+        this.toggleDrawer = this.toggleDrawer.bind(this);
         this.toggleLoad = this.toggleLoad.bind(this);
         this.togglePass = this.togglePass.bind(this);
     }
@@ -19,6 +20,10 @@ export class Preferences extends React.Component {
 
     toggleTheme(e) {
         this.setState({theme: e.target.checked ? 'dark' : 'light'});
+    }
+
+    toggleDrawer(e) {
+        this.setState({drawer: e.target.checked});
     }
 
     toggleLoad(e) {
@@ -44,6 +49,15 @@ export class Preferences extends React.Component {
                         label="Enable dark mode"
                     />
                     <Typography className="description">Set theme of the dashboard to dark</Typography>
+                </FormControl>
+                <FormControl margin="dense">
+                    <FormControlLabel
+                        control={
+                            <Switch color="primary" checked={this.state.drawer} onChange={this.toggleDrawer} />
+                        }
+                        label="Drawer open"
+                    />
+                    <Typography className="description">Have drawer expanded when dashboard opens</Typography>
                 </FormControl>
                 <FormControl margin="dense">
                     <FormControlLabel

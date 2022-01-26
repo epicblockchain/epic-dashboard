@@ -218,7 +218,7 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            drawerOpen: true,
+            drawerOpen: false,
             page: 'main',
             miner_data: [],
             models: [],
@@ -372,12 +372,9 @@ class App extends React.Component {
     init(settings) {
         this.setState(Object.assign(this.state, settings, {scanIp: networks[Object.keys(networks)[0]][0]}));
 
-        if (settings.sessionpass) {
-            this.toggleModal(true);
-        }
-        if (settings.autoload) {
-            this.loadMiners();
-        }
+        if (settings.sessionpass) this.toggleModal(true);
+        if (settings.autoload) this.loadMiners();
+        if (settings.drawer !== this.state.drawerOpen) this.setState({drawerOpen: settings.drawer});
 
         this.summary(true);
         setInterval(() => this.summary(false), 6000);
@@ -417,7 +414,7 @@ class App extends React.Component {
 
     eula(bool) {
         if (bool) {
-            const settings = {theme: 'light', sessionpass: true, autoload: false};
+            const settings = {theme: 'light', drawer: true, sessionpass: true, autoload: true};
             this.savePreferences(settings, false);
             this.setState({eula: false}, () => {
                 this.init(settings);
@@ -498,6 +495,7 @@ class App extends React.Component {
 
     savePreferences(json, notif) {
         if (json.theme !== this.state.theme) this.toggleTheme();
+        if (json.drawer !== this.state.drawer) this.setState({drawer: json.drawer});
         if (json.sessionpass !== this.state.sessionpass) this.setState({sessionpass: json.sessionpass});
         if (json.autoload !== this.state.autoload) this.setState({autoload: json.autoload});
 
@@ -876,6 +874,7 @@ class App extends React.Component {
                         <Preferences
                             settings={{
                                 sessionpass: this.state.sessionpass,
+                                drawer: this.state.drawer,
                                 autoload: this.state.autoload,
                                 theme: this.state.theme,
                             }}
