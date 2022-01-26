@@ -69,31 +69,33 @@ export class FanTab extends React.Component {
                         />
                     </Grid>
                 </Grid>
-                <TextField
-                    value={this.state.password || ''}
-                    variant="outlined"
-                    label="Password"
-                    type="password"
-                    onChange={this.updatePassword}
-                    margin="dense"
-                    onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
+                <div className="password-apply">
+                    <TextField
+                        value={this.state.password || ''}
+                        variant="outlined"
+                        label="Password"
+                        type="password"
+                        onChange={this.updatePassword}
+                        margin="dense"
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                            }
+                        }}
+                    />
+                    <Button
+                        onClick={() => {
                             this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={
+                            !this.state.speed || !this.state.password || !this.props.selected.length || this.props.disabled
                         }
-                    }}
-                />
-                <Button
-                    onClick={() => {
-                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                    }}
-                    variant="contained"
-                    color="primary"
-                    disabled={
-                        !this.state.speed || !this.state.password || !this.props.selected.length || this.props.disabled
-                    }
-                >
-                    Apply
-                </Button>
+                    >
+                        Apply
+                    </Button>
+                </div>
             </div>
         );
     }

@@ -5,9 +5,8 @@ import {CoinTab} from './tabs/CoinTab.jsx';
 import {OpModeTab} from './tabs/OpModeTab.jsx';
 import {PasswordTab} from './tabs/PasswordTab.jsx';
 import {UpdateTab} from './tabs/UpdateTab.jsx';
-import {RebootTab} from './tabs/RebootTab.jsx';
 import {LedTab} from './tabs/LedTab.jsx';
-import {CmdTab} from './tabs/CmdTab.jsx';
+import {ControlTab} from './tabs/ControlTab.jsx';
 import {FanTab} from './tabs/FanTab.jsx';
 import {PowerTab} from './tabs/PowerTab.jsx';
 import {DebugTab} from './tabs/DebugTab.jsx';
@@ -250,7 +249,7 @@ export class DataTable extends React.Component {
             fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
             cap: a.cap,
             voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
-            status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A')
+            status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A'),
         }));
 
         var miners = {};
@@ -326,12 +325,11 @@ export class DataTable extends React.Component {
                         variant="scrollable"
                     >
                         <Tab label="Home" />
-                        <Tab label="CMD" />
+                        <Tab label="Miner Control" />
                         <Tab label="Mining Config" disabled={!capApi} />
                         <Tab label="Operating Mode" />
                         <Tab label="Password" />
                         <Tab label="Firmware" />
-                        <Tab label="Reboot" />
                         <Tab label="Identify" />
                         <Tab label="Fans" disabled={!capApi} />
                         <Tab label="Power" />
@@ -353,7 +351,7 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 1}>
-                        <CmdTab
+                        <ControlTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
@@ -397,20 +395,13 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 6}>
-                        <RebootTab
-                            handleApi={this.props.handleApi}
-                            selected={selected}
-                            sessionPass={this.props.sessionPass}
-                        />
-                    </div>
-                    <div hidden={this.state.tab != 7}>
                         <LedTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 8}>
+                    <div hidden={this.state.tab != 7}>
                         <FanTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -418,14 +409,14 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 9}>
+                    <div hidden={this.state.tab != 8}>
                         <PowerTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 10}>
+                    <div hidden={this.state.tab != 9}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}

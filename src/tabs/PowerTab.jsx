@@ -45,29 +45,31 @@ export class PowerTab extends React.Component {
                     margin="dense"
                     inputProps={{step: '50', min: '500', max: '1300'}}
                 />
-                <TextField
-                    value={this.state.password || ''}
-                    variant="outlined"
-                    label="Password"
-                    type="password"
-                    onChange={this.updatePassword}
-                    margin="dense"
-                    onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
+                <div className="password-apply">
+                    <TextField
+                        value={this.state.password || ''}
+                        variant="outlined"
+                        label="Password"
+                        type="password"
+                        onChange={this.updatePassword}
+                        margin="dense"
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                this.props.handleApi('/power', this.state, this.props.selected);
+                            }
+                        }}
+                    />
+                    <Button
+                        onClick={() => {
                             this.props.handleApi('/power', this.state, this.props.selected);
-                        }
-                    }}
-                />
-                <Button
-                    onClick={() => {
-                        this.props.handleApi('/power', this.state, this.props.selected);
-                    }}
-                    variant="contained"
-                    color="primary"
-                    disabled={!this.state.power || !this.state.password || !this.props.selected.length}
-                >
-                    Change Power
-                </Button>
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={!this.state.power || !this.state.password || !this.props.selected.length}
+                    >
+                        Apply
+                    </Button>
+                </div>
             </div>
         );
     }

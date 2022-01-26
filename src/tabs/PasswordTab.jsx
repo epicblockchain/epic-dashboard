@@ -54,31 +54,33 @@ export class PasswordTab extends React.Component {
                     margin="dense"
                     helperText={this.state.error ? 'Passwords do not match' : ''}
                 />
-                <TextField
-                    value={this.state.password || ''}
-                    variant="outlined"
-                    label="Password"
-                    type="password"
-                    onChange={this.updatePassword}
-                    margin="dense"
-                    onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
+                <div className="password-apply">
+                    <TextField
+                        value={this.state.password || ''}
+                        variant="outlined"
+                        label="Password"
+                        type="password"
+                        onChange={this.updatePassword}
+                        margin="dense"
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                this.props.handleApi('/password', this.state, this.props.selected);
+                            }
+                        }}
+                    />
+                    <Button
+                        onClick={() => {
                             this.props.handleApi('/password', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={
+                            !this.state.pass1 || !this.state.pass2 || !this.state.password || !this.props.selected.length
                         }
-                    }}
-                />
-                <Button
-                    onClick={() => {
-                        this.props.handleApi('/password', this.state, this.props.selected);
-                    }}
-                    variant="contained"
-                    color="primary"
-                    disabled={
-                        !this.state.pass1 || !this.state.pass2 || !this.state.password || !this.props.selected.length
-                    }
-                >
-                    Apply
-                </Button>
+                    >
+                        Apply
+                    </Button>
+                </div>
             </div>
         );
     }

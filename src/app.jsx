@@ -368,7 +368,7 @@ class App extends React.Component {
         toast.dismiss('scan');
         notify('success', `Scan complete, ${scan_results.length} miner(s) found.`);
     }
-    
+
     init(settings) {
         this.setState(Object.assign(this.state, settings, {scanIp: networks[Object.keys(networks)[0]][0]}));
 
@@ -624,7 +624,7 @@ class App extends React.Component {
                 obj = {param: {test: data.test, miner_type: data.type}, password: data.password};
                 msg = `Running debug test: ${data.test}`;
                 success = `${data.test} debug test completed`;
-                break
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test'; //sends response after completed

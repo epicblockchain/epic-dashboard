@@ -7,6 +7,8 @@
     }
 }
 
+/* General */
+
 .MuiFormControl-root {
     margin-right: 12px !important;
 }
@@ -19,6 +21,21 @@
 #table .MuiInputAdornment-root button {
     margin: 0;
 }
+
+.hb-good {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+.hb-warn {
+    background: rgba(244, 67, 54, 0.3);
+}
+
+.password-apply {
+    position: absolute;
+    bottom: 8px;
+}
+
+/* CoinTab */
 
 .pool {
     width: 100%;
@@ -65,10 +82,15 @@
     flex-shrink: 0;
 }
 
-.hb-good {
-    background: rgba(76, 175, 80, 0.3);
+/* ControlTab */
+
+#control-tab .MuiPaper-root {
+    margin-bottom: 4px;
 }
 
-.hb-warn {
-    background: rgba(244, 67, 54, 0.3);
+#control-tab button.but-group {
+    width: 130px;
+    border: none;
+    margin: 0 2px;
+    border-radius: 4px;
 }
