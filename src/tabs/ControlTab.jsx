@@ -9,7 +9,6 @@ export class ControlTab extends React.Component {
         this.state = {cmd: 'autostart', delay: '0', password: this.props.sessionPass};
 
         this.updateCmd = this.updateCmd.bind(this);
-        this.updateDelay = this.updateDelay.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -23,49 +22,29 @@ export class ControlTab extends React.Component {
         this.setState({cmd: newCmd});
     }
 
-    updateDelay(e) {
-        this.setState({delay: e.target.value});
-    }
-
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
 
     render() {
-        let api = this.state.cmd === 'autostart' || this.state.cmd === 'stop' ? '/miner' : this.state.cmd;
+        let api = this.state.cmd === 'stop' ? '/miner' : this.state.cmd;
 
         return (
             <div style={{padding: '12px 0'}} id="control-tab">
                 <Paper variant="outlined" elevation={0} style={{ padding: "4px", display: "inline-block"}}>
                     <ToggleButtonGroup value={this.state.cmd} exclusive onChange={this.updateCmd}>
-                        <ToggleButton value="autostart" className="but-group">
-                            Autostart
+                        <ToggleButton value="/softreboot" className="but-group">
+                            Restart Mining
                         </ToggleButton>
                         <ToggleButton value="stop" className="but-group">
-                            Stop
+                            Stop Mining
                         </ToggleButton>
                         <Divider orientation="vertical" flexItem style={{margin: '4px'}} />
                         <ToggleButton value="/reboot" className="but-group">
                             Reboot
                         </ToggleButton>
-                        <ToggleButton value="/softreboot" className="but-group">
-                            Soft Reboot
-                        </ToggleButton>
                     </ToggleButtonGroup>
                 </Paper>
-                { (this.state.cmd === '/reboot' || this.state.cmd === '/softreboot') && 
-                    <TextField
-                        variant="outlined"
-                        label="Reboot Delay"
-                        type="number"
-                        onChange={this.updateDelay}
-                        onBlur={(e) => e.target.value < 0 ? this.setState({delay: '0'}) : null}
-                        value={this.state.delay}
-                        helperText="(seconds)"
-                        margin="dense"
-                        inputProps={{min: '0'}}
-                        style={{display: 'block'}}
-                    />}
                 <div className="password-apply">
                     <TextField
                         value={this.state.password || ''}
@@ -86,7 +65,7 @@ export class ControlTab extends React.Component {
                         }}
                         variant="contained"
                         color="primary"
-                        disabled={!this.state.delay || !this.state.password || !this.props.selected.length}
+                        disabled={!this.state.password || !this.props.selected.length}
                     >
                         Apply
                     </Button>
