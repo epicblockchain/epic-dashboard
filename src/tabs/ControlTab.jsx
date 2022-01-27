@@ -1,14 +1,11 @@
 import * as React from 'react';
-import {Button, TextField, Paper, Divider} from '@material-ui/core';
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import {Button, TextField, Paper, Divider, Grid} from '@material-ui/core';
 
 export class ControlTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {cmd: 'autostart', delay: '0', password: this.props.sessionPass};
+        this.state = {cmd: 'stop', delay: '0', password: this.props.sessionPass};
 
-        this.updateCmd = this.updateCmd.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -18,32 +15,47 @@ export class ControlTab extends React.Component {
         }
     }
 
-    updateCmd(e, newCmd) {
-        this.setState({cmd: newCmd});
-    }
-
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
 
     render() {
-        let api = this.state.cmd === 'stop' ? '/miner' : this.state.cmd;
+        let disabled = !this.state.password || !this.props.selected.length;
 
         return (
             <div style={{padding: '12px 0'}} id="control-tab">
-                <Paper variant="outlined" elevation={0} style={{ padding: "4px", display: "inline-block"}}>
-                    <ToggleButtonGroup value={this.state.cmd} exclusive onChange={this.updateCmd}>
-                        <ToggleButton value="/softreboot" className="but-group">
-                            Restart Mining
-                        </ToggleButton>
-                        <ToggleButton value="stop" className="but-group">
+                <Paper variant="outlined" elevation={0} style={{padding: '2px', display: 'inline-block'}}>
+                    <Grid container>
+                        <Button
+                            onClick={() => {
+                                this.props.handleApi('/miner', this.state, this.props.selected);
+                            }}
+                            className="but-group"
+                            disabled={disabled}
+                        >
                             Stop Mining
-                        </ToggleButton>
-                        <Divider orientation="vertical" flexItem style={{margin: '4px'}} />
-                        <ToggleButton value="/reboot" className="but-group">
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                this.props.handleApi('/softreboot', this.state, this.props.selected);
+                            }}
+                            className="but-group"
+                            disabled={disabled}
+                        >
+                            Restart Mining
+                        </Button>
+                        <Divider orientation="vertical" flexItem style={{margin: '2px'}} />
+                        <Button
+                            onClick={() => {
+                                this.props.handleApi('/reboot', this.state, this.props.selected);
+                            }}
+                            color="primary"
+                            className="but-group"
+                            disabled={disabled}
+                        >
                             Reboot
-                        </ToggleButton>
-                    </ToggleButtonGroup>
+                        </Button>
+                    </Grid>
                 </Paper>
                 <div className="password-apply">
                     <TextField
@@ -53,22 +65,7 @@ export class ControlTab extends React.Component {
                         type="password"
                         onChange={this.updatePassword}
                         margin="dense"
-                        onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                                this.props.handleApi(api, this.state, this.props.selected);
-                            }
-                        }}
                     />
-                    <Button
-                        onClick={() => {
-                            this.props.handleApi(api, this.state, this.props.selected);
-                        }}
-                        variant="contained"
-                        color="primary"
-                        disabled={!this.state.password || !this.props.selected.length}
-                    >
-                        Apply
-                    </Button>
                 </div>
             </div>
         );

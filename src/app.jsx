@@ -576,7 +576,7 @@ class App extends React.Component {
                         pool_url: data.pool,
                         login: data.address + '.' + data.worker,
                         unique_id: data.checked,
-                        password: data.wallet_pass,
+                        password: data.wallet_pass ? data.wallet_pass : 'x',
                     },
                     password: data.password,
                 };
@@ -595,7 +595,7 @@ class App extends React.Component {
             case '/softreboot':
             case '/reboot':
                 obj = {param: data.delay, password: data.password};
-                success = `${api.slice(1)} successful`;
+                success = `${api === '/reboot' ? 'Reboot' : 'Mining restart'} successful`;
                 break;
             case '/hwconfig':
                 obj = {param: true, password: data.password};

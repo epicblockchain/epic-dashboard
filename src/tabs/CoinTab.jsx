@@ -116,8 +116,14 @@ export class CoinTab extends React.Component {
                         onChange={this.updateCheck}
                     />
                 </FormControl>
-                <Button onClick={() => this.cloneFields()} variant="contained" color="primary" disabled={!this.props.selected.length}>
-                    Copy settings
+                <Button
+                    onClick={() => this.cloneFields()}
+                    variant="contained"
+                    id="clone"
+                    color="primary"
+                    disabled={!this.props.selected.length}
+                >
+                    Clone miner settings
                 </Button>
                 <div className="flex-line">
                     <TextField
@@ -181,7 +187,6 @@ export class CoinTab extends React.Component {
                         disabled={
                             !this.state.pool ||
                             !this.state.address ||
-                            !this.state.wallet_pass ||
                             !this.state.worker ||
                             !this.state.password ||
                             !this.props.selected.length ||

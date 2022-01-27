@@ -39,14 +39,14 @@
 
 .pool {
     width: 100%;
-    max-width: 400px;
+    flex-grow: 1;
     flex-shrink: 1 !important;
 }
 
 .wallet {
     margin-right: 0 !important;
     width: 100%;
-    max-width: 400px;
+    flex-grow: 1;
     flex-shrink: 1 !important;
 }
 
@@ -62,7 +62,7 @@
 }
 
 .stratum {
-    width: 134px;
+    width: 161px;
 }
 
 .unique-id {
@@ -84,13 +84,11 @@
 
 /* ControlTab */
 
-#control-tab .MuiPaper-root {
-    margin-bottom: 4px;
-}
-
 #control-tab button.but-group {
     width: 146px;
-    border: none;
-    margin: 0 2px;
-    border-radius: 4px;
+    margin: 2px;
+}
+
+#clone {
+    float: right;
 }

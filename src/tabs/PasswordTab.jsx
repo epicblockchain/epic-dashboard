@@ -75,7 +75,10 @@ export class PasswordTab extends React.Component {
                         variant="contained"
                         color="primary"
                         disabled={
-                            !this.state.pass1 || !this.state.pass2 || !this.state.password || !this.props.selected.length
+                            !this.state.pass1 ||
+                            !this.state.pass2 ||
+                            !this.state.password ||
+                            !this.props.selected.length
                         }
                     >
                         Apply

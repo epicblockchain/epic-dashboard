@@ -52,9 +52,7 @@ export class Preferences extends React.Component {
                 </FormControl>
                 <FormControl margin="dense">
                     <FormControlLabel
-                        control={
-                            <Switch color="primary" checked={this.state.drawer} onChange={this.toggleDrawer} />
-                        }
+                        control={<Switch color="primary" checked={this.state.drawer} onChange={this.toggleDrawer} />}
                         label="Drawer open"
                     />
                     <Typography className="description">Have drawer expanded when dashboard opens</Typography>

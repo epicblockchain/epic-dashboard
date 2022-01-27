@@ -90,7 +90,10 @@ export class FanTab extends React.Component {
                         variant="contained"
                         color="primary"
                         disabled={
-                            !this.state.speed || !this.state.password || !this.props.selected.length || this.props.disabled
+                            !this.state.speed ||
+                            !this.state.password ||
+                            !this.props.selected.length ||
+                            this.props.disabled
                         }
                     >
                         Apply
