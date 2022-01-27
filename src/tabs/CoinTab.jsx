@@ -24,24 +24,6 @@ export class CoinTab extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (!this.props.disabled && prevProps.selected != this.props.selected) {
-            if (this.props.selected.length && this.props.data[this.props.selected[0]].sum) {
-                if (
-                    prevProps.selected[0] != this.props.selected[0] &&
-                    this.props.data[this.props.selected[0]].sum.Stratum
-                ) {
-                    var arr = this.props.data[this.props.selected[0]].sum.Stratum['Current User'].split('.');
-                    this.setState({
-                        coin: this.props.data[this.props.selected[0]].sum.Mining['Coin'],
-                        pool: this.props.data[this.props.selected[0]].sum.Stratum['Current Pool'],
-                        address: arr[0] || '',
-                        worker: arr[1] ? arr[1].split('-')[0] : '',
-                    });
-                }
-            } else {
-                this.setState({pool: '', address: '', worker: ''});
-            }
-        }
         if (prevProps.sessionPass != this.props.sessionPass) {
             this.setState({password: this.props.sessionPass});
         }
@@ -75,6 +57,22 @@ export class CoinTab extends React.Component {
         this.setState({password: e.target.value});
     }
 
+    cloneFields() {
+        if (this.props.selected.length && this.props.data[this.props.selected[0]].sum) {
+            if (this.props.data[this.props.selected[0]].sum.Stratum) {
+                var arr = this.props.data[this.props.selected[0]].sum.Stratum['Current User'].split('.');
+                this.setState({
+                    coin: this.props.data[this.props.selected[0]].sum.Mining['Coin'],
+                    pool: this.props.data[this.props.selected[0]].sum.Stratum['Current Pool'],
+                    address: arr[0] || '',
+                    worker: arr[1] ? arr[1].split('-')[0] : '',
+                });
+            }
+        } else {
+            this.setState({pool: '', address: '', worker: ''});
+        }
+    }
+
     render() {
         let options = null;
 
@@ -97,19 +95,31 @@ export class CoinTab extends React.Component {
 
         return (
             <div style={{padding: '12px 0'}}>
+                <FormControl variant="outlined" margin="dense">
+                    <InputLabel htmlFor="coin">Coin</InputLabel>
+                    <Select native id="coin" label="Coin" value={this.state.coin} onChange={this.updateCoin}>
+                        {options.map((a, i) => {
+                            return (
+                                <option key={i} value={a}>
+                                    {a}
+                                </option>
+                            );
+                        })}
+                    </Select>
+                </FormControl>
+                <FormControl margin="dense" style={{height: '40px'}}>
+                    <div className="unique-id-label">Unique ID</div>
+                    <Switch
+                        color="primary"
+                        className="unique-id"
+                        checked={this.state.checked}
+                        onChange={this.updateCheck}
+                    />
+                </FormControl>
+                <Button onClick={() => this.cloneFields()} variant="contained" color="primary" disabled={!this.props.selected.length}>
+                    Copy settings
+                </Button>
                 <div className="flex-line">
-                    <FormControl variant="outlined" margin="dense">
-                        <InputLabel htmlFor="coin">Coin</InputLabel>
-                        <Select native id="coin" label="Coin" value={this.state.coin} onChange={this.updateCoin}>
-                            {options.map((a, i) => {
-                                return (
-                                    <option key={i} value={a}>
-                                        {a}
-                                    </option>
-                                );
-                            })}
-                        </Select>
-                    </FormControl>
                     <TextField
                         variant="outlined"
                         label="Mining Pool"
@@ -122,7 +132,7 @@ export class CoinTab extends React.Component {
                     />
                     <TextField
                         variant="outlined"
-                        label="Wallet Address"
+                        label="Wallet Address/Pool Username"
                         onChange={this.updateAddress}
                         value={this.state.address}
                         margin="dense"
@@ -147,15 +157,6 @@ export class CoinTab extends React.Component {
                         margin="dense"
                         className="stratum"
                     />
-                    <FormControl margin="dense" style={{height: '40px'}}>
-                        <div className="unique-id-label">Unique ID</div>
-                        <Switch
-                            color="primary"
-                            className="unique-id"
-                            checked={this.state.checked}
-                            onChange={this.updateCheck}
-                        />
-                    </FormControl>
                 </div>
                 <div className="password-apply">
                     <TextField
