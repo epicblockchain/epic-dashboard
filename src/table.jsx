@@ -2,12 +2,11 @@ import * as React from 'react';
 import {Tabs, Tab, Paper} from '@material-ui/core';
 import {AddRemoveTab} from './tabs/AddRemoveTab.jsx';
 import {CoinTab} from './tabs/CoinTab.jsx';
-import {OpModeTab} from './tabs/OpModeTab.jsx';
+import {PerformanceTab} from './tabs/PerformanceTab.jsx';
 import {SystemTab} from './tabs/SystemTab.jsx';
 import {LedTab} from './tabs/LedTab.jsx';
 import {ControlTab} from './tabs/ControlTab.jsx';
 import {FanTab} from './tabs/FanTab.jsx';
-import {PowerTab} from './tabs/PowerTab.jsx';
 import {DebugTab} from './tabs/DebugTab.jsx';
 import './table.css';
 
@@ -326,11 +325,10 @@ export class DataTable extends React.Component {
                         <Tab label="Home" />
                         <Tab label="Miner Control" />
                         <Tab label="Mining Config" disabled={!capApi} />
-                        <Tab label="Operating Mode" />
+                        <Tab label="Performance" />
                         <Tab label="System" />
                         <Tab label="Find Miner" />
                         <Tab label="Cooling" disabled={!capApi} />
-                        <Tab label="Power" />
                         {this.state.models[this.state.list] == 'ENG_RIG' && <Tab label="Debug" />}
                     </Tabs>
                     <div hidden={this.state.tab != 0}>
@@ -368,7 +366,7 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 3}>
-                        <OpModeTab
+                        <PerformanceTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             miners={miners}
@@ -402,13 +400,6 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 7}>
-                        <PowerTab
-                            handleApi={this.props.handleApi}
-                            selected={selected}
-                            sessionPass={this.props.sessionPass}
-                        />
-                    </div>
-                    <div hidden={this.state.tab != 8}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}

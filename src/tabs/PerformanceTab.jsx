@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {Button, TextField, FormControl, InputLabel, Select} from '@material-ui/core';
 
-export class OpModeTab extends React.Component {
+export class PerformanceTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {mode: 'normal', password: this.props.sessionPass};
+        this.state = {mode: 'Normal', power: 'N/A', password: this.props.sessionPass};
 
         this.updateMode = this.updateMode.bind(this);
+        this.updatePower = this.updatePower.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -17,7 +18,11 @@ export class OpModeTab extends React.Component {
     }
 
     updateMode(e) {
-        this.setState({mode: e.target.value.toLowerCase()});
+        this.setState({mode: e.target.value});
+    }
+
+    updatePower(e) {
+        this.setState({power: e.target.value});
     }
 
     updatePassword(e) {
@@ -26,11 +31,13 @@ export class OpModeTab extends React.Component {
 
     render() {
         let options = null;
+        let power = null;
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
                 if (!options) {
                     options = this.props.data[selected].cap.Presets;
+                    power = this.props.data[selected].cap.PresetsPowerLevels;
                     continue;
                 }
                 for (const option of options) {
@@ -38,11 +45,15 @@ export class OpModeTab extends React.Component {
                         options.splice(options.indexOf(option), 1);
                     }
                 }
+                if (!this.props.data[selected].cap.PresetPowerLevels) {
+                    power = null;
+                }
             } else {
                 break;
             }
         }
         if (!options) options = ['Normal', 'Efficiency'];
+        power = power ? power[this.state.mode] : ['N/A'];
 
         return (
             <div style={{padding: '12px 0'}}>
@@ -53,16 +64,29 @@ export class OpModeTab extends React.Component {
                         id="mode"
                         label="Mode"
                         value={this.state.mode}
-                        onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                                this.props.handleApi('/mode', this.state, this.props.selected);
-                            }
-                        }}
                         onChange={this.updateMode}
                     >
                         {options.map((a, i) => {
                             return (
-                                <option key={i} value={a.toLowerCase()}>
+                                <option key={i} value={a}>
+                                    {a}
+                                </option>
+                            );
+                        })}
+                    </Select>
+                </FormControl>
+                <FormControl variant="outlined" margin="dense">
+                    <InputLabel htmlFor="power">Power</InputLabel>
+                    <Select
+                        native
+                        id="power"
+                        label="Power"
+                        value={this.state.power}
+                        onChange={this.updatePower}
+                    >
+                        {power.map((a, i) => {
+                            return (
+                                <option key={i} value={a}>
                                     {a}
                                 </option>
                             );
