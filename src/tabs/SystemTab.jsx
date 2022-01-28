@@ -78,6 +78,7 @@ export class SystemTab extends React.Component {
                             value={this.state.filepath}
                             disabled
                             margin="dense"
+                            style={{width: '100%'}}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">

@@ -6,8 +6,7 @@ export class PerformanceTab extends React.Component {
         super(props);
         this.state = {mode: 'Normal', power: '', password: this.props.sessionPass};
 
-        this.updateMode = this.updateMode.bind(this);
-        this.updatePower = this.updatePower.bind(this);
+        this.updatePreset = this.updatePreset.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -17,12 +16,9 @@ export class PerformanceTab extends React.Component {
         }
     }
 
-    updateMode(e) {
-        this.setState({mode: e.target.value});
-    }
-
-    updatePower(e) {
-        this.setState({power: e.target.value});
+    updatePreset(e, oldApi) {
+        let obj = JSON.parse(e.target.value);
+        this.setState({mode: obj.mode, power: oldApi ? '' : obj.power}, () => console.log(this.state));
     }
 
     updatePassword(e) {
@@ -30,57 +26,47 @@ export class PerformanceTab extends React.Component {
     }
 
     render() {
-        let options = null;
-        let power = null;
+        let powers = null;
+        let oldApi = true;
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
-                if (!options) {
-                    options = this.props.data[selected].cap.Presets;
-                    power = this.props.data[selected].cap.PresetsPowerLevels;
+                if (!powers) {
+                    powers = this.props.data[selected].cap.PresetsPowerLevels;
                     continue;
                 }
-                for (const option of options) {
-                    if (!this.props.data[selected].cap.Presets.includes(option)) {
-                        options.splice(options.indexOf(option), 1);
+                if (this.props.data[selected].cap.PresetPowerLevels) {
+                    oldApi = false;
+                    for (const power of Object.keys(powers)) {
+                        if (!this.props.data[selected].cap.PresetsPowerLevels[power]) {
+                            powers[power] = null;
+                        }
                     }
-                }
-                if (!this.props.data[selected].cap.PresetPowerLevels) {
-                    power = null;
+                } else {
+                    powers = null;
                 }
             } else {
                 break;
             }
         }
-        if (!options) options = ['Normal', 'Efficiency'];
-        power = power ? power[this.state.mode] : ['N/A'];
+        if (!powers) powers = {Normal: [1300], Efficiency: [900], UltraEfficiency: [500]};
+        const value = JSON.stringify({mode: this.state.mode, power: !oldApi ? this.state.power : powers[this.state.mode][0]});
 
         const disabled = !this.state.mode || !this.state.password || !this.props.selected.length;
 
         return (
             <div style={{padding: '12px 0'}}>
                 <FormControl variant="outlined" margin="dense">
-                    <InputLabel htmlFor="mode">Mode</InputLabel>
-                    <Select native id="mode" label="Mode" value={this.state.mode} onChange={this.updateMode}>
-                        {options.map((a, i) => {
-                            return (
-                                <option key={i} value={a}>
-                                    {a}
-                                </option>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-                <FormControl variant="outlined" margin="dense">
-                    <InputLabel htmlFor="power">Power</InputLabel>
-                    <Select native id="power" label="Power" value={this.state.power} onChange={this.updatePower}>
-                        {power.map((a, i) => {
-                            return (
-                                <option key={i} value={a}>
-                                    {a}
-                                    {a !== 'N/A' ? 'W' : null}
-                                </option>
-                            );
+                    <InputLabel htmlFor="preset">Preset</InputLabel>
+                    <Select native id="preset" label="Preset" value={value} onChange={(e) => this.updatePreset(e, oldApi)}>
+                        {Object.keys(powers).map(mode => {
+                            return powers[mode].map((power, i) => {
+                                return (
+                                    <option key={i} value={JSON.stringify({mode: mode, power: power})}>
+                                        {mode} @ {power}W
+                                    </option>
+                                );
+                            })
                         })}
                     </Select>
                 </FormControl>

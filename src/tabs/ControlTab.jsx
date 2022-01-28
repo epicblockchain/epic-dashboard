@@ -30,7 +30,8 @@ export class ControlTab extends React.Component {
                             onClick={() => {
                                 this.props.handleApi('/miner', this.state, this.props.selected);
                             }}
-                            className="but-group"
+                            variant="contained"
+                            className="but-group stop"
                             disabled={disabled}
                         >
                             Stop Mining
@@ -39,7 +40,8 @@ export class ControlTab extends React.Component {
                             onClick={() => {
                                 this.props.handleApi('/softreboot', this.state, this.props.selected);
                             }}
-                            className="but-group"
+                            variant="contained"
+                            className="but-group restart"
                             disabled={disabled}
                         >
                             Restart Mining
@@ -49,6 +51,7 @@ export class ControlTab extends React.Component {
                             onClick={() => {
                                 this.props.handleApi('/reboot', this.state, this.props.selected);
                             }}
+                            variant="contained"
                             color="primary"
                             className="but-group"
                             disabled={disabled}
