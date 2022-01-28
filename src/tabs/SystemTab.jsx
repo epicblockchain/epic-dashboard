@@ -1,6 +1,6 @@
 const {ipcRenderer} = require('electron');
 import * as React from 'react';
-import {Button, TextField, InputAdornment, FormControl, FormControlLabel, Switch, Divider, Grid} from '@material-ui/core';
+import {Button, TextField, InputAdornment, FormControl, FormControlLabel, Switch, Divider, Grid, Typography} from '@material-ui/core';
 
 export class SystemTab extends React.Component {
     constructor(props) {
@@ -61,6 +61,7 @@ export class SystemTab extends React.Component {
             <div style={{padding: '12px 0'}}>
                 <Grid container>
                     <Grid item xs>
+                        <Typography>Update Firmware</Typography>
                         <TextField
                             variant="outlined"
                             label="Firmware file"
@@ -87,6 +88,7 @@ export class SystemTab extends React.Component {
                     </Grid>
                     <Divider orientation="vertical" flexItem style={{margin: '0 8px'}} />
                     <Grid item xs>
+                        <Typography>Change password</Typography>
                         <TextField
                             variant="outlined"
                             label="New Password"

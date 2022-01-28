@@ -3,7 +3,6 @@ import {Tabs, Tab, Paper} from '@material-ui/core';
 import {AddRemoveTab} from './tabs/AddRemoveTab.jsx';
 import {CoinTab} from './tabs/CoinTab.jsx';
 import {OpModeTab} from './tabs/OpModeTab.jsx';
-import {PasswordTab} from './tabs/PasswordTab.jsx';
 import {SystemTab} from './tabs/SystemTab.jsx';
 import {LedTab} from './tabs/LedTab.jsx';
 import {ControlTab} from './tabs/ControlTab.jsx';
