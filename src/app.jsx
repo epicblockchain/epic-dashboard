@@ -584,9 +584,10 @@ class App extends React.Component {
                 success = 'Mining config updated successfully';
                 break;
             case '/mode':
-                obj = {param: data.mode, password: data.password};
+                let param = data.power ? {preset: data.mode, power_target: data.power} : data.mode;
+                obj = {param: param, password: data.password};
                 msg = 'Updating operating mode';
-                success = `Operating mode set to ${data.mode}`;
+                success = `Operating mode set to ${data.mode} ${data.power ? `@ ${data.power}W` : ''}`;
                 break;
             case '/password':
                 obj = {param: data.pass1, password: data.password};
@@ -613,10 +614,6 @@ class App extends React.Component {
             case '/fanspeed':
                 obj = {param: data.speed.toString(), password: data.password};
                 success = `Fan speed set to ${data.speed}%`;
-                break;
-            case '/power':
-                obj = {param: data.power, password: data.password};
-                success = `Target power set to ${data.power}W`;
                 break;
             case '/test':
                 obj = {param: {test: data.test, miner_type: data.type}, password: data.password};

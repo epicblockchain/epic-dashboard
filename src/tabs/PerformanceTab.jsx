@@ -4,7 +4,7 @@ import {Button, TextField, FormControl, InputLabel, Select} from '@material-ui/c
 export class PerformanceTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {mode: 'Normal', power: 'N/A', password: this.props.sessionPass};
+        this.state = {mode: 'Normal', power: '', password: this.props.sessionPass};
 
         this.updateMode = this.updateMode.bind(this);
         this.updatePower = this.updatePower.bind(this);
@@ -55,17 +55,13 @@ export class PerformanceTab extends React.Component {
         if (!options) options = ['Normal', 'Efficiency'];
         power = power ? power[this.state.mode] : ['N/A'];
 
+        const disabled = !this.state.mode || !this.state.password || !this.props.selected.length;
+
         return (
             <div style={{padding: '12px 0'}}>
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="mode">Mode</InputLabel>
-                    <Select
-                        native
-                        id="mode"
-                        label="Mode"
-                        value={this.state.mode}
-                        onChange={this.updateMode}
-                    >
+                    <Select native id="mode" label="Mode" value={this.state.mode} onChange={this.updateMode}>
                         {options.map((a, i) => {
                             return (
                                 <option key={i} value={a}>
@@ -77,17 +73,12 @@ export class PerformanceTab extends React.Component {
                 </FormControl>
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="power">Power</InputLabel>
-                    <Select
-                        native
-                        id="power"
-                        label="Power"
-                        value={this.state.power}
-                        onChange={this.updatePower}
-                    >
+                    <Select native id="power" label="Power" value={this.state.power} onChange={this.updatePower}>
                         {power.map((a, i) => {
                             return (
                                 <option key={i} value={a}>
                                     {a}
+                                    {a !== 'N/A' ? 'W' : null}
                                 </option>
                             );
                         })}
@@ -102,7 +93,7 @@ export class PerformanceTab extends React.Component {
                         onChange={this.updatePassword}
                         margin="dense"
                         onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === 'Enter' && !disabled) {
                                 this.props.handleApi('/mode', this.state, this.props.selected);
                             }
                         }}
@@ -113,7 +104,7 @@ export class PerformanceTab extends React.Component {
                         }}
                         variant="contained"
                         color="primary"
-                        disabled={!this.state.mode || !this.state.password || !this.props.selected.length}
+                        disabled={disabled}
                     >
                         Apply
                     </Button>

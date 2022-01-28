@@ -37,6 +37,8 @@ export class FanTab extends React.Component {
     }
 
     render() {
+        const disabled = !this.state.password || !this.props.selected.length || this.props.disabled;
+
         return (
             <div style={{padding: '12px 0'}}>
                 <Typography gutterBottom>Fan Speed</Typography>
@@ -78,7 +80,7 @@ export class FanTab extends React.Component {
                         onChange={this.updatePassword}
                         margin="dense"
                         onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === 'Enter' && !disabled) {
                                 this.props.handleApi('/fanspeed', this.state, this.props.selected);
                             }
                         }}
@@ -89,12 +91,7 @@ export class FanTab extends React.Component {
                         }}
                         variant="contained"
                         color="primary"
-                        disabled={
-                            !this.state.speed ||
-                            !this.state.password ||
-                            !this.props.selected.length ||
-                            this.props.disabled
-                        }
+                        disabled={disabled}
                     >
                         Apply
                     </Button>

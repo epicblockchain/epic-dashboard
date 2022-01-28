@@ -20,7 +20,7 @@ export class ControlTab extends React.Component {
     }
 
     render() {
-        let disabled = !this.state.password || !this.props.selected.length;
+        const disabled = !this.state.password || !this.props.selected.length;
 
         return (
             <div style={{padding: '12px 0'}} id="control-tab">

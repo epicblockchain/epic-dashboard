@@ -25,6 +25,8 @@ export class LedTab extends React.Component {
     }
 
     render() {
+        const disabled = !this.state.password || !this.props.selected.length;
+
         return (
             <div style={{padding: '12px 0'}}>
                 <FormControl margin="dense" type="input">
@@ -42,7 +44,7 @@ export class LedTab extends React.Component {
                         onChange={this.updatePassword}
                         margin="dense"
                         onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === 'Enter' && !disabled) {
                                 this.props.handleApi('/identify', this.state, this.props.selected);
                             }
                         }}
@@ -54,7 +56,7 @@ export class LedTab extends React.Component {
                         variant="contained"
                         color="primary"
                         type="submit"
-                        disabled={!this.state.password || !this.props.selected.length}
+                        disabled={disabled}
                     >
                         Apply
                     </Button>

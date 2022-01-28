@@ -93,6 +93,13 @@ export class CoinTab extends React.Component {
         }
         if (!options) options = ['Sia'];
 
+        const disabled =
+            !this.state.pool ||
+            !this.state.address ||
+            !this.state.worker ||
+            !this.state.password ||
+            !this.props.selected.length;
+
         return (
             <div style={{padding: '12px 0'}}>
                 <FormControl variant="outlined" margin="dense">
@@ -173,7 +180,7 @@ export class CoinTab extends React.Component {
                         onChange={this.updatePassword}
                         margin="dense"
                         onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === 'Enter' && !disabled) {
                                 this.props.handleApi('/coin', this.state, this.props.selected);
                             }
                         }}
@@ -184,14 +191,7 @@ export class CoinTab extends React.Component {
                         }}
                         variant="contained"
                         color="primary"
-                        disabled={
-                            !this.state.pool ||
-                            !this.state.address ||
-                            !this.state.worker ||
-                            !this.state.password ||
-                            !this.props.selected.length ||
-                            this.props.disabled
-                        }
+                        disabled={disabled}
                     >
                         Apply
                     </Button>

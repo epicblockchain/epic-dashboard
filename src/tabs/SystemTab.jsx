@@ -1,6 +1,16 @@
 const {ipcRenderer} = require('electron');
 import * as React from 'react';
-import {Button, TextField, InputAdornment, FormControl, FormControlLabel, Switch, Divider, Grid, Typography} from '@material-ui/core';
+import {
+    Button,
+    TextField,
+    InputAdornment,
+    FormControl,
+    FormControlLabel,
+    Switch,
+    Divider,
+    Grid,
+    Typography,
+} from '@material-ui/core';
 
 export class SystemTab extends React.Component {
     constructor(props) {
@@ -71,7 +81,12 @@ export class SystemTab extends React.Component {
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
-                                        <Button onClick={this.updateFilepath} variant="contained" color="primary" size="small">
+                                        <Button
+                                            onClick={this.updateFilepath}
+                                            variant="contained"
+                                            color="primary"
+                                            size="small"
+                                        >
                                             Browse
                                         </Button>
                                     </InputAdornment>
@@ -81,7 +96,9 @@ export class SystemTab extends React.Component {
                         <br />
                         <FormControl margin="dense">
                             <FormControlLabel
-                                control={<Switch color="primary" checked={this.state.keep} onChange={this.updateKeep} />}
+                                control={
+                                    <Switch color="primary" checked={this.state.keep} onChange={this.updateKeep} />
+                                }
                                 label="Maintain config over update"
                             />
                         </FormControl>
@@ -109,7 +126,10 @@ export class SystemTab extends React.Component {
                         />
                     </Grid>
                 </Grid>
-                <Grid container className={this.props.drawerOpen ? "password-apply password-applyShift" : "password-apply"}>
+                <Grid
+                    container
+                    className={this.props.drawerOpen ? 'password-apply password-applyShift' : 'password-apply'}
+                >
                     <Grid item xs>
                         <TextField
                             value={this.state.password || ''}
@@ -118,11 +138,6 @@ export class SystemTab extends React.Component {
                             type="password"
                             onChange={this.updatePassword}
                             margin="dense"
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                    this.props.handleApi('/update', this.state, this.props.selected);
-                                }
-                            }}
                         />
                         <Button
                             onClick={() => {
