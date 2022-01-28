@@ -4,7 +4,7 @@ import {AddRemoveTab} from './tabs/AddRemoveTab.jsx';
 import {CoinTab} from './tabs/CoinTab.jsx';
 import {OpModeTab} from './tabs/OpModeTab.jsx';
 import {PasswordTab} from './tabs/PasswordTab.jsx';
-import {UpdateTab} from './tabs/UpdateTab.jsx';
+import {SystemTab} from './tabs/SystemTab.jsx';
 import {LedTab} from './tabs/LedTab.jsx';
 import {ControlTab} from './tabs/ControlTab.jsx';
 import {FanTab} from './tabs/FanTab.jsx';
@@ -328,10 +328,9 @@ export class DataTable extends React.Component {
                         <Tab label="Miner Control" />
                         <Tab label="Mining Config" disabled={!capApi} />
                         <Tab label="Operating Mode" />
-                        <Tab label="Password" />
-                        <Tab label="Firmware" />
-                        <Tab label="Identify" />
-                        <Tab label="Fans" disabled={!capApi} />
+                        <Tab label="System" />
+                        <Tab label="Find Miner" />
+                        <Tab label="Cooling" disabled={!capApi} />
                         <Tab label="Power" />
                         {this.state.models[this.state.list] == 'ENG_RIG' && <Tab label="Debug" />}
                     </Tabs>
@@ -381,27 +380,21 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 4}>
-                        <PasswordTab
-                            handleApi={this.props.handleApi}
-                            selected={selected}
-                            sessionPass={this.props.sessionPass}
-                        />
-                    </div>
-                    <div hidden={this.state.tab != 5}>
-                        <UpdateTab
+                        <SystemTab
                             handleApi={this.props.handleFormApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
+                            drawerOpen={this.props.drawerOpen}
                         />
                     </div>
-                    <div hidden={this.state.tab != 6}>
+                    <div hidden={this.state.tab != 5}>
                         <LedTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 7}>
+                    <div hidden={this.state.tab != 6}>
                         <FanTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -409,14 +402,14 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 8}>
+                    <div hidden={this.state.tab != 7}>
                         <PowerTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 9}>
+                    <div hidden={this.state.tab != 8}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}

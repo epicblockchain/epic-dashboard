@@ -30,9 +30,16 @@
     background: rgba(244, 67, 54, 0.3);
 }
 
-.password-apply {
+div.password-apply {
+    width: calc(100% - 73px);
+    max-width: 1400px;
     position: absolute;
     bottom: 8px;
+    transition: 0.25s;
+}
+
+div.password-applyShift {
+    width: calc(100% - 230px);
 }
 
 /* CoinTab */
