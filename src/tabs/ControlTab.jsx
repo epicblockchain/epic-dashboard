@@ -31,6 +31,7 @@ export class ControlTab extends React.Component {
                                 this.props.handleApi('/miner', this.state, this.props.selected);
                             }}
                             variant="contained"
+                            color="primary"
                             className="but-group stop"
                             disabled={disabled}
                         >
@@ -41,6 +42,7 @@ export class ControlTab extends React.Component {
                                 this.props.handleApi('/softreboot', this.state, this.props.selected);
                             }}
                             variant="contained"
+                            color="primary"
                             className="but-group restart"
                             disabled={disabled}
                         >
@@ -53,7 +55,7 @@ export class ControlTab extends React.Component {
                             }}
                             variant="contained"
                             color="primary"
-                            className="but-group"
+                            className="but-group reboot"
                             disabled={disabled}
                         >
                             Reboot

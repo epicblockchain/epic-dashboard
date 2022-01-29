@@ -50,7 +50,10 @@ export class PerformanceTab extends React.Component {
             }
         }
         if (!powers) powers = {Normal: [1300], Efficiency: [900], UltraEfficiency: [500]};
-        const value = JSON.stringify({mode: this.state.mode, power: !oldApi ? this.state.power : powers[this.state.mode][0]});
+        const value = JSON.stringify({
+            mode: this.state.mode,
+            power: !oldApi ? this.state.power : powers[this.state.mode][0],
+        });
 
         const disabled = !this.state.mode || !this.state.password || !this.props.selected.length;
 
@@ -58,15 +61,21 @@ export class PerformanceTab extends React.Component {
             <div style={{padding: '12px 0'}}>
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="preset">Preset</InputLabel>
-                    <Select native id="preset" label="Preset" value={value} onChange={(e) => this.updatePreset(e, oldApi)}>
-                        {Object.keys(powers).map(mode => {
+                    <Select
+                        native
+                        id="preset"
+                        label="Preset"
+                        value={value}
+                        onChange={(e) => this.updatePreset(e, oldApi)}
+                    >
+                        {Object.keys(powers).map((mode) => {
                             return powers[mode].map((power, i) => {
                                 return (
                                     <option key={i} value={JSON.stringify({mode: mode, power: power})}>
                                         {mode} @ {power}W
                                     </option>
                                 );
-                            })
+                            });
                         })}
                     </Select>
                 </FormControl>
