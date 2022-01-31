@@ -22,6 +22,7 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
+import LightOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
 
 import {
     useTable,
@@ -75,7 +76,7 @@ function hashrateSort(a, b, c, d) {
     }
 }
 
-function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear}) {
+function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, handleApi}) {
     const DefaultColumnFilter = React.useCallback(({column: {filterValue, preFilteredRows, setFilter}}) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const handleClick = (event) => {
@@ -167,6 +168,13 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear}) 
 
     const getTextWidth = React.useCallback((input, context) => {
         return Math.ceil(context.measureText(input).width);
+    });
+
+    // Memoized clear miners from undefined tab
+    const clearM = React.useCallback(() => clear());
+    // Memoized handleApi
+    const handleApiM = React.useCallback((api, data, selected) => {
+        handleApi(api, data, selected);
     });
 
     const [open, setOpen] = React.useState(false);
@@ -269,6 +277,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear}) 
     const RenderRow = React.useCallback(
         ({columnIndex, rowIndex, style}) => {
             const row = rows[rowIndex];
+            const led = data[rowIndex].misc ? data[rowIndex].misc['Locate Miner State'] : null;
             prepareRow(row);
             return (
                 <TableRow
@@ -293,10 +302,24 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear}) 
                                             ? cell.value <= 11.9
                                                 ? 'hb-warn'
                                                 : null
+                                            : cell.column.id === 'ip'
+                                            ? 'ip-col'
                                             : null
                                         : null
                                 }
                             >
+                                {cell.column.id === 'ip' && (
+                                    <IconButton
+                                        className="led-toggle"
+                                        size="small"
+                                        disabled={!data[rowIndex].misc}
+                                        onClick={() =>
+                                            handleApiM('/identify', {checked: !led, password: ''}, [rowIndex])
+                                        }
+                                    >
+                                        <LightOutlinedIcon className={led ? 'led-on' : ''} />
+                                    </IconButton>
+                                )}
                                 {cell.render('Cell')}
                             </TableCell>
                         );
@@ -320,7 +343,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear}) 
                     Columns
                 </Button>
                 {clear && (
-                    <Button startIcon={<DeleteSweepIcon />} color="primary" size="small" onClick={() => clear()}>
+                    <Button startIcon={<DeleteSweepIcon />} color="primary" size="small" onClick={() => clearM()}>
                         Clear Miners
                     </Button>
                 )}

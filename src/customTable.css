@@ -82,3 +82,32 @@
     position: absolute;
     z-index: 1;
 }
+
+/* LED button */
+
+@keyframes flash {
+    0% {color: red;}
+    15% {color: red;}
+    16% {color: rgba(255, 0, 0, 0.3)}
+    31% {color: rgba(255, 0, 0, 0.3)}
+    32% {color: red;}
+    47% {color: red;}
+    48% {color: rgba(255, 0, 0, 0.3)}
+    100% {color: rgba(255, 0, 0, 0.3)}
+}
+
+#datatable .ip-col {
+    padding-left: 28px;
+}
+
+button.led-toggle {
+    position: absolute;
+    top: 0;
+    transform: translateX(-28px);
+}
+
+.led-on {
+    animation: flash;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}

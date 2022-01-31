@@ -248,6 +248,7 @@ export class DataTable extends React.Component {
             cap: a.cap,
             voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
             status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A'),
+            misc: this.failSafe(a.sum) || a.sum.Misc,
         }));
 
         var miners = {};
@@ -308,6 +309,7 @@ export class DataTable extends React.Component {
                                     reset={this.state.reset}
                                     drawerOpen={this.props.drawerOpen}
                                     clear={model === 'undefined' ? this.props.clear : null}
+                                    handleApi={this.props.handleApi}
                                 />
                             </Paper>
                         ) : null;
