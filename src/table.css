@@ -106,17 +106,19 @@ div.password-applyShift {
 }
 
 button.restart {
+    color: white;
     background-color: #1b5e20;
 }
 
 button.restart:hover {
-    background-color: #1b5e20;
+    background-color: rgb(18, 65, 22);
 }
 
 button.stop {
+    color: white;
     background-color: #b71c1c;
 }
 
 button.stop:hover {
-    background-color: #b71c1c;
+    background-color: rgb(128, 19, 19);
 }
