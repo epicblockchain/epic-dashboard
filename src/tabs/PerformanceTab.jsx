@@ -52,7 +52,7 @@ export class PerformanceTab extends React.Component {
                 break;
             }
         }
-        
+
         if (!powers) powers = {Normal: [1300], Efficiency: [900], UltraEfficiency: [500]};
         const value = JSON.stringify({
             mode: this.state.mode,

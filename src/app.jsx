@@ -228,7 +228,7 @@ class App extends React.Component {
             theme: 'light',
             scanIp: '',
             scanRange: '24',
-            scanTimeout: '200',
+            scanTimeout: '500',
         };
 
         this.setPage = this.setPage.bind(this);

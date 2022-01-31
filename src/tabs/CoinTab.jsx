@@ -5,7 +5,7 @@ export class CoinTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            coin: '',
+            coin: 'Select Coin',
             pool: '',
             address: '',
             worker: '',
@@ -74,16 +74,16 @@ export class CoinTab extends React.Component {
     }
 
     render() {
-        let options = null;
+        let options = ['Select Coin'];
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
-                if (!options) {
-                    options = this.props.data[selected].cap.Coins;
+                if (options.length === 1) {
+                    options = options.concat(this.props.data[selected].cap.Coins);
                     continue;
                 }
                 for (const option of options) {
-                    if (!this.props.data[selected].cap.Coins.includes(option)) {
+                    if (option !== 'Select Coin' && !this.props.data[selected].cap.Coins.includes(option)) {
                         options.splice(options.indexOf(option), 1);
                     }
                 }
@@ -91,9 +91,9 @@ export class CoinTab extends React.Component {
                 break;
             }
         }
-        if (!options) options = ['Sia'];
 
         const disabled =
+            this.state.coin === 'Select Coin' ||
             !this.state.pool ||
             !this.state.address ||
             !this.state.worker ||
