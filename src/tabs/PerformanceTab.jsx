@@ -31,12 +31,14 @@ export class PerformanceTab extends React.Component {
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
-                if (!powers) {
-                    powers = this.props.data[selected].cap.PresetsPowerLevels;
-                    continue;
-                }
-                if (this.props.data[selected].cap.PresetPowerLevels) {
+                if (this.props.data[selected].cap.PresetsPowerLevels) {
                     oldApi = false;
+
+                    if (!powers) {
+                        powers = this.props.data[selected].cap.PresetsPowerLevels;
+                        continue;
+                    }
+
                     for (const power of Object.keys(powers)) {
                         if (!this.props.data[selected].cap.PresetsPowerLevels[power]) {
                             powers[power] = null;
@@ -44,11 +46,13 @@ export class PerformanceTab extends React.Component {
                     }
                 } else {
                     powers = null;
+                    break;
                 }
             } else {
                 break;
             }
         }
+        
         if (!powers) powers = {Normal: [1300], Efficiency: [900], UltraEfficiency: [500]};
         const value = JSON.stringify({
             mode: this.state.mode,
