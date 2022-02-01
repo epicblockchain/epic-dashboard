@@ -74,11 +74,11 @@ export class PerformanceTab extends React.Component {
                     >
                         {Object.keys(powers).map((mode) => {
                             return powers[mode].map((power, i) => {
-                                return (
+                                return power % 100 === 0 ? (
                                     <option key={i} value={JSON.stringify({mode: mode, power: power})}>
                                         {mode} @ {power}W
                                     </option>
-                                );
+                                ) : null;
                             });
                         })}
                     </Select>

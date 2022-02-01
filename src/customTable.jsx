@@ -417,14 +417,15 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                                 context.font = '14px Helvetica';
 
                                                 data.forEach((row) => {
-                                                    const width = getTextWidth(row[column.id], context);
+                                                    let width = getTextWidth(row[column.id], context);
+                                                    if (column.id === 'ip') width += 17;
                                                     if (width > max) max = width;
                                                 });
 
                                                 dispatch({
                                                     type: 'autoColSize',
                                                     col: column.id,
-                                                    val: Math.max(max, getTextWidth(column.Header, context)) + 48,
+                                                    val: Math.max(max + 22, getTextWidth(column.Header, context) + 48),
                                                 });
                                             }
                                         }}
