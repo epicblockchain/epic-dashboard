@@ -31,6 +31,11 @@
 }
 
 div.password-apply {
+    position: absolute;
+    bottom: 8px;
+}
+
+div.system-apply {
     width: calc(100% - 73px);
     max-width: 1400px;
     position: absolute;
@@ -38,7 +43,7 @@ div.password-apply {
     transition: 0.25s;
 }
 
-div.password-applyShift {
+div.system-applyShift {
     width: calc(100% - 230px);
 }
 

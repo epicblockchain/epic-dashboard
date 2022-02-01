@@ -129,7 +129,7 @@ export class SystemTab extends React.Component {
                 </Grid>
                 <Grid
                     container
-                    className={this.props.drawerOpen ? 'password-apply password-applyShift' : 'password-apply'}
+                    className={this.props.drawerOpen ? 'system-apply system-applyShift' : 'system-apply'}
                 >
                     <Grid item xs>
                         <TextField
