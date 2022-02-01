@@ -229,7 +229,9 @@ export class DataTable extends React.Component {
             name: this.failSafe(a.sum) || a.sum.Hostname,
             firmware: this.failSafe(a.sum) || a.sum.Software.split(' ')[1],
             model: this.failSafe(a.cap) || a.cap.Model,
-            mode: this.failSafe(a.sum) || a.sum.Preset,
+            mode:
+                this.failSafe(a.sum) ||
+                (a.sum.Preset ? a.sum.Preset : `${a.sum.PresetInfo.Preset} @ ${a.sum.PresetInfo['Target Power']}W`),
             pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
             user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
             start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],

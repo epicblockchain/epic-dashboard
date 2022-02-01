@@ -73,6 +73,10 @@ export class CoinTab extends React.Component {
         }
     }
 
+    clearFields() {
+        this.setState({coin: 'Select Coin', pool: '', address: '', worker: '', wallet_pass: ''});
+    }
+
     render() {
         let options = ['Select Coin'];
 
@@ -123,10 +127,13 @@ export class CoinTab extends React.Component {
                         onChange={this.updateCheck}
                     />
                 </FormControl>
+                <Button onClick={() => this.clearFields()} variant="contained" className="float stop">
+                    Clear fields
+                </Button>
                 <Button
                     onClick={() => this.cloneFields()}
                     variant="contained"
-                    id="clone"
+                    className="float"
                     color="primary"
                     disabled={!this.props.selected.length}
                 >

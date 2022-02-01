@@ -94,20 +94,16 @@ div.system-applyShift {
     flex-shrink: 0;
 }
 
+.float {
+    float: right;
+}
+
 /* ControlTab */
 
 #control-tab button.but-group {
     padding: 6px 15px;
     width: 154px;
     margin: 2px;
-}
-
-#clone {
-    float: right;
-}
-
-#control-tab .Mui-disabled {
-    background-color: rgba(255, 255, 255, 0.12);
 }
 
 button.restart {
