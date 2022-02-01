@@ -312,9 +312,9 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                     <IconButton
                                         className="led-toggle"
                                         size="small"
-                                        disabled={!data[rowIndex].misc}
+                                        disabled={!data[rowIndex].misc || data[rowIndex].name === 'Error'}
                                         onClick={() =>
-                                            handleApiM('/identify', {checked: !led, password: ''}, [rowIndex])
+                                            handleApiM('/identify', {checked: !led, password: ''}, [data[rowIndex].id])
                                         }
                                     >
                                         <LightOutlinedIcon className={led ? 'led-on' : ''} />
