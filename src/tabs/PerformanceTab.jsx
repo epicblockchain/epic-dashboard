@@ -4,7 +4,7 @@ import {Button, TextField, FormControl, InputLabel, Select} from '@material-ui/c
 export class PerformanceTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {mode: 'Normal', power: '', password: this.props.sessionPass};
+        this.state = {mode: 'Select Preset', power: '', password: this.props.sessionPass};
 
         this.updatePreset = this.updatePreset.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
@@ -16,9 +16,9 @@ export class PerformanceTab extends React.Component {
         }
     }
 
-    updatePreset(e, oldApi) {
+    updatePreset(e) {
         let obj = JSON.parse(e.target.value);
-        this.setState({mode: obj.mode, power: oldApi ? '' : obj.power}, () => console.log(this.state));
+        this.setState({mode: obj.mode, power: obj.power});
     }
 
     updatePassword(e) {
@@ -27,13 +27,11 @@ export class PerformanceTab extends React.Component {
 
     render() {
         let powers = null;
-        let oldApi = true;
+        let oldPresets = null;
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
                 if (this.props.data[selected].cap.PresetsPowerLevels) {
-                    oldApi = false;
-
                     if (!powers) {
                         powers = this.props.data[selected].cap.PresetsPowerLevels;
                         continue;
@@ -45,6 +43,7 @@ export class PerformanceTab extends React.Component {
                         }
                     }
                 } else {
+                    oldPresets = this.props.data[selected].cap.Presets;
                     powers = null;
                     break;
                 }
@@ -52,14 +51,12 @@ export class PerformanceTab extends React.Component {
                 break;
             }
         }
+        
+        const powerArray = [{mode: 'Select Preset'}];
+        if (powers) powerArray.push(...Object.entries(powers).map(entry => entry[1].map(power => ({mode: entry[0], power: power}))).flat());
+        else if (oldPresets) powerArray.push(...oldPresets.map(preset => ({mode: preset})));
 
-        if (!powers) powers = {Normal: [1300], Efficiency: [900], UltraEfficiency: [500]};
-        const value = JSON.stringify({
-            mode: this.state.mode,
-            power: !oldApi ? this.state.power : powers[this.state.mode][0],
-        });
-
-        const disabled = !this.state.mode || !this.state.password || !this.props.selected.length;
+        const disabled = this.state.mode === 'Select Preset' || !this.state.password || !this.props.selected.length;
 
         return (
             <div style={{padding: '12px 0'}}>
@@ -69,17 +66,15 @@ export class PerformanceTab extends React.Component {
                         native
                         id="preset"
                         label="Preset"
-                        value={value}
-                        onChange={(e) => this.updatePreset(e, oldApi)}
+                        value={JSON.stringify({mode: this.state.mode, power: this.state.power})}
+                        onChange={this.updatePreset}
                     >
-                        {Object.keys(powers).map((mode) => {
-                            return powers[mode].map((power, i) => {
-                                return power % 100 === 0 ? (
-                                    <option key={i} value={JSON.stringify({mode: mode, power: power})}>
-                                        {mode} @ {power}W
-                                    </option>
-                                ) : null;
-                            });
+                        {powerArray.sort((a, b) => b.power - a.power).map((obj, i) => {
+                            return obj.mode === 'Select Preset' || obj.power % 100 === 0 || !obj.power ? (
+                                <option key={i} value={JSON.stringify({mode: obj.mode, power: obj.power})}>
+                                    {obj.mode}{obj.power ? ` @ ${obj.power}W` : ''}
+                                </option>
+                            ) : null;
                         })}
                     </Select>
                 </FormControl>
