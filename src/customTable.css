@@ -7,6 +7,11 @@
     padding: 4px 4px 0;
 }
 
+.toolbar .MuiButton-startIcon {
+    position: relative;
+    top: -1px;
+}
+
 .header-wrapper {
     display: flex;
     width: 100%;

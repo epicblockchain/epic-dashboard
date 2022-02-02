@@ -23,6 +23,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import LightOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import {
     useTable,
@@ -313,6 +314,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                         className="led-toggle"
                                         size="small"
                                         disabled={!data[rowIndex].misc || data[rowIndex].name === 'Error'}
+                                        title={led ? 'Toggle LED Off' : 'Toggle LED On'}
                                         onClick={() =>
                                             handleApiM('/identify', {checked: !led, password: ''}, [data[rowIndex].id])
                                         }
@@ -346,6 +348,43 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                     <Button startIcon={<DeleteSweepIcon />} color="primary" size="small" onClick={() => clearM()}>
                         Clear Miners
                     </Button>
+                )}
+                {model !== 'undefined' && (
+                    <>
+                        <Button
+                            startIcon={<LightOutlinedIcon />}
+                            color="primary"
+                            size="small"
+                            title="LEDs on for selected"
+                            disabled={!selectedFlatRows.length}
+                            onClick={() => {
+                                console.log(state.selectedRowIds);
+                                handleApiM(
+                                    '/identify',
+                                    {checked: true, password: ''},
+                                    Object.keys(state.selectedRowIds).map((id) => data[id].id)
+                                );
+                            }}
+                        >
+                            LED On
+                        </Button>
+                        <Button
+                            startIcon={<HighlightOffIcon />}
+                            color="primary"
+                            size="small"
+                            title="LEDs off for selected"
+                            disabled={!selectedFlatRows.length}
+                            onClick={() => {
+                                handleApiM(
+                                    '/identify',
+                                    {checked: false, password: ''},
+                                    Object.keys(state.selectedRowIds).map((id) => data[id].id)
+                                );
+                            }}
+                        >
+                            LED Off
+                        </Button>
+                    </>
                 )}
                 <Popper
                     open={open}
@@ -409,6 +448,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                     <div
                                         {...(column.canResize ? column.getResizerProps() : [])}
                                         className={`resizer ${column.isResizing ? 'isResizing' : ''}`}
+                                        title="Drag to resize or double-click to autosize"
                                         onDoubleClick={() => {
                                             if (column.id != 'selection') {
                                                 let max = 0;

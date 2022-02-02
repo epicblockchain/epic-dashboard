@@ -261,7 +261,7 @@ export class Dashboard extends React.Component {
                                 <TableCell align="right">Total Power</TableCell>
                                 <TableCell align="right">Active Miners</TableCell>
                                 <TableCell align="right">Accepted / Rejected Shares</TableCell>
-                                <TableCell align="right">Last Share Submition Time</TableCell>
+                                <TableCell align="right">Last Share Submission Time</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
