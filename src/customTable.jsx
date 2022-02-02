@@ -278,7 +278,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     const RenderRow = React.useCallback(
         ({columnIndex, rowIndex, style}) => {
             const row = rows[rowIndex];
-            const led = data[rowIndex].misc ? data[rowIndex].misc['Locate Miner State'] : null;
+            const led = data[row.id].misc ? data[row.id].misc['Locate Miner State'] : null;
             prepareRow(row);
             return (
                 <TableRow
@@ -313,10 +313,10 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                     <IconButton
                                         className="led-toggle"
                                         size="small"
-                                        disabled={!data[rowIndex].misc || data[rowIndex].name === 'Error'}
+                                        disabled={!data[row.id].misc || data[row.id].name === 'Error'}
                                         title={led ? 'Toggle LED Off' : 'Toggle LED On'}
                                         onClick={() =>
-                                            handleApiM('/identify', {checked: !led, password: ''}, [data[rowIndex].id])
+                                            handleApiM('/identify', {checked: !led, password: ''}, [data[row.id].id])
                                         }
                                     >
                                         <LightOutlinedIcon className={led ? 'led-on' : ''} />
