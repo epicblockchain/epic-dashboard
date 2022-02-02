@@ -305,6 +305,12 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                                 : null
                                             : cell.column.id === 'ip'
                                             ? 'ip-col'
+                                            : cell.column.id === 'pool'
+                                            ? data[row.id].connected !== 'Error'
+                                                ? data[row.id].connected
+                                                    ? 'hb-good'
+                                                    : 'hb-warn'
+                                                : null
                                             : null
                                         : null
                                 }

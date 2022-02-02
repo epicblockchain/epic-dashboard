@@ -6,7 +6,7 @@ import {
     InputAdornment,
     FormControl,
     FormControlLabel,
-    Switch,
+    Checkbox,
     Divider,
     Grid,
     Typography,
@@ -98,7 +98,12 @@ export class SystemTab extends React.Component {
                         <FormControl margin="dense">
                             <FormControlLabel
                                 control={
-                                    <Switch color="primary" checked={this.state.keep} onChange={this.updateKeep} />
+                                    <Checkbox
+                                        color="primary"
+                                        checked={this.state.keep}
+                                        onChange={this.updateKeep}
+                                        disabled={this.state.lock}
+                                    />
                                 }
                                 label="Maintain config over update"
                             />

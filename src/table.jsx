@@ -250,6 +250,9 @@ export class DataTable extends React.Component {
             voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
             status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A'),
             misc: this.failSafe(a.sum) || a.sum.Misc,
+            connected:
+                this.failSafe(a.sum) ||
+                (a.sum.Stratum.IsPoolConnected !== undefined ? a.sum.Stratum.IsPoolConnected : 'Error'),
         }));
 
         var miners = {};

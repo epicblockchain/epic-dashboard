@@ -51,10 +51,15 @@ export class PerformanceTab extends React.Component {
                 break;
             }
         }
-        
+
         const powerArray = [{mode: 'Select Preset'}];
-        if (powers) powerArray.push(...Object.entries(powers).map(entry => entry[1].map(power => ({mode: entry[0], power: power}))).flat());
-        else if (oldPresets) powerArray.push(...oldPresets.map(preset => ({mode: preset})));
+        if (powers)
+            powerArray.push(
+                ...Object.entries(powers)
+                    .map((entry) => entry[1].map((power) => ({mode: entry[0], power: power})))
+                    .flat()
+            );
+        else if (oldPresets) powerArray.push(...oldPresets.map((preset) => ({mode: preset})));
 
         const disabled = this.state.mode === 'Select Preset' || !this.state.password || !this.props.selected.length;
 
@@ -69,13 +74,15 @@ export class PerformanceTab extends React.Component {
                         value={JSON.stringify({mode: this.state.mode, power: this.state.power})}
                         onChange={this.updatePreset}
                     >
-                        {powerArray.sort((a, b) => b.power - a.power).map((obj, i) => {
-                            return obj.mode === 'Select Preset' || obj.power % 100 === 0 || !obj.power ? (
-                                <option key={i} value={JSON.stringify({mode: obj.mode, power: obj.power})}>
-                                    {obj.mode}{obj.power ? ` @ ${obj.power}W` : ''}
-                                </option>
-                            ) : null;
-                        })}
+                        {powerArray
+                            .sort((a, b) => b.power - a.power)
+                            .map((obj, i) => {
+                                return obj.mode === 'Select Preset' || obj.power % 100 === 0 || !obj.power ? (
+                                    <option key={i} value={JSON.stringify({mode: obj.mode, power: obj.power})}>
+                                        {obj.mode} {obj.power ? `@ ${obj.power}W` : ''}
+                                    </option>
+                                ) : null;
+                            })}
                     </Select>
                 </FormControl>
                 <div className="password-apply">
