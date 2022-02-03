@@ -39,6 +39,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import MenuIcon from '@material-ui/icons/Menu';
+import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 import PermScanWifiIcon from '@material-ui/icons/PermScanWifi';
 import SettingsIcon from '@material-ui/icons/Settings';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
@@ -370,11 +371,12 @@ class App extends React.Component {
     }
 
     init(settings) {
-        this.setState(Object.assign(this.state, settings, {scanIp: networks[Object.keys(networks)[0]][0]}));
+        this.setState(Object.assign(this.state, settings, {scanIp: Object.entries(networks)[0][1][0]}));
 
         if (settings.sessionpass) this.toggleModal(true);
         if (settings.autoload) this.loadMiners();
         if (settings.drawer !== this.state.drawerOpen) this.setState({drawerOpen: settings.drawer});
+        if (settings.autoscan) this.portscan(Object.entries(networks)[0][1][0], 24, 500);
 
         this.summary(true);
         setInterval(() => this.summary(false), 6000);
@@ -414,7 +416,7 @@ class App extends React.Component {
 
     eula(bool) {
         if (bool) {
-            const settings = {theme: 'light', drawer: true, sessionpass: true, autoload: true};
+            const settings = {theme: 'light', drawer: true, sessionpass: true, autoload: true, autoscan: true};
             this.savePreferences(settings, false);
             this.setState({eula: false}, () => {
                 this.init(settings);
@@ -494,10 +496,9 @@ class App extends React.Component {
     }
 
     savePreferences(json, notif) {
-        if (json.theme !== this.state.theme) this.toggleTheme();
-        if (json.drawer !== this.state.drawer) this.setState({drawer: json.drawer});
-        if (json.sessionpass !== this.state.sessionpass) this.setState({sessionpass: json.sessionpass});
-        if (json.autoload !== this.state.autoload) this.setState({autoload: json.autoload});
+        for (let key of Object.keys(json)) {
+            if (json[key] !== this.state[key]) this.setState({[key]: json[key]});
+        }
 
         fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
         fs.writeFile(path.join(app_path, 'settings.json'), JSON.stringify(json), function (err) {
@@ -718,10 +719,20 @@ class App extends React.Component {
                                 <ListItemText primary="Table" />
                             </ListItem>
                         </Tooltip>
-                        <Tooltip title="Scan" placement="right" arrow>
-                            <ListItem button key="Scan for Miners" onClick={() => this.setState({portscan: true})}>
+                        <Tooltip title="Quick Scan" placement="right" arrow>
+                            <ListItem
+                                button
+                                key="Quick Miner Scan"
+                                onClick={() => this.portscan(Object.entries(networks)[0][1][0], 24, 500)}
+                            >
+                                <NetworkCheckIcon />
+                                <ListItemText primary="Quick Miner Scan" />
+                            </ListItem>
+                        </Tooltip>
+                        <Tooltip title="Advanced Scan" placement="right" arrow>
+                            <ListItem button key="Advanced Scan" onClick={() => this.setState({portscan: true})}>
                                 <PermScanWifiIcon />
-                                <ListItemText primary="Scan for Miners" />
+                                <ListItemText primary="Advanced Scan" />
                             </ListItem>
                         </Tooltip>
                         <Tooltip title="Session Password" placement="right" arrow>
@@ -873,6 +884,7 @@ class App extends React.Component {
                                 sessionpass: this.state.sessionpass,
                                 drawer: this.state.drawer,
                                 autoload: this.state.autoload,
+                                autoscan: this.state.autoscan,
                                 theme: this.state.theme,
                             }}
                             savePreferences={this.savePreferences}

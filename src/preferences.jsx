@@ -6,12 +6,13 @@ export class Preferences extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {theme: 'light', drawer: true, sessionpass: true, autoload: true};
+        this.state = {theme: 'light', drawer: true, sessionpass: true, autoload: true, autoscan: true};
 
         this.toggleTheme = this.toggleTheme.bind(this);
         this.toggleDrawer = this.toggleDrawer.bind(this);
         this.toggleLoad = this.toggleLoad.bind(this);
         this.togglePass = this.togglePass.bind(this);
+        this.toggleScan = this.toggleScan.bind(this);
     }
 
     componentDidMount() {
@@ -32,6 +33,10 @@ export class Preferences extends React.Component {
 
     togglePass(e) {
         this.setState({sessionpass: e.target.checked});
+    }
+
+    toggleScan(e) {
+        this.setState({autoscan: e.target.checked});
     }
 
     render() {
@@ -73,6 +78,15 @@ export class Preferences extends React.Component {
                     />
                     <Typography className="description">
                         Automatically load saved miners when dashboard opens
+                    </Typography>
+                </FormControl>
+                <FormControl margin="dense">
+                    <FormControlLabel
+                        control={<Switch color="primary" checked={this.state.autoscan} onChange={this.toggleScan} />}
+                        label="Autoscan for miners"
+                    />
+                    <Typography className="description">
+                        Automatically run quickscan for miners when dashboard opens
                     </Typography>
                 </FormControl>
                 <Button
