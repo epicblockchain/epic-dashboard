@@ -31,6 +31,7 @@ import {
     InputLabel,
     Typography,
     Tooltip,
+    Link,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {ToastContainer, toast} from 'react-toastify';
@@ -171,7 +172,7 @@ switch (process.platform) {
         break;
     default:
         console.log('Unsupported platform: ' + process.platform);
-        process.exit(1);
+        ipcRenderer.send('exit', 1);
 }
 
 const logger = createLogger({
@@ -422,7 +423,7 @@ class App extends React.Component {
                 this.init(settings);
             });
         } else {
-            process.exit(1);
+            ipcRenderer.send('exit', 1);
         }
     }
 
@@ -786,7 +787,7 @@ class App extends React.Component {
                         <TextField
                             variant="outlined"
                             margin="dense"
-                            label="IP Address Range"
+                            label="Network Address"
                             onChange={(e) => this.setScan(e, 'scanIp')}
                             value={this.state.scanIp}
                         />
@@ -799,8 +800,8 @@ class App extends React.Component {
                                 value={this.state.scanRange}
                                 onChange={(e) => this.setScan(e, 'scanRange')}
                             >
-                                <option>16</option>
-                                <option>24</option>
+                                <option value="16">/16</option>
+                                <option value="24">/24</option>
                             </Select>
                         </FormControl>
                         <TextField
@@ -815,8 +816,18 @@ class App extends React.Component {
                         <Typography display="inline" variant="overline" color="primary">
                             IP Range:{' '}
                         </Typography>
-                        24 searches {split[0]}.{split[1]}.{split[2]}.0-255, 16 searches {split[0]}.{split[1]}
-                        .0-255.0-255
+                        <Link
+                            underline="always"
+                            style={{cursor: 'pointer'}}
+                            onClick={() =>
+                                ipcRenderer.invoke(
+                                    'open-external',
+                                    'https://docs.netgate.com/pfsense/en/latest/network/cidr.html'
+                                )
+                            }
+                        >
+                            Explanation
+                        </Link>
                         <br />
                         <Typography display="inline" variant="overline" color="primary">
                             Timeout:{' '}

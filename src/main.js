@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain, dialog} = require('electron');
+const {app, BrowserWindow, ipcMain, dialog, shell} = require('electron');
 const got = require('got');
 const fs = require('fs');
 const path = require('path');
@@ -51,6 +51,10 @@ const createWindow = () => {
         return dialog.showOpenDialog(properties);
     });
 
+    ipcMain.handle('open-external', (event, url) => {
+        return shell.openExternal(url);
+    });
+
     ipcMain.on('form-post', (event, miners, api, data, selected) => {
         for (const i of selected) {
             (async () => {
@@ -86,6 +90,10 @@ const createWindow = () => {
         }
     });
 };
+
+ipcMain.on('exit', (code) => {
+    process.exit(code);
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
