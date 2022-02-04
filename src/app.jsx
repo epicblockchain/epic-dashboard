@@ -693,6 +693,9 @@ class App extends React.Component {
 
     render() {
         const split = this.state.scanIp.split('.');
+        const octect0 = document.getElementById('octect0');
+        const octect1 = document.getElementById('octect1');
+        const octect2 = document.getElementById('octect2');
 
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
@@ -795,29 +798,42 @@ class App extends React.Component {
                             margin="dense"
                             style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
                             label="Network Address"
+                            id="octect0"
                             onChange={(e) => this.setScan(e, 'octect0')}
+                            onKeyUp={(e) => {
+                                if (e.target.value.length === 3 && e.key !== 'Tab') octect1.focus();
+                            }}
                             InputLabelProps={{shrink: true, style: {width: '200px'}}}
                             value={this.state.octect0}
-                            inputProps={{maxlength: 3}}
+                            inputProps={{maxLength: 3}}
                         />
                         <p className="period">.</p>
                         <TextField
                             margin="dense"
                             style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
                             label=" "
+                            id="octect1"
                             onChange={(e) => this.setScan(e, 'octect1')}
+                            onKeyUp={(e) => {
+                                if (e.target.value.length === 3 && e.key !== 'Tab') octect2.focus();
+                                if (!e.target.value && e.key === 'Backspace') octect0.focus();
+                            }}
                             value={this.state.octect1}
-                            inputProps={{maxlength: 3}}
+                            inputProps={{maxLength: 3}}
                         />
                         <p className="period">.</p>
                         <TextField
                             margin="dense"
                             style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
                             label=" "
+                            id="octect2"
                             onChange={(e) => this.setScan(e, 'octect2')}
+                            onKeyUp={(e) => {
+                                if (!e.target.value && e.key === 'Backspace') octect1.focus();
+                            }}
                             value={this.state.octect2}
                             disabled={this.state.scanRange === '16'}
-                            inputProps={{maxlength: 3}}
+                            inputProps={{maxLength: 3}}
                         />
                         <p className="period" style={{marginRight: '6px'}}>
                             .0/
