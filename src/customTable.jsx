@@ -150,6 +150,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150, sortType: hashrateSort},
+            {accessor: 'efficiency1hr', Header: 'Efficiency (1h)', width: 140, sortType: 'number'},
             {accessor: 'accepted', Header: 'Accepted Shares', width: 150},
             {accessor: 'rejected', Header: 'Rejected Shares', width: 150},
             {accessor: 'difficulty', Header: 'Difficulty', width: 120},

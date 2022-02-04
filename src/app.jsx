@@ -841,7 +841,7 @@ class App extends React.Component {
                             label="Timeout (ms)"
                             onChange={(e) => this.setScan(e, 'scanTimeout')}
                             value={this.state.scanTimeout}
-                            style={{width: '100px', marginRight: 0}}
+                            style={{width: '120px', marginRight: 0}}
                         />
                         <br />
                         <Typography display="inline" variant="overline" color="primary">
