@@ -19,7 +19,8 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 1536,
         minWidth: 800,
-        height: 864,
+        height: 915,
+        minHeight: 720,
         icon: __dirname + '/img/epic.png',
         webPreferences: {
             nodeIntegration: true,
@@ -91,8 +92,8 @@ const createWindow = () => {
     });
 };
 
-ipcMain.on('exit', (code) => {
-    process.exit(code);
+ipcMain.on('quit', () => {
+    app.quit();
 });
 
 // This method will be called when Electron has finished

@@ -172,7 +172,7 @@ switch (process.platform) {
         break;
     default:
         console.log('Unsupported platform: ' + process.platform);
-        ipcRenderer.send('exit', 1);
+        ipcRenderer.send('quit');
 }
 
 const logger = createLogger({
@@ -423,7 +423,7 @@ class App extends React.Component {
                 this.init(settings);
             });
         } else {
-            ipcRenderer.send('exit', 1);
+            ipcRenderer.send('quit');
         }
     }
 
@@ -575,10 +575,15 @@ class App extends React.Component {
                 obj = {
                     param: {
                         coin: data.coin,
-                        pool_url: data.pool,
-                        login: data.address + '.' + data.worker,
+                        stratum_configs: data.stratum_configs.map((x) => ({
+                            pool: x.pool,
+                            login: `${x.address}.${x.worker}`,
+                            password: x.password,
+                        })),
+                        pool_url: data.stratum_configs[0].pool,
+                        login: data.stratum_configs[0].address + '.' + data.stratum_configs[0].worker,
+                        password: data.stratum_configs[0].password,
                         unique_id: data.checked,
-                        password: data.wallet_pass ? data.wallet_pass : 'x',
                     },
                     password: data.password,
                 };
