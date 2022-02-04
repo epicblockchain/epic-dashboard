@@ -32,6 +32,7 @@ import {
     Typography,
     Tooltip,
     Link,
+    InputAdornment,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {ToastContainer, toast} from 'react-toastify';
@@ -372,7 +373,8 @@ class App extends React.Component {
     }
 
     init(settings) {
-        this.setState(Object.assign(this.state, settings, {scanIp: Object.entries(networks)[0][1][0]}));
+        const ip = Object.entries(networks)[0][1][0].split('.');
+        this.setState(Object.assign(this.state, settings, {octect0: ip[2], octect1: ip[1], octect2: ip[2]}));
 
         if (settings.sessionpass) this.toggleModal(true);
         if (settings.autoload) this.loadMiners();
@@ -790,14 +792,38 @@ class App extends React.Component {
                     <DialogTitle>Scan network for miners</DialogTitle>
                     <DialogContent>
                         <TextField
-                            variant="outlined"
                             margin="dense"
+                            style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
                             label="Network Address"
-                            onChange={(e) => this.setScan(e, 'scanIp')}
-                            value={this.state.scanIp}
+                            onChange={(e) => this.setScan(e, 'octect0')}
+                            InputLabelProps={{shrink: true, style: {width: '200px'}}}
+                            value={this.state.octect0}
+                            inputProps={{maxlength: 3}}
                         />
+                        <p className="period">.</p>
+                        <TextField
+                            margin="dense"
+                            style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
+                            label=" "
+                            onChange={(e) => this.setScan(e, 'octect1')}
+                            value={this.state.octect1}
+                            inputProps={{maxlength: 3}}
+                        />
+                        <p className="period">.</p>
+                        <TextField
+                            margin="dense"
+                            style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
+                            label=" "
+                            onChange={(e) => this.setScan(e, 'octect2')}
+                            value={this.state.octect2}
+                            disabled={this.state.scanRange === '16'}
+                            inputProps={{maxlength: 3}}
+                        />
+                        <p className="period" style={{marginRight: '6px'}}>
+                            .0/
+                        </p>
                         <FormControl variant="outlined" margin="dense">
-                            <InputLabel htmlFor="ipRange">IP Range</InputLabel>
+                            <InputLabel htmlFor="ipRange">Prefix</InputLabel>
                             <Select
                                 native
                                 id="ipRange"
@@ -805,8 +831,8 @@ class App extends React.Component {
                                 value={this.state.scanRange}
                                 onChange={(e) => this.setScan(e, 'scanRange')}
                             >
-                                <option value="16">/16</option>
-                                <option value="24">/24</option>
+                                <option>16</option>
+                                <option>24</option>
                             </Select>
                         </FormControl>
                         <TextField
@@ -815,11 +841,11 @@ class App extends React.Component {
                             label="Timeout (ms)"
                             onChange={(e) => this.setScan(e, 'scanTimeout')}
                             value={this.state.scanTimeout}
-                            style={{width: '100px'}}
+                            style={{width: '100px', marginRight: 0}}
                         />
                         <br />
                         <Typography display="inline" variant="overline" color="primary">
-                            IP Range:{' '}
+                            Prefix:{' '}
                         </Typography>
                         <Link
                             underline="always"
@@ -831,7 +857,7 @@ class App extends React.Component {
                                 )
                             }
                         >
-                            Explanation
+                            Click for explanation
                         </Link>
                         <br />
                         <Typography display="inline" variant="overline" color="primary">
@@ -842,7 +868,11 @@ class App extends React.Component {
                     <DialogActions>
                         <Button
                             onClick={() =>
-                                this.portscan(this.state.scanIp, this.state.scanRange, this.state.scanTimeout)
+                                this.portscan(
+                                    `${this.state.octect0}.${this.state.octect1}.${this.state.octect2}`,
+                                    this.state.scanRange,
+                                    this.state.scanTimeout
+                                )
                             }
                             color="primary"
                             variant="contained"

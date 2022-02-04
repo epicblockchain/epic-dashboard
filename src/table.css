@@ -9,8 +9,8 @@
 
 /* General */
 
-.MuiFormControl-root {
-    margin-right: 12px !important;
+div.MuiFormControl-root {
+    margin-right: 12px;
 }
 
 #table .MuiButton-contained {
@@ -63,9 +63,10 @@ div.system-applyShift {
 }
 
 .period {
+    font-size: 1rem;
     display: inline-block;
     margin: 8px 1px 4px 1px;
-    padding: 15px 0 6px 0;
+    padding: 13px 0 6px 0;
     line-height: 1.1876em;
 }
 

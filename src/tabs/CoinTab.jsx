@@ -6,16 +6,16 @@ export class CoinTab extends React.Component {
         super(props);
         this.state = {
             coin: 'Select Coin',
-            stratum_configs: Array(3).fill({pool: '', address: '', worker: '', password: ''}),
+            stratum_configs: [
+                {pool: '', address: '', worker: '', password: ''},
+                {pool: '', address: '', worker: '', password: ''},
+                {pool: '', address: '', worker: '', password: ''},
+            ],
             checked: true,
             password: this.props.sessionPass,
         };
 
         this.updateCoin = this.updateCoin.bind(this);
-        this.updatePool = this.updatePool.bind(this);
-        this.updateAddress = this.updateAddress.bind(this);
-        this.updateWorker = this.updateWorker.bind(this);
-        this.updateWalletPass = this.updateWalletPass.bind(this);
         this.updateCheck = this.updateCheck.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
@@ -31,25 +31,25 @@ export class CoinTab extends React.Component {
     }
 
     updatePool(e, i) {
-        const temp = [...this.state.stratum_configs];
+        const temp = this.state.stratum_configs.slice();
         temp[i].pool = e.target.value;
         this.setState({stratum_configs: temp});
     }
 
     updateAddress(e, i) {
-        const temp = [...this.state.stratum_configs];
+        const temp = this.state.stratum_configs.slice();
         temp[i].address = e.target.value;
         this.setState({stratum_configs: temp});
     }
 
     updateWorker(e, i) {
-        const temp = [...this.state.stratum_configs];
+        const temp = this.state.stratum_configs.slice();
         temp[i].worker = e.target.value;
         this.setState({stratum_configs: temp});
     }
 
     updateWalletPass(e, i) {
-        const temp = [...this.state.stratum_configs];
+        const temp = this.state.stratum_configs.slice();
         temp[i].password = e.target.value;
         this.setState({stratum_configs: temp});
     }
@@ -63,7 +63,11 @@ export class CoinTab extends React.Component {
     }
 
     cloneFields() {
-        const temp = Array(3).fill({pool: '', address: '', worker: '', password: ''});
+        const temp = [
+            {pool: '', address: '', worker: '', password: ''},
+            {pool: '', address: '', worker: '', password: ''},
+            {pool: '', address: '', worker: '', password: ''},
+        ];
 
         if (this.props.selected.length && this.props.data[this.props.selected[0]].sum) {
             if (this.props.data[this.props.selected[0]].sum.StratumConfigs) {
@@ -101,7 +105,11 @@ export class CoinTab extends React.Component {
     clearFields() {
         this.setState({
             coin: 'Select Coin',
-            stratum_configs: Array(3).fill({pool: '', address: '', worker: '', password: ''}),
+            stratum_configs: [
+                {pool: '', address: '', worker: '', password: ''},
+                {pool: '', address: '', worker: '', password: ''},
+                {pool: '', address: '', worker: '', password: ''},
+            ],
         });
     }
 
