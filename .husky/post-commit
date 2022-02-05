@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+LAST_GIT_MESSAGE=$(git log -1 --pretty=%B)
+
+if [ ! -z $(echo $LAST_GIT_MESSAGE | grep -iPo "bump version to v\K([0-9]+)\.([0-9]+)\.([0-9]+)") ]; then
+    echo "found version: ${VERSION}"
+    git tag -a "v${VERSION}" -m "version ${VERSION}"
+    git push origin --tags
+fi
