@@ -86,16 +86,12 @@ export class DataTable extends React.Component {
             let prev = prevProps.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
             let curr = this.props.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
 
-            if (curr.length < prev.length) {
-                this.selectReset();
-            }
+            if (curr.length < prev.length) this.selectReset();
         }
 
-        if (this.props.data.length < prevProps.data.length) {
-            this.selectReset();
-        } else if (this.state.reset) {
-            this.setState({reset: false});
-        }
+        if (this.props.data.length < prevProps.data.length) this.selectReset();
+
+        if (this.state.reset) this.setState({reset: false});
     }
 
     hashrate_x_hr(row, x, noFormat) {

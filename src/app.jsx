@@ -438,6 +438,7 @@ class App extends React.Component {
     }
 
     setScan(e, key) {
+        const obj = {[key]: e.target.value};
         if (key === 'scanIp') {
             const count = e.target.value.split('.').length;
             if (this.state.scanRange === '16') {
@@ -445,8 +446,13 @@ class App extends React.Component {
             } else {
                 if (count > 3) return;
             }
+        } else if (key === 'scanRange') {
+            if (e.target.value === '16') {
+                const split = this.state.scanIp.split('.');
+                obj.scanIp = `${split[0]}.${split[1]}`;
+            }
         }
-        this.setState({[key]: e.target.value});
+        this.setState(obj);
     }
 
     setPage(page) {
@@ -683,6 +689,22 @@ class App extends React.Component {
                                 temp[ind].timer = 10; //10 * 6sec = 1min
                                 this.setState({miner_data: temp});
                             }
+                        } else if (api === '/identify') {
+                            try {
+                                let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
+                                const summary = await got(`http://${miners[i].address}:4028/summary`, {
+                                    timeout: 2000,
+                                    retry: 0,
+                                });
+
+                                const sum = JSON.parse(summary.body);
+                                const temp = Array.from(this.state.miner_data);
+                                temp[ind].sum = sum;
+
+                                if (sum.Hostname) this.setState({miner_data: temp});
+                            } catch (err) {
+                                console.log(err);
+                            }
                         }
                     } else {
                         notify('error', `${miners[i].address}: ${body.error}`);
@@ -807,9 +829,13 @@ class App extends React.Component {
                             label="Network Address"
                             onChange={(e) => this.setScan(e, 'scanIp')}
                             value={this.state.scanIp}
-                            inputProps={{maxLength: prefix16 ? 7 : 11, }}
+                            inputProps={{maxLength: prefix16 ? 7 : 11}}
                             InputLabelProps={{shrink: true}}
-                            InputProps={{endAdornment: <InputAdornment position="end">{prefix16 ? '.0.0/' : '.0/'}</InputAdornment>}}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">{prefix16 ? '.0.0/' : '.0/'}</InputAdornment>
+                                ),
+                            }}
                         />
                         <FormControl variant="outlined" margin="dense">
                             <InputLabel htmlFor="ipRange">Prefix</InputLabel>
