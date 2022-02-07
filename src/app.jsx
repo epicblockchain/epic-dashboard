@@ -374,7 +374,7 @@ class App extends React.Component {
 
     init(settings) {
         const ip = Object.entries(networks)[0][1][0].split('.');
-        this.setState(Object.assign(this.state, settings, {octect0: ip[2], octect1: ip[1], octect2: ip[2]}));
+        this.setState(Object.assign(this.state, settings, {scanIp: `${ip[0]}.${ip[1]}.${ip[2]}`}));
 
         if (settings.sessionpass) this.toggleModal(true);
         if (settings.autoload) this.loadMiners();
@@ -438,6 +438,14 @@ class App extends React.Component {
     }
 
     setScan(e, key) {
+        if (key === 'scanIp') {
+            const count = e.target.value.split('.').length;
+            if (this.state.scanRange === '16') {
+                if (count > 2) return;
+            } else {
+                if (count > 3) return;
+            }
+        }
         this.setState({[key]: e.target.value});
     }
 
@@ -693,9 +701,7 @@ class App extends React.Component {
 
     render() {
         const split = this.state.scanIp.split('.');
-        const octect0 = document.getElementById('octect0');
-        const octect1 = document.getElementById('octect1');
-        const octect2 = document.getElementById('octect2');
+        const prefix16 = this.state.scanRange === '16';
 
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
@@ -795,49 +801,16 @@ class App extends React.Component {
                     <DialogTitle>Scan network for miners</DialogTitle>
                     <DialogContent>
                         <TextField
+                            variant="outlined"
                             margin="dense"
-                            style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
+                            style={{width: prefix16 ? '130px' : '150px'}}
                             label="Network Address"
-                            id="octect0"
-                            onChange={(e) => this.setScan(e, 'octect0')}
-                            onKeyUp={(e) => {
-                                if (e.target.value.length === 3 && e.key !== 'Tab') octect1.focus();
-                            }}
-                            InputLabelProps={{shrink: true, style: {width: '200px'}}}
-                            value={this.state.octect0}
-                            inputProps={{maxLength: 3}}
+                            onChange={(e) => this.setScan(e, 'scanIp')}
+                            value={this.state.scanIp}
+                            inputProps={{maxLength: prefix16 ? 7 : 11, }}
+                            InputLabelProps={{shrink: true}}
+                            InputProps={{endAdornment: <InputAdornment position="end">{prefix16 ? '.0.0/' : '.0/'}</InputAdornment>}}
                         />
-                        <p className="period">.</p>
-                        <TextField
-                            margin="dense"
-                            style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
-                            label=" "
-                            id="octect1"
-                            onChange={(e) => this.setScan(e, 'octect1')}
-                            onKeyUp={(e) => {
-                                if (e.target.value.length === 3 && e.key !== 'Tab') octect2.focus();
-                                if (!e.target.value && e.key === 'Backspace') octect0.focus();
-                            }}
-                            value={this.state.octect1}
-                            inputProps={{maxLength: 3}}
-                        />
-                        <p className="period">.</p>
-                        <TextField
-                            margin="dense"
-                            style={{width: '50px', transform: 'translateY(-6px)', marginRight: 0}}
-                            label=" "
-                            id="octect2"
-                            onChange={(e) => this.setScan(e, 'octect2')}
-                            onKeyUp={(e) => {
-                                if (!e.target.value && e.key === 'Backspace') octect1.focus();
-                            }}
-                            value={this.state.octect2}
-                            disabled={this.state.scanRange === '16'}
-                            inputProps={{maxLength: 3}}
-                        />
-                        <p className="period" style={{marginRight: '6px'}}>
-                            .0/
-                        </p>
                         <FormControl variant="outlined" margin="dense">
                             <InputLabel htmlFor="ipRange">Prefix</InputLabel>
                             <Select
@@ -884,11 +857,7 @@ class App extends React.Component {
                     <DialogActions>
                         <Button
                             onClick={() =>
-                                this.portscan(
-                                    `${this.state.octect0}.${this.state.octect1}.${this.state.octect2}`,
-                                    this.state.scanRange,
-                                    this.state.scanTimeout
-                                )
+                                this.portscan(this.state.scanIp, this.state.scanRange, this.state.scanTimeout)
                             }
                             color="primary"
                             variant="contained"
