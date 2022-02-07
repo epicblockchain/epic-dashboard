@@ -365,7 +365,6 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                             title="LEDs on for selected"
                             disabled={!selectedFlatRows.length}
                             onClick={() => {
-                                console.log(state.selectedRowIds);
                                 handleApiM(
                                     '/identify',
                                     {checked: true, password: ''},

@@ -144,7 +144,7 @@ export class SystemTab extends React.Component {
                         />
                         <Button
                             onClick={() => {
-                                this.props.handleApi('/update', this.state, this.props.selected);
+                                this.props.handleFormApi('/update', this.state, this.props.selected);
                             }}
                             variant="contained"
                             color="primary"

@@ -225,7 +225,7 @@ class Mutex {
     lock() {
         let begin = null;
         this.mutex = this.mutex.then(() => new Promise(begin));
-        return new Promise(res => begin = res);
+        return new Promise((res) => (begin = res));
     }
 }
 
@@ -356,7 +356,8 @@ class App extends React.Component {
 
         models = Array.from(models).sort();
         miner_data = miner_data.filter((x) => x !== undefined);
-        if (models.length != this.state.models.length) this.setState({miner_data: miner_data, models: models}, () => unlock());
+        if (models.length != this.state.models.length)
+            this.setState({miner_data: miner_data, models: models}, () => unlock());
         else this.setState({miner_data: miner_data}, () => unlock());
     }
 
