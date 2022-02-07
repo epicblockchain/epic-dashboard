@@ -160,6 +160,7 @@ const blacklist = [];
 let app_path = '';
 let version = 'ePIC Dashboard v';
 const networks = {};
+let lock = false;
 
 switch (process.platform) {
     case 'darwin':
@@ -216,6 +217,20 @@ const notify = (sev, text, options) => {
     );
 };
 
+class Mutex {
+    constructor() {
+        this.mutex = Promise.resolve();
+    }
+
+    lock() {
+        let begin = null;
+        this.mutex = this.mutex.then(() => new Promise(begin));
+        return new Promise(res => begin = res);
+    }
+}
+
+const minerMutex = new Mutex();
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -249,6 +264,7 @@ class App extends React.Component {
 
     async summary(init) {
         let models = new Set(this.state.models);
+        const unlock = await minerMutex.lock();
         let miner_data = await Promise.all(
             miners.map(async (miner, i) => {
                 try {
@@ -340,8 +356,8 @@ class App extends React.Component {
 
         models = Array.from(models).sort();
         miner_data = miner_data.filter((x) => x !== undefined);
-        if (models.length != this.state.models.length) this.setState({miner_data: miner_data, models: models});
-        else this.setState({miner_data: miner_data});
+        if (models.length != this.state.models.length) this.setState({miner_data: miner_data, models: models}, () => unlock());
+        else this.setState({miner_data: miner_data}, () => unlock());
     }
 
     compare(a, b) {
@@ -486,7 +502,7 @@ class App extends React.Component {
         }
     }
 
-    delMiner(ids) {
+    async delMiner(ids) {
         var temp = Array.from(this.state.miner_data);
         for (let id of ids.sort(function (a, b) {
             return b - a;
@@ -495,11 +511,12 @@ class App extends React.Component {
             temp.splice(id, 1);
         }
 
+        const unlock = await minerMutex.lock();
         notify('success', 'Successfully removed miners');
-        this.setState({miner_data: temp});
+        this.setState({miner_data: temp}, () => unlock());
     }
 
-    clearUndefined() {
+    async clearUndefined() {
         var temp = Array.from(this.state.miner_data);
         temp.forEach((miner, i) => {
             if (!miner.sum && !miner.timer) {
@@ -508,8 +525,9 @@ class App extends React.Component {
             }
         });
 
+        const unlock = await minerMutex.lock();
         notify('success', 'Successfully cleared miners');
-        this.setState({miner_data: temp});
+        this.setState({miner_data: temp}, () => unlock());
     }
 
     savePreferences(json, notif) {
@@ -561,7 +579,7 @@ class App extends React.Component {
         });
     }
 
-    blacklist(ids) {
+    async blacklist(ids) {
         console.log(ids, miners);
         var temp = Array.from(this.state.miner_data);
         for (let id of ids.sort(function (a, b) {
@@ -580,8 +598,9 @@ class App extends React.Component {
             }
         });
 
+        const unlock = await minerMutex.lock();
         notify('success', 'Successfully blacklisted miners');
-        this.setState({miner_data: temp});
+        this.setState({miner_data: temp}, () => unlock());
     }
 
     async handleApi(api, data, selected) {
@@ -701,7 +720,9 @@ class App extends React.Component {
                                 const temp = Array.from(this.state.miner_data);
                                 temp[ind].sum = sum;
 
+                                const unlock = await minerMutex.lock();
                                 if (sum.Hostname) this.setState({miner_data: temp});
+                                unlock();
                             } catch (err) {
                                 console.log(err);
                             }

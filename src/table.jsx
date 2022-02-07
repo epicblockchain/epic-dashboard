@@ -86,7 +86,7 @@ export class DataTable extends React.Component {
             let prev = prevProps.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
             let curr = this.props.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
 
-            if (curr.length < prev.length) this.selectReset();
+            if (curr.length !== prev.length) this.selectReset();
         }
 
         if (this.props.data.length < prevProps.data.length) this.selectReset();
@@ -233,7 +233,7 @@ export class DataTable extends React.Component {
             model: this.failSafe(a.cap) || a.cap.Model,
             mode:
                 this.failSafe(a.sum) ||
-                (a.sum.Preset ? a.sum.Preset : `${a.sum.PresetInfo.Preset} @ ${a.sum.PresetInfo['Target Power']}W`),
+                (a.sum.PresetInfo ? `${a.sum.PresetInfo.Preset} @ ${a.sum.PresetInfo['Target Power']}W` : a.sum.Preset),
             pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
             user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
             start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
