@@ -68,7 +68,7 @@ export class SystemTab extends React.Component {
 
     render() {
         return (
-            <div style={{padding: '12px 0'}}>
+            <div className="tab-body">
                 <Grid container>
                     <Grid item xs>
                         <Typography>Update Firmware</Typography>
@@ -132,7 +132,7 @@ export class SystemTab extends React.Component {
                         />
                     </Grid>
                 </Grid>
-                <Grid container className={this.props.drawerOpen ? 'system-apply system-applyShift' : 'system-apply'}>
+                <Grid container className="system-apply">
                     <Grid item xs>
                         <TextField
                             value={this.state.password || ''}

@@ -157,7 +157,7 @@ const dark = createMuiTheme({
 });
 
 const miners = [];
-const blacklist = [];
+let blacklist = [];
 let app_path = '';
 let version = 'ePIC Dashboard v';
 const networks = {};
@@ -582,12 +582,11 @@ class App extends React.Component {
     }
 
     async blacklist(ids) {
-        console.log(ids, miners);
         var temp = Array.from(this.state.miner_data);
         for (let id of ids.sort(function (a, b) {
             return b - a;
         })) {
-            blacklist.push(miners[id].name);
+            blacklist.push(miners[id].name || (temp[id].sum ? temp[id].sum.Hostname : null));
             miners.splice(id, 1);
             temp.splice(id, 1);
         }
@@ -723,8 +722,7 @@ class App extends React.Component {
                                 temp[ind].sum = sum;
 
                                 const unlock = await minerMutex.lock();
-                                if (sum.Hostname) this.setState({miner_data: temp});
-                                unlock();
+                                if (sum.Hostname) this.setState({miner_data: temp}, () => unlock());
                             } catch (err) {
                                 console.log(err);
                             }
@@ -755,8 +753,12 @@ class App extends React.Component {
                         <img src={icon} />
                         ePIC Dashboard
                     </div>
-                    <button id="minimize" title="Minimize" onClick={() => ipcRenderer.send('minimize')}>—</button>
-                    <button id="close" title="Close" onClick={() => ipcRenderer.send('quit')}>&#x2715;</button>
+                    <button id="minimize" title="Minimize" onClick={() => ipcRenderer.send('minimize')}>
+                        —
+                    </button>
+                    <button id="close" title="Close" onClick={() => ipcRenderer.send('quit')}>
+                        &#x2715;
+                    </button>
                 </div>
                 <Button
                     onClick={() => this.toggleDrawer(!this.state.drawerOpen)}

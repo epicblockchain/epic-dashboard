@@ -71,7 +71,7 @@ export class DebugTab extends React.Component {
         let types = ['Sphinx', 'Ra'];
 
         return (
-            <div style={{padding: '12px 0'}}>
+            <div className="tab-body">
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="test">Test</InputLabel>
                     <Select native id="test" label="Test" value={this.state.test} onChange={this.updateTest}>

@@ -64,7 +64,7 @@ export class PerformanceTab extends React.Component {
         const disabled = this.state.mode === 'Select Preset' || !this.state.password || !this.props.selected.length;
 
         return (
-            <div style={{padding: '12px 0'}}>
+            <div className="tab-body">
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="preset">Preset</InputLabel>
                     <Select

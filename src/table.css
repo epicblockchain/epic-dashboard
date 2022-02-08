@@ -30,21 +30,23 @@ div.MuiFormControl-root {
     background: rgba(244, 67, 54, 0.3);
 }
 
+.tab-body {
+    padding: 12px 0;
+    position: relative;
+    height: calc(100vh - 620px);
+    max-height: 280px;
+}
+
 div.password-apply {
     position: absolute;
     bottom: 8px;
 }
 
 div.system-apply {
-    width: calc(100% - 73px);
     max-width: 1400px;
     position: absolute;
     bottom: 8px;
     transition: 0.25s;
-}
-
-div.system-applyShift {
-    width: calc(100% - 230px);
 }
 
 /* CoinTab */

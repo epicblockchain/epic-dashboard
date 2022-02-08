@@ -391,7 +391,6 @@ export class DataTable extends React.Component {
                             handleFormApi={this.props.handleFormApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
-                            drawerOpen={this.props.drawerOpen}
                         />
                     </div>
                     <div hidden={this.state.tab != 5}>

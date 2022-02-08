@@ -23,7 +23,7 @@ export class ControlTab extends React.Component {
         const disabled = !this.state.password || !this.props.selected.length;
 
         return (
-            <div style={{padding: '12px 0'}} id="control-tab">
+            <div className="tab-body" id="control-tab">
                 <Paper variant="outlined" elevation={0} style={{padding: '2px', display: 'inline-block'}}>
                     <Grid container>
                         <Button

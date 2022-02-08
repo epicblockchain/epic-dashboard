@@ -54,7 +54,7 @@ export class AddRemoveTab extends React.Component {
 
     render() {
         return (
-            <div style={{padding: '12px 0'}}>
+            <div className="tab-body">
                 <TextField id="ip" variant="outlined" label="Miner IP" onChange={this.updateIP} margin="dense" />
                 <Button
                     onClick={() => this.props.addMiner(this.state.ip)}

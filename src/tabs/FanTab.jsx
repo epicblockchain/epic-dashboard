@@ -40,7 +40,7 @@ export class FanTab extends React.Component {
         const disabled = !this.state.password || !this.props.selected.length || this.props.disabled;
 
         return (
-            <div style={{padding: '12px 0'}}>
+            <div className="tab-body">
                 <Typography gutterBottom>Fan Speed</Typography>
                 <Grid container spacing={2} alignItems="center">
                     <Grid item>
