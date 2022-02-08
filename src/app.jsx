@@ -520,7 +520,7 @@ class App extends React.Component {
 
     async clearUndefined() {
         var temp = Array.from(this.state.miner_data);
-        for (let i=temp.length - 1; i >= 0; i--) {
+        for (let i = temp.length - 1; i >= 0; i--) {
             if (!temp[i].sum && !temp[i].timer) {
                 miners.splice(i, 1);
                 temp.splice(i, 1);
