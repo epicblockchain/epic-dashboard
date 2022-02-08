@@ -173,7 +173,7 @@ export class CoinTab extends React.Component {
                     color="primary"
                     disabled={!this.props.selected.length}
                 >
-                    Clone miner settings
+                    Copy miner settings
                 </Button>
                 <div className="flex-line">
                     <TextField
@@ -304,6 +304,7 @@ export class CoinTab extends React.Component {
                             this.props.handleApi('/coin', this.state, this.props.selected);
                         }
                     }}
+                    error={!this.state.password}
                 />
                 <Button
                     onClick={() => {

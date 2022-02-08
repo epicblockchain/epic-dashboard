@@ -68,6 +68,7 @@ export class ControlTab extends React.Component {
                         type="password"
                         onChange={this.updatePassword}
                         margin="dense"
+                        error={!this.state.password}
                     />
                 </div>
             </div>

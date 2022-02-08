@@ -84,6 +84,7 @@ export class FanTab extends React.Component {
                                 this.props.handleApi('/fanspeed', this.state, this.props.selected);
                             }
                         }}
+                        error={!this.state.password}
                     />
                     <Button
                         onClick={() => {

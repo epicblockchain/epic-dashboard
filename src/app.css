@@ -7,13 +7,59 @@ div.Toastify__toast-body {
     padding: 0;
 }
 
-/*.Toastify__progress-bar {
+#topbar {
+    position: fixed;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #1b1d4d;
+    color: white;
+}
 
-}*/
+#topbar button {
+    color: white;
+    float: right;
+    height: 24px;
+    background: none;
+    border: none;
+    width: 40px;
+    transition: 0.25s;
+    line-height: 0.8;
+}
 
-body {
-    background-color: white;
-    margin: 0 8px !important;
+#close:hover {
+    background: red;
+}
+
+#minimize:hover {
+    background: #31348d;
+}
+
+#topbar button:focus {
+    outline: none;
+}
+
+#titlebar {
+    padding: 2px 0;
+    padding-left: 30px;
+    flex-grow: 1;
+    -webkit-app-region: drag;
+}
+
+#titlebar img {
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    height: 16px;
+}
+
+#body {
+    padding: 0 8px;
+    margin-top: 24px;
+    height: calc(100vh - 24px);
+    overflow-y: auto;
 }
 
 .main {
@@ -56,23 +102,25 @@ body {
     height: initial;
 }
 
-.menuBut {
-    position: fixed !important;
-    top: 8px;
+button.menuBut {
+    position: fixed;
+    top: 32px;
     left: 12px;
-    z-index: 1201 !important;
-    padding: 4px !important;
-    min-width: 0 !important;
-    transition: 0.25s !important;
+    z-index: 1201;
+    padding: 4px;
+    min-width: 0;
+    transition: 0.25s;
 }
 
-.menuButOpen {
+button.menuButOpen {
     left: 222px;
 }
 
 div.MuiDrawer-paper {
     background-color: #1b1d4d;
     color: rgba(255, 255, 255, 0.5);
+    top: 24px;
+    height: calc(100% - 24px);
 }
 
 .MuiDrawer-paper .MuiSvgIcon-root {

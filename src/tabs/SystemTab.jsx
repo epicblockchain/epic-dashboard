@@ -141,6 +141,7 @@ export class SystemTab extends React.Component {
                             type="password"
                             onChange={this.updatePassword}
                             margin="dense"
+                            error={!this.state.password}
                         />
                         <Button
                             onClick={() => {

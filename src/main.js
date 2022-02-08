@@ -19,8 +19,9 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 1536,
         minWidth: 800,
-        height: 915,
+        height: 900,
         minHeight: 720,
+        frame: false,
         icon: __dirname + '/img/epic.png',
         webPreferences: {
             nodeIntegration: true,
@@ -54,6 +55,10 @@ const createWindow = () => {
 
     ipcMain.handle('open-external', (event, url) => {
         return shell.openExternal(url);
+    });
+
+    ipcMain.on('minimize', () => {
+        mainWindow.minimize();
     });
 
     ipcMain.on('form-post', (event, miners, api, data, selected) => {

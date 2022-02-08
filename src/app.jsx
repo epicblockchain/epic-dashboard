@@ -46,6 +46,7 @@ import PermScanWifiIcon from '@material-ui/icons/PermScanWifi';
 import SettingsIcon from '@material-ui/icons/Settings';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import './app.css';
+import icon from './img/epic.png';
 import logo from './img/EpicLogo.png';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 
@@ -744,12 +745,19 @@ class App extends React.Component {
     }
 
     render() {
-        const split = this.state.scanIp.split('.');
         const prefix16 = this.state.scanRange === '16';
 
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
                 <CssBaseline />
+                <div id="topbar">
+                    <div id="titlebar">
+                        <img src={icon} />
+                        ePIC Dashboard
+                    </div>
+                    <button id="minimize" title="Minimize" onClick={() => ipcRenderer.send('minimize')}>—</button>
+                    <button id="close" title="Close" onClick={() => ipcRenderer.send('quit')}>&#x2715;</button>
+                </div>
                 <Button
                     onClick={() => this.toggleDrawer(!this.state.drawerOpen)}
                     variant="contained"

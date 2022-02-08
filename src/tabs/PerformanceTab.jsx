@@ -98,6 +98,7 @@ export class PerformanceTab extends React.Component {
                                 this.props.handleApi('/mode', this.state, this.props.selected);
                             }
                         }}
+                        error={!this.state.password}
                     />
                     <Button
                         onClick={() => {

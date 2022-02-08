@@ -489,7 +489,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                         rowCount={rows.length}
                         columnCount={1}
                         columnWidth={totalColumnsWidth + 8}
-                        width={document.body.offsetWidth - (drawer ? 216 : 59)}
+                        width={document.getElementById('width').offsetWidth - (drawer ? 216 : 59)}
                         onScroll={scroll}
                         className="grid"
                     >
