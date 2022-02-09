@@ -34,8 +34,6 @@ const createWindow = () => {
     });
     // and load the index.html of the app.
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-    // Hide menu bar
-    mainWindow.setMenuBarVisibility(false);
 
     ipcMain.handle('portscan', (event, ip, range, timeout) => {
         return new Promise((resolve, reject) => {

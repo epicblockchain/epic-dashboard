@@ -32,7 +32,6 @@ import {
     useRowSelect,
     useSortBy,
     useFilters,
-    useGlobalFilter,
     useAsyncDebounce,
 } from 'react-table';
 import {FixedSizeGrid} from 'react-window';
@@ -164,20 +163,18 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
 
     const model = React.useMemo(() => extmodel, []);
     const initialState = React.useMemo(() => extstate, []);
-    const updateState = React.useCallback((a, b, c, data, model) => update(a, b, c, data, model));
+    const updateState = React.useCallback((a, b, c, data, model) => update(a, b, c, data, model), []);
     const resetSelected = React.useMemo(() => reset, [reset]);
     const drawer = React.useMemo(() => drawerOpen, [drawerOpen]);
 
     const getTextWidth = React.useCallback((input, context) => {
         return Math.ceil(context.measureText(input).width);
-    });
+    }, []);
 
     // Memoized clear miners from undefined tab
-    const clearM = React.useCallback(() => clear());
+    const clearM = React.useCallback(() => clear(), []);
     // Memoized handleApi
-    const handleApiM = React.useCallback((api, data, selected) => {
-        handleApi(api, data, selected);
-    });
+    const handleApiM = React.useCallback((api, data, selected) => handleApi(api, data, selected), []);
 
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
@@ -214,8 +211,6 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         selectedFlatRows,
         toggleHideColumn,
         toggleHideAllColumns,
-        preGlobalFilteredRows,
-        setGlobalFilter,
     } = useTable(
         {
             columns,
@@ -225,7 +220,6 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             autoResetSelectedRows: resetSelected,
             autoResetSortBy: false,
             autoResetFilters: false,
-            autoResetGlobalFilter: false,
             stateReducer: (a, b, c) => {
                 switch (b.type) {
                     case 'autoColSize':
@@ -246,7 +240,6 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         useBlockLayout,
         useResizeColumns,
         useFilters,
-        useGlobalFilter,
         useSortBy,
         useRowSelect,
         (hooks) => {
@@ -274,7 +267,30 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
 
     const scroll = React.useCallback((obj) => {
         document.getElementById('header').style.transform = `translateX(${-obj.scrollLeft}px)`;
-    });
+    }, []);
+
+    const resizeCol = React.useCallback((e) => {
+        const { id, header } = JSON.parse(e.target.getAttribute('data-value'));
+
+        if (id != 'selection') {
+            let max = 0;
+
+            const context = document.getElementById('canvas').getContext('2d');
+            context.font = '14px Helvetica';
+
+            data.forEach((row) => {
+                let width = getTextWidth(row[id], context);
+                if (id === 'ip') width += 17;
+                if (width > max) max = width;
+            });
+
+            dispatch({
+                type: 'autoColSize',
+                col: id,
+                val: Math.max(max + 22, getTextWidth(header, context) + 48),
+            });
+        }
+    }, [data]);
 
     const RenderRow = React.useCallback(
         ({columnIndex, rowIndex, style}) => {
@@ -352,7 +368,13 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                     Columns
                 </Button>
                 {clear && (
-                    <Button startIcon={<DeleteSweepIcon />} color="primary" size="small" onClick={() => clearM()}>
+                    <Button
+                        startIcon={<DeleteSweepIcon />}
+                        color="primary"
+                        size="small"
+                        disabled={!rows.length}
+                        onClick={clearM}
+                    >
                         Clear Miners
                     </Button>
                 )}
@@ -453,28 +475,10 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                     {column.canFilter ? column.render('Filter') : null}
                                     <div
                                         {...(column.canResize ? column.getResizerProps() : [])}
-                                        className={`resizer ${column.isResizing ? 'isResizing' : ''}`}
+                                        className={`resizer${column.isResizing ? ' isResizing' : ''}`}
                                         title="Drag to resize or double-click to autosize"
-                                        onDoubleClick={() => {
-                                            if (column.id != 'selection') {
-                                                let max = 0;
-
-                                                const context = document.getElementById('canvas').getContext('2d');
-                                                context.font = '14px Helvetica';
-
-                                                data.forEach((row) => {
-                                                    let width = getTextWidth(row[column.id], context);
-                                                    if (column.id === 'ip') width += 17;
-                                                    if (width > max) max = width;
-                                                });
-
-                                                dispatch({
-                                                    type: 'autoColSize',
-                                                    col: column.id,
-                                                    val: Math.max(max + 22, getTextWidth(column.Header, context) + 48),
-                                                });
-                                            }
-                                        }}
+                                        data-value={JSON.stringify({id: column.id, header: column.Header})}
+                                        onDoubleClick={resizeCol}
                                     />
                                 </TableCell>
                             ))}
