@@ -160,7 +160,7 @@ These will be stored in a line seperated text file:
 -   ~/Library/Application Support/ePIC-Dashboard/ipaddr.txt
 -   ~/Library/Application Support/ePIC-Dashboard/blacklist.txt
 
-## API
+## API (ePIC Miner v4.0.0)
 
 Api requests are documented as follows. Under each METHOD are the endpoint and expected values that are returned or should be provided.
 
@@ -173,8 +173,16 @@ Sample response:
 
 ```
 {
+  "Status": {
+    "Operating State": <string>,
+    "Last Command": <string>,
+    "Last Command Result": <string>
+  },
   "Hostname": <string>,
-  "Preset": <string>,
+  "PresetInfo": {
+    "Preset": <string>,
+    "Target Power": <uint>
+  },
   "Software": <string>,
   "Mining": {
     "Coin": <string>,
@@ -183,6 +191,7 @@ Sample response:
   "Stratum": {
     "Current Pool": <string>,
     "Current User": <string.string>,
+    "IsPoolConnected": true,
     "Average Latency": <float>
   },
   "Session": {
@@ -213,13 +222,30 @@ Sample response:
       "Input Power": <float>,
       "Output Power": <float>,
       "Temperature": <uint>,
-      "Core Clock": <float>
-    } [,<more Hashboards>]
+      "Core Clock": [<float>]
+    },
+    [<more Hashboards>]
+  ],
+  "Fans": {
+    "Fans Speed": <uint>
+  },
+  "Misc": {
+    "Locate Miner State": <bool>,
+    "Append Unique Id To Worker": <bool>
+  },
+  "StratumConfigs": [
+    {
+      "pool": <string>,
+      "login": <string.string>,
+      "password": <string>
+    },
+    [<more configs>]
   ]
 }
 ```
 
 **/history**
+
 Provides hashrate data polled every 15min for up to the past 48 hrs.
 Response type: application/json
 Sample response:
@@ -240,7 +266,8 @@ Sample response:
 ```
 
 **/capabilities**
-Provides miner model and all available coins and operating modes.
+
+Provides miner model and all available coins and performance presets.
 Response type: application/json
 Sample response:
 
@@ -251,6 +278,13 @@ Sample response:
     <string>,
     ...
   ],
+  "PresetsPowerLevels": {
+    <string>: [
+      <uint>,
+      ...
+    ],
+    ...
+  },
   "Coins": [
     <string>,
     ...
@@ -266,142 +300,123 @@ Response should look like the following if the provided password was accepted, (
 
 ```
 {
-	"result": <bool>
-	"error": <string or null>
-}
-```
-
-**/pool**
-Changes the mining pool of the miner.
-Format of request body:
-
-```
-{
-	"param": <string>,
-	"password": <string>
-}
-```
-
-**/login**
-param.login contains the mining updated mining address. Seperate the worker name from the miner with a period as is common.
-param.password typically contains "x". Note that this is not the password to your miner.
-Format of request body:
-
-```
-{
-	"param": {
-		"login": <string.string>,
-		"password": <string>
-	},
-	"password": <string>
+  "result": <bool>
+  "error": <string or null>
 }
 ```
 
 **/coin**
-Combines the /pool and /login api calls into one.
+
+Set the mining config of the miner. Supports up to 3 stratum_configs.
 
 ```
 {
-	"param": {
-        "coin": <string>,
-        "pool_url": <string>,
-		"login": <string.string>,
-		"password": <string>
-	},
-	"password": <string>
+  "param": {
+    "coin": <string>,
+    "stratum_configs": [
+      {
+        "pool": <string>,
+        "login": <string.string>,
+        "password": <string>
+      },
+      ...
+    ]
+    "unique_id": <bool>
+  },
+  "password": <string>
 }
 ```
 
 **/miner**
+
 Autostart or stop the mining program.
 Format of request body:
 
 ```
 {
-	"param": <string>,
-	"password": <string>
+  "param": <string>,
+  "password": <string>
 }
 ```
 
 **/reboot, /softreboot**
+
 Provide unsigned integer to specify a delay in seconds before the reboot. Provide 0 to reboot instantly. Soft reboot only restarts the mining program.
 Format of request body:
 
 ```
 {
-	"param": <uint>,
-	"password": <string>
+  "param": <uint>,
+  "password": <string>
 }
 ```
 
 **/mode**
-Set the miner to run in normal or efficiency mode. Provide the exact string "normal" or "efficiency".
+
+Set the miner to run a specific performance preset. Must use a preset from the /capabilities endpoint.
 Format of request body:
 
 ```
 {
-	"param": "{normal|efficiency}",
-	"password": <string>
+  "param": {
+    "preset": <string>,
+    "power_target": <uint>
+  },
+  "password": <string>
 }
 ```
 
 **/password**
+
 Set a new password for the miner. param contains the new password. password contains the old one.
 Format of request body:
 
 ```
 {
-	"param": <string>,
-	"password": <string>
+  "param": <string>,
+  "password": <string>
 }
 ```
 
 **/hwconfig**
+
 Recalibrate the miner.
 param should be set to true.
 Format of request body:
 
 ```
 {
-	"param": bool,
-	"password": <string>
-}
-```
-
-**/id**
-Have each miner add a unique identifier to its worker name. This will change how it shows up on mining pools.
-Format of request body:
-
-```
-{
-	"param": bool,
-	"password": <string>
+  "param": <bool>,
+  "password": <string>
 }
 ```
 
 **/identify**
+
 Toggle the miner LED for easier identification.
 Format of request body:
 
 ```
 {
-    "param": bool,
-    "password": <string>
+  "param": <bool>,
+  "password": <string>
 }
 ```
 
 **/fanspeed**
+
 Manually set the fan speed of the miner. Provide a string from 1-100. Note: if the speed sent is too low, it will automatically be set to the minimum of the current operating mode.
 Format of request body:
 
 ```
 {
-    "param": <string>,
-    "password": <string>
+  "param": <string>,
+  "password": <string>
 }
 ```
 
 **/update**
+
 Endpoint for receiving .swu file to update the firmware. Accepts multipart/form-data encoding in the body.
 Note this is not receiving a json.
 The form keys are "password", "checksum", "keepsettings", and "swupdate.swu".
