@@ -141,7 +141,7 @@ export class CoinTab extends React.Component {
             !this.props.selected.length;
 
         return (
-            <div className="tab-body" id="coin-tab">
+            <div className="tab-body">
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="coin">Coin</InputLabel>
                     <Select native id="coin" label="Coin" value={this.state.coin} onChange={this.updateCoin}>

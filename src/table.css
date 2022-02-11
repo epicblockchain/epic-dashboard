@@ -103,6 +103,10 @@ div.system-apply {
 
 /* ControlTab */
 
+#control-tab {
+    min-height: 124px;
+}
+
 #control-tab button.but-group {
     padding: 6px 15px;
     width: 154px;
@@ -125,10 +129,4 @@ button.stop {
 
 button.stop:hover {
     background-color: rgb(128, 19, 19);
-}
-
-/* Coin Tab */
-
-#coin-tab {
-    max-height: 280px;
 }

@@ -122,7 +122,7 @@ export class DataTable extends React.Component {
     efficiency(row) {
         const raw = this.hashrate_x_hr(row, 1, true) / this.totalPower(row.sum.HBs);
         if (isNaN(raw)) return 'N/A';
-        return `${Math.round(raw * 100) / 100} MH/W`;
+        return `${Math.round(raw / 10) / 100} GH/W`;
     }
 
     secondsToHumanReadable(seconds) {

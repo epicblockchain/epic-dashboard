@@ -68,7 +68,7 @@ export class SystemTab extends React.Component {
 
     render() {
         return (
-            <div className="tab-body">
+            <div className="tab-body" style={{minHeight: '200px'}}>
                 <Grid container>
                     <Grid item xs>
                         <Typography>Update Firmware</Typography>
@@ -154,6 +154,7 @@ export class SystemTab extends React.Component {
                             Apply
                         </Button>
                     </Grid>
+                    <Divider orientation="vertical" style={{margin: '0 8px'}} />
                     <Grid item xs>
                         <Button
                             onClick={() => {

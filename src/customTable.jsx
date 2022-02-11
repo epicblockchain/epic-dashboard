@@ -269,28 +269,31 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         document.getElementById('header').style.transform = `translateX(${-obj.scrollLeft}px)`;
     }, []);
 
-    const resizeCol = React.useCallback((e) => {
-        const { id, header } = JSON.parse(e.target.getAttribute('data-value'));
+    const resizeCol = React.useCallback(
+        (e) => {
+            const {id, header} = JSON.parse(e.target.getAttribute('data-value'));
 
-        if (id != 'selection') {
-            let max = 0;
+            if (id != 'selection') {
+                let max = 0;
 
-            const context = document.getElementById('canvas').getContext('2d');
-            context.font = '14px Helvetica';
+                const context = document.getElementById('canvas').getContext('2d');
+                context.font = '14px Helvetica';
 
-            data.forEach((row) => {
-                let width = getTextWidth(row[id], context);
-                if (id === 'ip') width += 17;
-                if (width > max) max = width;
-            });
+                data.forEach((row) => {
+                    let width = getTextWidth(row[id], context);
+                    if (id === 'ip') width += 17;
+                    if (width > max) max = width;
+                });
 
-            dispatch({
-                type: 'autoColSize',
-                col: id,
-                val: Math.max(max + 22, getTextWidth(header, context) + 48),
-            });
-        }
-    }, [data]);
+                dispatch({
+                    type: 'autoColSize',
+                    col: id,
+                    val: Math.max(max + 22, getTextWidth(header, context) + 48),
+                });
+            }
+        },
+        [data]
+    );
 
     const RenderRow = React.useCallback(
         ({columnIndex, rowIndex, style}) => {
