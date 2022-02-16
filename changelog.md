@@ -15,7 +15,6 @@ This release contains many new features and improvements.
     -   Quick Scan - for scanning epic-dashboard local network
     -   Advanced Scan - for scanning a wide range of IP addresses
 
-
 ### Bug Fixes
 
 -   Fix table resetting when switching switching to dashboard and other tabs

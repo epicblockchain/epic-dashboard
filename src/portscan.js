@@ -61,7 +61,7 @@ parentPort.on('message', async ({ip, range, timeout}) => {
                     method: 'GET',
                     timeout: gtimeout + 300,
                 };
-                http.get(options, (res) => {
+                const req = http.get(options, (res) => {
                     let body = '';
                     res.setEncoding('utf8');
                     res.on('data', (chunk) => {
@@ -74,7 +74,14 @@ parentPort.on('message', async ({ip, range, timeout}) => {
                             reject(err);
                         }
                     });
-                }).on('error', (err) => {
+                });
+                req.on('socket', (socket) => {
+                    socket.setTimeout(gtimeout + 500);
+                    socket.on('timeout', () => {
+                        req.abort();
+                    });
+                });
+                req.on('error', (err) => {
                     reject(err);
                 });
             });
