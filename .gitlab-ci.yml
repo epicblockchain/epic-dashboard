@@ -1,4 +1,4 @@
-image: ubuntu:latest
+image: node:16
 
 stages:
     - build
@@ -7,18 +7,10 @@ stages:
 .build_base:
     stage: build
     before_script:
-        - apt update
-        - export TZ="America/Toronto"
-        - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-        - apt install -y curl make git wine mono-devel fakeroot zip rpm
         - dpkg --add-architecture i386
         - apt update
-        - apt install -y wine32
-        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-        - export NVM_DIR="$HOME/.nvm"
-        - \. "$NVM_DIR/nvm.sh"
-        - nvm install 16
-        - npm i --unsafe-perm
+        - npm install
+        - apt install -y wine64 fakeroot mono-devel zip rpm wine32
         - export VERSION=$(node -p "require('./package.json').version")
         - echo "VERSION=$(node -p "require('./package.json').version")" >> variables.env
 
