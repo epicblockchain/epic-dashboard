@@ -248,12 +248,14 @@ class App extends React.Component {
             scanIp: '',
             scanRange: '24',
             scanTimeout: '500',
+            defaultTable: {},
         };
 
         this.setPage = this.setPage.bind(this);
         this.addMiner = this.addMiner.bind(this);
         this.delMiner = this.delMiner.bind(this);
         this.savePreferences = this.savePreferences.bind(this);
+        this.saveDefault = this.saveDefault.bind(this);
         this.saveMiners = this.saveMiners.bind(this);
         this.loadMiners = this.loadMiners.bind(this);
         this.blacklist = this.blacklist.bind(this);
@@ -433,6 +435,40 @@ class App extends React.Component {
                 this.init(JSON.parse(data));
             }
         });
+
+        fs.readFile(path.join(app_path, 'default.json'), (err, data) => {
+            if (err) {
+                this.setState({
+                    defaultTable: {
+                        status: true,
+                        ip: true,
+                        name: true,
+                        firmware: true,
+                        model: false,
+                        mode: true,
+                        pool: true,
+                        user: true,
+                        start: false,
+                        uptime: true,
+                        hbs: true,
+                        hashrate15min: true,
+                        hashrate1hr: false,
+                        hashrate6hr: false,
+                        hashrate24hr: false,
+                        efficiency1hr: false,
+                        accepted: false,
+                        rejected: false,
+                        difficulty: false,
+                        temperature: true,
+                        power: false,
+                        fanspeed: false,
+                        voltage: false,
+                    },
+                });
+            } else {
+                this.setState({defaultTable: JSON.parse(data)});
+            }
+        });
     }
 
     eula(bool) {
@@ -544,6 +580,20 @@ class App extends React.Component {
                 throw err;
             }
             if (notif) notify('success', 'Preferences saved');
+        });
+    }
+
+    saveDefault(json) {
+        for (let key of Object.keys(json)) {
+            if (json[key] !== this.state[key]) this.setState({[key]: json[key]});
+        }
+
+        fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
+        fs.writeFile(path.join(app_path, 'default.json'), JSON.stringify(json), function (err) {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
         });
     }
 
@@ -952,6 +1002,8 @@ class App extends React.Component {
                     {this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme} />}
                     <div hidden={this.state.page !== 'table'}>
                         <DataTable
+                            saveDefault={this.saveDefault}
+                            defaultTable={this.state.defaultTable}
                             data={this.state.miner_data}
                             models={this.state.models}
                             sessionPass={this.state.sessionPass}

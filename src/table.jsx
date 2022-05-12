@@ -11,20 +11,7 @@ import './table.css';
 
 import Table from './customTable.jsx';
 
-const defaultHidden = [
-    'model',
-    'start',
-    'hashrate1hr',
-    'hashrate6hr',
-    'hashrate24hr',
-    'efficiency1hr',
-    'accepted',
-    'rejected',
-    'difficulty',
-    'power',
-    'fanspeed',
-    'voltage',
-];
+let defaultHidden = new Set([]);
 
 function debounce1(func, timeout = 300) {
     let timer;
@@ -54,10 +41,45 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             this.props.models.forEach((key) => {
                 newState[key + '_sel'] = [];
-                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+                newState[key + '_state'] = {hiddenColumns: Array.from(defaultHidden)};
             });
 
             this.setState(newState);
+        }
+    }
+
+    setDefault(data) {
+        for (let key of Object.keys(data)) {
+            if (!data[key]) {
+                defaultHidden.add(key);
+                console.log(key + ': ' + data[key]);
+            }
+        }
+    }
+
+    toggleColumn(data, columnId) {
+        if (data[columnId]) {
+            data[columnId] = false;
+        } else {
+            data[columnId] = true;
+        }
+    }
+
+    toggleColumnAll(data) {
+        let allTrue = true;
+        for (let key of Object.keys(data)) {
+            if (!data[key]) {
+                allTrue = false;
+            }
+        }
+        if (allTrue) {
+            for (let key of Object.keys(data)) {
+                data[key] = false;
+            }
+        } else {
+            for (let key of Object.keys(data)) {
+                data[key] = true;
+            }
         }
     }
 
@@ -76,7 +98,7 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             newModels.forEach((key) => {
                 newState[key + '_sel'] = [];
-                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+                newState[key + '_state'] = {hiddenColumns: Array.from(defaultHidden)};
             });
 
             this.setState(newState);
@@ -92,6 +114,12 @@ export class DataTable extends React.Component {
         if (this.props.data.length < prevProps.data.length) this.selectReset();
 
         if (this.state.reset) this.setState({reset: false});
+
+        if (this.props.defaultTable != prevProps.defaultTable) {
+            console.log('update');
+            console.log(this.props.defaultTable, prevProps.defaultTable);
+            this.setDefault(this.props.defaultTable);
+        }
     }
 
     hashrate_x_hr(row, x, noFormat) {
@@ -192,6 +220,14 @@ export class DataTable extends React.Component {
 
     update(newState, action, prevState, data, model) {
         if (action.type == 'toggleHideColumn' || action.type == 'toggleHideAllColumns') {
+            if (action.type == 'toggleHideAllColumns') {
+                this.toggleColumnAll(this.props.defaultTable);
+            } else if (action.type == 'toggleHideColumn') {
+                this.toggleColumn(this.props.defaultTable, action.columnId);
+            }
+            this.setDefault(this.props.defaultTable);
+            this.props.saveDefault(this.props.defaultTable);
+
             var temp = {};
             this.props.models.forEach((mod) => {
                 temp[mod + '_state'] = Object.assign({}, this.state[mod + '_state']);
@@ -311,7 +347,9 @@ export class DataTable extends React.Component {
                             >
                                 <Table
                                     dataRaw={miners[model] || []}
-                                    extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
+                                    extstate={
+                                        this.state[model + '_state'] || {hiddenColumns: Array.from(defaultHidden)}
+                                    }
                                     update={this.update}
                                     extmodel={model}
                                     reset={this.state.reset}
