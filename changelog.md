@@ -1,7 +1,7 @@
 ## Small Update
 
-This release has a bug fix.
+This release has a few new features.
 
-### Bug Fixes
+### New Features
 
--   Fix for "Advanced Scan" which was causing a hang and no miners to be found
+-   Drop-down column selector in the table tab now saves which columns show by default
