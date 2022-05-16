@@ -163,6 +163,7 @@ export class SystemTab extends React.Component {
                             variant="contained"
                             color="primary"
                             disabled={
+                                this.state.error ||
                                 !this.state.pass1 ||
                                 !this.state.pass2 ||
                                 !this.state.password ||
