@@ -711,9 +711,14 @@ class App extends React.Component {
                 msg = `Running debug test: ${data.test}`;
                 success = `${data.test} debug test completed`;
                 break;
+            case '/wifi':
+                obj = {param: {ssid: data.ssid, psk: data.psk}, password: data.password};
+                msg = 'Updating wifi ssid and psk';
+                success = 'Wifi config updated';
+                break;
         }
 
-        let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test'; //sends response after completed
+        let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
         let soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
 
         for (let i of selected) {

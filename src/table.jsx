@@ -7,6 +7,7 @@ import {SystemTab} from './tabs/SystemTab.jsx';
 import {ControlTab} from './tabs/ControlTab.jsx';
 import {FanTab} from './tabs/FanTab.jsx';
 import {DebugTab} from './tabs/DebugTab.jsx';
+import {WifiTab} from './tabs/WifiTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
@@ -387,7 +388,8 @@ export class DataTable extends React.Component {
                         <Tab label="Performance" />
                         <Tab label="System" />
                         <Tab label="Cooling" disabled={!capApi} />
-                        {this.state.models[this.state.list] == 'ENG_RIG' && <Tab label="Debug" />}
+                        {this.state.models[this.state.list].toLowerCase() == 'bitmain' && <Tab label="Wifi" />}
+                        {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Debug" />}
                     </Tabs>
                     <div hidden={this.state.tab != 0}>
                         <AddRemoveTab
@@ -451,6 +453,15 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 6}>
+                        <WifiTab
+                            handleApi={this.props.handleApi}
+                            handleFormApi={this.props.handleFormApi}
+                            selected={selected}
+                            data={this.props.data}
+                            sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 7}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}
