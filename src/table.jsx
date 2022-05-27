@@ -11,7 +11,20 @@ import './table.css';
 
 import Table from './customTable.jsx';
 
-let defaultHidden = new Set([]);
+let defaultHidden = [
+    'model',
+    'start',
+    'hashrate1hr',
+    'hashrate6hr',
+    'hashrate24hr',
+    'efficiency1hr',
+    'accepted',
+    'rejected',
+    'difficulty',
+    'power',
+    'fanspeed',
+    'voltage',
+];
 
 function debounce1(func, timeout = 300) {
     let timer;
@@ -49,10 +62,10 @@ export class DataTable extends React.Component {
     }
 
     setDefault(data) {
+        defaultHidden = [];
         for (let key of Object.keys(data)) {
             if (!data[key]) {
-                defaultHidden.add(key);
-                console.log(key + ': ' + data[key]);
+                defaultHidden.push(key);
             }
         }
     }
@@ -98,7 +111,7 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             newModels.forEach((key) => {
                 newState[key + '_sel'] = [];
-                newState[key + '_state'] = {hiddenColumns: Array.from(defaultHidden)};
+                newState[key + '_state'] = {hiddenColumns: defaultHidden};
             });
 
             this.setState(newState);
@@ -347,9 +360,7 @@ export class DataTable extends React.Component {
                             >
                                 <Table
                                     dataRaw={miners[model] || []}
-                                    extstate={
-                                        this.state[model + '_state'] || {hiddenColumns: Array.from(defaultHidden)}
-                                    }
+                                    extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
                                     update={this.update}
                                     extmodel={model}
                                     reset={this.state.reset}

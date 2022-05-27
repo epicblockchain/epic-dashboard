@@ -101,6 +101,7 @@ export class Dashboard extends React.Component {
         series.name = 'Hashrate';
         series.strokeWidth = 2;
         series.smoothing = 'monotoneX';
+        series.fillOpacity = 0.6;
         yAxis.title.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
         yAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
         yAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffffff');
@@ -110,7 +111,7 @@ export class Dashboard extends React.Component {
         dateAxis.renderer.grid.template.strokeOpacity = 0.4;
 
         let bullet = series.bullets.push(new am4charts.CircleBullet());
-        bullet.scale = 0.6;
+        bullet.scale = 0.8;
         bullet.fill = am4core.color('#1b1d4d');
         bullet.tooltipText = 'Hashrate: [bold]{valueY} TH/s[/]';
         series.tooltip.getFillFromObject = false;

@@ -49,6 +49,7 @@ import './app.css';
 import icon from './img/epic.png';
 import logo from './img/EpicLogo.png';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
+import {ContactSupportOutlined} from '@material-ui/icons';
 
 const light = createMuiTheme({
     palette: {
@@ -248,7 +249,31 @@ class App extends React.Component {
             scanIp: '',
             scanRange: '24',
             scanTimeout: '500',
-            defaultTable: {},
+            defaultTable: {
+                status: true,
+                ip: true,
+                name: true,
+                firmware: true,
+                model: false,
+                mode: true,
+                pool: true,
+                user: true,
+                start: false,
+                uptime: true,
+                hbs: true,
+                hashrate15min: true,
+                hashrate1hr: false,
+                hashrate6hr: false,
+                hashrate24hr: false,
+                efficiency1hr: false,
+                accepted: false,
+                rejected: false,
+                difficulty: false,
+                temperature: true,
+                power: false,
+                fanspeed: false,
+                voltage: false,
+            },
         };
 
         this.setPage = this.setPage.bind(this);
@@ -437,35 +462,8 @@ class App extends React.Component {
         });
 
         fs.readFile(path.join(app_path, 'default.json'), (err, data) => {
-            if (err) {
-                this.setState({
-                    defaultTable: {
-                        status: true,
-                        ip: true,
-                        name: true,
-                        firmware: true,
-                        model: false,
-                        mode: true,
-                        pool: true,
-                        user: true,
-                        start: false,
-                        uptime: true,
-                        hbs: true,
-                        hashrate15min: true,
-                        hashrate1hr: false,
-                        hashrate6hr: false,
-                        hashrate24hr: false,
-                        efficiency1hr: false,
-                        accepted: false,
-                        rejected: false,
-                        difficulty: false,
-                        temperature: true,
-                        power: false,
-                        fanspeed: false,
-                        voltage: false,
-                    },
-                });
-            } else {
+            if (!err) {
+                console.log('columns read');
                 this.setState({defaultTable: JSON.parse(data)});
             }
         });
