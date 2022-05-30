@@ -31,6 +31,7 @@ export class WifiTab extends React.Component {
     }
 
     render() {
+        const disabled = this.state.ssid.length < 1 || this.state.psk.length < 8;
         return (
             <div className="tab-body" style={{minHeight: '200px'}}>
                 <Grid container>
@@ -48,7 +49,7 @@ export class WifiTab extends React.Component {
                         <TextField
                             variant="outlined"
                             label="Password"
-                            type="psk"
+                            type="password"
                             onChange={this.updatePsk}
                             value={this.state.psk}
                             margin="dense"
@@ -77,6 +78,7 @@ export class WifiTab extends React.Component {
                         }}
                         variant="contained"
                         color="primary"
+                        disabled={disabled}
                     >
                         Apply
                     </Button>
