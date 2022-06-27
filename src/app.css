@@ -18,7 +18,7 @@ body {
     left: 0;
     width: 100%;
     z-index: 1000;
-    background-color: #1b1d4d;
+    background-color: #171717;
     color: white;
 }
 
@@ -121,14 +121,10 @@ button.menuButOpen {
 }
 
 div.MuiDrawer-paper {
-    background-color: #1b1d4d;
+    background-color: #171717;
     color: rgba(255, 255, 255, 0.5);
     top: 24px;
     height: calc(100% - 24px);
-}
-
-.MuiDrawer-paper .MuiSvgIcon-root {
-    color: #ffc107;
 }
 
 .MuiDrawer-paper img {
@@ -136,7 +132,7 @@ div.MuiDrawer-paper {
 }
 
 .MuiDrawer-paper .MuiDivider-root {
-    background-color: #ffc107;
+    background-color: #2fc1de;
 }
 
 .MuiDrawer-paper .MuiListItemText-root {

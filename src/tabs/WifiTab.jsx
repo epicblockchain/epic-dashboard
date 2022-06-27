@@ -57,22 +57,23 @@ export class WifiTab extends React.Component {
                         <TextField
                             variant="outlined"
                             label="Wifi Password"
-                            type={this.state.visible ? "" : "password"}
+                            type={this.state.visible ? '' : 'password'}
                             onChange={this.updatePsk}
                             value={this.state.psk}
                             margin="dense"
                             inputProps={{minLength: 8}}
                             InputProps={{
-                                endAdornment:
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={() => this.clickShowPassword()}
-                                        onMouseDown={(e) => this.mouseDownPassword(e)}
-                                    >
-                                        {this.state.visible ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                </InputAdornment>
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => this.clickShowPassword()}
+                                            onMouseDown={(e) => this.mouseDownPassword(e)}
+                                        >
+                                            {this.state.visible ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
                             }}
                         />
                     </Grid>

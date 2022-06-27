@@ -47,26 +47,34 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import './app.css';
 import icon from './img/epic.png';
-import logo from './img/EpicLogo.png';
+import darkLogo from './img/EpicLogoDark.png';
+import lightLogo from './img/EpicLogoLight.png';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import {ContactSupportOutlined} from '@material-ui/icons';
 
 const light = createMuiTheme({
     palette: {
-        primary: {main: '#1b1d4d'},
-        secondary: {main: '#ffc107'},
+        primary: {main: '#0068B4'},
+        secondary: {main: '#0068B4'},
+        text: {
+            secondary: '#8F8F8F',
+        },
+        background: {
+            default: '#f6f6f6',
+            paper: '#fff',
+        },
     },
     overrides: {
         MuiCssBaseline: {
             '@global': {
                 '.datatable-wrap': {
-                    background: '#fafafa',
+                    background: '#fff',
                 },
                 '.resizer': {
                     border: '8px solid #fafafa',
                     background: '#aaa',
                     '&.isResizing': {
-                        background: '#1b1d4d',
+                        background: '#2FC1DE',
                     },
                 },
                 '.MuiTableRow-root': {
@@ -86,11 +94,17 @@ const light = createMuiTheme({
                 '.grid': {
                     borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
                 },
-                '.MuiDrawer-root .MuiListItem-button:hover': {
-                    background: 'rgba(255, 255, 255, 0.08)',
-                },
                 '.unique-id-label': {
                     color: 'rgba(0, 0, 0, 0.54)',
+                },
+
+                'div.MuiDrawer-paper': {
+                    backgroundColor: '#fff',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                },
+
+                '.MuiDrawer-paper .MuiListItemText-root': {
+                    color: '#000000',
                 },
             },
         },
@@ -100,8 +114,12 @@ const light = createMuiTheme({
 const dark = createMuiTheme({
     palette: {
         type: 'dark',
-        primary: {main: '#ffc107'},
-        secondary: {main: '#1b1d4d'},
+        primary: {main: '#2FC1DE'},
+        secondary: {main: '#2FC1DE'},
+        background: {
+            default: '#171717',
+            paper: '#2F2F2F',
+        },
     },
     overrides: {
         MuiCssBaseline: {
@@ -129,7 +147,7 @@ const dark = createMuiTheme({
                     border: '8px solid #303030',
                     background: '#aaa',
                     '&.isResizing': {
-                        background: '#ffc107',
+                        background: '#2FC1DE',
                     },
                 },
                 '.MuiTableRow-root': {
@@ -797,6 +815,11 @@ class App extends React.Component {
 
     render() {
         const prefix16 = this.state.scanRange === '16';
+        if (this.state.theme === 'light') {
+            var logo = lightLogo;
+        } else {
+            var logo = darkLogo;
+        }
 
         return (
             <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
@@ -819,7 +842,7 @@ class App extends React.Component {
                     color="primary"
                     className={this.state.drawerOpen ? 'menuBut menuButOpen' : 'menuBut'}
                 >
-                    <MenuIcon color="secondary" />
+                    <MenuIcon />
                 </Button>
                 <Drawer
                     variant="permanent"
@@ -828,18 +851,18 @@ class App extends React.Component {
                 >
                     <List>
                         <ListItem className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'}>
-                            <img src={logo} />
+                            <img src={logo} width="181px" />
                         </ListItem>
                         <Divider variant="middle" />
                         <Tooltip title="Dashboard" placement="right" arrow>
                             <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
-                                <AssessmentIcon />
+                                <AssessmentIcon color="primary" />
                                 <ListItemText primary="Dashboard" />
                             </ListItem>
                         </Tooltip>
                         <Tooltip title="Table" placement="right" arrow>
                             <ListItem button key="Table" onClick={() => this.setPage('table')}>
-                                <ListAltIcon />
+                                <ListAltIcon color="primary" />
                                 <ListItemText primary="Table" />
                             </ListItem>
                         </Tooltip>
@@ -849,31 +872,31 @@ class App extends React.Component {
                                 key="Quick Miner Scan"
                                 onClick={() => this.portscan(Object.entries(networks)[0][1][0], 24, 500)}
                             >
-                                <NetworkCheckIcon />
+                                <NetworkCheckIcon color="primary" />
                                 <ListItemText primary="Quick Miner Scan" />
                             </ListItem>
                         </Tooltip>
                         <Tooltip title="Advanced Scan" placement="right" arrow>
                             <ListItem button key="Advanced Scan" onClick={() => this.setState({portscan: true})}>
-                                <PermScanWifiIcon />
+                                <PermScanWifiIcon color="primary" />
                                 <ListItemText primary="Advanced Scan" />
                             </ListItem>
                         </Tooltip>
                         <Tooltip title="Session Password" placement="right" arrow>
                             <ListItem button key="Password" onClick={() => this.toggleModal(true)}>
-                                <VpnKeyIcon />
+                                <VpnKeyIcon color="primary" />
                                 <ListItemText primary="Session Password" />
                             </ListItem>
                         </Tooltip>
                         <Tooltip title="Preferences" placement="right" arrow>
                             <ListItem button key="Preferences" onClick={() => this.setPage('preferences')}>
-                                <SettingsIcon />
+                                <SettingsIcon color="primary" />
                                 <ListItemText primary="Preferences" />
                             </ListItem>
                         </Tooltip>
                         <Tooltip title="Support" placement="right" arrow>
                             <ListItem button key="Support" onClick={() => this.setPage('support')}>
-                                <ContactSupportIcon />
+                                <ContactSupportIcon color="primary" />
                                 <ListItemText primary="Support" />
                             </ListItem>
                         </Tooltip>

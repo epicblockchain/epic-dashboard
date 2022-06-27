@@ -102,22 +102,22 @@ export class Dashboard extends React.Component {
         series.strokeWidth = 2;
         series.smoothing = 'monotoneX';
         series.fillOpacity = 0.6;
-        yAxis.title.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
-        yAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
-        yAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffffff');
+        yAxis.title.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
+        yAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
+        yAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#ffffff');
         yAxis.renderer.grid.template.strokeOpacity = 0.4;
-        dateAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
-        dateAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffffff');
+        dateAxis.renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
+        dateAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#ffffff');
         dateAxis.renderer.grid.template.strokeOpacity = 0.4;
 
         let bullet = series.bullets.push(new am4charts.CircleBullet());
         bullet.scale = 0.8;
-        bullet.fill = am4core.color('#1b1d4d');
+        bullet.fill = am4core.color('#0068B4');
         bullet.tooltipText = 'Hashrate: [bold]{valueY} TH/s[/]';
         series.tooltip.getFillFromObject = false;
-        series.tooltip.label.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
+        series.tooltip.label.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
         series.tooltip.background.fill = am4core.color(this.props.theme == 'light' ? '#fafafa' : '#515151');
-        series.tooltip.background.stroke = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
+        series.tooltip.background.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
 
         chart.data = chartHashrateData;
         this.chart = chart;
@@ -168,18 +168,18 @@ export class Dashboard extends React.Component {
         let series = this.chart.series.values;
 
         if (yAxes && dateAxes && series) {
-            yAxes[0].title.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
-            yAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
-            yAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffffff');
+            yAxes[0].title.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
+            yAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
+            yAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#ffffff');
             dateAxes[0].renderer.labels.template.fill = am4core.color(
-                this.props.theme == 'light' ? '#1b1d4d' : '#ffc107'
+                this.props.theme == 'light' ? '#0068B4' : '#2FC1DE'
             );
             dateAxes[0].renderer.grid.template.stroke = am4core.color(
-                this.props.theme == 'light' ? '#1b1d4d' : '#ffffff'
+                this.props.theme == 'light' ? '#0068B4' : '#ffffff'
             );
-            series[0].tooltip.label.fill = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#fafafa');
+            series[0].tooltip.label.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#fafafa');
             series[0].tooltip.background.fill = am4core.color(this.props.theme == 'light' ? '#fafafa' : '#515151');
-            series[0].tooltip.background.stroke = am4core.color(this.props.theme == 'light' ? '#1b1d4d' : '#ffc107');
+            series[0].tooltip.background.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
         }
     }
 

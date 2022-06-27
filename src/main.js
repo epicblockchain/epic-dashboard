@@ -22,7 +22,7 @@ const createWindow = () => {
         height: 900,
         minHeight: 720,
         frame: false,
-        icon: __dirname + '/img/epic.png',
+        icon: __dirname + '/img/epic.ico',
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
