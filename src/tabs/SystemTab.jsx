@@ -98,12 +98,7 @@ export class SystemTab extends React.Component {
                         <FormControl margin="dense">
                             <FormControlLabel
                                 control={
-                                    <Checkbox
-                                        color="primary"
-                                        checked={this.state.keep}
-                                        onChange={this.updateKeep}
-                                        disabled={this.state.lock}
-                                    />
+                                    <Checkbox color="primary" checked={this.state.keep} onChange={this.updateKeep} />
                                 }
                                 label="Maintain config over update"
                             />
