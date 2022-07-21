@@ -112,7 +112,7 @@ export class Dashboard extends React.Component {
 
         let bullet = series.bullets.push(new am4charts.CircleBullet());
         bullet.scale = 0.8;
-        bullet.fill = am4core.color('#0068B4');
+        bullet.fill = am4core.color('#2FC1DE');
         bullet.tooltipText = 'Hashrate: [bold]{valueY} TH/s[/]';
         series.tooltip.getFillFromObject = false;
         series.tooltip.label.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');

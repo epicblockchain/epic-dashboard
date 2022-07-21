@@ -24,6 +24,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import LightOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 
 import {
     useTable,
@@ -37,6 +38,8 @@ import {
 import {FixedSizeGrid} from 'react-window';
 
 import './customTable.css';
+
+const {ipcRenderer} = require('electron');
 
 const IndeterminateCheckbox = React.forwardRef(({indeterminate, ...rest}, ref) => {
     const defaultRef = React.useRef();
@@ -135,7 +138,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     const columns = React.useMemo(
         () => [
             {accessor: 'status', Header: 'Status', width: 110},
-            {accessor: 'ip', Header: 'IP', width: 130},
+            {accessor: 'ip', Header: 'IP', width: 150},
             {accessor: 'name', Header: 'Name', width: 150},
             {accessor: 'firmware', Header: 'Firmware', width: 108},
             {accessor: 'model', Header: 'Model', width: 100},
@@ -336,17 +339,31 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                 }
                             >
                                 {cell.column.id === 'ip' && (
-                                    <IconButton
-                                        className="led-toggle"
-                                        size="small"
-                                        disabled={!data[row.id].misc || data[row.id].name === 'Error'}
-                                        title={led ? 'Toggle LED Off' : 'Toggle LED On'}
-                                        onClick={() =>
-                                            handleApiM('/identify', {checked: !led, password: ''}, [data[row.id].id])
-                                        }
-                                    >
-                                        <LightOutlinedIcon className={led ? 'led-on' : ''} />
-                                    </IconButton>
+                                    <>
+                                        {console.log(data[row.id])}
+                                        <IconButton
+                                            className="led-toggle"
+                                            size="small"
+                                            disabled={!data[row.id].misc || data[row.id].name === 'Error'}
+                                            title={led ? 'Toggle LED Off' : 'Toggle LED On'}
+                                            onClick={() =>
+                                                handleApiM('/identify', {checked: !led, password: ''}, [
+                                                    data[row.id].id,
+                                                ])
+                                            }
+                                        >
+                                            <LightOutlinedIcon className={led ? 'led-on' : ''} />
+                                        </IconButton>
+                                        <IconButton
+                                            className="open-browser"
+                                            size="small"
+                                            onClick={() =>
+                                                ipcRenderer.invoke('open-external', `http://${data[row.id].ip}`)
+                                            }
+                                        >
+                                            <OpenInNewIcon />
+                                        </IconButton>
+                                    </>
                                 )}
                                 {cell.render('Cell')}
                             </TableCell>

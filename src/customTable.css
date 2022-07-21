@@ -119,13 +119,20 @@
 }
 
 #datatable .ip-col {
-    padding-left: 28px;
+    padding-left: 56px;
 }
 
 button.led-toggle {
     position: absolute;
     top: 0;
-    transform: translateX(-28px);
+    transform: translateX(-56px);
+}
+
+button.open-browser {
+    position: absolute;
+    top: 0;
+    left: 50;
+    transform: translateX(-32px);
 }
 
 .led-on {

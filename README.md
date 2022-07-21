@@ -136,12 +136,17 @@ If you need to identify multiple miners or miners with older firmware, you can s
 
 ![led buttons](docs/images/led0.png)
 
+### Opening Web Dashboard
+
+For a more visual display of a single miner, the web dashboard can be access by typing the IP address of the miner into your favourite browser or by pressing the "Open In Browser" button next to the LED button.
+
+![open in browser icon](docs/images/open_browser.png)
+
 ## Adding/Removing/Blacklisting Miners
 
 Use the interface in the Table page to add, save, blacklist and load miners. Blacklisted miners will be ignored by quick scan/advanced scan.
 
-![add miner](docs/images/add_miner0.png)
-![add miner success](docs/images/add_miner1.png)
+![add miner](docs/images/add_miner.png)
 
 These will be stored in a line seperated text file:
 

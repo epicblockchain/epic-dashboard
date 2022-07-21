@@ -4,5 +4,4 @@ This release has a few new features.
 
 ### New Features
 
--   Update colour scheme
--   Update company logo
+-   Added "Open Webdash in Browser" button to IP Address column.
