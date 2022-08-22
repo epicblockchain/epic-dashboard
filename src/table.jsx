@@ -297,7 +297,7 @@ export class DataTable extends React.Component {
             accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
             rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
             difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
-            temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs) + ' \u00b0C',
+            temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs).toFixed(1) + ' \u00b0C',
             power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
             fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
             cap: a.cap,
