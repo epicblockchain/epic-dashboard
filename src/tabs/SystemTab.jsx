@@ -15,7 +15,15 @@ import {
 export class SystemTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {filepath: '', keep: true, pass1: '', pass2: '', error: false, password: this.props.sessionPass};
+        this.state = {
+            filepath: '',
+            fileext: '',
+            keep: true,
+            pass1: '',
+            pass2: '',
+            error: false,
+            password: this.props.sessionPass,
+        };
 
         this.updateFilepath = this.updateFilepath.bind(this);
         this.updateKeep = this.updateKeep.bind(this);
@@ -33,12 +41,13 @@ export class SystemTab extends React.Component {
     updateFilepath() {
         ipcRenderer
             .invoke('dialog-open', {
-                filters: [{name: '.swu files', extensions: ['swu']}],
+                filters: [{name: '.zip/.swu', extensions: ['zip', 'swu']}],
                 properties: ['openFile'],
             })
             .then((args) => {
                 if (!args.canceled) {
                     this.setState({filepath: args.filePaths[0]});
+                    this.setState({fileext: this.state.filepath.split('.').pop()});
                 }
             })
             .catch((err) => {
@@ -74,7 +83,7 @@ export class SystemTab extends React.Component {
                         <Typography>Update Firmware</Typography>
                         <TextField
                             variant="outlined"
-                            label="Firmware file"
+                            label="System Update File (.zip/.swu)"
                             value={this.state.filepath}
                             disabled
                             margin="dense"
@@ -140,11 +149,19 @@ export class SystemTab extends React.Component {
                         />
                         <Button
                             onClick={() => {
-                                this.props.handleFormApi('/update', this.state, this.props.selected);
+                                if (this.state.fileext == 'swu') {
+                                    this.props.handleFormApi('/update', this.state, this.props.selected);
+                                } else if (this.state.fileext == 'zip') {
+                                    this.props.handleFormApi('/systemupdate', this.state, this.props.selected);
+                                }
                             }}
                             variant="contained"
                             color="primary"
-                            disabled={!this.state.filepath || !this.state.password || !this.props.selected.length}
+                            disabled={
+                                (!this.state.filepath && !this.state.filepath2) ||
+                                !this.state.password ||
+                                !this.props.selected.length
+                            }
                         >
                             Apply
                         </Button>

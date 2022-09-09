@@ -340,7 +340,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                             >
                                 {cell.column.id === 'ip' && (
                                     <>
-                                        {console.log(data[row.id])}
+                                        {/* {console.log(data[row.id])} */}
                                         <IconButton
                                             className="led-toggle"
                                             size="small"

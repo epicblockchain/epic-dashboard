@@ -66,7 +66,14 @@ const createWindow = () => {
                 f.append('password', data.password);
                 f.append('checksum', sha256(data.filepath));
                 f.append('keepsettings', data.keep.toString());
-                f.append('swupdate.swu', fs.createReadStream(data.filepath));
+                switch (api) {
+                    case '/update':
+                        f.append('swupdate.swu', fs.createReadStream(data.filepath));
+                        break;
+                    case '/systemupdate':
+                        f.append('update.zip', fs.createReadStream(data.filepath));
+                        break;
+                }
 
                 try {
                     event.reply('form-post-reply', i, 'info', `${miners[i].address}: Updating in progress`);
