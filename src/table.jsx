@@ -388,7 +388,7 @@ export class DataTable extends React.Component {
                         <Tab label="Performance" />
                         <Tab label="System" />
                         <Tab label="Cooling" disabled={!capApi} />
-                        {this.state.models[this.state.list].toLowerCase() == 'bitmain' && <Tab label="Wifi" />}
+                        {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Wifi" />}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Debug" />}
                     </Tabs>
                     <div hidden={this.state.tab != 0}>
