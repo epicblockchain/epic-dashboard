@@ -136,6 +136,14 @@ If you need to identify multiple miners or miners with older firmware, you can s
 
 ![led buttons](docs/images/led0.png)
 
+Alternatively, if you need to identify the IP of a specific miner, press the button next to the LED lights on the control board.
+
+![led control button](docs/images/led2.png)
+
+On the dashboard, the light bulb icon of the miner will then be blinking. Once you have identified the IP, you may click on the flashing light bulb icon to turn the LED off.
+
+![led dashboard](docs/images/led3.png)
+
 ### Opening Web Dashboard
 
 For a more visual display of a single miner, the web dashboard can be access by typing the IP address of the miner into your favourite browser or by pressing the "Open In Browser" button next to the LED button.
