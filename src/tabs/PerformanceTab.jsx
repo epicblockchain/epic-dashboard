@@ -52,6 +52,14 @@ export class PerformanceTab extends React.Component {
             }
         }
 
+        if (powers != null) {
+            for (const power of Object.keys(powers)) {
+                if (powers[power] === null) {
+                    delete powers[power];
+                }
+            }
+        }
+
         const powerArray = [{mode: 'Select Preset'}];
         if (powers)
             powerArray.push(
