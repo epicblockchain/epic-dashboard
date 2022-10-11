@@ -1,7 +1,7 @@
 ## Small Update
 
-This release has a few new features.
+This release has a bug fix.
 
 ### New Features
 
--   Remove unused tab
+-   Dashboard goes blank during select all miners
