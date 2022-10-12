@@ -31,9 +31,9 @@ export class PerformanceTab extends React.Component {
 
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
-                if (this.props.data[selected].cap.PresetsPowerLevels) {
+                if (!oldPresets && this.props.data[selected].cap.PresetsPowerLevels) {
                     if (!powers) {
-                        powers = this.props.data[selected].cap.PresetsPowerLevels;
+                        powers = Object.assign({}, this.props.data[selected].cap.PresetsPowerLevels);
                         continue;
                     }
 
@@ -43,9 +43,17 @@ export class PerformanceTab extends React.Component {
                         }
                     }
                 } else {
-                    oldPresets = this.props.data[selected].cap.Presets;
-                    powers = null;
-                    break;
+                    if (!oldPresets) {
+                        oldPresets = Object.assign({}, this.props.data[selected].cap.Presets);
+                        powers = null;
+                        continue;
+                    }
+
+                    for (const preset in oldPresets) {
+                        if (!this.props.data[selected].cap.Presets[preset]) {
+                            oldPresets[preset] = null;
+                        }
+                    }
                 }
             } else {
                 break;
@@ -60,6 +68,14 @@ export class PerformanceTab extends React.Component {
             }
         }
 
+        if (oldPresets != null) {
+            for (const preset of Object.keys(oldPresets)) {
+                if (oldPresets[preset] === null) {
+                    delete oldPresets[preset];
+                }
+            }
+        }
+
         const powerArray = [{mode: 'Select Preset'}];
         if (powers)
             powerArray.push(
@@ -67,7 +83,7 @@ export class PerformanceTab extends React.Component {
                     .map((entry) => entry[1].map((power) => ({mode: entry[0], power: power})))
                     .flat()
             );
-        else if (oldPresets) powerArray.push(...oldPresets.map((preset) => ({mode: preset})));
+        else if (oldPresets) powerArray.push(...Object.entries(oldPresets).map((preset) => ({mode: preset[1]})));
 
         const disabled = this.state.mode === 'Select Preset' || !this.state.password || !this.props.selected.length;
 

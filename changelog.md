@@ -4,4 +4,4 @@ This release has a bug fix.
 
 ### New Features
 
--   Dashboard goes blank during select all miners
+-   Fixed bug with presets disappearing when selecting certain miners
