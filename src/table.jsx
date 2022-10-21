@@ -274,6 +274,15 @@ export class DataTable extends React.Component {
         }
     }
 
+    getLastError(a) {
+        let x = a.sum.Status['Last Error'];
+        if (x === null || x === undefined) {
+            return ' ';
+        } else {
+            return Object.values(a.sum.Status['Last Error']);
+        }
+    }
+
     render() {
         const rows = this.props.data.map((a, i) => ({
             id: i,
@@ -307,6 +316,8 @@ export class DataTable extends React.Component {
             connected:
                 this.failSafe(a.sum) ||
                 (a.sum.Stratum.IsPoolConnected !== undefined ? a.sum.Stratum.IsPoolConnected : 'Error'),
+            lasterror:
+                this.failSafe(a.sum) || (a.sum.Status && a.sum.Status['Last Error'] ? this.getLastError(a) : ' '),
         }));
 
         var miners = {};

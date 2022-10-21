@@ -160,6 +160,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'power', Header: 'Power (W)', width: 110},
             {accessor: 'fanspeed', Header: 'Fan Speed', width: 115},
             {accessor: 'voltage', Header: 'Input Voltage', width: 125, sortType: 'number'},
+            {accessor: 'lasterror', Header: 'Last Error', width: 250},
         ],
         []
     );
@@ -326,8 +327,18 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                             ? cell.value <= 11.9
                                                 ? 'hb-warn'
                                                 : null
+                                            : cell.column.id === 'lasterror'
+                                            ? cell.value !== ' '
+                                                ? 'hb-warn'
+                                                : null
                                             : cell.column.id === 'ip'
                                             ? 'ip-col'
+                                            : cell.column.id === 'status'
+                                            ? data[row.id].lasterror !== ' '
+                                                ? data[row.id].status
+                                                    ? 'hb-warn'
+                                                    : null
+                                                : null
                                             : cell.column.id === 'pool'
                                             ? data[row.id].connected !== 'Error'
                                                 ? data[row.id].connected
