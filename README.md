@@ -58,6 +58,10 @@ To build only a specific executable open the makefile and run the appropriate co
 1. Download the dashboard software from [here](https://github.com/epicblockchain/epic-dashboard/releases/)
 2. Use the sidebar on the left to navigate to tabs.
 
+## System Password
+
+By default all of the miners have a password of **letmein**.
+
 ## Scanning for miners
 
 To discover miners on your network, you can first try using the "Quick Miner Scan" in the sidebar. This will scan the network the computer is currently connected to for miners.
