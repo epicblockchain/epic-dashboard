@@ -65,6 +65,23 @@ const light = createTheme({
         },
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                '.datatable-wrap': {
+                    backgroundColor: '#fff',
+                },
+                '.resizer': {
+                    border: '8px solid #fafafa',
+                    background: '#aaa',
+                    '&.isResizing': {
+                        background: '#2FC1DE',
+                    },
+                },
+                '.unique-id-label': {
+                    color: 'rgba(0, 0, 0, 0.54)',
+                },
+            },
+        },
         MuiTextField: {
             defaultProps: {
                 size: 'small',
@@ -121,26 +138,6 @@ const light = createTheme({
             },
         },
     },
-
-    overrides: {
-        MuiCssBaseline: {
-            '@global': {
-                '.datatable-wrap': {
-                    background: '#fff',
-                },
-                '.resizer': {
-                    border: '8px solid #fafafa',
-                    background: '#aaa',
-                    '&.isResizing': {
-                        background: '#2FC1DE',
-                    },
-                },
-                '.unique-id-label': {
-                    color: 'rgba(0, 0, 0, 0.54)',
-                },
-            },
-        },
-    },
 });
 
 const dark = createTheme({
@@ -154,6 +151,39 @@ const dark = createTheme({
         },
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                '*::-webkit-scrollbar': {
+                    width: '1.25em',
+                    height: '1.25em',
+                    backgroundColor: '#202022',
+                },
+                '*::-webkit-scrollbar-corner': {
+                    backgroundColor: '#202022',
+                },
+                '*::-webkit-scrollbar-thumb': {
+                    backgroundColor: '#585859',
+                    border: '3px solid #202022',
+                    borderRadius: '8px',
+                },
+                '*::-webkit-scrollbar-thumb:hover': {
+                    backgroundColor: '#999',
+                },
+                '.datatable-wrap': {
+                    backgroundColor: '#303030',
+                },
+                '.resizer': {
+                    border: '8px solid #303030',
+                    background: '#aaa',
+                    '&.isResizing': {
+                        background: '#2FC1DE',
+                    },
+                },
+                '.unique-id-label': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                },
+            },
+        },
         MuiTextField: {
             defaultProps: {
                 size: 'small',
@@ -204,41 +234,6 @@ const dark = createTheme({
                 paper: {
                     backgroundColor: '#171717',
                     color: 'rgba(255, 255, 255, 0.5)',
-                },
-            },
-        },
-    },
-    overrides: {
-        MuiCssBaseline: {
-            '@global': {
-                '*::-webkit-scrollbar': {
-                    width: '1.25em',
-                    height: '1.25em',
-                    background: '#202022',
-                },
-                '*::-webkit-scrollbar-corner': {
-                    background: '#202022',
-                },
-                '*::-webkit-scrollbar-thumb': {
-                    background: '#585859',
-                    border: '3px solid #202022',
-                    borderRadius: '8px',
-                },
-                '*::-webkit-scrollbar-thumb:hover': {
-                    background: '#999',
-                },
-                '.datatable-wrap': {
-                    background: '#303030',
-                },
-                '.resizer': {
-                    border: '8px solid #303030',
-                    background: '#aaa',
-                    '&.isResizing': {
-                        background: '#2FC1DE',
-                    },
-                },
-                '.unique-id-label': {
-                    color: 'rgba(255, 255, 255, 0.7)',
                 },
             },
         },
