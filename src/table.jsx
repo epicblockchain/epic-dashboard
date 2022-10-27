@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Tabs, Tab, Paper} from '@material-ui/core';
+import {Tabs, Tab, Paper} from '@mui/material';
 import {AddRemoveTab} from './tabs/AddRemoveTab.jsx';
 import {CoinTab} from './tabs/CoinTab.jsx';
 import {PerformanceTab} from './tabs/PerformanceTab.jsx';

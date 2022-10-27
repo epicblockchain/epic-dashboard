@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, TextField, Select, FormControl, InputLabel, InputAdornment, Switch} from '@material-ui/core';
+import {Button, TextField, Select, FormControl, InputLabel, InputAdornment, Switch} from '@mui/material';
 
 export class CoinTab extends React.Component {
     constructor(props) {
@@ -144,7 +144,14 @@ export class CoinTab extends React.Component {
             <div className="tab-body">
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="coin">Coin</InputLabel>
-                    <Select native id="coin" label="Coin" value={this.state.coin} onChange={this.updateCoin}>
+                    <Select
+                        native
+                        id="coin"
+                        label="Coin"
+                        size="small"
+                        value={this.state.coin}
+                        onChange={this.updateCoin}
+                    >
                         {options.map((a, i) => {
                             return (
                                 <option key={i} value={a}>

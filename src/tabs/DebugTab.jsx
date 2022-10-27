@@ -2,7 +2,7 @@ const {ipcRenderer} = require('electron');
 const got = require('got');
 const fs = require('fs');
 import * as React from 'react';
-import {Button, FormControl, InputLabel, Select} from '@material-ui/core';
+import {Button, FormControl, InputLabel, Select} from '@mui/material';
 
 export class DebugTab extends React.Component {
     constructor(props) {
@@ -74,7 +74,14 @@ export class DebugTab extends React.Component {
             <div className="tab-body">
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="test">Test</InputLabel>
-                    <Select native id="test" label="Test" value={this.state.test} onChange={this.updateTest}>
+                    <Select
+                        native
+                        id="test"
+                        label="Test"
+                        size="small"
+                        value={this.state.test}
+                        onChange={this.updateTest}
+                    >
                         {options.map((a, i) => {
                             return (
                                 <option key={i} value={a}>
@@ -86,7 +93,14 @@ export class DebugTab extends React.Component {
                 </FormControl>
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="type">Type</InputLabel>
-                    <Select native id="type" label="Type" value={this.state.type} onChange={this.updateType}>
+                    <Select
+                        native
+                        id="type"
+                        label="Type"
+                        size="small"
+                        value={this.state.type}
+                        onChange={this.updateType}
+                    >
                         {types.map((a, i) => {
                             return (
                                 <option key={i} value={a}>

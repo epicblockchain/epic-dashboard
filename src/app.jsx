@@ -32,27 +32,27 @@ import {
     Typography,
     Tooltip,
     Link,
+    Alert,
     InputAdornment,
-} from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+} from '@mui/material';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AssessmentIcon from '@material-ui/icons/Assessment';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-import MenuIcon from '@material-ui/icons/Menu';
-import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
-import PermScanWifiIcon from '@material-ui/icons/PermScanWifi';
-import SettingsIcon from '@material-ui/icons/Settings';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import MenuIcon from '@mui/icons-material/Menu';
+import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
+import PermScanWifiIcon from '@mui/icons-material/PermScanWifi';
+import SettingsIcon from '@mui/icons-material/Settings';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import './app.css';
 import icon from './img/epic.png';
 import darkLogo from './img/EpicLogoDark.png';
 import lightLogo from './img/EpicLogoLight.png';
-import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
-import {ContactSupportOutlined} from '@material-ui/icons';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {ContactSupportOutlined} from '@mui/icons-material';
 
-const light = createMuiTheme({
+const light = createTheme({
     palette: {
         primary: {main: '#0068B4'},
         secondary: {main: '#0068B4'},
@@ -64,6 +64,64 @@ const light = createMuiTheme({
             paper: '#fff',
         },
     },
+    components: {
+        MuiTextField: {
+            defaultProps: {
+                size: 'small',
+            },
+        },
+        MuiListItemText: {
+            styleOverrides: {
+                root: {
+                    color: '#000000',
+                },
+            },
+        },
+        MuiToolbar: {
+            styleOverrides: {
+                root: {
+                    paddingLeft: '16px',
+                    backgroundColor: 'white',
+                },
+            },
+        },
+        Grid: {
+            styleOverrides: {
+                borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+            },
+        },
+
+        MuiTableRow: {
+            styleOverrides: {
+                root: {
+                    head: {
+                        hover: {
+                            backgroundColor: 'inherit',
+                        },
+                    },
+                    hover: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    },
+                    selected: {
+                        backgroundColor: 'rgba(27, 29, 77, 0.08) !important',
+                        hover: {
+                            backgroundColor: 'rgba(27, 29, 77, 0.12) !important',
+                        },
+                    },
+                },
+            },
+        },
+
+        MuiDrawer: {
+            styleOverrides: {
+                paper: {
+                    backgroundColor: '#fff',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                },
+            },
+        },
+    },
+
     overrides: {
         MuiCssBaseline: {
             '@global': {
@@ -77,48 +135,77 @@ const light = createMuiTheme({
                         background: '#2FC1DE',
                     },
                 },
-                '.MuiTableRow-root': {
-                    '&.MuiTableRow-head:hover': {
-                        backgroundColor: 'inherit',
-                    },
-                    '&:hover': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                    },
-                },
-                '.MuiTableRow-root.Mui-selected': {
-                    backgroundColor: 'rgba(27, 29, 77, 0.08) !important',
-                    '&:hover': {
-                        backgroundColor: 'rgba(27, 29, 77, 0.12) !important',
-                    },
-                },
-                '.grid': {
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                },
                 '.unique-id-label': {
                     color: 'rgba(0, 0, 0, 0.54)',
-                },
-
-                'div.MuiDrawer-paper': {
-                    backgroundColor: '#fff',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                },
-
-                '.MuiDrawer-paper .MuiListItemText-root': {
-                    color: '#000000',
                 },
             },
         },
     },
 });
 
-const dark = createMuiTheme({
+const dark = createTheme({
     palette: {
-        type: 'dark',
+        mode: 'dark',
         primary: {main: '#2FC1DE'},
         secondary: {main: '#2FC1DE'},
         background: {
             default: '#171717',
             paper: '#2F2F2F',
+        },
+    },
+    components: {
+        MuiTextField: {
+            defaultProps: {
+                size: 'small',
+            },
+        },
+        MuiListItemText: {
+            styleOverrides: {
+                root: {
+                    color: 'white',
+                },
+            },
+        },
+        MuiToolbar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: '#2f2f2f',
+                },
+            },
+        },
+        Grid: {
+            styleOverrides: {
+                borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+            },
+        },
+        MuiTableRow: {
+            styleOverrides: {
+                root: {
+                    head: {
+                        hover: {
+                            backgroundColor: 'inherit',
+                        },
+                    },
+                    hover: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    },
+                    selected: {
+                        backgroundColor: 'rgba(255, 193, 7, 0.16) !important',
+                        hover: {
+                            backgroundColor: 'rgba(255, 193, 7, 0.24) !important',
+                        },
+                    },
+                },
+            },
+        },
+
+        MuiDrawer: {
+            styleOverrides: {
+                paper: {
+                    backgroundColor: '#171717',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                },
+            },
         },
     },
     overrides: {
@@ -149,23 +236,6 @@ const dark = createMuiTheme({
                     '&.isResizing': {
                         background: '#2FC1DE',
                     },
-                },
-                '.MuiTableRow-root': {
-                    '&.MuiTableRow-head:hover': {
-                        backgroundColor: 'inherit',
-                    },
-                    '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    },
-                },
-                '.MuiTableRow-root.Mui-selected': {
-                    backgroundColor: 'rgba(255, 193, 7, 0.16) !important',
-                    '&:hover': {
-                        backgroundColor: 'rgba(255, 193, 7, 0.24) !important',
-                    },
-                },
-                '.grid': {
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
                 },
                 '.unique-id-label': {
                     color: 'rgba(255, 255, 255, 0.7)',
@@ -822,7 +892,7 @@ class App extends React.Component {
         }
 
         return (
-            <MuiThemeProvider theme={this.state.theme == 'light' ? light : dark}>
+            <ThemeProvider theme={this.state.theme == 'light' ? light : dark}>
                 <CssBaseline />
                 <div id="topbar">
                     <div id="titlebar">
@@ -919,10 +989,10 @@ class App extends React.Component {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => this.setSessionPass()} color="primary" variant="contained">
+                        <Button color="primary" variant="contained" onClick={() => this.setSessionPass()}>
                             Set Password
                         </Button>
-                        <Button onClick={() => this.toggleModal(false)} color="primary" variant="outlined">
+                        <Button color="primary" variant="outlined" onClick={() => this.toggleModal(false)}>
                             Skip
                         </Button>
                     </DialogActions>
@@ -951,6 +1021,7 @@ class App extends React.Component {
                                 native
                                 id="ipRange"
                                 label="Command"
+                                size="small"
                                 value={this.state.scanRange}
                                 onChange={(e) => this.setScan(e, 'scanRange')}
                             >
@@ -1059,7 +1130,7 @@ class App extends React.Component {
                     )}
                     {this.state.page == 'support' && <Support data={this.state} setPage={this.setPage} />}
                 </div>
-            </MuiThemeProvider>
+            </ThemeProvider>
         );
     }
 }

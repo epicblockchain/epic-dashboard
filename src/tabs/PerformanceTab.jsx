@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, TextField, FormControl, InputLabel, Select} from '@material-ui/core';
+import {Button, TextField, FormControl, InputLabel, Select} from '@mui/material';
 
 export class PerformanceTab extends React.Component {
     constructor(props) {
@@ -95,6 +95,7 @@ export class PerformanceTab extends React.Component {
                         native
                         id="preset"
                         label="Preset"
+                        size="small"
                         value={JSON.stringify({mode: this.state.mode, power: this.state.power})}
                         onChange={this.updatePreset}
                     >

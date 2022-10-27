@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Container, Button, Divider, Typography, FormControl, FormControlLabel, Switch} from '@material-ui/core';
+import {Container, Button, Divider, Typography, FormControl, FormControlLabel, Switch} from '@mui/material';
 import './preferences.css';
 
 export class Preferences extends React.Component {
@@ -90,10 +90,10 @@ export class Preferences extends React.Component {
                     </Typography>
                 </FormControl>
                 <Button
-                    onClick={() => this.props.savePreferences(this.state, true)}
                     variant="contained"
                     color="primary"
                     id="save"
+                    onClick={() => this.props.savePreferences(this.state, true)}
                 >
                     Save
                 </Button>

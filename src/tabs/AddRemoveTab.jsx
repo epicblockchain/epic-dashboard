@@ -2,7 +2,7 @@ const {ipcRenderer} = require('electron');
 const got = require('got');
 const fs = require('fs');
 import * as React from 'react';
-import {Button, TextField, Typography, Divider} from '@material-ui/core';
+import {Button, TextField, Typography, Divider} from '@mui/material';
 
 export class AddRemoveTab extends React.Component {
     constructor(props) {

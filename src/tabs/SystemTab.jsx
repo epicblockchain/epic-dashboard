@@ -10,7 +10,7 @@ import {
     Divider,
     Grid,
     Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 export class SystemTab extends React.Component {
     constructor(props) {

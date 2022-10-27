@@ -88,9 +88,6 @@
         "@electron-forge/maker-zip": "^6.0.0-beta.54",
         "@electron-forge/plugin-webpack": "^6.0.0-beta.54",
         "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
-        "@material-ui/core": "^4.11.4",
-        "@material-ui/icons": "^4.11.2",
-        "@material-ui/lab": "^4.0.0-alpha.58",
         "babel-loader": "^8.2.2",
         "css-loader": "^4.3.0",
         "electron": "12.2.3",
@@ -111,6 +108,12 @@
         "url-loader": "^4.1.1"
     },
     "dependencies": {
+        "@emotion/react": "^11.10.4",
+        "@emotion/styled": "^11.10.4",
+        "@mui/icons-material": "^5.10.9",
+        "@mui/lab": "^5.0.0-alpha.105",
+        "@mui/material": "^5.10.11",
+        "@mui/styles": "^5.10.10",
         "core-js": "^3.20.2",
         "react-table": "^7.7.0",
         "react-window": "^1.8.6",

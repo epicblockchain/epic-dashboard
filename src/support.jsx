@@ -2,7 +2,7 @@ const {ipcRenderer} = require('electron');
 const fs = require('fs');
 
 import * as React from 'react';
-import {Button, Divider, Typography} from '@material-ui/core';
+import {Button, Divider, Typography} from '@mui/material';
 
 import './support.css';
 

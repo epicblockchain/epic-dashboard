@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button, TextField, Slider, Input, Typography, Grid} from '@material-ui/core';
-import ToysIcon from '@material-ui/icons/Toys';
+import {Button, TextField, Slider, Input, Typography, Grid} from '@mui/material';
+import WindPowerIcon from '@mui/icons-material/WindPower';
 
 export class FanTab extends React.Component {
     constructor(props) {
@@ -44,7 +44,7 @@ export class FanTab extends React.Component {
                 <Typography gutterBottom>Fan Speed</Typography>
                 <Grid container spacing={2} alignItems="center">
                     <Grid item>
-                        <ToysIcon />
+                        <WindPowerIcon />
                     </Grid>
                     <Grid item>
                         <Slider

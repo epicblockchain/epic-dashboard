@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, TextField, Paper, Divider, Grid} from '@material-ui/core';
+import {Button, TextField, Paper, Divider, Grid} from '@mui/material';
 
 export class ControlTab extends React.Component {
     constructor(props) {

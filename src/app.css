@@ -121,9 +121,8 @@ button.menuButOpen {
 }
 
 div.MuiDrawer-paper {
-    background-color: #171717;
     color: rgba(255, 255, 255, 0.5);
-    top: 24px;
+    top: 29px;
     height: calc(100% - 24px);
 }
 
@@ -136,7 +135,6 @@ div.MuiDrawer-paper {
 }
 
 .MuiDrawer-paper .MuiListItemText-root {
-    color: white;
     margin-left: 16px;
 }
 

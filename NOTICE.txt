@@ -18,7 +18,7 @@ Asset Relocator Loader for Webpack
 https://www.npmjs.com/package/@marshallofsound/webpack-asset-relocator-loader
 
 Material-UI
-https://material-ui.com/
+https://mui.com/
 
 Babel-Loader
 https://github.com/babel/babel-loader
