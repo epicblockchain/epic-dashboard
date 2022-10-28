@@ -121,7 +121,7 @@ button.menuButOpen {
 }
 
 div.MuiDrawer-paper {
-    color: rgba(255, 255, 255, 0.5);
+    color: #ffffff80;
     top: 29px;
     height: calc(100% - 24px);
 }

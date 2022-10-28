@@ -99,10 +99,10 @@
         color: red;
     }
     16% {
-        color: rgba(255, 0, 0, 0.3);
+        color: #ff00004d;
     }
     31% {
-        color: rgba(255, 0, 0, 0.3);
+        color: #ff00004d;
     }
     32% {
         color: red;
@@ -111,10 +111,10 @@
         color: red;
     }
     48% {
-        color: rgba(255, 0, 0, 0.3);
+        color: #ff00004d;
     }
     100% {
-        color: rgba(255, 0, 0, 0.3);
+        color: #ff00004d;
     }
 }
 

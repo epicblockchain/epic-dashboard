@@ -78,7 +78,7 @@ const light = createTheme({
                     },
                 },
                 '.unique-id-label': {
-                    color: 'rgba(0, 0, 0, 0.54)',
+                    color: '#0000008a',
                 },
             },
         },
@@ -104,7 +104,7 @@ const light = createTheme({
         },
         Grid: {
             styleOverrides: {
-                borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                borderBottom: '1px solid #0000001f',
             },
         },
 
@@ -117,12 +117,12 @@ const light = createTheme({
                         },
                     },
                     hover: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                        backgroundColor: '#0000000a',
                     },
                     selected: {
-                        backgroundColor: 'rgba(27, 29, 77, 0.08) !important',
+                        backgroundColor: '#1b1d4d14 !important',
                         hover: {
-                            backgroundColor: 'rgba(27, 29, 77, 0.12) !important',
+                            backgroundColor: '#1b1d4d1f !important',
                         },
                     },
                 },
@@ -133,7 +133,7 @@ const light = createTheme({
             styleOverrides: {
                 paper: {
                     backgroundColor: '#fff',
-                    color: 'rgba(255, 255, 255, 0.5)',
+                    color: '#ffffff80',
                 },
             },
         },
@@ -180,7 +180,7 @@ const dark = createTheme({
                     },
                 },
                 '.unique-id-label': {
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    color: '#ffffffb3',
                 },
             },
         },
@@ -205,7 +205,7 @@ const dark = createTheme({
         },
         Grid: {
             styleOverrides: {
-                borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+                borderBottom: '1px solid #ffffff1f',
             },
         },
         MuiTableRow: {
@@ -217,12 +217,12 @@ const dark = createTheme({
                         },
                     },
                     hover: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                        backgroundColor: '#ffffff14',
                     },
                     selected: {
-                        backgroundColor: 'rgba(255, 193, 7, 0.16) !important',
+                        backgroundColor: '#ffc10729 !important',
                         hover: {
-                            backgroundColor: 'rgba(255, 193, 7, 0.24) !important',
+                            backgroundColor: '#ffc1073d !important',
                         },
                     },
                 },
@@ -233,7 +233,7 @@ const dark = createTheme({
             styleOverrides: {
                 paper: {
                     backgroundColor: '#171717',
-                    color: 'rgba(255, 255, 255, 0.5)',
+                    color: '#ffffff80',
                 },
             },
         },

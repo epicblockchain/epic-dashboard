@@ -23,11 +23,11 @@ div.MuiFormControl-root {
 }
 
 .hb-good {
-    background: rgba(76, 175, 80, 0.3);
+    background: #4caf504d;
 }
 
 .hb-warn {
-    background: rgba(244, 67, 54, 0.3);
+    background: #f443364d;
 }
 
 .tab-body {
@@ -119,7 +119,7 @@ button.restart {
 }
 
 button.restart:hover {
-    background-color: rgb(18, 65, 22);
+    background-color: #124116;
 }
 
 button.stop {
@@ -128,5 +128,5 @@ button.stop {
 }
 
 button.stop:hover {
-    background-color: rgb(128, 19, 19);
+    background-color: #801313;
 }
