@@ -6,6 +6,7 @@ import {PerformanceTab} from './tabs/PerformanceTab.jsx';
 import {SystemTab} from './tabs/SystemTab.jsx';
 import {ControlTab} from './tabs/ControlTab.jsx';
 import {FanTab} from './tabs/FanTab.jsx';
+import {TuneTab} from './tabs/TuneTab.jsx';
 import {DebugTab} from './tabs/DebugTab.jsx';
 import {WifiTab} from './tabs/WifiTab.jsx';
 import './table.css';
@@ -217,6 +218,7 @@ export class DataTable extends React.Component {
 
     setList(event, newVal) {
         this.setState({list: newVal});
+        this.setState({tab: 0});
     }
 
     setTab(event, newVal) {
@@ -399,6 +401,7 @@ export class DataTable extends React.Component {
                         <Tab label="Performance" />
                         <Tab label="System" />
                         <Tab label="Cooling" disabled={!capApi} />
+                        {this.state.models[this.state.list].toLowerCase() == 'bitmain s19j' && <Tab label="tune" />}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Wifi" />}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Debug" />}
                     </Tabs>
@@ -464,6 +467,14 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 6}>
+                        <TuneTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            disabled={!capApi}
+                            sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 7}>
                         <WifiTab
                             handleApi={this.props.handleApi}
                             handleFormApi={this.props.handleFormApi}
@@ -472,7 +483,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 7}>
+                    <div hidden={this.state.tab != 8}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}

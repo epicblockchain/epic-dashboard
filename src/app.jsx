@@ -785,6 +785,16 @@ class App extends React.Component {
                 msg = 'Sending command';
                 success = `${data.cmd} sent successfully`;
                 break;
+            case '/tune':
+                obj = {
+                    param: {
+                        clks: data.clock.toString(),
+                        voltage: (data.voltage * 1000).toString(),
+                    },
+                    password: data.password,
+                };
+                success = `Tuned voltage to ${data.voltage} and clock to ${data.clock}`;
+                break;
             case '/fanspeed':
                 obj = {param: data.speed.toString(), password: data.password};
                 success = `Fan speed set to ${data.speed}%`;
