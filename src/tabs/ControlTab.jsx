@@ -32,6 +32,7 @@ export class ControlTab extends React.Component {
                             }}
                             variant="contained"
                             className="but-group stop"
+                            color="error"
                             disabled={disabled}
                         >
                             Stop Mining
@@ -41,7 +42,8 @@ export class ControlTab extends React.Component {
                                 this.props.handleApi('/softreboot', this.state, this.props.selected);
                             }}
                             variant="contained"
-                            className="but-group restart"
+                            className="but-group"
+                            color="success"
                             disabled={disabled}
                         >
                             Restart Mining
