@@ -194,6 +194,30 @@ export class DataTable extends React.Component {
         return Math.round((sum + Number.EPSILON) * 100) / 100;
     }
 
+    avgClock(data, cap) {
+        const totals = [];
+        for (let hb in data) {
+            totals.push(String(data[hb]['Core Clock'].reduce((a, b) => a + b, 0) / data[hb]['Core Clock'].length));
+        }
+
+        if (totals.length == 0 || cap['Max HBs'] == undefined) {
+            return 'N/A';
+        } else {
+            let text = '';
+            for (let i = 0; i < cap['Max HBs']; i++) {
+                if (totals[i] == undefined) {
+                    text += (String(i) + ': ' + 'N/A').padEnd(10);
+                } else {
+                    text += (String(i) + ': ' + String(parseFloat(totals[i]).toFixed(1))).padEnd(10);
+                }
+                if (i + 1 < cap['Max HBs']) {
+                    text += '| ';
+                }
+            }
+            return text;
+        }
+    }
+
     totalPower(data) {
         const power = data.map((a) => a['Input Power']);
         var sum;
@@ -357,6 +381,7 @@ export class DataTable extends React.Component {
             fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
             cap: a.cap,
             voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
+            clock: this.failSafe(a.sum) || this.avgClock(a.sum.HBs, a.cap),
             status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A'),
             misc: this.failSafe(a.sum) || a.sum.Misc,
             connected:

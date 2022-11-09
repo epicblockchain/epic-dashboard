@@ -181,7 +181,8 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'temperature', Header: 'Temp', width: 84},
             {accessor: 'power', Header: 'Power (W)', width: 110},
             {accessor: 'fanspeed', Header: 'Fan Speed', width: 115},
-            {accessor: 'voltage', Header: 'Input Voltage', width: 125, sortType: 'number'},
+            {accessor: 'voltage', Header: 'Input Voltage', width: 100, sortType: 'number'},
+            {accessor: 'clock', Header: 'Avg Clock', width: 210},
             {accessor: 'lasterror', Header: 'Last Error', width: 250},
         ],
         []
