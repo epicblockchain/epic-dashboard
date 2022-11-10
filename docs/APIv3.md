@@ -606,7 +606,7 @@ Format of request body:
 
 **/systemupdate**
 
-Updates the firmware of the miner. 
+Updates the firmware of the miner.
 Endpoint for receiving .zip file to update the firmware. Accepts multipart/form-data encoding in the body.
 Note: this is not receiving a json.
 The form keys are "password", "checksum", "keepsettings" and "update.zip".

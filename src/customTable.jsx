@@ -38,6 +38,7 @@ import {
 import {FixedSizeGrid} from 'react-window';
 
 import './customTable.css';
+import {CollectionsBookmarkOutlined} from '@mui/icons-material';
 
 const {ipcRenderer} = require('electron');
 
@@ -76,6 +77,26 @@ function hashrateSort(a, b, c, d) {
         return -1;
     } else if (a.values[c] === 'N/A') {
         return -1;
+    }
+}
+
+function getColor(lowest) {
+    if (lowest < 95) {
+        return 'error.main';
+    } else if (lowest < 97) {
+        return 'warning.main';
+    } else {
+        return 'success.main';
+    }
+}
+
+function getColorText(lowest) {
+    if (lowest < 95) {
+        return 'text.error';
+    } else if (lowest < 97) {
+        return 'text.success';
+    } else {
+        return 'text.success';
     }
 }
 
@@ -148,6 +169,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'start', Header: 'Started', width: 260},
             {accessor: 'uptime', Header: 'Uptime', width: 135},
             {accessor: 'hbs', Header: 'Active HBs', width: 118},
+            {accessor: 'performance', Header: 'Hb Performance', width: 250},
             {accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort},
@@ -317,37 +339,76 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                             <TableCell
                                 {...cell.getCellProps()}
                                 component="div"
-                                className={
-                                    cell.column
+                                sx={{
+                                    whiteSpace: 'pre-wrap',
+                                    color: cell.column
                                         ? cell.column.id === 'hbs'
                                             ? cell.value === 3
-                                                ? 'hb-good'
-                                                : 'hb-warn'
+                                                ? 'text.success'
+                                                : 'text.error'
+                                            : cell.column.id === 'performance'
+                                            ? cell.value == 'N/A' || cell.value == 'Error'
+                                                ? 'text.error'
+                                                : getColorText(data[row.id].lowest)
                                             : cell.column.id === 'voltage'
                                             ? cell.value <= 11.9
-                                                ? 'hb-warn'
+                                                ? 'text.error'
                                                 : null
                                             : cell.column.id === 'lasterror'
                                             ? cell.value !== ' '
-                                                ? 'hb-warn'
+                                                ? 'text.error'
                                                 : null
                                             : cell.column.id === 'ip'
                                             ? 'ip-col'
                                             : cell.column.id === 'status'
                                             ? data[row.id].lasterror !== ' '
                                                 ? data[row.id].status
-                                                    ? 'hb-warn'
+                                                    ? 'text.error'
                                                     : null
                                                 : null
                                             : cell.column.id === 'pool'
                                             ? data[row.id].connected !== 'Error'
                                                 ? data[row.id].connected
-                                                    ? 'hb-good'
-                                                    : 'hb-warn'
+                                                    ? 'text.success'
+                                                    : 'text.error'
                                                 : null
                                             : null
-                                        : null
-                                }
+                                        : null,
+                                    backgroundColor: cell.column
+                                        ? cell.column.id === 'hbs'
+                                            ? cell.value === 3
+                                                ? 'success.main'
+                                                : 'error.main'
+                                            : cell.column.id === 'performance'
+                                            ? cell.value == 'N/A' || cell.value == 'Error'
+                                                ? 'error.main'
+                                                : getColor(data[row.id].lowest)
+                                            : cell.column.id === 'voltage'
+                                            ? cell.value <= 11.9
+                                                ? 'error.main'
+                                                : null
+                                            : cell.column.id === 'lasterror'
+                                            ? cell.value !== ' '
+                                                ? 'error.main'
+                                                : null
+                                            : cell.column.id === 'ip'
+                                            ? 'ip-col'
+                                            : cell.column.id === 'status'
+                                            ? data[row.id].lasterror !== ' '
+                                                ? data[row.id].status
+                                                    ? 'error.main'
+                                                    : null
+                                                : null
+                                            : cell.column.id === 'pool'
+                                            ? data[row.id].connected !== 'Error'
+                                                ? data[row.id].connected
+                                                    ? 'success.main'
+                                                    : 'error.main'
+                                                : 'error.main'
+                                            : null
+                                        : null,
+                                }}
+                                className={cell.column.id === 'ip' && 'ip-col'}
                             >
                                 {cell.column.id === 'ip' && (
                                     <>
@@ -376,7 +437,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                         </IconButton>
                                     </>
                                 )}
-                                {cell.render('Cell')}
+                                <div style={{whiteSpace: 'pre'}}>{cell.render('Cell')}</div>
                             </TableCell>
                         );
                     })}

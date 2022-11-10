@@ -212,6 +212,48 @@ export class DataTable extends React.Component {
         return hbs.length;
     }
 
+    hbperformance(hashrate, cap) {
+        const totals = [];
+        if (hashrate.length > 0) {
+            for (let hb in hashrate) {
+                totals.push(String(hashrate[hb].Total[1]));
+            }
+        }
+        if (totals.length == 0 || cap['Max HBs'] == undefined) {
+            return 'N/A';
+        } else {
+            let text = '';
+            for (let i = 0; i < cap['Max HBs']; i++) {
+                if (totals[i] == undefined) {
+                    text += (String(i) + ': ' + 'N/A').padEnd(10);
+                } else {
+                    text += (String(i) + ': ' + String(parseFloat(totals[i]).toFixed(1)) + '%').padEnd(10);
+                    if (parseFloat(totals[i]) < 100) {
+                        text += ' ';
+                    }
+                }
+                if (i + 1 < cap['Max HBs']) {
+                    text += '| ';
+                }
+            }
+            return text;
+        }
+    }
+
+    getLowest(hashrate) {
+        const totals = [];
+        if (hashrate.length > 0) {
+            for (let hb in hashrate) {
+                totals.push(String(hashrate[hb].Total[1]));
+            }
+        }
+        if (totals.length == 0) {
+            return 0;
+        } else {
+            return Math.min(...totals);
+        }
+    }
+
     select(sel_model, model) {
         this.setState({[model + '_sel']: sel_model});
     }
@@ -300,6 +342,8 @@ export class DataTable extends React.Component {
             start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
             uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
             hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
+            performance: this.failSafe(a.sum) || this.hbperformance(a.hash, a.cap),
+            lowest: this.failSafe(a.sum) || this.getLowest(a.hash),
             hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null, false),
             hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1, false),
             hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6, false),
