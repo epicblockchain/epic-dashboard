@@ -145,7 +145,30 @@ Sample response:
   "Coins": [
     <string>,
     ...
-  ]
+  ],
+  "Display": [
+    <string>,
+    ...
+  ],
+  "Tune Presets": [
+    {
+      "voltage": <uint>,
+      "clk": <uint>,
+      "hashrate": <float>,
+      "power": <uint>,
+    }
+    ...
+  ],
+  "Temp Sensor Info": {
+    "Type": <String>,
+    "Count": <uint>,
+  },
+  "Psu Info": {
+    "PSU Type": <uint>,
+    "FW": <uint>
+    "Min Vout": <uint>,
+    "Max Vout": <uint>,
+  },
 }
 ```
 

@@ -191,7 +191,7 @@ export class CoinTab extends React.Component {
                         value={this.state.stratum_configs[0].pool}
                         margin="dense"
                         disabled={this.props.disabled}
-                        InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
+                        InputProps={{startAdornment: <InputAdornment position="start">stratum+tcp://</InputAdornment>}}
                     />
                     <TextField
                         variant="outlined"
@@ -230,7 +230,7 @@ export class CoinTab extends React.Component {
                         value={this.state.stratum_configs[1].pool}
                         margin="dense"
                         disabled={this.props.disabled}
-                        InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
+                        InputProps={{startAdornment: <InputAdornment position="start">stratum+tcp://</InputAdornment>}}
                     />
                     <TextField
                         variant="outlined"
@@ -269,7 +269,7 @@ export class CoinTab extends React.Component {
                         value={this.state.stratum_configs[2].pool}
                         margin="dense"
                         disabled={this.props.disabled}
-                        InputProps={{startAdornment: <InputAdornment>stratum+tcp://</InputAdornment>}}
+                        InputProps={{startAdornment: <InputAdornment position="start">stratum+tcp://</InputAdornment>}}
                     />
                     <TextField
                         variant="outlined"

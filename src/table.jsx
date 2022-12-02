@@ -539,6 +539,7 @@ export class DataTable extends React.Component {
                         <TuneTab
                             handleApi={this.props.handleApi}
                             selected={selected}
+                            data={this.props.data}
                             disabled={!capApi}
                             sessionPass={this.props.sessionPass}
                         />

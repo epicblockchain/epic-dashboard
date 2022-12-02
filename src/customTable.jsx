@@ -409,7 +409,6 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                             : null
                                         : null,
                                 }}
-                                className={cell.column.id === 'ip' && 'ip-col'}
                             >
                                 {cell.column.id === 'ip' && (
                                     <>
