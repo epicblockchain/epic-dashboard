@@ -200,21 +200,23 @@ export class DataTable extends React.Component {
             totals.push(String(data[hb]['Core Clock'].reduce((a, b) => a + b, 0) / data[hb]['Core Clock'].length));
         }
 
-        if (totals.length == 0 || cap['Max HBs'] == undefined) {
-            return 'N/A';
-        } else {
-            let text = '';
-            for (let i = 0; i < cap['Max HBs']; i++) {
-                if (totals[i] == undefined) {
-                    text += (String(i) + ': ' + 'N/A').padEnd(10);
-                } else {
-                    text += (String(i) + ': ' + String(parseFloat(totals[i]).toFixed(1))).padEnd(10);
+        if (cap !== undefined) {
+            if (totals.length == 0 || cap['Max HBs'] == undefined) {
+                return 'N/A';
+            } else {
+                let text = '';
+                for (let i = 0; i < cap['Max HBs']; i++) {
+                    if (totals[i] == undefined) {
+                        text += (String(i) + ': ' + 'N/A').padEnd(10);
+                    } else {
+                        text += (String(i) + ': ' + String(parseFloat(totals[i]).toFixed(1))).padEnd(10);
+                    }
+                    if (i + 1 < cap['Max HBs']) {
+                        text += '| ';
+                    }
                 }
-                if (i + 1 < cap['Max HBs']) {
-                    text += '| ';
-                }
+                return text;
             }
-            return text;
         }
     }
 
@@ -243,25 +245,27 @@ export class DataTable extends React.Component {
                 totals.push(String(hashrate[hb].Total[1]));
             }
         }
-        if (totals.length == 0 || cap['Max HBs'] == undefined) {
-            return 'N/A';
-        } else {
-            let text = '';
-            for (let i = 0; i < cap['Max HBs']; i++) {
-                if (totals[i] == undefined) {
-                    text += (String(i) + ': ' + 'N/A').padEnd(10);
-                } else {
-                    text += (String(i) + ': ' + String(parseFloat(totals[i]).toFixed(1)) + '%').padEnd(10);
-                    if (parseFloat(totals[i]) < 100) {
-                        text += ' ';
+        if (cap !== undefined) {
+            if (totals.length == 0 || cap['Max HBs'] == undefined) {
+                return 'N/A';
+            } else {
+                let text = '';
+                for (let i = 0; i < cap['Max HBs']; i++) {
+                    if (totals[i] == undefined) {
+                        text += (String(i) + ': ' + 'N/A').padEnd(10);
+                    } else {
+                        text += (String(i) + ': ' + String(parseFloat(totals[i]).toFixed(1)) + '%').padEnd(10);
+                        if (parseFloat(totals[i]) < 100) {
+                            text += ' ';
+                        }
+                    }
+                    if (i + 1 < cap['Max HBs']) {
+                        text += '| ';
                     }
                 }
-                if (i + 1 < cap['Max HBs']) {
-                    text += '| ';
-                }
+                return text;
             }
-            return text;
-        }
+        }  
     }
 
     getLowest(hashrate) {
