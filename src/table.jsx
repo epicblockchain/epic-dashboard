@@ -265,7 +265,7 @@ export class DataTable extends React.Component {
                 }
                 return text;
             }
-        }  
+        }
     }
 
     getLowest(hashrate) {
