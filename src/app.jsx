@@ -407,6 +407,7 @@ class App extends React.Component {
                         match.sum == 'load' ||
                         match.sum == 'reboot' ||
                         match.sum == null ||
+                        match.cap.Model === 'undefined' ||
                         (match && !match.cap)
                     ) {
                         const history = await got(`http://${miner.address}:4028/history`, {
