@@ -215,10 +215,10 @@ export class TuneTab extends React.Component {
                         </Grid>
                         <Grid item>
                             <FormControl style={{width: '450px'}}>
-                                <InputLabel id="preset-select-label">(Optional) Presets</InputLabel>
+                                <InputLabel id="preset-select-label">Presets (Optional)</InputLabel>
                                 <Select
                                     labelId="preset-select-label"
-                                    label="(Optional) Presets"
+                                    label="Presets (Optional)"
                                     onChange={(e) => this.handlePresetChange(e)}
                                     value={this.state.preset}
                                     displayEmpty
