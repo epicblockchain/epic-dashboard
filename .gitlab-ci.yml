@@ -44,20 +44,6 @@ build:win32:
             - '*.exe'
         expire_in: 2 mos
 
-build:deb32:
-    extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
-    script:
-        - make deb32
-        - mv out/make/deb/ia32/*.deb ./epic-dashboard-$VERSION-ia32.deb
-    artifacts:
-        name: epic-dashboard-deb32-$VERSION-$CI_COMMIT_SHORT_SHA
-        paths:
-            - '*.deb'
-        expire_in: 2 mos
-
 build:deb64:
     extends: .build_base
     rules:
@@ -98,20 +84,6 @@ build:debarm64:
         name: epic-dashboard-debarm64-$VERSION-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.deb'
-        expire_in: 2 mos
-
-build:rpm32:
-    extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
-    script:
-        - make rpm32
-        - mv out/make/rpm/ia32/*.rpm ./epic-dashboard-$VERSION-ia32.rpm
-    artifacts:
-        name: epic-dashboard-rpm32-$VERSION-$CI_COMMIT_SHORT_SHA
-        paths:
-            - '*.rpm'
         expire_in: 2 mos
 
 build:rpm64:
@@ -169,10 +141,8 @@ release:
         - gh release create v$VERSION -F changelog.md
         - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-x64.exe#Windows 64-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-ia32.exe#Windows 32-bit"
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-ia32.deb#Debian, Ubuntu 32-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.deb#Debian, Ubuntu 64-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-armhf.deb#Debian, Ubuntu ARMhf"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-arm64.deb#Debian, Ubuntu ARM64"
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-ia32.rpm#Red Hat, Fedora 32-bit"
         - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.rpm#Red Hat, Fedora 64-bit"
         - gh release upload v$VERSION "epic-dashboard-mac-$VERSION-x64.zip#macOS 64-bit"
