@@ -331,6 +331,7 @@ class App extends React.Component {
             page: 'main',
             miner_data: [],
             models: [],
+            tunecap: [],
             portscan: false,
             modal: false,
             eula: false,
@@ -382,6 +383,7 @@ class App extends React.Component {
 
     async summary(init) {
         let models = new Set(this.state.models);
+        let tunecap = new Set(this.state.tunecap);
         const unlock = await minerMutex.lock();
         let miner_data = await Promise.all(
             miners.map(async (miner, i) => {
@@ -423,6 +425,13 @@ class App extends React.Component {
 
                             if (content.Model) models.add(content.Model);
                             else models.add('undefined');
+
+                            if (
+                                content.Model &&
+                                content.Model != 'undefined' &&
+                                content.Display.includes('ClksAndVoltage')
+                            )
+                                tunecap.add(content.Model.toLowerCase());
 
                             return {
                                 ip: miner.address,
@@ -496,7 +505,9 @@ class App extends React.Component {
         );
 
         models = Array.from(models).sort();
+        tunecap = Array.from(tunecap).sort();
         miner_data = miner_data.filter((x) => x !== undefined);
+        if (tunecap.length != this.state.tunecap.length) this.setState({tunecap: tunecap});
         if (models.length != this.state.models.length)
             this.setState({miner_data: miner_data, models: models}, () => unlock());
         else this.setState({miner_data: miner_data}, () => unlock());
@@ -1137,6 +1148,7 @@ class App extends React.Component {
                             defaultTable={this.state.defaultTable}
                             data={this.state.miner_data}
                             models={this.state.models}
+                            tunecap={this.state.tunecap}
                             sessionPass={this.state.sessionPass}
                             addMiner={this.addMiner}
                             delMiner={this.delMiner}
