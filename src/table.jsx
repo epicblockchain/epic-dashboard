@@ -197,7 +197,11 @@ export class DataTable extends React.Component {
     avgClock(data, cap) {
         const totals = [];
         for (let hb in data) {
-            totals.push(String(data[hb]['Core Clock'].reduce((a, b) => a + b, 0) / data[hb]['Core Clock'].length));
+            if (Array.isArray(data[hb]['Core Clock'])) {
+                totals.push(String(data[hb]['Core Clock'].reduce((a, b) => a + b, 0) / data[hb]['Core Clock'].length));
+            } else {
+                totals.push(String(data[hb]['Core Clock']));
+            }
         }
 
         if (cap !== undefined) {
@@ -217,6 +221,8 @@ export class DataTable extends React.Component {
                 }
                 return text;
             }
+        } else {
+            return 'N/A';
         }
     }
 
