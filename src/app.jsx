@@ -429,6 +429,7 @@ class App extends React.Component {
                             if (
                                 content.Model &&
                                 content.Model != 'undefined' &&
+                                content.Display &&
                                 content.Display.includes('ClksAndVoltage')
                             )
                                 tunecap.add(content.Model.toLowerCase());
