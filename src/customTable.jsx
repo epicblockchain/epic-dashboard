@@ -169,7 +169,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'start', Header: 'Started', width: 150},
             {accessor: 'uptime', Header: 'Uptime', width: 135},
             {accessor: 'hbs', Header: 'Active HBs', width: 118},
-            {accessor: 'performance', Header: 'Hb Performance', width: 250},
+            {accessor: 'performance', Header: 'Hashboard Performance', width: 250},
             {accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort},

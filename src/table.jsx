@@ -256,16 +256,25 @@ export class DataTable extends React.Component {
                 return 'N/A';
             } else {
                 let text = '';
-                for (let i = 0; i < cap['Max HBs']; i++) {
-                    if (totals[i] == undefined) {
+                let count = 0;
+                for (let i = 0; i + count < cap['Max HBs']; i++) {
+                    if (hashrate[i] == undefined) {
                         text += (String(i) + ': ' + 'N/A').padEnd(10);
                     } else {
-                        text += (String(i) + ': ' + String(parseFloat(totals[i]).toFixed(1)) + '%').padEnd(10);
-                        if (parseFloat(totals[i]) < 100) {
-                            text += ' ';
+                        if (hashrate[i].Index !== i + count) {
+                            text += (String(i + count) + ': ' + 'N/A').padEnd(10);
+                            count++;
+                            i--;
+                        } else {
+                            text += (String(i + count) + ': ' + String(parseFloat(totals[i]).toFixed(1)) + '%').padEnd(
+                                10
+                            );
+                            if (parseFloat(totals[i]) < 100) {
+                                text += ' ';
+                            }
                         }
                     }
-                    if (i + 1 < cap['Max HBs']) {
+                    if (i + 1 + count < cap['Max HBs']) {
                         text += '| ';
                     }
                 }
