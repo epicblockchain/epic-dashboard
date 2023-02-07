@@ -259,7 +259,7 @@ export class DataTable extends React.Component {
                 let count = 0;
                 for (let i = 0; i + count < cap['Max HBs']; i++) {
                     if (hashrate[i] == undefined) {
-                        text += (String(i) + ': ' + 'N/A').padEnd(10);
+                        text += (String(i + count) + ': ' + 'N/A').padEnd(10);
                     } else {
                         if (hashrate[i].Index !== i + count) {
                             text += (String(i + count) + ': ' + 'N/A').padEnd(10);
