@@ -487,8 +487,8 @@ class App extends React.Component {
                         if (match.timer > 0) {
                             return {
                                 ip: miner.address,
-                                sum: match.sum == 'reboot' ? 'reboot' : null,
-                                hist: match.sum == 'reboot' ? 'reboot' : null,
+                                sum: match.sum ? match.sum : null,
+                                hist: match.sum ? match.hist : null,
                                 hash: match.hash ? match.hash : null,
                                 cap: match.cap ? match.cap : null,
                                 timer: match.timer - 1,
