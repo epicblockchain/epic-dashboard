@@ -248,7 +248,9 @@ export class DataTable extends React.Component {
         const totals = [];
         if (hashrate.length > 0) {
             for (let hb in hashrate) {
-                totals.push(String(hashrate[hb].Total[1]));
+                if (hashrate[hb].Hashrate !== undefined) {
+                    totals.push(String(hashrate[hb].Hashrate[1]));
+                }
             }
         }
         if (cap !== undefined) {
@@ -287,7 +289,9 @@ export class DataTable extends React.Component {
         const totals = [];
         if (hashrate.length > 0) {
             for (let hb in hashrate) {
-                totals.push(String(hashrate[hb].Total[1]));
+                if (hashrate[hb].Hashrate !== undefined) {
+                    totals.push(String(hashrate[hb].Hashrate[1]));
+                }
             }
         }
         if (totals.length == 0) {
@@ -385,8 +389,8 @@ export class DataTable extends React.Component {
             start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
             uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
             hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
-            performance: this.failSafe(a.sum) || this.hbperformance(a.hash, a.cap),
-            lowest: this.failSafe(a.sum) || this.getLowest(a.hash),
+            performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
+            lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
             hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null, false),
             hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1, false),
             hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6, false),

@@ -392,13 +392,8 @@ class App extends React.Component {
                         timeout: 2000,
                         retry: 0,
                     });
-                    const hashrates = await got(`http://${miner.address}:4028/hashrate`, {
-                        timeout: 2000,
-                        retry: 0,
-                    });
 
                     let sum = JSON.parse(summary.body);
-                    let hashrate = JSON.parse(hashrates.body);
                     if (!sum.Hostname) sum = null;
 
                     let match = this.state.miner_data.find((a) => a.ip == miner.address);
@@ -438,7 +433,6 @@ class App extends React.Component {
                                 ip: miner.address,
                                 sum: sum,
                                 hist: JSON.parse(history.body).History.slice(-48),
-                                hash: hashrate,
                                 cap: content.Model ? content : undefined,
                                 timer: 10,
                             };
@@ -449,7 +443,6 @@ class App extends React.Component {
                                 ip: miner.address,
                                 sum: sum,
                                 hist: JSON.parse(history.body).History.slice(-48),
-                                hash: hashrate,
                                 timer: 10,
                             };
                         }
@@ -457,13 +450,12 @@ class App extends React.Component {
                         const lastMHs = sum.Session.LastAverageMHs;
 
                         if (lastMHs == null) {
-                            return {ip: miner.address, sum: sum, hist: [], hash: hashrate, cap: match.cap, timer: 10};
+                            return {ip: miner.address, sum: sum, hist: [], cap: match.cap, timer: 10};
                         } else if (match.hist.length == 0) {
                             return {
                                 ip: miner.address,
                                 sum: sum,
                                 hist: [lastMHs],
-                                hash: hashrate,
                                 cap: match.cap,
                                 timer: 10,
                             };
@@ -475,7 +467,6 @@ class App extends React.Component {
                             ip: miner.address,
                             sum: sum,
                             hist: match.hist,
-                            hash: hashrate,
                             cap: match.cap,
                             timer: 10,
                         };
@@ -489,17 +480,16 @@ class App extends React.Component {
                                 ip: miner.address,
                                 sum: match.sum ? match.sum : null,
                                 hist: match.sum ? match.hist : null,
-                                hash: match.hash ? match.hash : null,
                                 cap: match.cap ? match.cap : null,
                                 timer: match.timer - 1,
                             };
                         }
 
                         models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, hash: null, timer: 0};
+                        return {ip: miner.address, sum: null, hist: null, timer: 0};
                     } else {
                         models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, hash: null, timer: 0};
+                        return {ip: miner.address, sum: null, hist: null, timer: 0};
                     }
                 }
             })

@@ -48,7 +48,6 @@ export class ControlTab extends React.Component {
                         >
                             Restart Mining
                         </Button>
-                        <Divider orientation="vertical" flexItem style={{margin: '2px'}} />
                         <Button
                             onClick={() => {
                                 this.props.handleApi('/reboot', this.state, this.props.selected);
