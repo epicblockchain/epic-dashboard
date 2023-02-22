@@ -1,10 +1,8 @@
 ## Small Update
 
 This release has a few new features.
-This release has a bug fix.
+This release works with version 0.22.0+ of UMC fw and all SC200 fw
 
 ### New Features
 
--   Added clock and voltage tuning capabilities for Bitmain S19Js in the tune tab
--   Added tuning presets for S19Js
--   Fixed bug where miners won't get sorted into correct tab
+-   Reduce network data when polling all miners
