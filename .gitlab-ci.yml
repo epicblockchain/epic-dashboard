@@ -6,119 +6,98 @@ stages:
 
 .build_base:
     stage: build
+    rules:
+        - if: $CI_COMMIT_TAG
     before_script:
         - dpkg --add-architecture i386
         - apt update
         - npm install
         - apt install -y wine64 fakeroot mono-devel zip rpm wine32
-        - export VERSION=$(node -p "require('./package.json').version")
-        - echo "VERSION=$(node -p "require('./package.json').version")" >> variables.env
 
 build:win64:
     extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make win64
-        - mv out/make/squirrel.windows/x64/*.exe ./epic-dashboard-$VERSION-Setup-x64.exe
+        - mv out/make/squirrel.windows/x64/*.exe ./epic-dashboard-$CI_COMMIT_TAG-Setup-x64.exe
     artifacts:
         reports:
             dotenv: variables.env
-        name: epic-dashboard-win64-$VERSION-$CI_COMMIT_SHORT_SHA
+        name: epic-dashboard-win64-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.exe'
-        expire_in: 2 mos
+        expire_in: 1 week
 
 build:win32:
     extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make win32
-        - mv out/make/squirrel.windows/ia32/*.exe ./epic-dashboard-$VERSION-Setup-ia32.exe
+        - mv out/make/squirrel.windows/ia32/*.exe ./epic-dashboard-$CI_COMMIT_TAG-Setup-ia32.exe
     artifacts:
-        name: epic-dashboard-win32-$VERSION-$CI_COMMIT_SHORT_SHA
+        name: epic-dashboard-win32-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.exe'
-        expire_in: 2 mos
+        expire_in: 1 week
 
 build:deb64:
     extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make deb64
-        - mv out/make/deb/x64/*.deb ./epic-dashboard-$VERSION-x64.deb
+        - mv out/make/deb/x64/*.deb ./epic-dashboard-$CI_COMMIT_TAG-x64.deb
     artifacts:
-        name: epic-dashboard-deb64-$VERSION-$CI_COMMIT_SHORT_SHA
+        name: epic-dashboard-deb64-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.deb'
-        expire_in: 2 mos
+        expire_in: 1 week
 
 build:debarmhf:
     extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make debarmhf
-        - mv out/make/deb/armv7l/*.deb ./epic-dashboard-$VERSION-armhf.deb
+        - mv out/make/deb/armv7l/*.deb ./epic-dashboard-$CI_COMMIT_TAG-armhf.deb
     artifacts:
-        name: epic-dashboard-debarmhf-$VERSION-$CI_COMMIT_SHORT_SHA
+        name: epic-dashboard-debarmhf-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.deb'
-        expire_in: 2 mos
+        expire_in: 1 week
 
 build:debarm64:
     extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make debarm64
-        - mv out/make/deb/arm64/*.deb ./epic-dashboard-$VERSION-arm64.deb
+        - mv out/make/deb/arm64/*.deb ./epic-dashboard-$CI_COMMIT_TAG-arm64.deb
     artifacts:
-        name: epic-dashboard-debarm64-$VERSION-$CI_COMMIT_SHORT_SHA
+        name: epic-dashboard-debarm64-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.deb'
-        expire_in: 2 mos
+        expire_in: 1 week
 
 build:rpm64:
     extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make rpm64
-        - mv out/make/rpm/x64/*.rpm ./epic-dashboard-$VERSION-x64.rpm
+        - mv out/make/rpm/x64/*.rpm ./epic-dashboard-$CI_COMMIT_TAG-x64.rpm
     artifacts:
-        name: epic-dashboard-rpm64-$VERSION-$CI_COMMIT_SHORT_SHA
+        name: epic-dashboard-rpm64-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.rpm'
-        expire_in: 2 mos
+        expire_in: 1 week
 
 build:mac:
     extends: .build_base
-    rules:
-        - if: $CI_COMMIT_MESSAGE =~ /bump version to /
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
     script:
         - make mac
-        - mv out/make/zip/darwin/x64/*.zip ./epic-dashboard-mac-$VERSION-x64.zip
-        - mv out/make/zip/darwin/arm64/*.zip ./epic-dashboard-mac-$VERSION-ARM64.zip
+        - mv out/make/zip/darwin/x64/*.zip ./epic-dashboard-mac-$CI_COMMIT_TAG-x64.zip
+        - mv out/make/zip/darwin/arm64/*.zip ./epic-dashboard-mac-$CI_COMMIT_TAG-ARM64.zip
     artifacts:
-        name: epic-dashboard-mac-$VERSION-$CI_COMMIT_SHORT_SHA
+        name: epic-dashboard-mac-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
         paths:
             - '*.zip'
-        expire_in: 2 mos
+        expire_in: 1 week
 
 release:
     stage: release
     rules:
-        - if: $CI_COMMIT_MESSAGE =~ /public release version /
+        - if: $CI_COMMIT_TAG && ($CI_COMMIT_MESSAGE =~ /Release public version /)
     variables:
         GIT_STRATEGY: clone
     before_script:
@@ -132,17 +111,17 @@ release:
         - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
-        - echo "$SSH_PUBLIC_KEY" >> ~/.ssh/id_rsa.pub
-        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - ssh-keyscan github.com >> ~/.ssh/known_hosts
+        - chmod 644 ~/.ssh/known_hosts
     script:
         - git checkout master
         - git remote add github git@github.com:epicblockchain/epic-dashboard.git
         - git push -f github master
-        - gh release create v$VERSION -F changelog.md
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-x64.exe#Windows 64-bit"
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-Setup-ia32.exe#Windows 32-bit"
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.deb#Debian, Ubuntu 64-bit"
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-armhf.deb#Debian, Ubuntu ARMhf"
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-arm64.deb#Debian, Ubuntu ARM64"
-        - gh release upload v$VERSION "epic-dashboard-$VERSION-x64.rpm#Red Hat, Fedora 64-bit"
-        - gh release upload v$VERSION "epic-dashboard-mac-$VERSION-x64.zip#macOS 64-bit"
+        - gh release create v$CI_COMMIT_TAG -F changelog.md
+        - gh release upload v$CI_COMMIT_TAG "epic-dashboard-$CI_COMMIT_TAG-Setup-x64.exe#Windows 64-bit"
+        - gh release upload v$CI_COMMIT_TAG "epic-dashboard-$CI_COMMIT_TAG-Setup-ia32.exe#Windows 32-bit"
+        - gh release upload v$CI_COMMIT_TAG "epic-dashboard-$CI_COMMIT_TAG-x64.deb#Debian, Ubuntu 64-bit"
+        - gh release upload v$CI_COMMIT_TAG "epic-dashboard-$CI_COMMIT_TAG-armhf.deb#Debian, Ubuntu ARMhf"
+        - gh release upload v$CI_COMMIT_TAG "epic-dashboard-$CI_COMMIT_TAG-arm64.deb#Debian, Ubuntu ARM64"
+        - gh release upload v$CI_COMMIT_TAG "epic-dashboard-$CI_COMMIT_TAG-x64.rpm#Red Hat, Fedora 64-bit"
+        - gh release upload v$CI_COMMIT_TAG "epic-dashboard-mac-$CI_COMMIT_TAG-x64.zip#macOS 64-bit"

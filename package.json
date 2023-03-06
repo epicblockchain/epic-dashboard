@@ -13,7 +13,8 @@
         "lint": "eslint --ignore-path .gitignore .",
         "format": "prettier --write .",
         "prepare": "husky install",
-        "release": "release-it --no-npm.publish"
+        "release": "release-it --no-npm.publish",
+        "release-pub": "release-it --no-npm.publish --git.commitMessage='Release public version ${version}'"
     },
     "keywords": [],
     "author": {
