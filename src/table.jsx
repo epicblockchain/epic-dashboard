@@ -200,8 +200,8 @@ export class DataTable extends React.Component {
             totals.push(String(data[hb]['Core Clock Avg']));
         }
 
-        if (cap !== undefined) {
-            if (totals.length == 0 || cap['Max HBs'] == undefined) {
+        if (cap !== undefined && cap !== null) {
+            if (totals.length == 0 || cap['Max HBs'] === undefined) {
                 return 'N/A';
             } else {
                 let text = '';
