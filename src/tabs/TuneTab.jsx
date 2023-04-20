@@ -258,7 +258,7 @@ export class TuneTab extends React.Component {
                         variant="outlined"
                         label="Password"
                         type="password"
-                        onChange={() => this.updatePassword}
+                        onChange={this.updatePassword}
                         margin="dense"
                         onKeyPress={(e) => {
                             if (e.key === 'Enter' && !disabled) {
