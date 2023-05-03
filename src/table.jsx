@@ -9,6 +9,7 @@ import {FanTab} from './tabs/FanTab.jsx';
 import {TuneTab} from './tabs/TuneTab.jsx';
 import {DebugTab} from './tabs/DebugTab.jsx';
 import {WifiTab} from './tabs/WifiTab.jsx';
+import {AutotuneTab} from './tabs/AutotuneTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
@@ -247,6 +248,48 @@ export class DataTable extends React.Component {
         return hbs.length;
     }
 
+    autotune(data) {
+        if (data.Autotune == undefined) {
+            return 'N/A';
+        } else {
+            if (data.Autotune.Running) {
+                return 'Enabled';
+            } else {
+                return 'Disabled';
+            }
+        }
+    }
+
+    autotuneAlgo(data) {
+        if (data.Autotune == undefined) {
+            return 'N/A';
+        } else {
+            for (let i in data.Autotune.Algorithm) {
+                return i;
+            }
+        }
+    }
+
+    autotuneOptimized(data) {
+        if (data.Autotune == undefined) {
+            return 'N/A';
+        } else {
+            for (let i in data.Autotune.Algorithm) {
+                return data.Autotune.Algorithm[i].Optimized.toString();
+            }
+        }
+    }
+
+    autotuneTarget(data) {
+        if (data.Autotune == undefined) {
+            return 'N/A';
+        } else {
+            for (let i in data.Autotune.Algorithm) {
+                return data.Autotune.Algorithm[i].Target;
+            }
+        }
+    }
+
     hbperformance(hashrate, cap) {
         const totals = [];
         if (hashrate.length > 0) {
@@ -392,6 +435,10 @@ export class DataTable extends React.Component {
             start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
             uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
             hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
+            autotune: this.failSafe(a.sum) || this.autotune(a.sum),
+            autotunealgo: this.failSafe(a.sum) || this.autotuneAlgo(a.sum),
+            autotuneoptimized: this.failSafe(a.sum) || this.autotuneOptimized(a.sum),
+            autotunetarget: this.failSafe(a.sum) || this.autotuneTarget(a.sum),
             performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
             lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
             hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null, false),
@@ -499,6 +546,9 @@ export class DataTable extends React.Component {
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab label="tune" />
                         )}
+                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                            <Tab label="Autotune" />
+                        )}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Wifi" />}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Debug" />}
                     </Tabs>
@@ -573,6 +623,15 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 7}>
+                        <AutotuneTab
+                            handleApi={this.props.handleApi}
+                            selected={selected}
+                            data={this.props.data}
+                            disabled={!capApi}
+                            sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 8}>
                         <WifiTab
                             handleApi={this.props.handleApi}
                             handleFormApi={this.props.handleFormApi}
@@ -581,7 +640,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 8}>
+                    <div hidden={this.state.tab != 9}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}

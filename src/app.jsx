@@ -840,6 +840,20 @@ class App extends React.Component {
                 msg = 'Updating wifi ssid and psk';
                 success = 'Wifi config updated';
                 break;
+            case '/autotune':
+                obj = {param: data.checked, password: data.password};
+                success = `Autotune enable: ${data.checked}`;
+                break;
+            case '/autotune/algo':
+                obj = {
+                    param: {
+                        algo: data.algo,
+                        target: data.num,
+                    },
+                    password: data.password,
+                };
+                success = `Autotune algorithm changed to ${data.algo} with target ${data.num}`;
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
