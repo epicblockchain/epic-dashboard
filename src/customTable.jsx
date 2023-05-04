@@ -174,6 +174,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'autotuneoptimized', Header: 'Autotune Optimized', width: 190},
             {accessor: 'autotunetarget', Header: 'Autotune Target', width: 160},
             {accessor: 'performance', Header: 'Hashboard Performance', width: 250},
+            {accessor: 'realtimehashrate', Header: 'Realtime Hashrate', width: 200},
             {accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort},
             {accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort},

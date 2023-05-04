@@ -347,6 +347,20 @@ export class DataTable extends React.Component {
         }
     }
 
+    realtime_hashrate(hashrate, cap) {
+        let total = 0;
+        if (cap !== undefined) {
+            if (cap['Max HBs'] !== undefined) {
+                for (let hb in hashrate) {
+                    total += hashrate[hb].Hashrate[0];
+                }
+            } else {
+                return 'N/A';
+            }
+        }
+        return String((total / 1e6).toFixed(2)) + ' TH/s';
+    }
+
     select(sel_model, model) {
         this.setState({[model + '_sel']: sel_model});
     }
@@ -441,6 +455,7 @@ export class DataTable extends React.Component {
             autotunetarget: this.failSafe(a.sum) || this.autotuneTarget(a.sum),
             performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
             lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
+            realtimehashrate: this.failSafe(a.sum) || this.realtime_hashrate(a.sum.HBs, a.cap),
             hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null, false),
             hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1, false),
             hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6, false),
