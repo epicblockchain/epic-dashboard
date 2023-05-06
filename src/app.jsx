@@ -854,6 +854,10 @@ class App extends React.Component {
                 };
                 success = `Autotune algorithm changed to ${data.algo} with target ${data.num}`;
                 break;
+            case '/shutdowntemp':
+                obj = {param: data.shutdowntemp, password: data.password};
+                success = `Shutdown Temperature set to ${data.shutdowntemp}`;
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
