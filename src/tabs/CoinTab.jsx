@@ -1,4 +1,4 @@
-import {Button, FormControl, InputLabel, Select, Switch, TextField} from '@mui/material';
+import {Button, FormControl, InputLabel, Select, Switch, TextField, MenuItem} from '@mui/material';
 import * as React from 'react';
 
 export class CoinTab extends React.Component {
@@ -6,6 +6,7 @@ export class CoinTab extends React.Component {
         super(props);
         this.state = {
             coin: 'Select Coin',
+            unique_variant: '',
             stratum_configs: [
                 {pool: '', address: '', worker: '', password: ''},
                 {pool: '', address: '', worker: '', password: ''},
@@ -16,6 +17,7 @@ export class CoinTab extends React.Component {
         };
 
         this.updateCoin = this.updateCoin.bind(this);
+        this.updateVariant = this.updateVariant.bind(this);
         this.updateCheck = this.updateCheck.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
@@ -28,6 +30,10 @@ export class CoinTab extends React.Component {
 
     updateCoin(e) {
         this.setState({coin: e.target.value});
+    }
+
+    updateVariant(e) {
+        this.setState({unique_variant: e.target.value});
     }
 
     updatePool(e, i) {
@@ -97,6 +103,12 @@ export class CoinTab extends React.Component {
                     stratum_configs: temp,
                 });
             }
+            if (this.props.data[this.props.selected[0]].sum.Stratum) {
+                this.setState({unique_variant: this.props.data[this.props.selected[0]].sum.Stratum.uniqueIdVariant});
+                this.setState({
+                    checked: this.props.data[this.props.selected[0]].sum.Stratum['Append Unique Id To Worker'],
+                });
+            }
         } else {
             this.setState({stratum_configs: temp});
         }
@@ -105,6 +117,7 @@ export class CoinTab extends React.Component {
     clearFields() {
         this.setState({
             coin: 'Select Coin',
+            unique_variant: '',
             stratum_configs: [
                 {pool: '', address: '', worker: '', password: ''},
                 {pool: '', address: '', worker: '', password: ''},
@@ -169,6 +182,20 @@ export class CoinTab extends React.Component {
                         checked={this.state.checked}
                         onChange={this.updateCheck}
                     />
+                </FormControl>
+                <FormControl variant="outlined" margin="dense" style={{width: '200px'}} disabled={!this.state.checked}>
+                    <InputLabel>Unique ID Variant</InputLabel>
+                    <Select
+                        id="variant"
+                        label="Unique ID Variant"
+                        size="small"
+                        value={this.state.unique_variant}
+                        onChange={this.updateVariant}
+                    >
+                        <MenuItem value={'IpAddress'}>Ip Address</MenuItem>
+                        <MenuItem value={'MacAddress'}>Mac Address</MenuItem>
+                        <MenuItem value={'CpuId'}>CPU ID</MenuItem>
+                    </Select>
                 </FormControl>
                 <Button onClick={() => this.clearFields()} variant="contained" className="float stop">
                     Clear fields
@@ -306,6 +333,9 @@ export class CoinTab extends React.Component {
                     onKeyPress={(e) => {
                         if (e.key === 'Enter' && !disabled) {
                             this.props.handleApi('/coin', this.state, this.props.selected);
+                            if (this.state.checked) {
+                                this.props.handleApi('/id/variant', this.state, this.props.selected);
+                            }
                         }
                     }}
                     error={!this.state.password}
@@ -313,6 +343,9 @@ export class CoinTab extends React.Component {
                 <Button
                     onClick={() => {
                         this.props.handleApi('/coin', this.state, this.props.selected);
+                        if (this.state.checked) {
+                            this.props.handleApi('/id/variant', this.state, this.props.selected);
+                        }
                     }}
                     variant="contained"
                     color="primary"

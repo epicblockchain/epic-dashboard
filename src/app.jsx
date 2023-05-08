@@ -858,6 +858,10 @@ class App extends React.Component {
                 obj = {param: data.shutdowntemp, password: data.password};
                 success = `Shutdown Temperature set to ${data.shutdowntemp}`;
                 break;
+            case '/id/variant':
+                obj = {param: data.unique_variant, password: data.password};
+                success = `Unique Id Variant set to ${data.unique_variant}`;
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
