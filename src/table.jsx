@@ -201,7 +201,7 @@ export class DataTable extends React.Component {
             totals.push(String(data[hb]['Core Clock Avg']));
         }
 
-        if (cap !== undefined && cap !== null) {
+        if (cap !== undefined || cap !== null) {
             if (totals.length == 0 || cap['Max HBs'] === undefined) {
                 return 'N/A';
             } else {
@@ -249,7 +249,7 @@ export class DataTable extends React.Component {
     }
 
     autotune(data) {
-        if (data.Autotune == undefined) {
+        if (data.Autotune == undefined || data.Autotune == null) {
             return 'N/A';
         } else {
             if (data.Autotune.Running) {
@@ -261,7 +261,7 @@ export class DataTable extends React.Component {
     }
 
     autotuneAlgo(data) {
-        if (data.Autotune == undefined) {
+        if (data.Autotune == undefined || data.Autotune == null) {
             return 'N/A';
         } else {
             for (let i in data.Autotune.Algorithm) {
@@ -271,7 +271,7 @@ export class DataTable extends React.Component {
     }
 
     autotuneOptimized(data) {
-        if (data.Autotune == undefined) {
+        if (data.Autotune == undefined || data.Autotune == null) {
             return 'N/A';
         } else {
             for (let i in data.Autotune.Algorithm) {
@@ -281,7 +281,7 @@ export class DataTable extends React.Component {
     }
 
     autotuneTarget(data) {
-        if (data.Autotune == undefined) {
+        if (data.Autotune == undefined || data.Autotune == null) {
             return 'N/A';
         } else {
             for (let i in data.Autotune.Algorithm) {
@@ -299,7 +299,7 @@ export class DataTable extends React.Component {
                 }
             }
         }
-        if (cap !== undefined) {
+        if (cap !== undefined || cap !== null) {
             if (totals.length == 0 || cap['Max HBs'] == undefined) {
                 return 'N/A';
             } else {
@@ -349,7 +349,7 @@ export class DataTable extends React.Component {
 
     realtime_hashrate(hashrate, cap) {
         let total = 0;
-        if (cap !== undefined) {
+        if (cap !== undefined || cap !== null) {
             if (cap['Max HBs'] !== undefined) {
                 for (let hb in hashrate) {
                     total += hashrate[hb].Hashrate[0];
