@@ -9,7 +9,7 @@ import {FanTab} from './tabs/FanTab.jsx';
 import {TuneTab} from './tabs/TuneTab.jsx';
 import {DebugTab} from './tabs/DebugTab.jsx';
 import {WifiTab} from './tabs/WifiTab.jsx';
-import {AutotuneTab} from './tabs/AutotuneTab.jsx';
+import {PerpetualtuneTab} from './tabs/PerpetualtuneTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
@@ -248,11 +248,11 @@ export class DataTable extends React.Component {
         return hbs.length;
     }
 
-    autotune(data) {
-        if (data.Autotune == undefined || data.Autotune == null) {
+    perpetualtune(data) {
+        if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
             return 'N/A';
         } else {
-            if (data.Autotune.Running) {
+            if (data.PerpetualTune.Running) {
                 return 'Enabled';
             } else {
                 return 'Disabled';
@@ -260,32 +260,32 @@ export class DataTable extends React.Component {
         }
     }
 
-    autotuneAlgo(data) {
-        if (data.Autotune == undefined || data.Autotune == null) {
+    perpetualtuneAlgo(data) {
+        if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
             return 'N/A';
         } else {
-            for (let i in data.Autotune.Algorithm) {
+            for (let i in data.PerpetualTune.Algorithm) {
                 return i;
             }
         }
     }
 
-    autotuneOptimized(data) {
-        if (data.Autotune == undefined || data.Autotune == null) {
+    perpetualtuneOptimized(data) {
+        if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
             return 'N/A';
         } else {
-            for (let i in data.Autotune.Algorithm) {
-                return data.Autotune.Algorithm[i].Optimized.toString();
+            for (let i in data.PerpetualTune.Algorithm) {
+                return data.PerpetualTune.Algorithm[i].Optimized.toString();
             }
         }
     }
 
-    autotuneTarget(data) {
-        if (data.Autotune == undefined || data.Autotune == null) {
+    perpetualtuneTarget(data) {
+        if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
             return 'N/A';
         } else {
-            for (let i in data.Autotune.Algorithm) {
-                return data.Autotune.Algorithm[i].Target;
+            for (let i in data.PerpetualTune.Algorithm) {
+                return data.PerpetualTune.Algorithm[i].Target;
             }
         }
     }
@@ -449,10 +449,10 @@ export class DataTable extends React.Component {
             start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
             uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
             hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
-            autotune: this.failSafe(a.sum) || this.autotune(a.sum),
-            autotunealgo: this.failSafe(a.sum) || this.autotuneAlgo(a.sum),
-            autotuneoptimized: this.failSafe(a.sum) || this.autotuneOptimized(a.sum),
-            autotunetarget: this.failSafe(a.sum) || this.autotuneTarget(a.sum),
+            perpetualtune: this.failSafe(a.sum) || this.perpetualtune(a.sum),
+            perpetualtunealgo: this.failSafe(a.sum) || this.perpetualtuneAlgo(a.sum),
+            perpetualtuneoptimized: this.failSafe(a.sum) || this.perpetualtuneOptimized(a.sum),
+            perpetualtunetarget: this.failSafe(a.sum) || this.perpetualtuneTarget(a.sum),
             performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
             lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
             realtimehashrate: this.failSafe(a.sum) || this.realtime_hashrate(a.sum.HBs, a.cap),
@@ -562,7 +562,7 @@ export class DataTable extends React.Component {
                             <Tab label="tune" />
                         )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab label="Autotune" />
+                            <Tab label="Perpetual tune" />
                         )}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Wifi" />}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Debug" />}
@@ -638,7 +638,7 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 7}>
-                        <AutotuneTab
+                        <PerpetualtuneTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             data={this.props.data}

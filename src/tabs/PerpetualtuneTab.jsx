@@ -6,7 +6,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 
-export class AutotuneTab extends React.Component {
+export class PerpetualtuneTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -100,14 +100,14 @@ export class AutotuneTab extends React.Component {
         ];
 
         if (this.props.data[this.props.selected[0]]) {
-            let autotune_cap = this.props.data[this.props.selected[0]].cap['Autotune'];
-            for (let i in autotune_cap) {
+            let perpetualtune_cap = this.props.data[this.props.selected[0]].cap['PerpetualTune'];
+            for (let i in perpetualtune_cap) {
                 const algo = {
-                    algorithm: autotune_cap[i].algorithm,
-                    name: autotune_cap[i].name,
-                    description: autotune_cap[i].description,
-                    min: autotune_cap[i].min,
-                    max: autotune_cap[i].max,
+                    algorithm: perpetualtune_cap[i].algorithm,
+                    name: perpetualtune_cap[i].name,
+                    description: perpetualtune_cap[i].description,
+                    min: perpetualtune_cap[i].min,
+                    max: perpetualtune_cap[i].max,
                 };
                 algo_info.push(algo);
             }
@@ -126,7 +126,7 @@ export class AutotuneTab extends React.Component {
                                         onChange={this.updateCheck}
                                     />
                                 }
-                                label={<Box fontSize={20}>Enable Autotune</Box>}
+                                label={<Box fontSize={20}>Perpetual Tuning</Box>}
                                 labelPlacement="top"
                             />
                         </Box>
@@ -134,7 +134,7 @@ export class AutotuneTab extends React.Component {
                     <Divider orientation="vertical" sx={{pt: 25}} style={{marginRight: '25px'}} />
 
                     <FormControl disabled={!this.state.checked}>
-                        <Typography fontSize={20}>Autotune Algorithm</Typography>
+                        <Typography fontSize={20}>Perpetual Tune Algorithm</Typography>
                         <RadioGroup value={this.state.algo}>
                             {algo_info.map((x, index) => (
                                 <FormControlLabel
@@ -195,9 +195,9 @@ export class AutotuneTab extends React.Component {
                         margin="dense"
                         onKeyPress={(e) => {
                             if (e.key === 'Enter' && !disabled) {
-                                this.props.handleApi('/autotune', this.state, this.props.selected);
+                                this.props.handleApi('/perpetualtune', this.state, this.props.selected);
                                 if (this.state.checked) {
-                                    this.props.handleApi('/autotune/algo', this.state, this.props.selected);
+                                    this.props.handleApi('/perpetualtune/algo', this.state, this.props.selected);
                                 }
                             }
                         }}
@@ -205,9 +205,9 @@ export class AutotuneTab extends React.Component {
                     />
                     <Button
                         onClick={() => {
-                            this.props.handleApi('/autotune', this.state, this.props.selected);
+                            this.props.handleApi('/perpetualtune', this.state, this.props.selected);
                             if (this.state.checked) {
-                                this.props.handleApi('/autotune/algo', this.state, this.props.selected);
+                                this.props.handleApi('/perpetualtune/algo', this.state, this.props.selected);
                             }
                         }}
                         variant="contained"

@@ -840,11 +840,11 @@ class App extends React.Component {
                 msg = 'Updating wifi ssid and psk';
                 success = 'Wifi config updated';
                 break;
-            case '/autotune':
+            case '/perpetualtune':
                 obj = {param: data.checked, password: data.password};
-                success = `Autotune enable: ${data.checked}`;
+                success = `Perpetual tune enable: ${data.checked}`;
                 break;
-            case '/autotune/algo':
+            case '/perpetualtune/algo':
                 obj = {
                     param: {
                         algo: data.algo,
@@ -852,7 +852,7 @@ class App extends React.Component {
                     },
                     password: data.password,
                 };
-                success = `Autotune algorithm changed to ${data.algo} with target ${data.num}`;
+                success = `Perpetual tune algorithm changed to ${data.algo} with target ${data.num}`;
                 break;
             case '/shutdowntemp':
                 obj = {param: data.shutdowntemp, password: data.password};
