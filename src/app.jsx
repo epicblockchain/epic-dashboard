@@ -512,7 +512,7 @@ class App extends React.Component {
 
     async portscan(ip, range, timeout) {
         notify('info', 'Scanning for miners...', {
-            autoClose: range === '16' ? 30000 + parseInt(timeout) : 2000 + parseInt(timeout),
+            autoClose: range === '16' ? 120000 + parseInt(timeout) : 2000 + parseInt(timeout),
             hideProgressBar: false,
             pauseOnHover: false,
             toastId: 'scan',

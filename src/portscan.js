@@ -1,25 +1,40 @@
 const {parentPort} = require('worker_threads');
-const net = require('net');
 const http = require('http');
 
 let gtimeout = 200;
 const results = [];
 
-function checkPort(ip) {
+function checkGet(ip) {
     return new Promise((resolve, reject) => {
-        const client = new net.Socket();
-        client.connect({port: 4028, host: ip}, () => {
-            resolve(ip);
-            client.destroy();
+        const options = {
+            hostname: ip,
+            port: 4028,
+            path: '/summary',
+            method: 'GET',
+            timeout: gtimeout + 300,
+        };
+        const req = http.get(options, (res) => {
+            let body = '';
+            res.setEncoding('utf8');
+            res.on('data', (chunk) => {
+                body += chunk;
+            });
+            res.on('end', () => {
+                try {
+                    resolve({ip: ip, name: JSON.parse(body).Hostname});
+                } catch (err) {
+                    reject(err);
+                }
+            });
         });
-        client.setTimeout(gtimeout);
-        client.on('timeout', () => {
-            reject(Error('timeout'));
-            client.destroy();
+        req.on('socket', (socket) => {
+            socket.setTimeout(gtimeout + 800);
+            socket.on('timeout', () => {
+                socket.destroy();
+            });
         });
-        client.on('error', (e) => {
-            reject(e);
-            client.destroy();
+        req.on('error', (err) => {
+            reject(err);
         });
     });
 }
@@ -27,7 +42,7 @@ function checkPort(ip) {
 async function doWork(iterator) {
     for (const item of iterator) {
         try {
-            results.push(await checkPort(item));
+            results.push(await checkGet(item));
         } catch {}
     }
 }
@@ -47,53 +62,10 @@ parentPort.on('message', async ({ip, range, timeout}) => {
     }
 
     const iterator = ips.values();
-    const workers = new Array(1020).fill(iterator).map(doWork);
+    const workers = new Array(1000).fill(iterator).map(doWork);
 
     await Promise.allSettled(workers);
 
-    let finalResults = await Promise.allSettled(
-        results.map((ip) => {
-            return new Promise((resolve, reject) => {
-                const options = {
-                    hostname: ip,
-                    port: 4028,
-                    path: '/summary',
-                    method: 'GET',
-                    timeout: gtimeout + 300,
-                };
-                const req = http.get(options, (res) => {
-                    let body = '';
-                    res.setEncoding('utf8');
-                    res.on('data', (chunk) => {
-                        body += chunk;
-                    });
-                    res.on('end', () => {
-                        try {
-                            resolve({ip: ip, name: JSON.parse(body).Hostname});
-                        } catch (err) {
-                            reject(err);
-                        }
-                    });
-                });
-                req.on('socket', (socket) => {
-                    socket.setTimeout(gtimeout + 500);
-                    socket.on('timeout', () => {
-                        req.abort();
-                    });
-                });
-                req.on('error', (err) => {
-                    reject(err);
-                });
-            });
-        })
-    );
-
     console.log(`Portscan done. Took ${Date.now() - start}ms`);
-    finalResults = finalResults.reduce((filtered, result) => {
-        if (result.status === 'fulfilled') {
-            filtered.push(result.value);
-        }
-        return filtered;
-    }, []);
-    parentPort.postMessage(finalResults);
+    parentPort.postMessage(results);
 });
