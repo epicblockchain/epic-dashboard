@@ -1,7 +1,7 @@
 {
     "name": "epic-dashboard",
     "productName": "epic-dashboard",
-    "version": "3.5.5",
+    "version": "3.5.6",
     "description": "Dashboard for ePIC mining rigs.",
     "main": ".webpack/main",
     "scripts": {
