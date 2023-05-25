@@ -104,9 +104,11 @@ export class CoinTab extends React.Component {
                 });
             }
             if (this.props.data[this.props.selected[0]].sum.Stratum) {
-                this.setState({unique_variant: this.props.data[this.props.selected[0]].sum.Stratum.uniqueIdVariant});
                 this.setState({
-                    checked: this.props.data[this.props.selected[0]].sum.Stratum['Append Unique Id To Worker'],
+                    unique_variant: this.props.data[this.props.selected[0]].sum.Stratum['Worker Unique Id Variant'],
+                });
+                this.setState({
+                    checked: this.props.data[this.props.selected[0]].sum.Stratum['Worker Unique Id'],
                 });
             }
         } else {
