@@ -1,8 +1,13 @@
-## Small Update
+## Major Update
 
-This release has a few new features.
-This release works with version 0.22.0+ of UMC fw and all SC200 fw
+This release contains many new features and improvements.
+This release works with version 0.27.0+ of UMC fw
 
 ### New Features
 
--   Reduce network data when polling all miners
+-   Support new Perpetual Tune feature
+-   Added Realtime Hashrate column to table
+
+### Bug Fixes
+
+-   Improved stability
