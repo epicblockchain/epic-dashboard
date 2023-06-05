@@ -201,8 +201,10 @@ export class DataTable extends React.Component {
             totals.push(String(data[hb]['Core Clock Avg']));
         }
 
-        if (cap !== undefined || cap !== null) {
-            if (totals.length == 0 || cap['Max HBs'] === undefined) {
+        if (cap == null) {
+            return 'N/A';
+        } else {
+            if (totals.length == 0 || cap['Max HBs'] == null) {
                 return 'N/A';
             } else {
                 let text = '';
@@ -225,8 +227,6 @@ export class DataTable extends React.Component {
                 }
                 return text;
             }
-        } else {
-            return 'N/A';
         }
     }
 
@@ -299,8 +299,10 @@ export class DataTable extends React.Component {
                 }
             }
         }
-        if (cap !== undefined || cap !== null) {
-            if (totals.length == 0 || cap['Max HBs'] == undefined) {
+        if (cap == null) {
+            return 'N/A';
+        } else {
+            if (totals.length == 0 || cap['Max HBs'] == null) {
                 return 'N/A';
             } else {
                 let text = '';
@@ -349,13 +351,15 @@ export class DataTable extends React.Component {
 
     realtime_hashrate(hashrate, cap) {
         let total = 0;
-        if (cap !== undefined || cap !== null) {
-            if (cap['Max HBs'] !== undefined) {
+        if (cap == null) {
+            return 'N/A';
+        } else {
+            if (cap['Max HBs'] == null) {
+                return 'N/A';
+            } else {
                 for (let hb in hashrate) {
                     total += hashrate[hb].Hashrate[0];
                 }
-            } else {
-                return 'N/A';
             }
         }
         return String((total / 1e6).toFixed(2)) + ' TH/s';
