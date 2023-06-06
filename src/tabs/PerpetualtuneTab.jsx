@@ -100,16 +100,18 @@ export class PerpetualtuneTab extends React.Component {
         ];
 
         if (this.props.data[this.props.selected[0]]) {
-            let perpetualtune_cap = this.props.data[this.props.selected[0]].cap['PerpetualTune'];
-            for (let i in perpetualtune_cap) {
-                const algo = {
-                    algorithm: perpetualtune_cap[i].algorithm,
-                    name: perpetualtune_cap[i].name,
-                    description: perpetualtune_cap[i].description,
-                    min: perpetualtune_cap[i].min,
-                    max: perpetualtune_cap[i].max,
-                };
-                algo_info.push(algo);
+            if (this.props.data[this.props.selected[0]].cap) {
+                let perpetualtune_cap = this.props.data[this.props.selected[0]].cap['PerpetualTune'];
+                for (let i in perpetualtune_cap) {
+                    const algo = {
+                        algorithm: perpetualtune_cap[i].algorithm,
+                        name: perpetualtune_cap[i].name,
+                        description: perpetualtune_cap[i].description,
+                        min: perpetualtune_cap[i].min,
+                        max: perpetualtune_cap[i].max,
+                    };
+                    algo_info.push(algo);
+                }
             }
         }
 
