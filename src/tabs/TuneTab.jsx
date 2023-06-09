@@ -25,18 +25,6 @@ const marksCLK = [
         label: '1000 MHz',
     },
 ];
-
-const marksVOLT = [
-    {
-        value: 12.0,
-        label: '12 V',
-    },
-    {
-        value: 15,
-        label: '15 V',
-    },
-];
-
 export class TuneTab extends React.Component {
     constructor(props) {
         super(props);
@@ -86,9 +74,10 @@ export class TuneTab extends React.Component {
         if (this.state.clock < 50) this.setState({clock: 50});
         else if (this.state.clock > 1000) this.setState({clock: 500});
     }
-    handleInputVoltageBlur() {
-        if (this.state.voltage < 12) this.setState({voltage: 12});
-        else if (this.state.voltage > 15) this.setState({voltage: 15});
+
+    handleInputVoltageBlur(minV, maxV) {
+        if (this.state.voltage < minV) this.setState({voltage: minV});
+        else if (this.state.voltage > maxV) this.setState({voltage: maxV});
     }
 
     updatePassword(e) {
@@ -115,8 +104,34 @@ export class TuneTab extends React.Component {
             !this.state.voltage;
 
         let tunePresets = null;
+        let min_v = 12;
+        let max_v = 15;
+        var marksVOLT = [
+            {
+                value: min_v,
+                label: `${min_v} V`,
+            },
+            {
+                value: max_v,
+                label: `${max_v} V`,
+            },
+        ];
+
         for (const selected of this.props.selected) {
             if (this.props.data[selected].cap) {
+                min_v = this.props.data[selected]?.cap?.['Psu Info']?.['Min Vout'] / 1000;
+                max_v = this.props.data[selected]?.cap?.['Psu Info']?.['Max Vout'] / 1000;
+
+                marksVOLT = [
+                    {
+                        value: min_v,
+                        label: `${min_v} V`,
+                    },
+                    {
+                        value: max_v,
+                        label: `${max_v} V`,
+                    },
+                ];
                 if (this.props.data[selected].cap['Tune Presets']) {
                     if (!tunePresets) {
                         tunePresets = Object.assign({}, this.props.data[selected].cap['Tune Presets']);
@@ -169,7 +184,7 @@ export class TuneTab extends React.Component {
                                 min={50}
                                 max={1000}
                                 marks={marksCLK}
-                                onChange={(e) => this.handleSliderClockChange(e)}
+                                onChange={this.handleSliderClockChange}
                                 style={{width: '250px'}}
                             />
                         </Grid>
@@ -188,12 +203,12 @@ export class TuneTab extends React.Component {
                         </Grid>
                         <Grid item xs={8}>
                             <Slider
-                                value={typeof this.state.voltage === 'number' ? this.state.voltage : 12.0}
-                                min={12.0}
-                                max={15.0}
+                                value={typeof this.state.voltage === 'number' ? this.state.voltage : min_v}
+                                min={min_v}
+                                max={max_v}
                                 step={0.001}
                                 marks={marksVOLT}
-                                onChange={(e) => this.handleSliderVoltageChange(e)}
+                                onChange={this.handleSliderVoltageChange}
                                 style={{width: '250px'}}
                             />
                         </Grid>
@@ -202,8 +217,8 @@ export class TuneTab extends React.Component {
                                 value={this.state.voltage}
                                 margin="dense"
                                 onChange={(e) => this.handleInputVoltageChange(e)}
-                                onBlur={() => this.handleInputVoltageBlur}
-                                inputProps={{step: 0.05, min: 12, max: 15, type: 'number'}}
+                                onBlur={() => this.handleInputVoltageBlur(min_v, max_v)}
+                                inputProps={{step: 0.05, min: min_v, max: max_v, type: 'number'}}
                                 style={{width: '70px'}}
                             />
                         </Grid>
