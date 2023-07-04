@@ -173,6 +173,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'perpetualtunealgo', Header: 'Perpetual Tune Algorithm', width: 225},
             {accessor: 'perpetualtuneoptimized', Header: 'Perpetual Tune Optimized', width: 225},
             {accessor: 'perpetualtunetarget', Header: 'Perpetual Tune Target', width: 200},
+            {accessor: 'shutdowntemp', Header: 'Shutdown Temperature', width: 170},
             {accessor: 'performance', Header: 'Hashboard Performance', width: 250},
             {accessor: 'realtimehashrate', Header: 'Realtime Hashrate', width: 200},
             {accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort},

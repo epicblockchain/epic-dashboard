@@ -290,6 +290,14 @@ export class DataTable extends React.Component {
         }
     }
 
+    shutdowntemp(data) {
+        if (data.Misc == null) {
+            return 'N/A';
+        } else {
+            return data.Misc['Shutdown Temp'] + ' °C';
+        }
+    }
+
     hbperformance(hashrate, cap) {
         const totals = [];
         if (hashrate.length > 0) {
@@ -457,6 +465,7 @@ export class DataTable extends React.Component {
             perpetualtunealgo: this.failSafe(a.sum) || this.perpetualtuneAlgo(a.sum),
             perpetualtuneoptimized: this.failSafe(a.sum) || this.perpetualtuneOptimized(a.sum),
             perpetualtunetarget: this.failSafe(a.sum) || this.perpetualtuneTarget(a.sum),
+            shutdowntemp: this.failSafe(a.sum) || this.shutdowntemp(a.sum),
             performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
             lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
             realtimehashrate: this.failSafe(a.sum) || this.realtime_hashrate(a.sum.HBs, a.cap),
