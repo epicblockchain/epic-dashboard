@@ -177,6 +177,18 @@ These will be stored in a line seperated text file:
 -   ~/Library/Application Support/ePIC-Dashboard/ipaddr.txt
 -   ~/Library/Application Support/ePIC-Dashboard/blacklist.txt
 
+## Saving Miner Log Files
+
+Use the interface in the Table page to select miners and save their logs to a destination folder.
+
+![select miner](docs/images/select_miner.png)
+
+![save logs](docs/images/save_log.png)
+
+A notification will pop up on the top right of the dashboard containing the save miner's IP addresses and destination folder.
+
+In the destination folder, the .log files will be saved in folders that correspond to each miner's IP address.
+
 ## API
 
 [APIv3](docs/APIv3.md) is for PowerPlay
