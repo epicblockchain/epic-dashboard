@@ -1,14 +1,8 @@
-## Major Update
-
-This release contains many new features and improvements.
-This release works with version 0.27.0+ of UMC fw
+## Minor Update
 
 ### New Features
 
--   Support new Perpetual Tune feature
--   Added Realtime Hashrate column to table
--   Added User Target and Throttle Target in brackets in Perpetual Tune Target column
+-   Add Throttle Target to Perpetual Tune Target column
+-   Add Shutdown temp column to table
 
 ### Bug Fixes
-
--   Improved stability
