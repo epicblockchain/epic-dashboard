@@ -285,7 +285,19 @@ export class DataTable extends React.Component {
             return 'N/A';
         } else {
             for (let i in data.PerpetualTune.Algorithm) {
-                return data.PerpetualTune.Algorithm[i].Target;
+                if (
+                    data.PerpetualTune.Algorithm[i]['Throttle Target'] == undefined ||
+                    data.PerpetualTune.Algorithm[i]['Throttle Target'] == null
+                ) {
+                    return data.PerpetualTune.Algorithm[i].Target;
+                } else {
+                    return (
+                        data.PerpetualTune.Algorithm[i].Target +
+                        ' (' +
+                        data.PerpetualTune.Algorithm[i]['Throttle Target'] +
+                        ')'
+                    );
+                }
             }
         }
     }
