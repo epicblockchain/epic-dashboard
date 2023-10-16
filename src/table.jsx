@@ -164,7 +164,7 @@ export class DataTable extends React.Component {
     }
 
     efficiency(row) {
-        const raw = this.hashrate_x_hr(row, 1, true) / this.totalPower(row.sum.HBs);
+        const raw = this.hashrate_x_hr(row, 1, true) / this.totalPower(row.sum);
         if (isNaN(raw)) return 'N/A';
         return `${Math.round(raw / 10) / 100} GH/W`;
     }
@@ -230,13 +230,16 @@ export class DataTable extends React.Component {
         }
     }
 
-    totalPower(data) {
-        const power = data.map((a) => a['Input Power']);
-        var sum;
-        sum = power.reduce((total, num) => {
-            return total + num;
-        }, 0);
-        return Math.round(sum);
+    totalPower(summary) {
+        let power = summary['Power Supply Stats']?.['Input Power'];
+
+        if (!power) {
+            const hb_power = summary.HBs.map((hb) => hb['Input Power']);
+            power = hb_power.reduce((total, num) => {
+                return total + num;
+            }, 0);
+        }
+        return Math.round(power);
     }
 
     activeHBs(hbs) {
@@ -490,7 +493,7 @@ export class DataTable extends React.Component {
             rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
             difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
             temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs).toFixed(1) + ' \u00b0C',
-            power: this.failSafe(a.sum) || this.totalPower(a.sum.HBs),
+            power: this.failSafe(a.sum) || this.totalPower(a.sum),
             fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
             cap: a.cap,
             voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
