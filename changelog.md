@@ -2,7 +2,6 @@
 
 ### New Features
 
--   Add Throttle Target to Perpetual Tune Target column
--   Add Shutdown temp column to table
-
 ### Bug Fixes
+
+-   Power column display correct value for UMC miners
