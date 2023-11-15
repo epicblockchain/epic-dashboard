@@ -832,8 +832,17 @@ class App extends React.Component {
                 success = `Tuned voltage to ${data.voltage} and clock to ${data.clock}`;
                 break;
             case '/fanspeed':
-                obj = {param: data.speed.toString(), password: data.password};
-                success = `Fan speed set to ${data.speed}%`;
+                if (data.autofan) {
+                    console.log(data);
+                    obj = {
+                        param: {Auto: {'Target Temperature': data.target_temp, 'Idle Speed': data.idle_speed}},
+                        password: data.password,
+                    };
+                    success = `Fan mode set to Auto with target ${data.target_temp}\u00b0C and idle speed ${data.idle_speed}%`;
+                } else {
+                    obj = {param: data.speed, password: data.password};
+                    success = `Fan speed set to ${data.speed}%`;
+                }
                 break;
             case '/test':
                 obj = {param: {test: data.test, miner_type: data.type}, password: data.password};

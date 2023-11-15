@@ -19,7 +19,7 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 1536,
         minWidth: 800,
-        height: 900,
+        height: 1100,
         minHeight: 720,
         frame: false,
         icon: __dirname + '/img/epic.ico',
