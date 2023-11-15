@@ -816,6 +816,11 @@ class App extends React.Component {
                 msg = 'Sending command';
                 success = `${data.cmd} sent successfully`;
                 break;
+            case '/defaultconfig':
+                obj = {param: null, password: data.password};
+                msg = 'Sending command';
+                success = `Reset sent successfully`;
+                break;
             case '/tune':
                 obj = {
                     param: {

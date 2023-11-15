@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, TextField, Paper, Divider, Grid} from '@mui/material';
+import {Button, TextField, Paper, Grid} from '@mui/material';
 
 export class ControlTab extends React.Component {
     constructor(props) {
@@ -58,6 +58,17 @@ export class ControlTab extends React.Component {
                             disabled={disabled}
                         >
                             Reboot
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                this.props.handleApi('/defaultconfig', this.state, this.props.selected);
+                            }}
+                            variant="contained"
+                            color="error"
+                            className="but-group"
+                            disabled={disabled}
+                        >
+                            Reset Default Config
                         </Button>
                     </Grid>
                 </Paper>
