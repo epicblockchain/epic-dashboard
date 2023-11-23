@@ -19,10 +19,16 @@ export class FanTab extends React.Component {
         this.updateCheck = this.updateCheck.bind(this);
         this.handleSlider = this.handleSlider.bind(this);
         this.handleTempSlider = this.handleTempSlider.bind(this);
-        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleTempInputChange = this.handleTempInputChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleInputBlur = this.handleInputBlur.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
+        this.handleTargetTempInputChange = this.handleTargetTempInputChange.bind(this);
+        this.handleTargetTempInputBlur = this.handleTargetTempInputBlur.bind(this);
+        this.handleTargetTempSlider = this.handleTargetTempSlider.bind(this);
+        this.handleIdleSpeedSlider = this.handleIdleSpeedSlider.bind(this);
+        this.handleIdleSpeedInputChange = this.handleIdleSpeedInputChange.bind(this);
+        this.handleIdleSpeedInputBlur = this.handleIdleSpeedInputBlur.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -61,12 +67,37 @@ export class FanTab extends React.Component {
         this.setState({shutdowntemp: newVal});
     }
 
+    handleTargetTempSlider(e, newVal) {
+        this.setState({target_temp: newVal});
+    }
+
     handleInputChange(e) {
         this.setState({speed: e.target.value == '' ? '' : Number(e.target.value)});
     }
 
     handleTempInputChange(e) {
         this.setState({shutdowntemp: e.target.value == '' ? '' : Number(e.target.value)});
+    }
+
+    handleTargetTempInputChange(e) {
+        this.setState({target_temp: e.target.value == '' ? '' : Number(e.target.value)});
+    }
+    handleTargetTempInputBlur(e) {
+        if (this.state.target_temp < 60) this.setState({target_temp: 60});
+        else if (this.state.target_temp > 100) this.setState({target_temp: 100});
+    }
+
+    handleIdleSpeedSlider(e, newVal) {
+        this.setState({idle_speed: newVal});
+    }
+
+    handleIdleSpeedInputChange(e) {
+        this.setState({idle_speed: e.target.value == '' ? '' : Number(e.target.value)});
+    }
+
+    handleIdleSpeedInputBlur(e) {
+        if (this.state.idle_speed < 10) this.setState({idle_speed: 10});
+        else if (this.state.idle_speed > 100) this.setState({idle_speed: 100});
     }
 
     handleInputBlur() {
@@ -120,7 +151,7 @@ export class FanTab extends React.Component {
                                                         : 60
                                                 }
                                                 min={1}
-                                                onChange={this.handleTempSlider}
+                                                onChange={this.handleTargetTempSlider}
                                                 style={{width: '250px'}}
                                                 disabled={this.props.disabled || this.state.lock}
                                             />
@@ -132,8 +163,8 @@ export class FanTab extends React.Component {
                                                 endAdornment={
                                                     <InputAdornment position="end">{'\u00b0C'}</InputAdornment>
                                                 }
-                                                onChange={this.handleTempInputChange}
-                                                onBlur={this.handleTempInputBlur}
+                                                onChange={this.handleTargetTempInputChange}
+                                                onBlur={this.handleTargetTempInputBlur}
                                                 inputProps={{step: 5, min: 60, max: 100, type: 'number'}}
                                                 disabled={this.props.disabled || this.state.lock}
                                                 style={{width: '70px'}}
