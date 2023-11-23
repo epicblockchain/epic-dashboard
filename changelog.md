@@ -2,6 +2,7 @@
 
 ### New Features
 
-### Bug Fixes
+-   Add support for autofan API
+-   Add button to revert to stock settings
 
--   Power column display correct value for UMC miners
+### Bug Fixes
