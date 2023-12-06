@@ -37,7 +37,6 @@ export class FanTab extends React.Component {
         }
         if (prevProps.selected != this.props.selected) {
             const data = this.props.data?.[this.props.selected[0]];
-            console.log(data);
             if (data && data.sum.Fans && data.sum.Misc) {
                 this.setState({speed: data.sum.Fans['Fans Speed']});
                 if (data.sum.Fans['Fan Mode']) {
@@ -114,7 +113,6 @@ export class FanTab extends React.Component {
 
     render() {
         const disabled = !this.state.password || !this.props.selected.length || this.props.disabled;
-        console.log(this.props.selected);
 
         return (
             <div className="tab-body" style={{minHeight: '40%'}}>

@@ -379,6 +379,25 @@ class App extends React.Component {
         this.handleFormApi = this.handleFormApi.bind(this);
         this.setScan = this.setScan.bind(this);
         this.clearUndefined = this.clearUndefined.bind(this);
+        this.retryPromise = this.retryPromise.bind(this);
+    }
+
+    retryPromise(fn, retries = 3) {
+        return new Promise((resolve, reject) => {
+            fn()
+                .then(resolve)
+                .catch((error) => {
+                    if (retries > 0) {
+                        console.log('retry');
+                        return retryPromise(fn, retries - 1)
+                            .then(resolve)
+                            .catch(reject);
+                    } else {
+                        console.log('error');
+                        reject(error);
+                    }
+                });
+        });
     }
 
     async summary(init) {
@@ -881,8 +900,10 @@ class App extends React.Component {
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
         let soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
 
+        const MAX_CONCURRENT_REQUESTS = 5;
+        let promises = [];
         for (let i of selected) {
-            (async () => {
+            let promise = this.retryPromise(async () => {
                 try {
                     if (slow_api) {
                         notify('info', `${miners[i].address}: ${msg}`, {
@@ -945,9 +966,16 @@ class App extends React.Component {
                     }
                 } catch (err) {
                     console.log(err);
-                    notify('error', `${miners[i].address}: Request Failed`);
                 }
-            })();
+            });
+            promises.push(promise);
+            if (promises.length >= MAX_CONCURRENT_REQUESTS) {
+                await Promise.all(promises);
+                promises = [];
+            }
+        }
+        if (promises.length > 0) {
+            await Promise.all(promises);
         }
     }
 
