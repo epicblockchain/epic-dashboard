@@ -313,6 +313,29 @@ export class DataTable extends React.Component {
         }
     }
 
+    fansrpm(fansrpm) {
+        if (fansrpm) {
+            return (
+                'Fan 1' +
+                ': ' +
+                String(fansrpm['Fans Speed 1']) +
+                ' | ' +
+                'Fan 2' +
+                ': ' +
+                String(fansrpm['Fans Speed 2']) +
+                ' | ' +
+                'Fan 3' +
+                ': ' +
+                String(fansrpm['Fans Speed 3']) +
+                ' | ' +
+                'Fan 4' +
+                ': ' +
+                String(fansrpm['Fans Speed 4'])
+            );
+        } else {
+            return 'N/A';
+        }
+    }
     hbperformance(hashrate, cap) {
         const totals = [];
         if (hashrate.length > 0) {
