@@ -190,6 +190,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'voltage', Header: 'Input Voltage', width: 100, sortType: 'number'},
             {accessor: 'clock', Header: 'Avg Clock', width: 210},
             {accessor: 'lasterror', Header: 'Last Error', width: 250},
+            {accessor: 'mac', Header: 'MAC Address', width: 250},
         ],
         []
     );

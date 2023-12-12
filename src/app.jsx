@@ -411,8 +411,13 @@ class App extends React.Component {
                         timeout: 2000,
                         retry: 0,
                     });
-
                     let sum = JSON.parse(summary.body);
+
+                    const network = await got(`http://${miner.address}:4028/network`, {
+                        timeout: 2000,
+                        retry: 0,
+                    });
+                    let net = JSON.parse(network.body);
                     if (!sum.Hostname) sum = null;
 
                     let match = this.state.miner_data.find((a) => a.ip == miner.address);
@@ -451,6 +456,7 @@ class App extends React.Component {
                             return {
                                 ip: miner.address,
                                 sum: sum,
+                                network: net,
                                 hist: JSON.parse(history.body).History.slice(-48),
                                 cap: content.Model ? content : undefined,
                                 timer: 10,
@@ -461,6 +467,7 @@ class App extends React.Component {
                             return {
                                 ip: miner.address,
                                 sum: sum,
+                                network: net,
                                 hist: JSON.parse(history.body).History.slice(-48),
                                 timer: 10,
                             };
@@ -469,11 +476,12 @@ class App extends React.Component {
                         const lastMHs = sum.Session.LastAverageMHs;
 
                         if (lastMHs == null) {
-                            return {ip: miner.address, sum: sum, hist: [], cap: match.cap, timer: 10};
+                            return {ip: miner.address, sum: sum, hist: [], cap: match.cap, network: net, timer: 10};
                         } else if (match.hist.length == 0) {
                             return {
                                 ip: miner.address,
                                 sum: sum,
+                                network: net,
                                 hist: [lastMHs],
                                 cap: match.cap,
                                 timer: 10,
@@ -485,6 +493,7 @@ class App extends React.Component {
                         return {
                             ip: miner.address,
                             sum: sum,
+                            network: net,
                             hist: match.hist,
                             cap: match.cap,
                             timer: 10,
@@ -498,6 +507,7 @@ class App extends React.Component {
                             return {
                                 ip: miner.address,
                                 sum: match.sum ? match.sum : null,
+                                network: match.network ? match.network : null,
                                 hist: match.sum ? match.hist : null,
                                 cap: match.cap ? match.cap : null,
                                 timer: match.timer - 1,
@@ -505,10 +515,10 @@ class App extends React.Component {
                         }
 
                         models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, timer: 0};
+                        return {ip: miner.address, sum: null, hist: null, network: null, timer: 0};
                     } else {
                         models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, timer: 0};
+                        return {ip: miner.address, sum: null, hist: null, network: null, timer: 0};
                     }
                 }
             })
@@ -659,7 +669,7 @@ class App extends React.Component {
             miners.push({address: ip});
 
             var temp = Array.from(this.state.miner_data);
-            temp.push({ip: ip, sum: 'load', hist: 'load', timer: 0});
+            temp.push({ip: ip, sum: 'load', hist: 'load', network: 'load', timer: 0});
 
             var models = Array.from(this.state.models);
             if (!models.includes('undefined')) models.push('undefined');

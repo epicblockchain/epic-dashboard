@@ -505,6 +505,7 @@ export class DataTable extends React.Component {
                 (a.sum.Stratum.IsPoolConnected !== undefined ? a.sum.Stratum.IsPoolConnected : 'Error'),
             lasterror:
                 this.failSafe(a.sum) || (a.sum.Status && a.sum.Status['Last Error'] ? this.getLastError(a) : ' '),
+            mac: this.failSafe(a.sum) || a.network?.dhcp?.mac_address || a.network?.static?.mac_address || ' ',
         }));
 
         var miners = {};
