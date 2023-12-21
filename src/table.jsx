@@ -529,6 +529,7 @@ export class DataTable extends React.Component {
             lasterror:
                 this.failSafe(a.sum) || (a.sum.Status && a.sum.Status['Last Error'] ? this.getLastError(a) : ' '),
             mac: this.failSafe(a.sum) || a.network?.dhcp?.mac_address || a.network?.static?.mac_address || ' ',
+            fansrpm: this.failSafe(a.sum) || this.fansrpm(a.sum['Fans Rpm']),
         }));
 
         var miners = {};
