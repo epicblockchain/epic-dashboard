@@ -13,6 +13,7 @@ import {
     Select,
     MenuItem,
     Divider,
+    Switch,
 } from '@mui/material';
 
 const marksCLK = [
@@ -31,6 +32,7 @@ export class TuneTab extends React.Component {
         this.state = {
             voltage: '',
             clock: '',
+            overdrive: false,
             password: this.props.sessionPass,
             preset: 'Select Preset',
         };
@@ -41,6 +43,7 @@ export class TuneTab extends React.Component {
         this.handleInputVoltageChange = this.handleInputVoltageChange.bind(this);
         this.handleInputClockBlur = this.handleInputClockBlur.bind(this);
         this.handleInputVoltageBlur = this.handleInputVoltageBlur.bind(this);
+        this.handleSwitch = this.handleSwitch.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -78,6 +81,10 @@ export class TuneTab extends React.Component {
     handleInputVoltageBlur(minV, maxV) {
         if (this.state.voltage < minV) this.setState({voltage: minV});
         else if (this.state.voltage > maxV) this.setState({voltage: maxV});
+    }
+
+    handleSwitch() {
+        this.setState({overdrive: !this.state.overdrive});
     }
 
     updatePassword(e) {
@@ -170,7 +177,7 @@ export class TuneTab extends React.Component {
 
         return (
             <div className="tab-body" style={{minHeight: '140px'}}>
-                <Grid container spacing={2}>
+                <Grid container alignItems="flex-start" spacing={2}>
                     <Grid item container spacing={2} style={{width: '450px'}}>
                         <Grid item xs={12}>
                             <Typography gutterBottom>Change Clock or Voltage settings</Typography>
@@ -263,6 +270,49 @@ export class TuneTab extends React.Component {
                                             );
                                         })}
                                 </Select>
+                                <Typography gutterBottom style={{marginTop: '20px'}}>
+                                    Overdrive mode
+                                </Typography>
+                                <Typography
+                                    variant="subtitle2"
+                                    color="textSecondary"
+                                    gutterBottom
+                                    style={{whiteSpace: 'pre-line'}}
+                                >
+                                    May provide better efficiency when overclocking
+                                    <Typography
+                                        variant="subtitle2"
+                                        color="white"
+                                        component="a"
+                                        style={{display: 'inline'}}
+                                    >
+                                        {' '}
+                                        (BM1366 ASIC chips)
+                                    </Typography>
+                                </Typography>
+                                <Grid container spacing={2} alignItems="center">
+                                    <Grid item>
+                                        <Switch checked={this.state.overdrive} onChange={this.handleSwitch} />
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography variant="body2" color="textSecondary">
+                                            {this.state.overdrive ? 'Enabled' : 'Disabled'}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Button
+                                    onClick={() => {
+                                        this.props.handleApi('/overdrive', this.state, this.props.selected);
+                                    }}
+                                    variant="contained"
+                                    color="primary"
+                                    style={{width: 78}}
+                                    disabled={
+                                        !this.state.password || !this.props.selected.length || this.props.disabled
+                                    }
+                                >
+                                    Apply
+                                </Button>
                             </FormControl>
                         </Grid>
                     </Grid>

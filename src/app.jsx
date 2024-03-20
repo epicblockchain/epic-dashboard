@@ -905,6 +905,10 @@ class App extends React.Component {
                 obj = {param: data.unique_variant, password: data.password};
                 success = `Unique Id Variant set to ${data.unique_variant}`;
                 break;
+            case '/overdrive':
+                obj = {param: data.overdrive, password: data.password};
+                success = `Overdrive set to ${data.overdrive}`;
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
