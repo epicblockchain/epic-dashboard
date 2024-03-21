@@ -70,6 +70,10 @@ export class PerpetualtuneTab extends React.Component {
     }
 
     handleSlider(e, newVal) {
+        if (typeof newVal === 'number') {
+            this.setState({num: newVal});
+            return;
+        }
         this.setState({num: Math.max(newVal[1], this.state.min ?? 60), throttle: newVal[0]});
     }
 
