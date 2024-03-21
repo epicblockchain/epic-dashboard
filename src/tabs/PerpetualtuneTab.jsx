@@ -1,11 +1,24 @@
 import * as React from 'react';
 import {styled} from '@mui/material/styles';
-import {Box, Button, TextField, Slider, Input, Switch, Typography, Grid, Divider} from '@mui/material';
+import {
+    Box,
+    Button,
+    TextField,
+    Slider,
+    Input,
+    Switch,
+    Typography,
+    Grid,
+    Divider,
+    InputAdornment,
+    Tooltip,
+} from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-
+import InfoIcon from '@mui/icons-material/Info';
+const MIN_THROTTLE = 10;
 export class PerpetualtuneTab extends React.Component {
     constructor(props) {
         super(props);
@@ -15,6 +28,7 @@ export class PerpetualtuneTab extends React.Component {
             name: '',
             desc: '',
             num: 0,
+            throttle: MIN_THROTTLE,
             min: 0,
             max: 0,
             password: this.props.sessionPass,
@@ -24,6 +38,8 @@ export class PerpetualtuneTab extends React.Component {
         this.handleSlider = this.handleSlider.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleInputBlur = this.handleInputBlur.bind(this);
+        this.handleThrotChange = this.handleThrotChange.bind(this);
+        this.handleThrotBlur = this.handleThrotBlur.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -46,17 +62,35 @@ export class PerpetualtuneTab extends React.Component {
         this.setState({num: Number(e.target.min)});
     }
 
+    equalityCheck() {
+        if (this.state.throttle > this.state.num) {
+            let newVal = Math.max(this.state.num, MIN_THROTTLE);
+            this.setState({throttle: newVal});
+        }
+    }
+
     handleSlider(e, newVal) {
-        this.setState({num: newVal});
+        this.setState({num: Math.max(newVal[1], this.state.min ?? 60), throttle: newVal[0]});
     }
 
     handleInputChange(e) {
         this.setState({num: e.target.value == '' ? '' : Number(e.target.value)});
     }
 
+    handleThrotChange(e) {
+        this.setState({throttle: e.target.value == '' ? '' : Number(e.target.value)});
+    }
+
     handleInputBlur() {
         if (this.state.num < this.state.min) this.setState({num: this.state.min});
         else if (this.state.num > this.state.max) this.setState({num: this.state.max});
+        this.equalityCheck();
+    }
+
+    handleThrotBlur() {
+        if (this.state.throttle < 10) this.setState({throttle: 10});
+        if (this.state.num < this.state.throttle) this.setState({throt: this.state.num});
+        this.equalityCheck();
     }
 
     updatePassword(e) {
@@ -115,6 +149,9 @@ export class PerpetualtuneTab extends React.Component {
             }
         }
 
+        let hasMinThrot = false;
+        if (this.state.algo === 'VoltageOptimizer') hasMinThrot = true;
+
         return (
             <div className="tab-body" style={{minHeight: '140px'}}>
                 <Grid container spacing={2}>
@@ -162,25 +199,67 @@ export class PerpetualtuneTab extends React.Component {
                         <Typography fontSize={14}>{this.state.desc}</Typography>
                         <br />
                         <Grid container spacing={2} alignItems="center">
-                            <Grid item>
+                            <Grid item xs="auto">
                                 <Slider
-                                    value={typeof this.state.num === 'number' ? this.state.num : 0}
-                                    min={Number(this.state.min)}
+                                    value={hasMinThrot ? [this.state.throttle, this.state.num] : this.state.num}
+                                    min={hasMinThrot ? MIN_THROTTLE : Number(this.state.min)}
                                     max={Number(this.state.max)}
                                     marks={marks}
                                     valueLabelDisplay="auto"
+                                    valueLabelFormat={(x) => {
+                                        if (x === this.state.throttle) {
+                                            return 'Throttle';
+                                        }
+                                        return 'Target';
+                                    }}
                                     onChange={this.handleSlider}
                                     style={{width: '250px'}}
                                 />
                             </Grid>
-                            <Grid item>
+                            <Grid item xs={2}>
                                 <Box pl={2} pb={3}>
                                     <Input
                                         value={this.state.num}
                                         onChange={this.handleInputChange}
                                         onBlur={this.handleInputBlur}
-                                        inputProps={{step: 1, min: this.state.min, max: this.state.max, type: 'number'}}
+                                        endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                        inputProps={{
+                                            step: 1,
+                                            min: hasMinThrot ? this.state.throttle : this.state.min,
+                                            max: this.state.max,
+                                            type: 'number',
+                                        }}
+                                        style={{width: 90}}
                                     />
+                                    <Typography variant="subtitle2" color="textSecondary" component="a">
+                                        Target
+                                    </Typography>
+                                    {hasMinThrot && (
+                                        <div>
+                                            <Input
+                                                value={this.state.throttle}
+                                                onChange={this.handleThrotChange}
+                                                onBlur={this.handleThrotBlur}
+                                                endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                                inputProps={{step: 1, min: 10, max: this.state.num, type: 'number'}}
+                                                style={{width: 90}}
+                                            />
+                                            <Typography
+                                                variant="subtitle2"
+                                                color="textSecondary"
+                                                gutterBottom
+                                                style={{width: 120}}
+                                            >
+                                                Min Throttle
+                                                <Tooltip
+                                                    title="Minimum throttling hashrate before idling"
+                                                    placement="right"
+                                                >
+                                                    <InfoIcon sx={{fontSize: 14}} />
+                                                </Tooltip>
+                                            </Typography>
+                                        </div>
+                                    )}
                                 </Box>
                             </Grid>
                         </Grid>
