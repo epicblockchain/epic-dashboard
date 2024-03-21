@@ -2,7 +2,8 @@
 
 ### New Features
 
--   Add support for autofan API
--   Add button to revert to stock settings
+-   Add min throttle target column
 
 ### Bug Fixes
+
+-   Fix: chiptune target under the perpetual tune tab
