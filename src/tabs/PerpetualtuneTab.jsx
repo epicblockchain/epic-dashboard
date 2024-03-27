@@ -29,6 +29,7 @@ export class PerpetualtuneTab extends React.Component {
             desc: '',
             num: 0,
             throttle: MIN_THROTTLE,
+            step: 5,
             min: 0,
             max: 0,
             password: this.props.sessionPass,
@@ -40,6 +41,8 @@ export class PerpetualtuneTab extends React.Component {
         this.handleInputBlur = this.handleInputBlur.bind(this);
         this.handleThrotChange = this.handleThrotChange.bind(this);
         this.handleThrotBlur = this.handleThrotBlur.bind(this);
+        this.handleStepChange = this.handleStepChange.bind(this);
+        this.handleStepBlur = this.handleStepBlur.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -85,6 +88,10 @@ export class PerpetualtuneTab extends React.Component {
         this.setState({throttle: e.target.value == '' ? '' : Number(e.target.value)});
     }
 
+    handleStepChange(e) {
+        this.setState({step: e.target.value == '' ? '' : Number(e.target.value)});
+    }
+
     handleInputBlur() {
         if (this.state.num < this.state.min) this.setState({num: this.state.min});
         else if (this.state.num > this.state.max) this.setState({num: this.state.max});
@@ -95,6 +102,12 @@ export class PerpetualtuneTab extends React.Component {
         if (this.state.throttle < 10) this.setState({throttle: 10});
         if (this.state.num < this.state.throttle) this.setState({throt: this.state.num});
         this.equalityCheck();
+    }
+
+    handleStepBlur() {
+        if (this.state.step < 1) this.setState({step: 1});
+        let max = this.state.num - this.state.throttle;
+        if (this.state.step > max) this.setState({step: max});
     }
 
     updatePassword(e) {
@@ -154,7 +167,11 @@ export class PerpetualtuneTab extends React.Component {
         }
 
         let hasMinThrot = false;
-        if (this.state.algo === 'VoltageOptimizer') hasMinThrot = true;
+        let hasThrotStep = false;
+        if (this.state.algo === 'VoltageOptimizer') {
+            hasMinThrot = true;
+            hasThrotStep = true;
+        }
 
         return (
             <div className="tab-body" style={{minHeight: '140px'}}>
@@ -220,26 +237,28 @@ export class PerpetualtuneTab extends React.Component {
                                     style={{width: '250px'}}
                                 />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs="auto">
                                 <Box pl={2} pb={3}>
-                                    <Input
-                                        value={this.state.num}
-                                        onChange={this.handleInputChange}
-                                        onBlur={this.handleInputBlur}
-                                        endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
-                                        inputProps={{
-                                            step: 1,
-                                            min: hasMinThrot ? this.state.throttle : this.state.min,
-                                            max: this.state.max,
-                                            type: 'number',
-                                        }}
-                                        style={{width: 90}}
-                                    />
-                                    <Typography variant="subtitle2" color="textSecondary" component="a">
-                                        Target
-                                    </Typography>
+                                    <FormControl>
+                                        <Input
+                                            value={this.state.num}
+                                            onChange={this.handleInputChange}
+                                            onBlur={this.handleInputBlur}
+                                            endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                            inputProps={{
+                                                step: 1,
+                                                min: hasMinThrot ? this.state.throttle : this.state.min,
+                                                max: this.state.max,
+                                                type: 'number',
+                                            }}
+                                            style={{width: 90}}
+                                        />
+                                        <Typography variant="subtitle2" color="textSecondary" component="a">
+                                            Target
+                                        </Typography>
+                                    </FormControl>
                                     {hasMinThrot && (
-                                        <div>
+                                        <FormControl>
                                             <Input
                                                 value={this.state.throttle}
                                                 onChange={this.handleThrotChange}
@@ -248,12 +267,7 @@ export class PerpetualtuneTab extends React.Component {
                                                 inputProps={{step: 1, min: 10, max: this.state.num, type: 'number'}}
                                                 style={{width: 90}}
                                             />
-                                            <Typography
-                                                variant="subtitle2"
-                                                color="textSecondary"
-                                                gutterBottom
-                                                style={{width: 120}}
-                                            >
+                                            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                                                 Min Throttle
                                                 <Tooltip
                                                     title="Minimum throttling hashrate before idling"
@@ -262,7 +276,30 @@ export class PerpetualtuneTab extends React.Component {
                                                     <InfoIcon sx={{fontSize: 14}} />
                                                 </Tooltip>
                                             </Typography>
-                                        </div>
+                                        </FormControl>
+                                    )}
+                                    {hasMinThrot && (
+                                        <FormControl>
+                                            <Input
+                                                value={this.state.step}
+                                                onChange={this.handleStepChange}
+                                                onBlur={this.handleStepBlur}
+                                                endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 1,
+                                                    max: this.state.num - this.state.throttle,
+                                                    type: 'number',
+                                                }}
+                                                style={{width: 90}}
+                                            />
+                                            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                                Throttle Step
+                                                <Tooltip title="Amount to step down when throttling" placement="right">
+                                                    <InfoIcon sx={{fontSize: 14}} />
+                                                </Tooltip>
+                                            </Typography>
+                                        </FormControl>
                                     )}
                                 </Box>
                             </Grid>

@@ -893,6 +893,7 @@ class App extends React.Component {
                         algo: data.algo,
                         target: data.num,
                         min_throttle: data.throttle,
+                        throttle_step: data.step,
                     },
                     password: data.password,
                 };

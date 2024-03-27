@@ -509,6 +509,8 @@ export class DataTable extends React.Component {
                 this.failSafe(a.sum) ||
                 Object.values(a.sum?.PerpetualTune?.Algorithm)[0]?.['Min Throttle Target'] ||
                 'N/A',
+            perpetualtunethrottlestep:
+                this.failSafe(a.sum) || Object.values(a.sum?.PerpetualTune?.Algorithm)[0]?.['Throttle Step'] || 'N/A',
             shutdowntemp: this.failSafe(a.sum) || this.shutdowntemp(a.sum),
             performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
             lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),

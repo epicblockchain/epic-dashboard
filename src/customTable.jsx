@@ -38,7 +38,6 @@ import {
 import {FixedSizeGrid} from 'react-window';
 
 import './customTable.css';
-import {CollectionsBookmarkOutlined} from '@mui/icons-material';
 
 const {ipcRenderer} = require('electron');
 
@@ -174,6 +173,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'perpetualtuneoptimized', Header: 'Perpetual Tune Optimized', width: 225},
             {accessor: 'perpetualtunetarget', Header: 'Perpetual Tune Target', width: 200},
             {accessor: 'perpetualtuneminthrottle', Header: 'Perpetual Tune Min Throttle', width: 225},
+            {accessor: 'perpetualtunethrottlestep', Header: 'Perpetual Tune Throttle Step', width: 225},
             {accessor: 'shutdowntemp', Header: 'Shutdown Temperature', width: 170},
             {accessor: 'performance', Header: 'Hashboard Performance', width: 250},
             {accessor: 'realtimehashrate', Header: 'Realtime Hashrate', width: 200},
