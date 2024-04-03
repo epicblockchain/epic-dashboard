@@ -862,7 +862,6 @@ class App extends React.Component {
                 break;
             case '/fanspeed':
                 if (data.autofan) {
-                    console.log(data);
                     obj = {
                         param: {Auto: {'Target Temperature': data.target_temp, 'Idle Speed': data.idle_speed}},
                         password: data.password,
@@ -898,6 +897,10 @@ class App extends React.Component {
                     password: data.password,
                 };
                 success = `Perpetual tune algorithm changed to ${data.algo} with target ${data.num}`;
+                break;
+            case '/criticaltemp':
+                obj = {param: data.criticaltemp, password: data.password};
+                success = `Critical Temperature set to ${data.criticaltemp}`;
                 break;
             case '/shutdowntemp':
                 obj = {param: data.shutdowntemp, password: data.password};
