@@ -914,6 +914,10 @@ class App extends React.Component {
                 obj = {param: data.overdrive, password: data.password};
                 success = `Overdrive set to ${data.overdrive}`;
                 break;
+            case '/idleonconnectionlost':
+                obj = {param: data.load, password: data.password};
+                success = `Idle on connection lost set to ${data.load}`;
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
