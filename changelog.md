@@ -1,11 +1,10 @@
-## Minor Update
+# Minor Update
 
-### New Features
+## New Features
 
--   Add min throttle target column
+-   Add throttle step to Perpetual Tune tab
+-   Add throttle step column
 -   Add Critical Temp feature to suited miners in Cooling tab
 -   Add Idle On Connection Lost tab
 
-### Bug Fixes
-
--   Fix: chiptune target under the perpetual tune tab
+## Bug Fixes
