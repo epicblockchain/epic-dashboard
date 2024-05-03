@@ -8,3 +8,5 @@
 -   Add Idle On Connection Lost tab
 
 ## Bug Fixes
+
+-   Fix crashing caused by null value
