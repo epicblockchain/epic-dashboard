@@ -168,7 +168,7 @@ export class PerpetualtuneTab extends React.Component {
 
         let hasMinThrot = false;
         let hasThrotStep = false;
-        if (this.state.algo === 'VoltageOptimizer') {
+        if (this.state.algo === 'VoltageOptimizer' || this.state.algo === 'BoardTune') {
             hasMinThrot = true;
             hasThrotStep = true;
         }

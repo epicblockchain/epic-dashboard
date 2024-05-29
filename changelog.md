@@ -2,10 +2,7 @@
 
 ## New Features
 
--   Add throttle step to Perpetual Tune tab
--   Add throttle step column
--   Add Critical Temp feature to suited miners in Cooling tab
--   Add Idle On Connection Lost tab
+-   add board tune (experimental) to Perpetual Tune tab for BM miners
 
 ## Bug Fixes
 
