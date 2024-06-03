@@ -315,6 +315,13 @@ export class DataTable extends React.Component {
             return data.Misc['Shutdown Temp'] + ' °C';
         }
     }
+    critialtemp(data) {
+        if (data.Misc == null) {
+            return 'N/A';
+        } else {
+            return data.Misc['Critical Temp'] + ' °C';
+        }
+    }
 
     fansrpm(fansrpm) {
         if (fansrpm) {
@@ -515,6 +522,7 @@ export class DataTable extends React.Component {
                 Object.values(a.sum?.PerpetualTune?.Algorithm || {})[0]?.['Throttle Step'] ||
                 'N/A',
             shutdowntemp: this.failSafe(a.sum) || this.shutdowntemp(a.sum),
+            criticaltemp: this.failSafe(a.sum) || this.critialtemp(a.sum),
             performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
             lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
             realtimehashrate: this.failSafe(a.sum) || this.realtime_hashrate(a.sum.HBs, a.cap),
