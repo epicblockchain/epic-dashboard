@@ -6,4 +6,4 @@
 
 ## Bug Fixes
 
--   Fix crashing caused by null value
+-   Stability improvements
