@@ -130,6 +130,10 @@ Click on the "COOLING" tab. Set the desired fan speed and apply.
 
 ![fans](docs/images/cooling.png)
 
+From the cooling tab you can also set the minimum number of fans required to mine. If the number of running fans is under this number the miner will stop running. You can restart mining once you have the sufficient number of running fans.
+
+![min_working_fans](docs/images/min_working_fans.png)
+
 ### Finding/Identifying a miner
 
 This is if you have multiple miners and need to identify which is which. If you need to identify one, click the lightbulb icon in the ip column. The icon should start blinking, indicating the miner's LED is on. **NOTE: This is not supported by older firmware. See the following section.**

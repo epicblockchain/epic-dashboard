@@ -918,6 +918,10 @@ class App extends React.Component {
                 obj = {param: data.load, password: data.password};
                 success = `Idle on connection lost set to ${data.load}`;
                 break;
+            case '/fans/minimum':
+                obj = {param: data.min_working_fans, password: data.password};
+                success = `Minimum working fans set to ${data.min_working_fans}`;
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed

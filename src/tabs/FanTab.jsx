@@ -12,9 +12,13 @@ import {
     CardContent,
     CardActions,
 } from '@mui/material';
-import WindPowerIcon from '@mui/icons-material/WindPower';
-import ThermostatIcon from '@mui/icons-material/Thermostat';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
+import ThermostatIcon from '@mui/icons-material/Thermostat';
+import WarningIcon from '@mui/icons-material/Warning';
+import WindPowerIcon from '@mui/icons-material/WindPower';
+
+const MAX_FANS = 4;
+
 export class FanTab extends React.Component {
     constructor(props) {
         super(props);
@@ -27,6 +31,7 @@ export class FanTab extends React.Component {
             speed: 100,
             shutdowntemp: 85,
             criticaltemp: 110,
+            min_working_fans: 0,
             password: this.props.sessionPass,
         };
 
@@ -46,6 +51,9 @@ export class FanTab extends React.Component {
         this.handleIdleSpeedSlider = this.handleIdleSpeedSlider.bind(this);
         this.handleIdleSpeedInputChange = this.handleIdleSpeedInputChange.bind(this);
         this.handleIdleSpeedInputBlur = this.handleIdleSpeedInputBlur.bind(this);
+        this.handleMinWorkingFansSlider = this.handleMinWorkingFansSlider.bind(this);
+        this.handleMinWorkingFansInputChange = this.handleMinWorkingFansInputChange.bind(this);
+        this.handleMinWorkingFansBlur = this.handleMinWorkingFansBlur.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -80,6 +88,12 @@ export class FanTab extends React.Component {
                 this.setState({shutdowntemp: data.sum.Misc['Shutdown Temp']});
             } else {
                 this.setState({autofan_enabled: false, autofan: false, crit_temp_enabled: false, criticaltemp: 110});
+            }
+
+            if (data && data.sum.Fans) {
+                this.setState({min_working_fans: data.sum.Fans['Minimum Working Fans']});
+            } else {
+                this.setState({min_working_fans: 0});
             }
         }
     }
@@ -169,6 +183,22 @@ export class FanTab extends React.Component {
         }
     }
 
+    handleMinWorkingFansSlider(e, newVal) {
+        this.setState({min_working_fans: newVal});
+    }
+
+    handleMinWorkingFansInputChange(e) {
+        this.setState({min_working_fans: e.target.value == '' ? '' : Number(e.target.value)});
+    }
+
+    handleMinWorkingFansBlur() {
+        if (this.state.min_working_fans < 0) {
+            this.setState({min_working_fans: 0});
+        } else if (this.state.min_working_fans > MAX_FANS) {
+            this.setState({min_working_fans: MAX_FANS});
+        }
+    }
+
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
@@ -179,7 +209,7 @@ export class FanTab extends React.Component {
         return (
             <div className="tab-body" style={{minHeight: '40%'}}>
                 <Grid container spacing={2} alignItems="stretch">
-                    <Grid item xs={6}>
+                    <Grid item xs={6} md={4}>
                         <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                             <CardContent>
                                 <Grid container spacing={2}>
@@ -322,7 +352,7 @@ export class FanTab extends React.Component {
                             </CardActions>
                         </Card>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} md={4}>
                         <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                             <CardContent>
                                 <Grid container spacing={2} alignItems="center">
@@ -429,22 +459,86 @@ export class FanTab extends React.Component {
                             </CardActions>
                         </Card>
                     </Grid>
+                    <Grid item xs={6} md={4}>
+                        <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+                            <CardContent>
+                                <Grid container spacing={2} alignItems="center">
+                                    <Grid item xs={12}>
+                                        <Typography gutterBottom>Minimum Working Fans</Typography>
+                                    </Grid>
+                                    <Grid item>
+                                        <WarningIcon />
+                                    </Grid>
+                                    <Grid item>
+                                        <Slider
+                                            value={
+                                                typeof this.state.min_working_fans === 'number'
+                                                    ? this.state.min_working_fans
+                                                    : MAX_FANS
+                                            }
+                                            min={0}
+                                            max={MAX_FANS}
+                                            onChange={this.handleMinWorkingFansSlider}
+                                            style={{width: '250px'}}
+                                            disabled={this.props.disabled}
+                                            valueLabelDisplay="auto"
+                                            marks
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <Input
+                                            value={this.state.min_working_fans}
+                                            margin="dense"
+                                            onChange={this.handleMinWorkingFansInputChange}
+                                            onBlur={this.handleMinWorkingFansBlur}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    this.props.handleApi(
+                                                        '/fans/minimum',
+                                                        this.state,
+                                                        this.props.selected
+                                                    );
+                                                }
+                                            }}
+                                            inputProps={{step: 5, min: 60, max: 110, type: 'number'}}
+                                            disabled={this.props.disabled}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                            <CardActions style={{marginTop: 'auto'}}>
+                                <Button
+                                    onClick={() => {
+                                        this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                                    }}
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={disabled}
+                                >
+                                    Apply
+                                </Button>
+                            </CardActions>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            value={this.state.password || ''}
+                            variant="outlined"
+                            label="Password"
+                            type="password"
+                            onChange={this.updatePassword}
+                            margin="dense"
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter' && !disabled) {
+                                    this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                                    this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
+                                    this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                                }
+                            }}
+                            error={!this.state.password}
+                        />
+                    </Grid>
                 </Grid>
-                <TextField
-                    value={this.state.password || ''}
-                    variant="outlined"
-                    label="Password"
-                    type="password"
-                    onChange={this.updatePassword}
-                    margin="dense"
-                    onKeyPress={(e) => {
-                        if (e.key === 'Enter' && !disabled) {
-                            this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                            this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
-                        }
-                    }}
-                    error={!this.state.password}
-                />
             </div>
         );
     }
