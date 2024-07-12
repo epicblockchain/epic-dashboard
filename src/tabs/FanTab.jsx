@@ -476,7 +476,7 @@ export class FanTab extends React.Component {
                                             value={
                                                 typeof this.state.min_working_fans === 'number'
                                                     ? this.state.min_working_fans
-                                                    : MAX_FANS
+                                                    : 0
                                             }
                                             min={0}
                                             max={MAX_FANS}
