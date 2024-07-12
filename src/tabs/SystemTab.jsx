@@ -12,6 +12,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import './SystemTab.css';
+
 export class SystemTab extends React.Component {
     constructor(props) {
         super(props);
@@ -22,6 +24,7 @@ export class SystemTab extends React.Component {
             pass1: '',
             pass2: '',
             error: false,
+            timezone: '',
             password: this.props.sessionPass,
         };
 
@@ -29,6 +32,7 @@ export class SystemTab extends React.Component {
         this.updateKeep = this.updateKeep.bind(this);
         this.updatePass1 = this.updatePass1.bind(this);
         this.checkMatch = this.checkMatch.bind(this);
+        this.updateTimezone = this.updateTimezone.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -59,6 +63,10 @@ export class SystemTab extends React.Component {
         this.setState({keep: e.target.checked});
     }
 
+    updateTimezone(e) {
+        this.setState({timezone: e.target.value});
+    }
+
     updatePass1(e) {
         this.setState({pass1: e.target.value});
     }
@@ -79,42 +87,90 @@ export class SystemTab extends React.Component {
         return (
             <div className="tab-body" style={{minHeight: '200px'}}>
                 <Grid container>
-                    <Grid item xs>
+                    <Grid className="system-option" item xs={4}>
                         <Typography>Update Firmware</Typography>
+                        <Grid>
+                            <TextField
+                                variant="outlined"
+                                label="System Update File (.zip/.swu)"
+                                value={this.state.filepath}
+                                disabled
+                                margin="dense"
+                                style={{width: '100%'}}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <Button
+                                                onClick={this.updateFilepath}
+                                                variant="contained"
+                                                color="primary"
+                                                size="small"
+                                            >
+                                                Browse
+                                            </Button>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <br />
+                            <FormControl margin="dense">
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            color="primary"
+                                            checked={this.state.keep}
+                                            onChange={this.updateKeep}
+                                        />
+                                    }
+                                    label="Maintain config over update"
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid>
+                            <Button
+                                onClick={() => {
+                                    if (this.state.fileext == 'swu') {
+                                        this.props.handleFormApi('/update', this.state, this.props.selected);
+                                    } else if (this.state.fileext == 'zip') {
+                                        this.props.handleFormApi('/systemupdate', this.state, this.props.selected);
+                                    }
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={
+                                    (!this.state.filepath && !this.state.filepath2) ||
+                                    !this.state.password ||
+                                    !this.props.selected.length
+                                }
+                            >
+                                Apply
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    <Divider className="system-divider" orientation="vertical" flexItem />
+                    <Grid className="system-option" item xs={4}>
+                        <Typography>Change System Timezone</Typography>
                         <TextField
                             variant="outlined"
-                            label="System Update File (.zip/.swu)"
-                            value={this.state.filepath}
-                            disabled
-                            margin="dense"
+                            label="Timezone (e.g. America/Toronto)"
+                            onChange={this.updateTimezone}
+                            value={this.state.timezone}
                             style={{width: '100%'}}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <Button
-                                            onClick={this.updateFilepath}
-                                            variant="contained"
-                                            color="primary"
-                                            size="small"
-                                        >
-                                            Browse
-                                        </Button>
-                                    </InputAdornment>
-                                ),
-                            }}
+                            margin="dense"
                         />
-                        <br />
-                        <FormControl margin="dense">
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={this.state.keep} onChange={this.updateKeep} />
-                                }
-                                label="Maintain config over update"
-                            />
-                        </FormControl>
+                        <Button
+                            onClick={() => {
+                                this.props.handleApi('/timezone', this.state, this.props.selected);
+                            }}
+                            variant="contained"
+                            color="primary"
+                            disabled={!this.state.timezone || !this.state.password || !this.props.selected.length}
+                        >
+                            Apply
+                        </Button>
                     </Grid>
-                    <Divider orientation="vertical" flexItem style={{margin: '0 8px'}} />
-                    <Grid item xs>
+                    <Divider className="system-divider" orientation="vertical" flexItem />
+                    <Grid className="system-option" item xs={4}>
                         <Typography>Change password</Typography>
                         <TextField
                             variant="outlined"
@@ -134,40 +190,6 @@ export class SystemTab extends React.Component {
                             margin="dense"
                             helperText={this.state.error ? 'Passwords do not match' : ''}
                         />
-                    </Grid>
-                </Grid>
-                <Grid container className="system-apply">
-                    <Grid item xs>
-                        <TextField
-                            value={this.state.password || ''}
-                            variant="outlined"
-                            label="Password"
-                            type="password"
-                            onChange={this.updatePassword}
-                            margin="dense"
-                            error={!this.state.password}
-                        />
-                        <Button
-                            onClick={() => {
-                                if (this.state.fileext == 'swu') {
-                                    this.props.handleFormApi('/update', this.state, this.props.selected);
-                                } else if (this.state.fileext == 'zip') {
-                                    this.props.handleFormApi('/systemupdate', this.state, this.props.selected);
-                                }
-                            }}
-                            variant="contained"
-                            color="primary"
-                            disabled={
-                                (!this.state.filepath && !this.state.filepath2) ||
-                                !this.state.password ||
-                                !this.props.selected.length
-                            }
-                        >
-                            Apply
-                        </Button>
-                    </Grid>
-                    <Divider orientation="vertical" style={{margin: '0 8px'}} />
-                    <Grid item xs>
                         <Button
                             onClick={() => {
                                 this.props.handleApi('/password', this.state, this.props.selected);
@@ -184,6 +206,20 @@ export class SystemTab extends React.Component {
                         >
                             Apply
                         </Button>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            value={this.state.password || ''}
+                            variant="outlined"
+                            label="Password"
+                            type="password"
+                            onChange={this.updatePassword}
+                            margin="dense"
+                            error={!this.state.password}
+                        />
                     </Grid>
                 </Grid>
             </div>

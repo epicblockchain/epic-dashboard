@@ -921,6 +921,9 @@ class App extends React.Component {
             case '/fans/minimum':
                 obj = {param: data.min_working_fans, password: data.password};
                 success = `Minimum working fans set to ${data.min_working_fans}`;
+            case '/timezone':
+                obj = {param: data.timezone, password: data.password};
+                success = `Timezone set to ${data.timezone}`;
                 break;
         }
 

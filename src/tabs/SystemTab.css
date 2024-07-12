@@ -1,0 +1,7 @@
+.MuiGrid-container > .MuiDivider-vertical.MuiDivider-flexItem {
+    margin-right: -1px;
+}
+
+.system-option {
+    padding: 8px;
+}

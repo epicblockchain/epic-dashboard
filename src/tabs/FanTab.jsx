@@ -19,6 +19,8 @@ import WindPowerIcon from '@mui/icons-material/WindPower';
 
 const MAX_FANS = 4;
 
+import './SystemTab.css';
+
 export class FanTab extends React.Component {
     constructor(props) {
         super(props);
