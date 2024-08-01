@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {Button, Typography, Grid, TextField, Switch} from '@mui/material';
 
-export class IdleOnConnectionLostTab extends React.Component {
+export class DisableBoardOnFailureTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {is_idle_on_connection_lost: true, password: this.props.sessionPass};
+        this.state = {disable_board_on_failure: true, password: this.props.sessionPass};
 
-        this.handleIdleOnConnectionLost = this.handleIdleOnConnectionLost.bind(this);
+        this.handleDisableBoardOnFail = this.handleDisableBoardOnFail.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
     }
 
@@ -20,8 +20,8 @@ export class IdleOnConnectionLostTab extends React.Component {
         this.setState({password: e.target.value});
     }
 
-    handleIdleOnConnectionLost = () => {
-        this.setState({is_idle_on_connection_lost: !this.state.is_idle_on_connection_lost});
+    handleDisableBoardOnFail = () => {
+        this.setState({disable_board_on_failure: !this.state.disable_board_on_failure});
     };
 
     render() {
@@ -30,21 +30,21 @@ export class IdleOnConnectionLostTab extends React.Component {
         return (
             <div className="tab-body">
                 <Typography variant="h6" gutterBottom>
-                    Idle On Connection Lost
+                    Disable Board On Failure
                 </Typography>
                 <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                    On connection lost, the miner will go to idle. When disabled, the miner will continue to draw power.
+                    When enabled, a board experiencing a failure will be disabled to allow other boards to mine.
                 </Typography>
                 <Grid container spacing={2} alignItems="center">
                     <Grid item>
                         <Switch
-                            checked={this.state.is_idle_on_connection_lost}
-                            onChange={this.handleIdleOnConnectionLost}
+                            checked={this.state.disable_board_on_failure}
+                            onChange={this.handleDisableBoardOnFail}
                         />
                     </Grid>
                     <Grid item>
                         <Typography variant="body2" color="textSecondary">
-                            {this.state.is_idle_on_connection_lost ? 'Enabled' : 'Disabled'}
+                            {this.state.disable_board_on_failure ? 'Enabled' : 'Disabled'}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -60,7 +60,7 @@ export class IdleOnConnectionLostTab extends React.Component {
                     />
                     <Button
                         onClick={() => {
-                            this.props.handleApi('/idleonconnectionlost', this.state, this.props.selected);
+                            this.props.handleApi('/disableboardonfailure', this.state, this.props.selected);
                         }}
                         variant="contained"
                         color="primary"

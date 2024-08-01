@@ -915,8 +915,8 @@ class App extends React.Component {
                 success = `Overdrive set to ${data.overdrive}`;
                 break;
             case '/idleonconnectionlost':
-                obj = {param: data.load, password: data.password};
-                success = `Idle on connection lost set to ${data.load}`;
+                obj = {param: data.is_idle_on_connection_lost, password: data.password};
+                success = `Idle on connection lost set to ${data.is_idle_on_connection_lost}`;
                 break;
             case '/fans/minimum':
                 obj = {param: data.min_working_fans, password: data.password};
@@ -925,6 +925,10 @@ class App extends React.Component {
             case '/timezone':
                 obj = {param: data.timezone, password: data.password};
                 success = `Timezone set to ${data.timezone}`;
+                break;
+            case '/disableboardonfailure':
+                obj = {param: data.disable_board_on_failure, password: data.password};
+                success = `Disable board on failure set to ${data.disable_board_on_failure}`;
                 break;
         }
 

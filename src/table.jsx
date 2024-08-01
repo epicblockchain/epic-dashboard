@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Tabs, Tab, Paper} from '@mui/material';
 import {AddRemoveTab} from './tabs/AddRemoveTab.jsx';
 import {CoinTab} from './tabs/CoinTab.jsx';
+import {DisableBoardOnFailureTab} from './tabs/DisableBoardOnFailureTab.jsx';
 import {IdleOnConnectionLostTab} from './tabs/IdleOnConnectionLostTab.jsx';
 import {PerformanceTab} from './tabs/PerformanceTab.jsx';
 import {SystemTab} from './tabs/SystemTab.jsx';
@@ -639,6 +640,9 @@ export class DataTable extends React.Component {
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab label="Idle On Connection Lost" />
                         )}
+                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                            <Tab label="Disable Board On Fail" />
+                        )}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Wifi" />}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Debug" />}
                     </Tabs>
@@ -732,6 +736,15 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 9}>
+                        <DisableBoardOnFailureTab
+                            handleApi={this.props.handleApi}
+                            disabled={!capApi}
+                            selected={selected}
+                            models={this.state.models}
+                            sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 10}>
                         <WifiTab
                             handleApi={this.props.handleApi}
                             handleFormApi={this.props.handleFormApi}
@@ -740,7 +753,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 10}>
+                    <div hidden={this.state.tab != 11}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}
