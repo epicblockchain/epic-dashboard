@@ -12,6 +12,7 @@ import {TuneTab} from './tabs/TuneTab.jsx';
 import {DebugTab} from './tabs/DebugTab.jsx';
 import {WifiTab} from './tabs/WifiTab.jsx';
 import {PerpetualtuneTab} from './tabs/PerpetualtuneTab.jsx';
+import {LicenseTab} from './tabs/LicenseTab.jsx';
 import './table.css';
 
 import Table from './customTable.jsx';
@@ -643,6 +644,9 @@ export class DataTable extends React.Component {
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab label="Disable Board On Fail" />
                         )}
+                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                            <Tab label="License" />
+                        )}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Wifi" />}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && <Tab label="Debug" />}
                     </Tabs>
@@ -745,7 +749,7 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 10}>
-                        <WifiTab
+                        <LicenseTab
                             handleApi={this.props.handleApi}
                             handleFormApi={this.props.handleFormApi}
                             selected={selected}
@@ -754,6 +758,15 @@ export class DataTable extends React.Component {
                         />
                     </div>
                     <div hidden={this.state.tab != 11}>
+                        <WifiTab
+                            handleApi={this.props.handleApi}
+                            handleFormApi={this.props.handleFormApi}
+                            selected={selected}
+                            data={this.props.data}
+                            sessionPass={this.props.sessionPass}
+                        />
+                    </div>
+                    <div hidden={this.state.tab != 12}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}

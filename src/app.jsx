@@ -930,6 +930,10 @@ class App extends React.Component {
                 obj = {param: data.disable_board_on_failure, password: data.password};
                 success = `Disable board on failure set to ${data.disable_board_on_failure}`;
                 break;
+            case '/loadlicense':
+                obj = {param: {key: data.license_key}, password: data.password};
+                success = `License uploaded`;
+                break;
         }
 
         let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
