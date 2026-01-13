@@ -930,6 +930,10 @@ class App extends React.Component {
                 obj = {param: data.disable_board_on_failure, password: data.password};
                 success = `Disable board on failure set to ${data.disable_board_on_failure}`;
                 break;
+            case '/enableboardsonidle':
+                obj = {param: data.enable_boards_on_idle, password: data.password};
+                success = `Enable boards on idle set to ${data.enable_boards_on_idle}`;
+                break;
             case '/loadlicense':
                 obj = {param: {key: data.license_key}, password: data.password};
                 success = `License uploaded`;
