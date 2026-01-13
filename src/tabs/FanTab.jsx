@@ -11,13 +11,17 @@ import {
     Card,
     CardContent,
     CardActions,
+    Tooltip,
 } from '@mui/material';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import WarningIcon from '@mui/icons-material/Warning';
 import WindPowerIcon from '@mui/icons-material/WindPower';
+import TimerIcon from '@mui/icons-material/Timer';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const MAX_FANS = 4;
+const MAX_PREINIT_COOLDOWN_DURATION = 600;
 
 import './SystemTab.css';
 
@@ -34,6 +38,7 @@ export class FanTab extends React.Component {
             shutdowntemp: 85,
             criticaltemp: 110,
             min_working_fans: 0,
+            preinit_cooldown_max_duration: 300,
             password: this.props.sessionPass,
         };
 
@@ -56,6 +61,9 @@ export class FanTab extends React.Component {
         this.handleMinWorkingFansSlider = this.handleMinWorkingFansSlider.bind(this);
         this.handleMinWorkingFansInputChange = this.handleMinWorkingFansInputChange.bind(this);
         this.handleMinWorkingFansBlur = this.handleMinWorkingFansBlur.bind(this);
+        this.handlePreinitCooldownSlider = this.handlePreinitCooldownSlider.bind(this);
+        this.handlePreinitCooldownInputChange = this.handlePreinitCooldownInputChange.bind(this);
+        this.handlePreinitCooldownBlur = this.handlePreinitCooldownBlur.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -96,6 +104,12 @@ export class FanTab extends React.Component {
                 this.setState({min_working_fans: data.sum.Fans['Minimum Working Fans']});
             } else {
                 this.setState({min_working_fans: 0});
+            }
+
+            if (data && data.sum) {
+                if (data.sum['PreInitCooldown Max Duration'] !== undefined) {
+                    this.setState({preinit_cooldown_max_duration: data.sum['PreInitCooldown Max Duration']});
+                }
             }
         }
     }
@@ -198,6 +212,22 @@ export class FanTab extends React.Component {
             this.setState({min_working_fans: 0});
         } else if (this.state.min_working_fans > MAX_FANS) {
             this.setState({min_working_fans: MAX_FANS});
+        }
+    }
+
+    handlePreinitCooldownSlider(e, newVal) {
+        this.setState({preinit_cooldown_max_duration: newVal});
+    }
+
+    handlePreinitCooldownInputChange(e) {
+        this.setState({preinit_cooldown_max_duration: e.target.value == '' ? '' : Number(e.target.value)});
+    }
+
+    handlePreinitCooldownBlur() {
+        if (this.state.preinit_cooldown_max_duration < 0) {
+            this.setState({preinit_cooldown_max_duration: 0});
+        } else if (this.state.preinit_cooldown_max_duration > MAX_PREINIT_COOLDOWN_DURATION) {
+            this.setState({preinit_cooldown_max_duration: MAX_PREINIT_COOLDOWN_DURATION});
         }
     }
 
@@ -502,7 +532,72 @@ export class FanTab extends React.Component {
                                                     );
                                                 }
                                             }}
-                                            inputProps={{step: 5, min: 60, max: 110, type: 'number'}}
+                                            inputProps={{step: 1, min: 0, max: MAX_FANS, type: 'number'}}
+                                            disabled={this.props.disabled}
+                                        />
+                                    </Grid>
+                                </Grid>
+                                <Grid container spacing={2} alignItems="center">
+                                    <Grid item xs={12}>
+                                        <Tooltip
+                                            title="Sets the PreInitCooldown maximum duration in seconds. This is the maximum time the miner can spend in PreInitCooldown. If the max duration is reached, the miner will skip the initialization temperature checks and start mining. Default is 300 seconds. Setting to 0 means the PreInitCooldown state will last for at most 0 seconds."
+                                            arrow
+                                            placement="top"
+                                        >
+                                            <Typography
+                                                gutterBottom
+                                                style={{
+                                                    cursor: 'help',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '4px',
+                                                }}
+                                            >
+                                                PreInit Cooldown Max Duration
+                                                <InfoOutlinedIcon fontSize="small" />
+                                            </Typography>
+                                        </Tooltip>
+                                    </Grid>
+                                    <Grid item>
+                                        <TimerIcon />
+                                    </Grid>
+                                    <Grid item>
+                                        <Slider
+                                            value={
+                                                typeof this.state.preinit_cooldown_max_duration === 'number'
+                                                    ? this.state.preinit_cooldown_max_duration
+                                                    : 0
+                                            }
+                                            min={0}
+                                            max={MAX_PREINIT_COOLDOWN_DURATION}
+                                            onChange={this.handlePreinitCooldownSlider}
+                                            style={{width: '250px'}}
+                                            disabled={this.props.disabled}
+                                            valueLabelDisplay="auto"
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <Input
+                                            value={this.state.preinit_cooldown_max_duration}
+                                            margin="dense"
+                                            endAdornment={<InputAdornment position="end">s</InputAdornment>}
+                                            onChange={this.handlePreinitCooldownInputChange}
+                                            onBlur={this.handlePreinitCooldownBlur}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    this.props.handleApi(
+                                                        '/preinitcooldownmaxduration',
+                                                        this.state,
+                                                        this.props.selected
+                                                    );
+                                                }
+                                            }}
+                                            inputProps={{
+                                                step: 10,
+                                                min: 0,
+                                                max: MAX_PREINIT_COOLDOWN_DURATION,
+                                                type: 'number',
+                                            }}
                                             disabled={this.props.disabled}
                                         />
                                     </Grid>
@@ -517,12 +612,26 @@ export class FanTab extends React.Component {
                                     color="primary"
                                     disabled={disabled}
                                 >
-                                    Apply
+                                    Apply Fans
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        this.props.handleApi(
+                                            '/preinitcooldownmaxduration',
+                                            this.state,
+                                            this.props.selected
+                                        );
+                                    }}
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={disabled}
+                                >
+                                    Apply Cooldown
                                 </Button>
                             </CardActions>
                         </Card>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} md={4}>
                         <TextField
                             value={this.state.password || ''}
                             variant="outlined"
@@ -535,6 +644,11 @@ export class FanTab extends React.Component {
                                     this.props.handleApi('/fanspeed', this.state, this.props.selected);
                                     this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
                                     this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                                    this.props.handleApi(
+                                        '/preinitcooldownmaxduration',
+                                        this.state,
+                                        this.props.selected
+                                    );
                                 }
                             }}
                             error={!this.state.password}

@@ -922,6 +922,10 @@ class App extends React.Component {
                 obj = {param: data.min_working_fans, password: data.password};
                 success = `Minimum working fans set to ${data.min_working_fans}`;
                 break;
+            case '/preinitcooldownmaxduration':
+                obj = {param: data.preinit_cooldown_max_duration, password: data.password};
+                success = `Preinit cooldown max duration set to ${data.preinit_cooldown_max_duration}s`;
+                break;
             case '/timezone':
                 obj = {param: data.timezone, password: data.password};
                 success = `Timezone set to ${data.timezone}`;
