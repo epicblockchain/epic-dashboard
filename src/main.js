@@ -20,7 +20,7 @@ const createWindow = () => {
         width: 1536,
         minWidth: 800,
         height: 1100,
-        minHeight: 720,
+        minHeight: 620,
         frame: false,
         icon: __dirname + '/img/epic.ico',
         webPreferences: {
