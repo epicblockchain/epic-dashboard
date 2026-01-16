@@ -1,5 +1,74 @@
-import {Button, FormControl, InputLabel, Select, Switch, TextField, MenuItem} from '@mui/material';
+import {
+    Button,
+    FormControl,
+    InputLabel,
+    Select,
+    Switch,
+    TextField,
+    MenuItem,
+    Typography,
+    IconButton,
+    Input,
+} from '@mui/material';
 import * as React from 'react';
+import AddIcon from '@mui/icons-material/ControlPoint';
+import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
+
+const MAX_HASHRATE_SPLITS = 3;
+
+// Reusable pool configuration component
+const PoolConfigFields = ({
+    pool,
+    address,
+    worker,
+    password,
+    index,
+    onPoolChange,
+    onAddressChange,
+    onWorkerChange,
+    onPasswordChange,
+    disabled,
+}) => (
+    <div className="flex-line">
+        <TextField
+            variant="outlined"
+            label="Mining Pool"
+            onChange={onPoolChange}
+            className="pool"
+            value={pool}
+            margin="dense"
+            disabled={disabled}
+        />
+        <TextField
+            variant="outlined"
+            label="Wallet Address/Pool Username"
+            onChange={onAddressChange}
+            value={address}
+            margin="dense"
+            disabled={disabled}
+            className="wallet"
+        />
+        <p className="period">.</p>
+        <TextField
+            variant="outlined"
+            label="Worker Name"
+            onChange={onWorkerChange}
+            value={worker}
+            margin="dense"
+            disabled={disabled}
+            className="worker"
+        />
+        <TextField
+            variant="outlined"
+            label="Stratum Password"
+            onChange={onPasswordChange}
+            value={password}
+            margin="dense"
+            disabled={disabled}
+            className="stratum"
+        />
+    </div>
+);
 
 export class CoinTab extends React.Component {
     constructor(props) {
@@ -13,6 +82,19 @@ export class CoinTab extends React.Component {
                 {pool: '', address: '', worker: '', password: ''},
             ],
             checked: true,
+            hashrate_split_enabled: false,
+            hashrate_splits: [
+                {
+                    coin: 'Select Coin',
+                    stratum_configs: [
+                        {pool: '', address: '', worker: '', password: ''},
+                        {pool: '', address: '', worker: '', password: ''},
+                        {pool: '', address: '', worker: '', password: ''},
+                    ],
+                    ratio: 100,
+                    unique_variant: '',
+                },
+            ],
             password: this.props.sessionPass,
         };
 
@@ -20,6 +102,10 @@ export class CoinTab extends React.Component {
         this.updateVariant = this.updateVariant.bind(this);
         this.updateCheck = this.updateCheck.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
+        this.updateHashrateSplitEnabled = this.updateHashrateSplitEnabled.bind(this);
+        this.addHashrateSplit = this.addHashrateSplit.bind(this);
+        this.removeHashrateSplit = this.removeHashrateSplit.bind(this);
+        this.handleApplySettings = this.handleApplySettings.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -66,6 +152,118 @@ export class CoinTab extends React.Component {
 
     updatePassword(e) {
         this.setState({password: e.target.value});
+    }
+
+    updateHashrateSplitEnabled(e) {
+        const enabled = e.target.checked;
+        if (enabled) {
+            // When enabling hashrate split, initialize Pool Config 1 with current settings
+            const initialSplit = {
+                coin: this.state.coin,
+                stratum_configs: [
+                    {...this.state.stratum_configs[0]},
+                    {...this.state.stratum_configs[1]},
+                    {...this.state.stratum_configs[2]},
+                ],
+                ratio: 100,
+                unique_variant: this.state.unique_variant,
+            };
+            this.setState({
+                hashrate_split_enabled: enabled,
+                hashrate_splits: [initialSplit],
+            });
+        } else {
+            this.setState({hashrate_split_enabled: enabled});
+        }
+    }
+
+    async handleApplySettings() {
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        let valid = false;
+        if (this.state.hashrate_split_enabled) {
+            valid = await this.props.handleApi('/hashratesplit', this.state, this.props.selected);
+        } else {
+            valid = await this.props.handleApi('/coin', this.state, this.props.selected);
+            await sleep(1000);
+            if (this.state.checked) {
+                const idValid = await this.props.handleApi('/id/variant', this.state, this.props.selected);
+                valid = valid ?? idValid;
+            }
+        }
+        await sleep(1000);
+        if (valid) {
+            await this.props.handleApi('/hashratesplit/enable', this.state, this.props.selected);
+        }
+    }
+
+    addHashrateSplit() {
+        if (this.state.hashrate_splits.length < MAX_HASHRATE_SPLITS) {
+            // Create empty pool config for subsequent splits
+            const newSplit = {
+                coin: 'Select Coin',
+                stratum_configs: [
+                    {pool: '', address: '', worker: '', password: ''},
+                    {pool: '', address: '', worker: '', password: ''},
+                    {pool: '', address: '', worker: '', password: ''},
+                ],
+                ratio: 0,
+                unique_variant: '',
+            };
+            this.setState({
+                hashrate_splits: [...this.state.hashrate_splits, newSplit],
+            });
+        }
+    }
+
+    removeHashrateSplit(index) {
+        if (this.state.hashrate_splits.length > 1) {
+            const temp = this.state.hashrate_splits.slice();
+            temp.splice(index, 1);
+            this.setState({hashrate_splits: temp});
+        }
+    }
+
+    updateSplitCoin(e, splitIndex) {
+        const temp = this.state.hashrate_splits.slice();
+        temp[splitIndex].coin = e.target.value;
+        this.setState({hashrate_splits: temp});
+    }
+
+    updateSplitVariant(e, splitIndex) {
+        const temp = this.state.hashrate_splits.slice();
+        temp[splitIndex].unique_variant = e.target.value;
+        this.setState({hashrate_splits: temp});
+    }
+
+    updateSplitPool(e, splitIndex, configIndex) {
+        const temp = this.state.hashrate_splits.slice();
+        temp[splitIndex].stratum_configs[configIndex].pool = e.target.value;
+        this.setState({hashrate_splits: temp});
+    }
+
+    updateSplitAddress(e, splitIndex, configIndex) {
+        const temp = this.state.hashrate_splits.slice();
+        temp[splitIndex].stratum_configs[configIndex].address = e.target.value;
+        this.setState({hashrate_splits: temp});
+    }
+
+    updateSplitWorker(e, splitIndex, configIndex) {
+        const temp = this.state.hashrate_splits.slice();
+        temp[splitIndex].stratum_configs[configIndex].worker = e.target.value;
+        this.setState({hashrate_splits: temp});
+    }
+
+    updateSplitPassword(e, splitIndex, configIndex) {
+        const temp = this.state.hashrate_splits.slice();
+        temp[splitIndex].stratum_configs[configIndex].password = e.target.value;
+        this.setState({hashrate_splits: temp});
+    }
+
+    updateSplitRatio(splitIndex, newValue) {
+        const temp = this.state.hashrate_splits.slice();
+        temp[splitIndex].ratio = newValue;
+        this.setState({hashrate_splits: temp});
     }
 
     cloneFields() {
@@ -117,15 +315,30 @@ export class CoinTab extends React.Component {
     }
 
     clearFields() {
-        this.setState({
-            coin: 'Select Coin',
-            unique_variant: '',
-            stratum_configs: [
-                {pool: '', address: '', worker: '', password: ''},
-                {pool: '', address: '', worker: '', password: ''},
-                {pool: '', address: '', worker: '', password: ''},
-            ],
-        });
+        if (this.state.hashrate_split_enabled) {
+            // Clear all fields in all hashrate split groups but keep the groups
+            const clearedSplits = this.state.hashrate_splits.map((split) => ({
+                coin: 'Select Coin',
+                stratum_configs: [
+                    {pool: '', address: '', worker: '', password: ''},
+                    {pool: '', address: '', worker: '', password: ''},
+                    {pool: '', address: '', worker: '', password: ''},
+                ],
+                ratio: 0, // Clear the ratio too
+                unique_variant: '',
+            }));
+            this.setState({hashrate_splits: clearedSplits});
+        } else {
+            this.setState({
+                coin: 'Select Coin',
+                unique_variant: '',
+                stratum_configs: [
+                    {pool: '', address: '', worker: '', password: ''},
+                    {pool: '', address: '', worker: '', password: ''},
+                    {pool: '', address: '', worker: '', password: ''},
+                ],
+            });
+        }
     }
 
     render() {
@@ -155,6 +368,17 @@ export class CoinTab extends React.Component {
             !this.state.password ||
             !this.props.selected.length;
 
+        const hashrateSplitDisabled =
+            !this.state.password ||
+            !this.props.selected.length ||
+            this.state.hashrate_splits.some(
+                (split) =>
+                    split.coin === 'Select Coin' ||
+                    !split.stratum_configs[0].pool ||
+                    !split.stratum_configs[0].address ||
+                    !split.stratum_configs[0].worker
+            );
+
         return (
             <div className="tab-body">
                 <FormControl variant="outlined" margin="dense">
@@ -166,6 +390,7 @@ export class CoinTab extends React.Component {
                         size="small"
                         value={this.state.coin}
                         onChange={this.updateCoin}
+                        disabled={this.state.hashrate_split_enabled}
                     >
                         {options.map((a, i) => {
                             return (
@@ -183,9 +408,15 @@ export class CoinTab extends React.Component {
                         className="unique-id"
                         checked={this.state.checked}
                         onChange={this.updateCheck}
+                        disabled={this.state.hashrate_split_enabled}
                     />
                 </FormControl>
-                <FormControl variant="outlined" margin="dense" style={{width: '200px'}} disabled={!this.state.checked}>
+                <FormControl
+                    variant="outlined"
+                    margin="dense"
+                    style={{width: '200px'}}
+                    disabled={!this.state.checked || this.state.hashrate_split_enabled}
+                >
                     <InputLabel>Unique ID Variant</InputLabel>
                     <Select
                         id="variant"
@@ -199,6 +430,15 @@ export class CoinTab extends React.Component {
                         <MenuItem value={'CpuId'}>CPU ID</MenuItem>
                     </Select>
                 </FormControl>
+                <FormControl margin="dense" style={{height: '40px', marginLeft: '20px'}}>
+                    <div className="unique-id-label">Hashrate Split</div>
+                    <Switch
+                        color="primary"
+                        className="unique-id"
+                        checked={this.state.hashrate_split_enabled}
+                        onChange={this.updateHashrateSplitEnabled}
+                    />
+                </FormControl>
                 <Button onClick={() => this.clearFields()} variant="contained" className="float stop">
                     Clear fields
                 </Button>
@@ -211,150 +451,162 @@ export class CoinTab extends React.Component {
                 >
                     Copy miner settings
                 </Button>
-                <div className="flex-line">
+
+                {!this.state.hashrate_split_enabled ? (
+                    <>
+                        {[0, 1, 2].map((i) => (
+                            <PoolConfigFields
+                                key={i}
+                                pool={this.state.stratum_configs[i].pool}
+                                address={this.state.stratum_configs[i].address}
+                                worker={this.state.stratum_configs[i].worker}
+                                password={this.state.stratum_configs[i].password}
+                                index={i}
+                                onPoolChange={(e) => this.updatePool(e, i)}
+                                onAddressChange={(e) => this.updateAddress(e, i)}
+                                onWorkerChange={(e) => this.updateWorker(e, i)}
+                                onPasswordChange={(e) => this.updateWalletPass(e, i)}
+                                disabled={this.props.disabled}
+                            />
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        {this.state.hashrate_splits.map((split, splitIndex) => (
+                            <div
+                                key={splitIndex}
+                                style={{
+                                    border: '1px solid #ccc',
+                                    padding: '10px',
+                                    marginBottom: '10px',
+                                    borderRadius: '4px',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        marginBottom: '10px',
+                                    }}
+                                >
+                                    <Typography variant="h6">Pool Config {splitIndex + 1}</Typography>
+                                    <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                                        <Typography variant="body2" style={{marginRight: '10px'}}>
+                                            Ratio: {split.ratio}%
+                                        </Typography>
+                                        <Input
+                                            value={split.ratio}
+                                            margin="dense"
+                                            onChange={(e) =>
+                                                this.updateSplitRatio(
+                                                    splitIndex,
+                                                    e.target.value === '' ? 0 : Number(e.target.value)
+                                                )
+                                            }
+                                            inputProps={{step: 5, min: 0, max: 100, type: 'number'}}
+                                            style={{width: '70px'}}
+                                        />
+                                        <IconButton
+                                            onClick={() => this.removeHashrateSplit(splitIndex)}
+                                            disabled={this.state.hashrate_splits.length <= 1}
+                                            color="error"
+                                        >
+                                            <RemoveIcon />
+                                        </IconButton>
+                                    </div>
+                                </div>
+                                <FormControl variant="outlined" margin="dense" style={{minWidth: '200px'}}>
+                                    <InputLabel htmlFor={`coin-${splitIndex}`}>Coin</InputLabel>
+                                    <Select
+                                        native
+                                        id={`coin-${splitIndex}`}
+                                        label="Coin"
+                                        size="small"
+                                        value={split.coin}
+                                        onChange={(e) => this.updateSplitCoin(e, splitIndex)}
+                                    >
+                                        {options.map((a, i) => {
+                                            return (
+                                                <option key={i} value={a}>
+                                                    {a}
+                                                </option>
+                                            );
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    margin="dense"
+                                    style={{width: '200px', marginLeft: '10px'}}
+                                >
+                                    <InputLabel>Unique ID Variant</InputLabel>
+                                    <Select
+                                        id={`variant-${splitIndex}`}
+                                        label="Unique ID Variant"
+                                        size="small"
+                                        value={split.unique_variant}
+                                        onChange={(e) => this.updateSplitVariant(e, splitIndex)}
+                                    >
+                                        <MenuItem value={''}>None</MenuItem>
+                                        <MenuItem value={'IpAddress'}>Ip Address</MenuItem>
+                                        <MenuItem value={'MacAddress'}>Mac Address</MenuItem>
+                                        <MenuItem value={'CpuId'}>CPU ID</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                {[0, 1, 2].map((configIndex) => (
+                                    <PoolConfigFields
+                                        key={configIndex}
+                                        pool={split.stratum_configs[configIndex].pool}
+                                        address={split.stratum_configs[configIndex].address}
+                                        worker={split.stratum_configs[configIndex].worker}
+                                        password={split.stratum_configs[configIndex].password}
+                                        index={configIndex}
+                                        onPoolChange={(e) => this.updateSplitPool(e, splitIndex, configIndex)}
+                                        onAddressChange={(e) => this.updateSplitAddress(e, splitIndex, configIndex)}
+                                        onWorkerChange={(e) => this.updateSplitWorker(e, splitIndex, configIndex)}
+                                        onPasswordChange={(e) => this.updateSplitPassword(e, splitIndex, configIndex)}
+                                        disabled={this.props.disabled}
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                        <IconButton
+                            onClick={() => this.addHashrateSplit()}
+                            disabled={this.state.hashrate_splits.length >= MAX_HASHRATE_SPLITS}
+                            color="primary"
+                        >
+                            <AddIcon /> Add Group
+                        </IconButton>
+                    </>
+                )}
+                <div style={{display: 'flex', gap: '10px', marginTop: '20px', alignItems: 'center'}}>
                     <TextField
+                        value={this.state.password || ''}
                         variant="outlined"
-                        label="Mining Pool"
-                        onChange={(e) => this.updatePool(e, 0)}
-                        className="pool"
-                        value={this.state.stratum_configs[0].pool}
+                        label="Password"
+                        type="password"
+                        onChange={this.updatePassword}
                         margin="dense"
-                        disabled={this.props.disabled}
-                    />
-                    <TextField
-                        variant="outlined"
-                        label="Wallet Address/Pool Username"
-                        onChange={(e) => this.updateAddress(e, 0)}
-                        value={this.state.stratum_configs[0].address}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                        className="wallet"
-                    />
-                    <p className="period">.</p>
-                    <TextField
-                        variant="outlined"
-                        label="Worker Name"
-                        onChange={(e) => this.updateWorker(e, 0)}
-                        value={this.state.stratum_configs[0].worker}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                        className="worker"
-                    />
-                    <TextField
-                        variant="outlined"
-                        label="Stratum Password"
-                        onChange={(e) => this.updateWalletPass(e, 0)}
-                        value={this.state.stratum_configs[0].password}
-                        margin="dense"
-                        className="stratum"
-                    />
-                </div>
-                <div className="flex-line">
-                    <TextField
-                        variant="outlined"
-                        label="Mining Pool"
-                        onChange={(e) => this.updatePool(e, 1)}
-                        className="pool"
-                        value={this.state.stratum_configs[1].pool}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                    />
-                    <TextField
-                        variant="outlined"
-                        label="Wallet Address/Pool Username"
-                        onChange={(e) => this.updateAddress(e, 1)}
-                        value={this.state.stratum_configs[1].address}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                        className="wallet"
-                    />
-                    <p className="period">.</p>
-                    <TextField
-                        variant="outlined"
-                        label="Worker Name"
-                        onChange={(e) => this.updateWorker(e, 1)}
-                        value={this.state.stratum_configs[1].worker}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                        className="worker"
-                    />
-                    <TextField
-                        variant="outlined"
-                        label="Stratum Password"
-                        onChange={(e) => this.updateWalletPass(e, 1)}
-                        value={this.state.stratum_configs[1].password}
-                        margin="dense"
-                        className="stratum"
-                    />
-                </div>
-                <div className="flex-line">
-                    <TextField
-                        variant="outlined"
-                        label="Mining Pool"
-                        onChange={(e) => this.updatePool(e, 2)}
-                        className="pool"
-                        value={this.state.stratum_configs[2].pool}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                    />
-                    <TextField
-                        variant="outlined"
-                        label="Wallet Address/Pool Username"
-                        onChange={(e) => this.updateAddress(e, 2)}
-                        value={this.state.stratum_configs[2].address}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                        className="wallet"
-                    />
-                    <p className="period">.</p>
-                    <TextField
-                        variant="outlined"
-                        label="Worker Name"
-                        onChange={(e) => this.updateWorker(e, 2)}
-                        value={this.state.stratum_configs[2].worker}
-                        margin="dense"
-                        disabled={this.props.disabled}
-                        className="worker"
-                    />
-                    <TextField
-                        variant="outlined"
-                        label="Stratum Password"
-                        onChange={(e) => this.updateWalletPass(e, 2)}
-                        value={this.state.stratum_configs[2].password}
-                        margin="dense"
-                        className="stratum"
-                    />
-                </div>
-                <TextField
-                    value={this.state.password || ''}
-                    variant="outlined"
-                    label="Password"
-                    type="password"
-                    onChange={this.updatePassword}
-                    margin="dense"
-                    onKeyPress={(e) => {
-                        if (e.key === 'Enter' && !disabled) {
-                            this.props.handleApi('/coin', this.state, this.props.selected);
-                            if (this.state.checked) {
-                                this.props.handleApi('/id/variant', this.state, this.props.selected);
+                        onKeyPress={async (e) => {
+                            if (
+                                e.key === 'Enter' &&
+                                !(this.state.hashrate_split_enabled ? hashrateSplitDisabled : disabled)
+                            ) {
+                                await this.handleApplySettings();
                             }
-                        }
-                    }}
-                    error={!this.state.password}
-                />
-                <Button
-                    onClick={() => {
-                        this.props.handleApi('/coin', this.state, this.props.selected);
-                        if (this.state.checked) {
-                            this.props.handleApi('/id/variant', this.state, this.props.selected);
-                        }
-                    }}
-                    variant="contained"
-                    color="primary"
-                    disabled={disabled}
-                >
-                    Apply
-                </Button>
+                        }}
+                        error={!this.state.password}
+                    />
+                    <Button
+                        onClick={() => this.handleApplySettings()}
+                        variant="contained"
+                        color="primary"
+                        disabled={this.state.hashrate_split_enabled ? hashrateSplitDisabled : disabled}
+                    >
+                        Apply
+                    </Button>
+                </div>
             </div>
         );
     }

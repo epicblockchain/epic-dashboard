@@ -942,13 +942,42 @@ class App extends React.Component {
                 obj = {param: {key: data.license_key}, password: data.password};
                 success = `License uploaded`;
                 break;
+            case '/hashratesplit':
+                obj = {
+                    param: data.hashrate_splits.map((split) => ({
+                        coin: split.coin,
+                        stratum_configs: split.stratum_configs.map((x) => ({
+                            pool: x.pool,
+                            login: `${x.address}.${x.worker}`,
+                            password: x.password,
+                        })),
+                        unique_id: split.unique_variant ? true : false,
+                        ratio: split.ratio,
+                        unique_worker_id_variant: split.unique_variant || null,
+                    })),
+                    password: data.password,
+                };
+                msg = 'Updating hashrate split config';
+                success = 'Hashrate split config updated successfully';
+                break;
+            case '/hashratesplit/enable':
+                obj = {param: data.hashrate_split_enabled, password: data.password};
+                success = `Hashrate split ${data.hashrate_split_enabled ? 'enabled' : 'disabled'}`;
+                break;
         }
 
-        let slow_api = api == '/coin' || api == '/miner' || api == '/mode' || api == '/test' || api == '/wifi'; //sends response after completed
+        let slow_api =
+            api == '/coin' ||
+            api == '/miner' ||
+            api == '/mode' ||
+            api == '/test' ||
+            api == '/wifi' ||
+            api == '/hashratesplit'; //sends response after completed
         let soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
 
         const MAX_CONCURRENT_REQUESTS = 5;
         let promises = [];
+        let allSuccess = true;
         for (let i of selected) {
             let promise = this.retryPromise(async () => {
                 try {
@@ -1008,22 +1037,28 @@ class App extends React.Component {
                                 console.log(err);
                             }
                         }
+                        return true;
                     } else {
                         notify('error', `${miners[i].address}: ${body.error}`);
+                        return false;
                     }
                 } catch (err) {
                     console.log(err);
+                    return false;
                 }
             });
             promises.push(promise);
             if (promises.length >= MAX_CONCURRENT_REQUESTS) {
-                await Promise.all(promises);
+                const results = await Promise.all(promises);
+                if (results.some((r) => r === false)) allSuccess = false;
                 promises = [];
             }
         }
         if (promises.length > 0) {
-            await Promise.all(promises);
+            const results = await Promise.all(promises);
+            if (results.some((r) => r === false)) allSuccess = false;
         }
+        return allSuccess;
     }
 
     handleFormApi(api, data, selected) {
