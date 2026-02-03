@@ -291,22 +291,34 @@ export class DataTable extends React.Component {
 
     perpetualtuneTarget(data) {
         if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
-            return 'N/A';
+            return {value: 'N/A', tooltip: null};
         } else {
             for (let i in data.PerpetualTune.Algorithm) {
-                if (
-                    data.PerpetualTune.Algorithm[i]['Throttle Target'] == undefined ||
-                    data.PerpetualTune.Algorithm[i]['Throttle Target'] == null
-                ) {
-                    return data.PerpetualTune.Algorithm[i].Target;
+                const algo = data.PerpetualTune.Algorithm[i];
+                const target = algo.Target;
+                const throttleTarget = algo['Throttle Target'];
+                const errorThrottleTarget = algo['Error Throttle Target'];
+                const unit = algo.Unit;
+
+                let displayValue;
+                let tooltip = null;
+
+                if (throttleTarget != undefined && throttleTarget != null) {
+                    displayValue = `${target} (${throttleTarget})`;
                 } else {
-                    return (
-                        data.PerpetualTune.Algorithm[i].Target +
-                        ' (' +
-                        data.PerpetualTune.Algorithm[i]['Throttle Target'] +
-                        ')'
-                    );
+                    displayValue = target;
                 }
+
+                if (errorThrottleTarget != undefined && errorThrottleTarget != null) {
+                    const unitText = unit != null ? ` ${unit}` : '';
+                    tooltip =
+                        `A chip or PSU error was detected that triggered a throttle to maintain stability. ` +
+                        `The chips may not be stable at higher hashrates or the PSU may have overheated. ` +
+                        `The rig will not throttle back up beyond ${errorThrottleTarget} ${unitText} automatically. ` +
+                        `In order to clear the error throttle target, reset Perpetual Tune.`;
+                }
+
+                return {value: displayValue, tooltip};
             }
         }
     }
@@ -515,7 +527,9 @@ export class DataTable extends React.Component {
             perpetualtune: this.failSafe(a.sum) || this.perpetualtune(a.sum),
             perpetualtunealgo: this.failSafe(a.sum) || this.perpetualtuneAlgo(a.sum),
             perpetualtuneoptimized: this.failSafe(a.sum) || this.perpetualtuneOptimized(a.sum),
-            perpetualtunetarget: this.failSafe(a.sum) || this.perpetualtuneTarget(a.sum),
+            perpetualtunetarget: this.failSafe(a.sum)
+                ? {value: this.failSafe(a.sum), tooltip: null}
+                : this.perpetualtuneTarget(a.sum),
             perpetualtuneminthrottle:
                 this.failSafe(a.sum) ||
                 Object.values(a.sum?.PerpetualTune?.Algorithm || {})[0]?.['Min Throttle Target'] ||

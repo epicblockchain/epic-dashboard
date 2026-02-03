@@ -17,7 +17,9 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import ViewWeekIcon from '@mui/icons-material/ViewWeek';
+import InfoIcon from '@mui/icons-material/Info';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -99,6 +101,40 @@ function getColorText(lowest) {
     }
 }
 
+function renderTooltipCell(value) {
+    return value.tooltip ? (
+        <Tooltip title={value.tooltip}>
+            <span style={{display: 'flex', alignItems: 'center'}}>
+                {value.value}
+                <InfoIcon fontSize="small" style={{marginLeft: 4}} />
+            </span>
+        </Tooltip>
+    ) : (
+        value.value
+    );
+}
+
+function perpetualTuneTargetSort(a, b, c) {
+    const aVal = a.values[c];
+    const bVal = b.values[c];
+
+    // Extract numeric value from the .value property
+    const aValue = aVal?.value ? parseFloat(aVal.value) : 0;
+    const bValue = bVal?.value ? parseFloat(bVal.value) : 0;
+
+    if (aValue > bValue) return 1;
+    if (aValue < bValue) return -1;
+    return 0;
+}
+
+function perpetualTuneTargetFilter(rows, id, filterValue) {
+    return rows.filter((row) => {
+        const cellValue = row.values[id];
+        const displayValue = cellValue?.value || '';
+        return String(displayValue).toLowerCase().includes(filterValue.toLowerCase());
+    });
+}
+
 function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, handleApi}) {
     const DefaultColumnFilter = React.useCallback(({column: {filterValue, preFilteredRows, setFilter}}) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
@@ -171,7 +207,14 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             {accessor: 'perpetualtune', Header: 'Perpetual Tune', width: 150},
             {accessor: 'perpetualtunealgo', Header: 'Perpetual Tune Algorithm', width: 225},
             {accessor: 'perpetualtuneoptimized', Header: 'Perpetual Tune Optimized', width: 225},
-            {accessor: 'perpetualtunetarget', Header: 'Perpetual Tune Target', width: 200},
+            {
+                accessor: 'perpetualtunetarget',
+                Header: 'Perpetual Tune Target',
+                width: 200,
+                Cell: ({value}) => renderTooltipCell(value),
+                sortType: perpetualTuneTargetSort,
+                filter: perpetualTuneTargetFilter,
+            },
             {accessor: 'perpetualtuneminthrottle', Header: 'Perpetual Tune Min Throttle', width: 225},
             {accessor: 'perpetualtunethrottlestep', Header: 'Perpetual Tune Throttle Step', width: 225},
             {accessor: 'shutdowntemp', Header: 'Shutdown Temperature', width: 170},
