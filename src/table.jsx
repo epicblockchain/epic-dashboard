@@ -440,6 +440,35 @@ export class DataTable extends React.Component {
         this.setState({[model + '_sel']: sel_model});
     }
 
+    getOrderedSelectedMiners(model, selectedRowIds, data) {
+        const previousSelection = Array.from(this.state[model + '_sel'] || []);
+        const nextSelection = [];
+        const remainingSelected = new Set();
+
+        Object.keys(selectedRowIds || {}).forEach((id) => {
+            if (data[id]) remainingSelected.add(data[id].id);
+        });
+
+        previousSelection.forEach((minerId) => {
+            if (remainingSelected.has(minerId)) {
+                nextSelection.push(minerId);
+                remainingSelected.delete(minerId);
+            }
+        });
+
+        Object.keys(selectedRowIds || {}).forEach((id) => {
+            if (!data[id]) return;
+
+            const minerId = data[id].id;
+            if (remainingSelected.has(minerId)) {
+                nextSelection.push(minerId);
+                remainingSelected.delete(minerId);
+            }
+        });
+
+        return nextSelection;
+    }
+
     setList(event, newVal) {
         this.setState({list: newVal});
         this.setState({tab: 0});
@@ -475,26 +504,14 @@ export class DataTable extends React.Component {
             });
 
             this.setState(temp);
-        } else if (action.type == 'toggleRowSelected') {
-            var temp = Array.from(this.state[model + '_sel']);
+        } else if (
+            action.type == 'toggleRowSelected' ||
+            action.type == 'toggleAllRowsSelected' ||
+            action.type == 'toggleRowRangeSelected'
+        ) {
+            var sel = this.getOrderedSelectedMiners(model, newState.selectedRowIds, data);
 
-            if (action.value) {
-                temp.push(data[action.id].id);
-            } else {
-                temp.splice(temp.indexOf(data[action.id].id), 1);
-            }
-
-            this.setState({[model + '_sel']: temp, [model + '_state']: newState});
-        } else if (action.type == 'toggleAllRowsSelected') {
-            if (this.state[model + '_sel']) {
-                var sel = [];
-
-                Object.keys(newState.selectedRowIds).forEach((id) => {
-                    if (data[id]) sel.push(data[id].id);
-                });
-
-                this.setState({[model + '_sel']: sel, [model + '_state']: newState});
-            }
+            this.setState({[model + '_sel']: sel, [model + '_state']: newState});
         } else {
             this.setState({[model + '_state']: newState});
         }

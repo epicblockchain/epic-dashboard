@@ -258,6 +258,20 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
 
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
+    const selectionStateRef = React.useRef({
+        anchorRowId: null,
+        baseSelectedRowIds: null,
+        rangeMode: null,
+        rows: [],
+        selectedRowIds: {},
+        shiftPressed: false,
+    });
+    const resetSelectionSession = React.useCallback((anchorRowId = null) => {
+        selectionStateRef.current.anchorRowId = anchorRowId;
+        selectionStateRef.current.baseSelectedRowIds = null;
+        selectionStateRef.current.rangeMode = null;
+        selectionStateRef.current.shiftPressed = false;
+    }, []);
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
     };
@@ -310,6 +324,13 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                             ...a,
                             columnResizing: clone,
                         };
+                    case 'toggleRowRangeSelected':
+                        const nextState = {
+                            ...a,
+                            selectedRowIds: b.selectedRowIds,
+                        };
+                        updateState(nextState, b, c, dataRaw, model);
+                        return nextState;
                 }
 
                 if (b.type != 'columnResizing' && b.type != 'columnStartResizing') {
@@ -329,20 +350,101 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                     width: 50,
                     disableResizing: true,
                     disableFilters: true,
-                    Header: ({getToggleAllRowsSelectedProps}) => (
-                        <div className="check-wrap">
-                            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                        </div>
-                    ),
-                    Cell: ({row}) => (
-                        <div className="check-wrap">
-                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                        </div>
-                    ),
+                    Header: ({getToggleAllRowsSelectedProps}) => {
+                        const toggleAllRowsSelectedProps = getToggleAllRowsSelectedProps();
+
+                        return (
+                            <div className="check-wrap">
+                                <IndeterminateCheckbox
+                                    {...toggleAllRowsSelectedProps}
+                                    onChange={(event) => {
+                                        resetSelectionSession();
+                                        toggleAllRowsSelectedProps.onChange(event);
+                                    }}
+                                />
+                            </div>
+                        );
+                    },
+                    Cell: ({row}) => {
+                        const toggleRowSelectedProps = row.getToggleRowSelectedProps();
+
+                        return (
+                            <div className="check-wrap">
+                                <IndeterminateCheckbox
+                                    {...toggleRowSelectedProps}
+                                    onMouseDown={(event) => {
+                                        selectionStateRef.current.shiftPressed = event.shiftKey;
+                                    }}
+                                    onChange={(event) => handleRowSelectionChange(event, row, toggleRowSelectedProps)}
+                                />
+                            </div>
+                        );
+                    },
                 },
                 ...columns,
             ]);
         }
+    );
+
+    selectionStateRef.current.rows = rows;
+    selectionStateRef.current.selectedRowIds = state.selectedRowIds || {};
+
+    React.useEffect(() => {
+        if (!Object.keys(state.selectedRowIds || {}).length) {
+            resetSelectionSession();
+        }
+    }, [resetSelectionSession, state.selectedRowIds]);
+
+    const handleRowSelectionChange = React.useCallback(
+        (event, row, toggleRowSelectedProps) => {
+            const selectionState = selectionStateRef.current;
+            const {
+                anchorRowId: currentAnchorRowId,
+                rows: currentRows,
+                selectedRowIds: currentSelectedRowIds,
+            } = selectionState;
+            const shiftPressed = selectionState.shiftPressed || event.shiftKey || event.nativeEvent?.shiftKey;
+            selectionState.shiftPressed = false;
+
+            if (!shiftPressed || currentAnchorRowId === null) {
+                toggleRowSelectedProps.onChange(event);
+                resetSelectionSession(row.id);
+                return;
+            }
+
+            const anchorIndex = currentRows.findIndex((tableRow) => tableRow.id === currentAnchorRowId);
+            const currentIndex = currentRows.findIndex((tableRow) => tableRow.id === row.id);
+
+            if (anchorIndex === -1 || currentIndex === -1) {
+                toggleRowSelectedProps.onChange(event);
+                resetSelectionSession(row.id);
+                return;
+            }
+
+            const [startIndex, endIndex] =
+                anchorIndex < currentIndex ? [anchorIndex, currentIndex] : [currentIndex, anchorIndex];
+            const baseSelectedRowIds = selectionState.baseSelectedRowIds || Object.assign({}, currentSelectedRowIds);
+            const shouldSelectRange =
+                selectionState.rangeMode !== null ? selectionState.rangeMode : event.target.checked;
+            const nextSelectedRowIds = Object.assign({}, baseSelectedRowIds);
+
+            selectionState.baseSelectedRowIds = baseSelectedRowIds;
+            selectionState.rangeMode = shouldSelectRange;
+
+            currentRows.slice(startIndex, endIndex + 1).forEach((tableRow) => {
+                if (shouldSelectRange) {
+                    nextSelectedRowIds[tableRow.id] = true;
+                } else {
+                    delete nextSelectedRowIds[tableRow.id];
+                }
+            });
+
+            dispatch({
+                type: 'toggleRowRangeSelected',
+                selectedRowIds: nextSelectedRowIds,
+            });
+        },
+        [dispatch, resetSelectionSession]
     );
 
     const scroll = React.useCallback((obj) => {
