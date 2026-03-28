@@ -15,12 +15,14 @@
 
 .header-wrapper {
     display: flex;
+    align-items: center;
     width: 100%;
 }
 
 .col-header {
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .filter {
@@ -28,6 +30,19 @@
     right: 8px;
     top: 8px;
     z-index: 2;
+}
+
+.move-column {
+    position: absolute !important;
+    right: 34px;
+    top: 8px;
+    z-index: 2;
+    cursor: grab;
+    touch-action: none;
+}
+
+.move-column:active {
+    cursor: grabbing;
 }
 
 #simple-menu {
@@ -59,11 +74,32 @@
 }
 
 #datatable .MuiTableCell-head {
+    box-sizing: border-box;
     white-space: nowrap;
-    padding: 10px 30px 10px 10px;
+    padding: 10px 56px 10px 10px;
+}
+
+#datatable .MuiTableCell-head.selection-col,
+#datatable .MuiTableCell-body.selection-col {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#datatable .MuiTableCell-head.ip-col {
+    text-align: left;
+    padding-left: 10px;
+}
+
+#datatable .MuiTableCell-head.column-drag-source {
+    opacity: 0.35;
+}
+
+#datatable .MuiTableCell-head.column-drag-target {
+    background: rgba(0, 104, 180, 0.08);
 }
 
 #datatable .MuiTableCell-body {
+    box-sizing: border-box;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -139,4 +175,19 @@ button.open-browser {
     animation: flash;
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
+}
+
+.column-drag-overlay {
+    box-sizing: border-box;
+    min-width: 120px;
+    max-width: 260px;
+    padding: 10px 56px 10px 10px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    opacity: 0.95;
+}
+
+.column-drag-overlay.ip-col {
+    padding-left: 10px;
 }

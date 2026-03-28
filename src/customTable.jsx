@@ -22,6 +22,7 @@ import ViewWeekIcon from '@mui/icons-material/ViewWeek';
 import InfoIcon from '@mui/icons-material/Info';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import LightOutlinedIcon from '@mui/icons-material/EmojiObjectsOutlined';
@@ -35,9 +36,21 @@ import {
     useRowSelect,
     useSortBy,
     useFilters,
+    useColumnOrder,
     useAsyncDebounce,
 } from 'react-table';
 import {FixedSizeGrid} from 'react-window';
+import {
+    closestCenter,
+    DndContext,
+    DragOverlay,
+    PointerSensor,
+    useDraggable,
+    useDroppable,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {restrictToHorizontalAxis} from '@dnd-kit/modifiers';
 
 import './customTable.css';
 
@@ -135,6 +148,144 @@ function perpetualTuneTargetFilter(rows, id, filterValue) {
     });
 }
 
+function isSameOrder(a = [], b = []) {
+    if (a.length !== b.length) {
+        return false;
+    }
+
+    return a.every((value, index) => value === b[index]);
+}
+
+export const tableColumns = [
+    {accessor: 'status', Header: 'Status', width: 110},
+    {accessor: 'ip', Header: 'IP', width: 150},
+    {accessor: 'name', Header: 'Name', width: 150},
+    {accessor: 'firmware', Header: 'Firmware', width: 108},
+    {accessor: 'model', Header: 'Model', width: 150},
+    {accessor: 'mode', Header: 'Mode', width: 150},
+    {accessor: 'pool', Header: 'Pool', width: 180},
+    {accessor: 'user', Header: 'User', width: 210, maxWidth: 700},
+    {accessor: 'start', Header: 'Started', width: 150},
+    {accessor: 'uptime', Header: 'Uptime', width: 135},
+    {accessor: 'hbs', Header: 'Active HBs', width: 118},
+    {accessor: 'perpetualtune', Header: 'Perpetual Tune', width: 150},
+    {accessor: 'perpetualtunealgo', Header: 'Perpetual Tune Algorithm', width: 225},
+    {accessor: 'perpetualtuneoptimized', Header: 'Perpetual Tune Optimized', width: 225},
+    {
+        accessor: 'perpetualtunetarget',
+        Header: 'Perpetual Tune Target',
+        width: 200,
+        Cell: ({value}) => renderTooltipCell(value),
+        sortType: perpetualTuneTargetSort,
+        filter: perpetualTuneTargetFilter,
+    },
+    {accessor: 'perpetualtuneminthrottle', Header: 'Perpetual Tune Min Throttle', width: 225},
+    {accessor: 'perpetualtunethrottlestep', Header: 'Perpetual Tune Throttle Step', width: 225},
+    {accessor: 'shutdowntemp', Header: 'Shutdown Temperature', width: 170},
+    {accessor: 'criticaltemp', Header: 'Critical Temperature', width: 170},
+    {accessor: 'performance', Header: 'Hashboard Performance', width: 250},
+    {accessor: 'realtimehashrate', Header: 'Realtime Hashrate', width: 200},
+    {accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort},
+    {accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort},
+    {accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort},
+    {accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150, sortType: hashrateSort},
+    {accessor: 'efficiency1hr', Header: 'Efficiency (1h)', width: 140, sortType: 'number'},
+    {accessor: 'accepted', Header: 'Accepted Shares', width: 150},
+    {accessor: 'rejected', Header: 'Rejected Shares', width: 150},
+    {accessor: 'difficulty', Header: 'Difficulty', width: 120},
+    {accessor: 'temperature', Header: 'Temp', width: 84},
+    {accessor: 'power', Header: 'Power (W)', width: 110},
+    {accessor: 'fanspeed', Header: 'Fan Speed', width: 115},
+    {accessor: 'voltage', Header: 'Input Voltage', width: 100, sortType: 'number'},
+    {accessor: 'clock', Header: 'Avg Clock', width: 210},
+    {accessor: 'fansrpm', Header: 'Fans Rpm', width: 370},
+    {accessor: 'lasterror', Header: 'Last Error', width: 250},
+    {accessor: 'mac', Header: 'MAC Address', width: 250},
+];
+
+export const tableColumnIds = tableColumns.map(({accessor}) => accessor);
+
+function getColumnClassName(columnId) {
+    if (columnId == 'selection') {
+        return 'selection-col';
+    }
+
+    if (columnId == 'ip') {
+        return 'ip-col';
+    }
+
+    return '';
+}
+
+function ColumnDragHandle({columnId}) {
+    const {attributes, listeners, setNodeRef} = useDraggable({id: columnId});
+
+    return (
+        <IconButton
+            ref={setNodeRef}
+            size="small"
+            className="move-column"
+            title="Drag to move column"
+            onClick={(event) => event.stopPropagation()}
+            {...attributes}
+            {...listeners}
+        >
+            <SwapHorizIcon fontSize="small" />
+        </IconButton>
+    );
+}
+
+function ColumnHeaderCell({column, draggedColumnId, resizeCol}) {
+    const isSelectionColumn = column.id == 'selection';
+    const {setNodeRef, isOver} = useDroppable({
+        id: column.id,
+        disabled: isSelectionColumn,
+    });
+    const className = `${getColumnClassName(column.id)}${draggedColumnId === column.id ? ' column-drag-source' : ''}${
+        isOver && draggedColumnId && draggedColumnId !== column.id ? ' column-drag-target' : ''
+    }`.trim();
+
+    return (
+        <TableCell {...column.getHeaderProps({className})} ref={setNodeRef} component="div">
+            <div {...column.getSortByToggleProps()} className="header-wrapper">
+                <div className={column.id != 'selection' ? 'col-header' : ''}>{column.render('Header')}</div>
+                {column.isSorted ? (
+                    column.isSortedDesc ? (
+                        <ArrowDownwardIcon fontSize="small" />
+                    ) : (
+                        <ArrowUpwardIcon fontSize="small" />
+                    )
+                ) : (
+                    ''
+                )}
+            </div>
+            {!isSelectionColumn && <ColumnDragHandle columnId={column.id} />}
+            {column.canFilter ? column.render('Filter') : null}
+            <div
+                {...(column.canResize ? column.getResizerProps() : [])}
+                className={`resizer${column.isResizing ? ' isResizing' : ''}`}
+                title="Drag to resize or double-click to autosize"
+                data-value={JSON.stringify({id: column.id, header: column.Header})}
+                onDoubleClick={resizeCol}
+            />
+        </TableCell>
+    );
+}
+
+function ColumnDragPreview({column}) {
+    if (!column) {
+        return null;
+    }
+
+    return (
+        <div className={`column-drag-overlay ${getColumnClassName(column.id)}`.trim()}>
+            <div className="header-wrapper">
+                <div className="col-header">{column.render('Header')}</div>
+            </div>
+        </div>
+    );
+}
+
 function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, handleApi}) {
     const DefaultColumnFilter = React.useCallback(({column: {filterValue, preFilteredRows, setFilter}}) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
@@ -191,55 +342,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     );
 
     const data = React.useMemo(() => dataRaw, [dataRaw]);
-    const columns = React.useMemo(
-        () => [
-            {accessor: 'status', Header: 'Status', width: 110},
-            {accessor: 'ip', Header: 'IP', width: 150},
-            {accessor: 'name', Header: 'Name', width: 150},
-            {accessor: 'firmware', Header: 'Firmware', width: 108},
-            {accessor: 'model', Header: 'Model', width: 150},
-            {accessor: 'mode', Header: 'Mode', width: 150},
-            {accessor: 'pool', Header: 'Pool', width: 180},
-            {accessor: 'user', Header: 'User', width: 210, maxWidth: 700},
-            {accessor: 'start', Header: 'Started', width: 150},
-            {accessor: 'uptime', Header: 'Uptime', width: 135},
-            {accessor: 'hbs', Header: 'Active HBs', width: 118},
-            {accessor: 'perpetualtune', Header: 'Perpetual Tune', width: 150},
-            {accessor: 'perpetualtunealgo', Header: 'Perpetual Tune Algorithm', width: 225},
-            {accessor: 'perpetualtuneoptimized', Header: 'Perpetual Tune Optimized', width: 225},
-            {
-                accessor: 'perpetualtunetarget',
-                Header: 'Perpetual Tune Target',
-                width: 200,
-                Cell: ({value}) => renderTooltipCell(value),
-                sortType: perpetualTuneTargetSort,
-                filter: perpetualTuneTargetFilter,
-            },
-            {accessor: 'perpetualtuneminthrottle', Header: 'Perpetual Tune Min Throttle', width: 225},
-            {accessor: 'perpetualtunethrottlestep', Header: 'Perpetual Tune Throttle Step', width: 225},
-            {accessor: 'shutdowntemp', Header: 'Shutdown Temperature', width: 170},
-            {accessor: 'criticaltemp', Header: 'Critical Temperature', width: 170},
-            {accessor: 'performance', Header: 'Hashboard Performance', width: 250},
-            {accessor: 'realtimehashrate', Header: 'Realtime Hashrate', width: 200},
-            {accessor: 'hashrate15min', Header: 'Hashrate (15min)', width: 150, sortType: hashrateSort},
-            {accessor: 'hashrate1hr', Header: 'Hashrate (1h)', width: 150, sortType: hashrateSort},
-            {accessor: 'hashrate6hr', Header: 'Hashrate (6h)', width: 150, sortType: hashrateSort},
-            {accessor: 'hashrate24hr', Header: 'Hashrate (24h)', width: 150, sortType: hashrateSort},
-            {accessor: 'efficiency1hr', Header: 'Efficiency (1h)', width: 140, sortType: 'number'},
-            {accessor: 'accepted', Header: 'Accepted Shares', width: 150},
-            {accessor: 'rejected', Header: 'Rejected Shares', width: 150},
-            {accessor: 'difficulty', Header: 'Difficulty', width: 120},
-            {accessor: 'temperature', Header: 'Temp', width: 84},
-            {accessor: 'power', Header: 'Power (W)', width: 110},
-            {accessor: 'fanspeed', Header: 'Fan Speed', width: 115},
-            {accessor: 'voltage', Header: 'Input Voltage', width: 100, sortType: 'number'},
-            {accessor: 'clock', Header: 'Avg Clock', width: 210},
-            {accessor: 'fansrpm', Header: 'Fans Rpm', width: 370},
-            {accessor: 'lasterror', Header: 'Last Error', width: 250},
-            {accessor: 'mac', Header: 'MAC Address', width: 250},
-        ],
-        []
-    );
+    const columns = React.useMemo(() => tableColumns, []);
 
     const model = React.useMemo(() => extmodel, []);
     const initialState = React.useMemo(() => extstate, []);
@@ -266,6 +369,15 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         selectedRowIds: {},
         shiftPressed: false,
     });
+    const [draggedColumnId, setDraggedColumnId] = React.useState(null);
+    const [previewColumnOrder, setPreviewColumnOrder] = React.useState(null);
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 4,
+            },
+        })
+    );
     const resetSelectionSession = React.useCallback((anchorRowId = null) => {
         selectionStateRef.current.anchorRowId = anchorRowId;
         selectionStateRef.current.baseSelectedRowIds = null;
@@ -303,6 +415,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         getToggleHideAllColumnsProps,
         state,
         selectedFlatRows,
+        setColumnOrder,
         toggleHideColumn,
         toggleHideAllColumns,
     } = useTable(
@@ -314,6 +427,11 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             autoResetSelectedRows: resetSelected,
             autoResetSortBy: false,
             autoResetFilters: false,
+            useControlledState: (tableState) => ({
+                ...tableState,
+                hiddenColumns: extstate?.hiddenColumns || [],
+                columnOrder: previewColumnOrder || extstate?.columnOrder || [],
+            }),
             stateReducer: (a, b, c) => {
                 switch (b.type) {
                     case 'autoColSize':
@@ -342,6 +460,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         useResizeColumns,
         useFilters,
         useSortBy,
+        useColumnOrder,
         useRowSelect,
         (hooks) => {
             hooks.visibleColumns.push((columns) => [
@@ -388,6 +507,58 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
 
     selectionStateRef.current.rows = rows;
     selectionStateRef.current.selectedRowIds = state.selectedRowIds || {};
+
+    const currentColumnOrder = React.useMemo(
+        () =>
+            state.columnOrder && state.columnOrder.length
+                ? state.columnOrder.concat(tableColumnIds.filter((columnId) => !state.columnOrder.includes(columnId)))
+                : tableColumnIds,
+        [state.columnOrder]
+    );
+
+    const visibleColumnIds = React.useMemo(
+        () => headerGroups[0]?.headers.filter((column) => column.id != 'selection').map((column) => column.id) || [],
+        [headerGroups]
+    );
+
+    const draggedColumn = React.useMemo(
+        () => headerGroups[0]?.headers.find((column) => column.id === draggedColumnId) || null,
+        [draggedColumnId, headerGroups]
+    );
+
+    const buildMovedColumnOrder = React.useCallback(
+        (columnId, targetColumnId) => {
+            if (!visibleColumnIds.includes(columnId) || !visibleColumnIds.includes(targetColumnId)) {
+                return null;
+            }
+            const oldIndex = visibleColumnIds.indexOf(columnId);
+            const newIndex = visibleColumnIds.indexOf(targetColumnId);
+
+            if (oldIndex < 0 || newIndex < 0) {
+                return null;
+            }
+
+            const nextVisibleColumnIds = visibleColumnIds.slice();
+            nextVisibleColumnIds.splice(oldIndex, 1);
+            nextVisibleColumnIds.splice(newIndex, 0, columnId);
+
+            let insertIndex = 0;
+            return currentColumnOrder.map((id) => {
+                if (!visibleColumnIds.includes(id)) {
+                    return id;
+                }
+
+                return nextVisibleColumnIds[insertIndex++];
+            });
+        },
+        [currentColumnOrder, visibleColumnIds]
+    );
+
+    React.useEffect(() => {
+        if (previewColumnOrder && isSameOrder(previewColumnOrder, extstate?.columnOrder || [])) {
+            setPreviewColumnOrder(null);
+        }
+    }, [extstate, previewColumnOrder]);
 
     React.useEffect(() => {
         if (!Object.keys(state.selectedRowIds || {}).length) {
@@ -446,6 +617,43 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         },
         [dispatch, resetSelectionSession]
     );
+
+    const handleColumnDragStart = React.useCallback(({active}) => {
+        setDraggedColumnId(String(active.id));
+    }, []);
+
+    const handleColumnDragOver = React.useCallback(
+        ({active, over}) => {
+            const columnId = active?.id ? String(active.id) : null;
+            const targetColumnId = over?.id ? String(over.id) : null;
+
+            if (!columnId || !targetColumnId || columnId === targetColumnId) {
+                return;
+            }
+
+            const nextColumnOrder = buildMovedColumnOrder(columnId, targetColumnId);
+
+            if (nextColumnOrder && !isSameOrder(previewColumnOrder || currentColumnOrder, nextColumnOrder)) {
+                setPreviewColumnOrder(nextColumnOrder);
+            }
+        },
+        [buildMovedColumnOrder, currentColumnOrder, previewColumnOrder]
+    );
+
+    const handleColumnDragEnd = React.useCallback(() => {
+        if (previewColumnOrder && !isSameOrder(extstate?.columnOrder || [], previewColumnOrder)) {
+            setColumnOrder(previewColumnOrder);
+        } else {
+            setPreviewColumnOrder(null);
+        }
+
+        setDraggedColumnId(null);
+    }, [extstate, previewColumnOrder, setColumnOrder]);
+
+    const handleColumnDragCancel = React.useCallback(() => {
+        setPreviewColumnOrder(null);
+        setDraggedColumnId(null);
+    }, []);
 
     const scroll = React.useCallback((obj) => {
         document.getElementById('header').style.transform = `translateX(${-obj.scrollLeft}px)`;
@@ -564,7 +772,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                             : null
                                         : null,
                                 }}
-                                className={cell.column.id === 'ip' && 'ip-col'}
+                                className={getColumnClassName(cell.column.id)}
                             >
                                 {cell.column.id === 'ip' && (
                                     <>
@@ -700,55 +908,50 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                     )}
                 </Popper>
             </div>
-            <MaUTable {...getTableProps()} component="div" id="datatable">
-                <TableHead component="div" id="header">
-                    {headerGroups.map((headerGroup) => (
-                        <TableRow {...headerGroup.getHeaderGroupProps()} component="div">
-                            {headerGroup.headers.map((column) => (
-                                <TableCell {...column.getHeaderProps()} component="div">
-                                    <div {...column.getSortByToggleProps()} className="header-wrapper">
-                                        <div className={column.id != 'selection' ? 'col-header' : ''}>
-                                            {column.render('Header')}
-                                        </div>
-                                        {column.isSorted ? (
-                                            column.isSortedDesc ? (
-                                                <ArrowDownwardIcon fontSize="small" />
-                                            ) : (
-                                                <ArrowUpwardIcon fontSize="small" />
-                                            )
-                                        ) : (
-                                            ''
-                                        )}
-                                    </div>
-                                    {column.canFilter ? column.render('Filter') : null}
-                                    <div
-                                        {...(column.canResize ? column.getResizerProps() : [])}
-                                        className={`resizer${column.isResizing ? ' isResizing' : ''}`}
-                                        title="Drag to resize or double-click to autosize"
-                                        data-value={JSON.stringify({id: column.id, header: column.Header})}
-                                        onDoubleClick={resizeCol}
+            <DndContext
+                sensors={sensors}
+                modifiers={[restrictToHorizontalAxis]}
+                collisionDetection={closestCenter}
+                onDragStart={handleColumnDragStart}
+                onDragOver={handleColumnDragOver}
+                onDragEnd={handleColumnDragEnd}
+                onDragCancel={handleColumnDragCancel}
+            >
+                <MaUTable {...getTableProps()} component="div" id="datatable">
+                    <TableHead component="div" id="header">
+                        {headerGroups.map((headerGroup) => (
+                            <TableRow {...headerGroup.getHeaderGroupProps()} component="div">
+                                {headerGroup.headers.map((column) => (
+                                    <ColumnHeaderCell
+                                        key={column.id}
+                                        column={column}
+                                        draggedColumnId={draggedColumnId}
+                                        resizeCol={resizeCol}
                                     />
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableHead>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableHead>
 
-                <TableBody {...getTableBodyProps()} component="div">
-                    <FixedSizeGrid
-                        height={380}
-                        rowHeight={32}
-                        rowCount={rows.length}
-                        columnCount={1}
-                        columnWidth={totalColumnsWidth + 8}
-                        width={document.getElementById('width').offsetWidth - (drawer ? 216 : 59)}
-                        onScroll={scroll}
-                        className="grid"
-                    >
-                        {RenderRow}
-                    </FixedSizeGrid>
-                </TableBody>
-            </MaUTable>
+                    <TableBody {...getTableBodyProps()} component="div">
+                        <FixedSizeGrid
+                            height={380}
+                            rowHeight={32}
+                            rowCount={rows.length}
+                            columnCount={1}
+                            columnWidth={totalColumnsWidth + 8}
+                            width={document.getElementById('width').offsetWidth - (drawer ? 216 : 59)}
+                            onScroll={scroll}
+                            className="grid"
+                        >
+                            {RenderRow}
+                        </FixedSizeGrid>
+                    </TableBody>
+                </MaUTable>
+                <DragOverlay>
+                    <ColumnDragPreview column={draggedColumn} />
+                </DragOverlay>
+            </DndContext>
             <TableFooter component="div">
                 {selectedFlatRows.length > 0 && (
                     <span>

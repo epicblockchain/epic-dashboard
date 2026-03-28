@@ -111,6 +111,8 @@
         "url-loader": "^4.1.1"
     },
     "dependencies": {
+        "@dnd-kit/core": "^6.3.1",
+        "@dnd-kit/modifiers": "^9.0.0",
         "@emotion/react": "^11.10.4",
         "@emotion/styled": "^11.10.4",
         "@mui/icons-material": "^5.10.9",

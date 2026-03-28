@@ -8,7 +8,7 @@ const {createLogger, transports} = require('winston');
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Dashboard} from './dashboard.jsx';
-import {DataTable} from './table.jsx';
+import {DataTable, DEFAULT_HIDDEN_COLUMNS, normalizeTablePreferences} from './table.jsx';
 import {Preferences} from './preferences.jsx';
 import {Support} from './support.jsx';
 import {Eula} from './eula.jsx';
@@ -340,30 +340,8 @@ class App extends React.Component {
             scanRange: '24',
             scanTimeout: '500',
             defaultTable: {
-                status: true,
-                ip: true,
-                name: true,
-                firmware: true,
-                model: false,
-                mode: true,
-                pool: true,
-                user: true,
-                start: false,
-                uptime: true,
-                hbs: true,
-                hbperformance: true,
-                hashrate15min: true,
-                hashrate1hr: false,
-                hashrate6hr: false,
-                hashrate24hr: false,
-                efficiency1hr: false,
-                accepted: false,
-                rejected: false,
-                difficulty: false,
-                temperature: true,
-                power: false,
-                fanspeed: false,
-                voltage: false,
+                hiddenColumns: Array.from(DEFAULT_HIDDEN_COLUMNS),
+                __columnOrder: [],
             },
         };
 
@@ -607,7 +585,7 @@ class App extends React.Component {
 
         fs.readFile(path.join(app_path, 'default.json'), (err, data) => {
             if (!err) {
-                this.setState({defaultTable: JSON.parse(data)});
+                this.setState({defaultTable: normalizeTablePreferences(JSON.parse(data))});
             }
         });
     }
@@ -725,12 +703,12 @@ class App extends React.Component {
     }
 
     saveDefault(json) {
-        for (let key of Object.keys(json)) {
-            if (json[key] !== this.state[key]) this.setState({[key]: json[key]});
-        }
+        const defaultTable = normalizeTablePreferences(json);
+
+        this.setState({defaultTable});
 
         fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
-        fs.writeFile(path.join(app_path, 'default.json'), JSON.stringify(json), function (err) {
+        fs.writeFile(path.join(app_path, 'default.json'), JSON.stringify(defaultTable), function (err) {
             if (err) {
                 console.log(err);
                 throw err;

@@ -16,9 +16,9 @@ import {PerpetualtuneTab} from './tabs/PerpetualtuneTab.jsx';
 import {LicenseTab} from './tabs/LicenseTab.jsx';
 import './table.css';
 
-import Table from './customTable.jsx';
+import Table, {tableColumnIds} from './customTable.jsx';
 
-let defaultHidden = [
+export const DEFAULT_HIDDEN_COLUMNS = [
     'model',
     'start',
     'hashrate1hr',
@@ -34,6 +34,62 @@ let defaultHidden = [
     'mac',
     'fansrpm',
 ];
+
+const DEFAULT_HIDDEN_COLUMN_SET = new Set(DEFAULT_HIDDEN_COLUMNS);
+const AVAILABLE_COLUMNS = new Set(tableColumnIds);
+
+function getColumnOrder(tablePreferences = {}) {
+    const seenColumns = new Set();
+    const columnOrder = Array.isArray(tablePreferences.__columnOrder)
+        ? tablePreferences.__columnOrder
+        : tablePreferences.columnOrder;
+
+    if (!Array.isArray(columnOrder)) {
+        return [];
+    }
+
+    return columnOrder.filter((columnId) => {
+        if (!AVAILABLE_COLUMNS.has(columnId) || seenColumns.has(columnId)) {
+            return false;
+        }
+
+        seenColumns.add(columnId);
+        return true;
+    });
+}
+
+function getHiddenColumns(tablePreferences = {}) {
+    if (Array.isArray(tablePreferences.hiddenColumns)) {
+        return tablePreferences.hiddenColumns.filter((columnId) => AVAILABLE_COLUMNS.has(columnId));
+    }
+
+    return tableColumnIds.filter(
+        (columnId) =>
+            tablePreferences[columnId] === false ||
+            (tablePreferences[columnId] !== true && DEFAULT_HIDDEN_COLUMN_SET.has(columnId))
+    );
+}
+
+function getSharedTableState(tablePreferences = {}) {
+    return {
+        hiddenColumns: getHiddenColumns(tablePreferences),
+        columnOrder: getColumnOrder(tablePreferences),
+    };
+}
+
+export function normalizeTablePreferences(tablePreferences = {}) {
+    return {
+        hiddenColumns: getHiddenColumns(tablePreferences),
+        __columnOrder: getColumnOrder(tablePreferences),
+    };
+}
+
+function getPersistedTable(tableState = {}) {
+    return normalizeTablePreferences({
+        hiddenColumns: tableState.hiddenColumns,
+        __columnOrder: tableState.columnOrder,
+    });
+}
 
 function debounce1(func, timeout = 300) {
     let timer;
@@ -63,45 +119,10 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             this.props.models.forEach((key) => {
                 newState[key + '_sel'] = [];
-                newState[key + '_state'] = {hiddenColumns: Array.from(defaultHidden)};
+                newState[key + '_state'] = {};
             });
 
             this.setState(newState);
-        }
-    }
-
-    setDefault(data) {
-        defaultHidden = [];
-        for (let key of Object.keys(data)) {
-            if (!data[key]) {
-                defaultHidden.push(key);
-            }
-        }
-    }
-
-    toggleColumn(data, columnId) {
-        if (data[columnId]) {
-            data[columnId] = false;
-        } else {
-            data[columnId] = true;
-        }
-    }
-
-    toggleColumnAll(data) {
-        let allTrue = true;
-        for (let key of Object.keys(data)) {
-            if (!data[key]) {
-                allTrue = false;
-            }
-        }
-        if (allTrue) {
-            for (let key of Object.keys(data)) {
-                data[key] = false;
-            }
-        } else {
-            for (let key of Object.keys(data)) {
-                data[key] = true;
-            }
         }
     }
 
@@ -120,7 +141,7 @@ export class DataTable extends React.Component {
             var newState = {models: this.props.models};
             newModels.forEach((key) => {
                 newState[key + '_sel'] = [];
-                newState[key + '_state'] = {hiddenColumns: defaultHidden};
+                newState[key + '_state'] = {};
             });
 
             this.setState(newState);
@@ -136,12 +157,6 @@ export class DataTable extends React.Component {
         if (this.props.data.length < prevProps.data.length) this.selectReset();
 
         if (this.state.reset) this.setState({reset: false});
-
-        if (this.props.defaultTable != prevProps.defaultTable) {
-            console.log('update');
-            console.log(this.props.defaultTable, prevProps.defaultTable);
-            this.setDefault(this.props.defaultTable);
-        }
     }
 
     hashrate_x_hr(row, x, noFormat) {
@@ -488,32 +503,31 @@ export class DataTable extends React.Component {
     }
 
     update(newState, action, prevState, data, model) {
-        if (action.type == 'toggleHideColumn' || action.type == 'toggleHideAllColumns') {
-            if (action.type == 'toggleHideAllColumns') {
-                this.toggleColumnAll(this.props.defaultTable);
-            } else if (action.type == 'toggleHideColumn') {
-                this.toggleColumn(this.props.defaultTable, action.columnId);
-            }
-            this.setDefault(this.props.defaultTable);
-            this.props.saveDefault(this.props.defaultTable);
+        const {hiddenColumns, columnOrder, ...nextModelState} = newState;
 
-            var temp = {};
-            this.props.models.forEach((mod) => {
-                temp[mod + '_state'] = Object.assign({}, this.state[mod + '_state']);
-                temp[mod + '_state'].hiddenColumns = newState.hiddenColumns;
-            });
-
-            this.setState(temp);
-        } else if (
-            action.type == 'toggleRowSelected' ||
-            action.type == 'toggleAllRowsSelected' ||
-            action.type == 'toggleRowRangeSelected'
+        if (
+            action.type == 'toggleHideColumn' ||
+            action.type == 'toggleHideAllColumns' ||
+            action.type == 'setColumnOrder'
         ) {
+            this.props.saveDefault(getPersistedTable(newState));
+            this.setState({[model + '_state']: nextModelState});
+        } else if (action.type == 'toggleRowSelected') {
+            var temp = Array.from(this.state[model + '_sel']);
+
+            if (action.value) {
+                temp.push(data[action.id].id);
+            } else {
+                temp.splice(temp.indexOf(data[action.id].id), 1);
+            }
+
+            this.setState({[model + '_sel']: temp, [model + '_state']: nextModelState});
+        } else if (action.type == 'toggleAllRowsSelected' || action.type == 'toggleRowRangeSelected') {
             var sel = this.getOrderedSelectedMiners(model, newState.selectedRowIds, data);
 
-            this.setState({[model + '_sel']: sel, [model + '_state']: newState});
+            this.setState({[model + '_sel']: sel, [model + '_state']: nextModelState});
         } else {
-            this.setState({[model + '_state']: newState});
+            this.setState({[model + '_state']: nextModelState});
         }
     }
 
@@ -637,7 +651,10 @@ export class DataTable extends React.Component {
                             >
                                 <Table
                                     dataRaw={miners[model] || []}
-                                    extstate={this.state[model + '_state'] || {hiddenColumns: defaultHidden}}
+                                    extstate={{
+                                        ...this.state[model + '_state'],
+                                        ...getSharedTableState(this.props.defaultTable),
+                                    }}
                                     update={this.update}
                                     extmodel={model}
                                     reset={this.state.reset}
