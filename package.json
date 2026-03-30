@@ -24,7 +24,7 @@
     "license": "GPLv3",
     "engines": {
         "npm": ">=8.0.0",
-        "node": ">=16.0.0"
+        "node": ">=22.0.0"
     },
     "config": {
         "forge": {
@@ -59,12 +59,13 @@
                 }
             ],
             "plugins": [
-                [
-                    "@electron-forge/plugin-webpack",
-                    {
+                {
+                    "name": "@electron-forge/plugin-webpack",
+                    "config": {
                         "mainConfig": "./webpack.main.config.js",
                         "renderer": {
                             "config": "./webpack.renderer.config.js",
+                            "nodeIntegration": true,
                             "entryPoints": [
                                 {
                                     "html": "./src/index.html",
@@ -74,7 +75,7 @@
                             ]
                         }
                     }
-                ]
+                }
             ]
         }
     },
@@ -83,13 +84,13 @@
         "@babel/core": "^7.14.0",
         "@babel/preset-env": "^7.14.4",
         "@babel/preset-react": "^7.13.13",
-        "@electron-forge/cli": "^6.0.0-beta.61",
-        "@electron-forge/maker-deb": "^6.0.0-beta.54",
-        "@electron-forge/maker-rpm": "^6.0.0-beta.54",
-        "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
-        "@electron-forge/maker-zip": "^6.0.0-beta.54",
-        "@electron-forge/plugin-webpack": "^6.0.0-beta.54",
-        "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+        "@electron-forge/cli": "^7.11.1",
+        "@electron-forge/maker-deb": "^7.11.1",
+        "@electron-forge/maker-rpm": "^7.11.1",
+        "@electron-forge/maker-squirrel": "^7.11.1",
+        "@electron-forge/maker-zip": "^7.11.1",
+        "@electron-forge/plugin-webpack": "^7.11.1",
+        "@vercel/webpack-asset-relocator-loader": "^1.10.0",
         "babel-loader": "^8.2.2",
         "css-loader": "^4.3.0",
         "electron": "^22.0.2",

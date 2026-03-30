@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const rules = require('./webpack.rules');
 
 rules.push({
@@ -10,4 +11,9 @@ module.exports = {
     module: {
         rules,
     },
+    plugins: [
+        new webpack.ProvidePlugin({
+            regeneratorRuntime: 'regenerator-runtime/runtime',
+        }),
+    ],
 };
