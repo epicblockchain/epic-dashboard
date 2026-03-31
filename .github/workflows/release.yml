@@ -200,7 +200,7 @@ jobs:
                   token: ${{ github.token }}
                   tag_name: ${{ needs.prepare.outputs.release_tag }}
                   name: ${{ needs.prepare.outputs.release_tag }}
-                  body_path: changelog.md
+                  generate_release_notes: true
                   draft: true
 
     publish-release:
