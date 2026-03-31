@@ -1,0 +1,200 @@
+name: Public Release
+
+on:
+    push:
+        tags:
+            - '[0-9]*.[0-9]*.[0-9]*'
+
+permissions:
+    contents: write
+    packages: read
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    prepare:
+        name: Prepare Release Metadata
+        runs-on: ubuntu-24.04
+        outputs:
+            version: ${{ steps.meta.outputs.version }}
+            release_tag: ${{ steps.meta.outputs.release_tag }}
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Derive release metadata
+              id: meta
+              run: |
+                  set -euo pipefail
+                  TAG_NAME="${{ github.ref_name }}"
+                  VERSION="${TAG_NAME#v}"
+
+                  [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+                    echo "Unsupported tag format: $TAG_NAME" >&2
+                    exit 1
+                  }
+
+                  echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+                  echo "release_tag=$TAG_NAME" >> "$GITHUB_OUTPUT"
+
+    build:
+        name: ${{ matrix.job_name }}
+        needs: [prepare, create-release]
+        runs-on: ubuntu-24.04
+        container:
+            image: node:22-bullseye
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - job_name: Build Debian x64
+                      make_target: deb64
+                      apt_packages: fakeroot
+                      rename_commands: |
+                          mv out/make/deb/x64/*.deb "./epic-dashboard-${VERSION}-x64.deb"
+                      upload_files: ./epic-dashboard-*-x64.deb
+                    - job_name: Build Debian armhf
+                      make_target: debarmhf
+                      apt_packages: fakeroot
+                      rename_commands: |
+                          mv out/make/deb/armv7l/*.deb "./epic-dashboard-${VERSION}-armhf.deb"
+                      upload_files: ./epic-dashboard-*-armhf.deb
+                    - job_name: Build Debian arm64
+                      make_target: debarm64
+                      apt_packages: fakeroot
+                      rename_commands: |
+                          mv out/make/deb/arm64/*.deb "./epic-dashboard-${VERSION}-arm64.deb"
+                      upload_files: ./epic-dashboard-*-arm64.deb
+                    - job_name: Build macOS zips
+                      make_target: mac
+                      apt_packages: zip
+                      rename_commands: |
+                          mv out/make/zip/darwin/x64/*.zip "./epic-dashboard-mac-${VERSION}-x64.zip"
+                          mv out/make/zip/darwin/arm64/*.zip "./epic-dashboard-mac-${VERSION}-ARM64.zip"
+                      upload_files: |
+                          ./epic-dashboard-mac-*-x64.zip
+                          ./epic-dashboard-mac-*-ARM64.zip
+                    - job_name: Build RPM x64
+                      make_target: rpm64
+                      apt_packages: rpm
+                      build_setup: |
+                          sed -i 's#usr/\* %{buildroot}/usr/#%{_topdir}/BUILD/usr/. %{buildroot}/usr/#' \
+                            node_modules/electron-installer-redhat/resources/spec.ejs
+                      rename_commands: |
+                          mv out/make/rpm/x64/*.rpm "./epic-dashboard-${VERSION}-x64.rpm"
+                      upload_files: ./epic-dashboard-*-x64.rpm
+                    - job_name: Build Windows x64
+                      make_target: win64
+                      needs_i386: true
+                      apt_packages: debianutils mono-devel wine wine32 wine64
+                      build_setup: |
+                          mkdir -p .github-home/.local/share .github-home/.wine
+                          export HOME="$PWD/.github-home"
+                          export XDG_DATA_HOME="$PWD/.github-home/.local/share"
+                          export WINEPREFIX="$PWD/.github-home/.wine"
+                      rename_commands: |
+                          mv out/make/squirrel.windows/x64/*.exe "./epic-dashboard-${VERSION}-Setup-x64.exe"
+                      upload_files: ./epic-dashboard-*-Setup-x64.exe
+                    - job_name: Build Windows ia32
+                      make_target: win32
+                      needs_i386: true
+                      apt_packages: debianutils mono-devel wine wine32 wine64
+                      build_setup: |
+                          mkdir -p .github-home/.local/share .github-home/.wine
+                          export HOME="$PWD/.github-home"
+                          export XDG_DATA_HOME="$PWD/.github-home/.local/share"
+                          export WINEPREFIX="$PWD/.github-home/.wine"
+                      rename_commands: |
+                          mv out/make/squirrel.windows/ia32/*.exe "./epic-dashboard-${VERSION}-Setup-ia32.exe"
+                      upload_files: ./epic-dashboard-*-Setup-ia32.exe
+        env:
+            VERSION: ${{ needs.prepare.outputs.version }}
+            RELEASE_TAG: ${{ needs.prepare.outputs.release_tag }}
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Install build dependencies
+              env:
+                  APT_PACKAGES: ${{ matrix.apt_packages }}
+                  NEEDS_I386: ${{ matrix.needs_i386 }}
+              run: |
+                  set -euo pipefail
+                  if [[ "${NEEDS_I386:-}" == "true" ]]; then
+                    dpkg --add-architecture i386
+                  fi
+
+                  if [[ -n "${APT_PACKAGES:-}" ]]; then
+                    apt-get update
+                    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+                      ${APT_PACKAGES}
+                  fi
+
+            - name: Install App Dependencies
+              run: npm ci
+
+            - name: Build App
+              env:
+                  BUILD_SETUP: ${{ matrix.build_setup }}
+                  MAKE_TARGET: ${{ matrix.make_target }}
+              run: |
+                  set -euo pipefail
+                  if [[ -n "${BUILD_SETUP:-}" ]]; then
+                    eval "$BUILD_SETUP"
+                  fi
+                  make "$MAKE_TARGET"
+
+            - name: Rename artifacts
+              env:
+                  RENAME_COMMANDS: ${{ matrix.rename_commands }}
+              run: |
+                  set -euo pipefail
+                  bash -eo pipefail -c "$RENAME_COMMANDS"
+
+            - name: Upload release assets
+              uses: softprops/action-gh-release@v2
+              with:
+                  repository: epicblockchain/epic-dashboard
+                  token: ${{ github.token }}
+                  tag_name: ${{ needs.prepare.outputs.release_tag }}
+                  files: ${{ matrix.upload_files }}
+                  fail_on_unmatched_files: true
+
+    create-release:
+        name: Ensure GitHub Release Exists
+        needs: prepare
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Create or update GitHub release
+              uses: softprops/action-gh-release@v2
+              with:
+                  repository: epicblockchain/epic-dashboard
+                  token: ${{ github.token }}
+                  tag_name: ${{ needs.prepare.outputs.release_tag }}
+                  name: ${{ needs.prepare.outputs.release_tag }}
+                  body_path: changelog.md
+                  draft: true
+
+    publish-release:
+        name: Publish GitHub Release
+        needs: [prepare, build]
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Publish draft release
+              uses: softprops/action-gh-release@v2
+              with:
+                  repository: epicblockchain/epic-dashboard
+                  token: ${{ github.token }}
+                  tag_name: ${{ needs.prepare.outputs.release_tag }}
+                  draft: false
