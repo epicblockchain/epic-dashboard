@@ -1,0 +1,149 @@
+name: Version Bump
+
+on:
+    workflow_dispatch:
+        inputs:
+            bump:
+                type: choice
+                required: false
+                options: [patch, minor, major]
+                default: patch
+            release_plan:
+                type: string
+                required: false
+
+permissions:
+    contents: write
+
+concurrency:
+    group: ${{ github.workflow }}
+
+env:
+    CARGO_TERM_COLOR: always
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    prepare-bump-ver:
+        runs-on: ubuntu-24.04
+        container:
+            image: node:22-bullseye
+        steps:
+            - name: Checkout main
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+                  ref: main
+
+            - name: Mark workspace as safe for git
+              run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+            - name: Create/reset bump-ver from main and push
+              run: |
+                  set -euo pipefail
+                  git fetch origin main
+                  git checkout -B bump-ver origin/main
+                  git push -u origin bump-ver --force
+
+    bump-ver:
+        needs: prepare-bump-ver
+        runs-on: ubuntu-24.04
+        container:
+            image: node:22-bullseye
+        outputs:
+            release_tag: ${{ steps.release_metadata.outputs.release_tag }}
+        steps:
+            - name: Checkout bump-ver
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+                  ref: bump-ver
+
+            - name: Mark workspace as safe for git
+              run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+            - name: Configure git identity
+              run: |
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+            - name: Install deps
+              run: npm ci
+
+            - name: Resolve bump type
+              id: resolve_bump
+              env:
+                  INPUT_BUMP: ${{ inputs.bump }}
+                  RELEASE_PLAN: ${{ inputs.release_plan }}
+              run: |
+                  set -euo pipefail
+                  if [[ -n "$RELEASE_PLAN" ]]; then
+                    TS_BUMP="$(node -e 'const plan = JSON.parse(process.env.RELEASE_PLAN); console.log(plan.bump || "")')"
+                  else
+                    TS_BUMP="$INPUT_BUMP"
+                  fi
+
+                  case "$TS_BUMP" in
+                    patch|minor|major) ;;
+                    *)
+                      echo "Unsupported bump: $TS_BUMP" >&2
+                      exit 1
+                      ;;
+                  esac
+
+                  echo "bump=$TS_BUMP" >> "$GITHUB_OUTPUT"
+
+            - name: Run release-it (bump only, non-interactive)
+              env:
+                  HUSKY: '0'
+              run: npm run release -- --increment "${{ steps.resolve_bump.outputs.bump }}"
+
+            - name: Capture release tag
+              id: release_metadata
+              run: |
+                  set -euo pipefail
+                  RELEASE_TAG="$(git tag --points-at HEAD | head -n 1)"
+
+                  [[ -n "$RELEASE_TAG" ]] || {
+                    echo "No release tag found at HEAD" >&2
+                    exit 1
+                  }
+
+                  echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
+    merge-bump-ver:
+        needs: bump-ver
+        runs-on: ubuntu-24.04
+        container:
+            image: node:22-bullseye
+        steps:
+            - name: Checkout main
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+                  ref: main
+
+            - name: Mark workspace as safe for git
+              run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+            - name: Merge Fast Forward
+              uses: MaximeHeckel/github-action-merge-fast-forward@v1.1.1
+              with:
+                  branchtomerge: origin/bump-ver
+                  branch: main
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+
+            - name: Remove branch
+              run: git push --delete origin bump-ver
+
+            - name: Dispatch release workflow
+              uses: peter-evans/repository-dispatch@v4
+              with:
+                  event-type: publish-release
+                  client-payload: |-
+                      {
+                        "release_tag": "${{ needs.bump-ver.outputs.release_tag }}"
+                      }
