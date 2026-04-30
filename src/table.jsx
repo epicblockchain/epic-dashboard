@@ -640,7 +640,7 @@ export class DataTable extends React.Component {
                     })}
                 </Tabs>
                 <canvas id="canvas" hidden></canvas>
-                <div style={{width: '100%', height: 500}}>
+                <div className="table-region">
                     {this.state.models.map((model, i) => {
                         return this.state.list == i ? (
                             <Paper

@@ -33,8 +33,21 @@ div.MuiFormControl-root {
 .tab-body {
     padding: 12px 0;
     position: relative;
-    height: calc(100vh - 620px);
+    height: calc(100vh - 540px);
     max-height: 280px;
+}
+
+.table-region {
+    width: 100%;
+}
+
+.password-apply-inline {
+    position: static !important;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 div.password-apply {
@@ -115,4 +128,18 @@ div.system-apply {
 
 #control-tab button.but-group.stop:hover {
     background-color: #b71c1c;
+}
+
+@media (max-height: 760px) {
+    .tab-body {
+        height: auto;
+        min-height: 120px;
+        max-height: none;
+    }
+
+    div.password-apply,
+    div.system-apply {
+        position: static;
+        margin-top: 12px;
+    }
 }

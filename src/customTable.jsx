@@ -505,6 +505,10 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         }
     );
 
+    const tablePreferredHeight = Math.round(window.innerHeight * 0.52);
+    const tableMaxViewportHeight = Math.max(180, window.innerHeight - 360);
+    const tableViewportHeight = Math.max(180, Math.min(tablePreferredHeight, tableMaxViewportHeight));
+
     selectionStateRef.current.rows = rows;
     selectionStateRef.current.selectedRowIds = state.selectedRowIds || {};
 
@@ -935,7 +939,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
 
                     <TableBody {...getTableBodyProps()} component="div">
                         <FixedSizeGrid
-                            height={380}
+                            height={tableViewportHeight}
                             rowHeight={32}
                             rowCount={rows.length}
                             columnCount={1}
