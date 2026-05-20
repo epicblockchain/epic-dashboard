@@ -24,6 +24,7 @@ export class PerpetualtuneTab extends React.Component {
         super(props);
         this.state = {
             checked: false,
+            errorthrottle: true,
             algo: '',
             name: '',
             desc: '',
@@ -35,6 +36,7 @@ export class PerpetualtuneTab extends React.Component {
             password: this.props.sessionPass,
         };
         this.updateCheck = this.updateCheck.bind(this);
+        this.updateErrorThrottle = this.updateErrorThrottle.bind(this);
         this.updateAlgorithm = this.updateAlgorithm.bind(this);
         this.handleSlider = this.handleSlider.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -54,6 +56,10 @@ export class PerpetualtuneTab extends React.Component {
 
     updateCheck(e) {
         this.setState({checked: e.target.checked});
+    }
+
+    updateErrorThrottle(e) {
+        this.setState({errorthrottle: e.target.checked});
     }
 
     updateAlgorithm(e) {
@@ -212,6 +218,16 @@ export class PerpetualtuneTab extends React.Component {
                                 />
                             ))}
                         </RadioGroup>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={this.state.errorthrottle}
+                                    onChange={this.updateErrorThrottle}
+                                    disabled={!this.state.checked}
+                                />
+                            }
+                            label="Error Throttle"
+                        />
                     </FormControl>
 
                     <Divider orientation="vertical" sx={{pt: 25}} style={{margin: '0 25px'}} />
@@ -320,6 +336,11 @@ export class PerpetualtuneTab extends React.Component {
                                 this.props.handleApi('/perpetualtune', this.state, this.props.selected);
                                 if (this.state.checked) {
                                     this.props.handleApi('/perpetualtune/algo', this.state, this.props.selected);
+                                    this.props.handleApi(
+                                        '/perpetualtune/errorthrottle',
+                                        this.state,
+                                        this.props.selected
+                                    );
                                 }
                             }
                         }}
@@ -330,6 +351,7 @@ export class PerpetualtuneTab extends React.Component {
                             this.props.handleApi('/perpetualtune', this.state, this.props.selected);
                             if (this.state.checked) {
                                 this.props.handleApi('/perpetualtune/algo', this.state, this.props.selected);
+                                this.props.handleApi('/perpetualtune/errorthrottle', this.state, this.props.selected);
                             }
                         }}
                         variant="contained"

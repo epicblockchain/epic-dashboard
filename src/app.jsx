@@ -864,6 +864,10 @@ class App extends React.Component {
                 obj = {param: data.checked, password: data.password};
                 success = `Perpetual tune enable: ${data.checked}`;
                 break;
+            case '/perpetualtune/errorthrottle':
+                obj = {param: data.errorthrottle, password: data.password};
+                success = `Perpetual tune error throttle: ${data.errorthrottle}`;
+                break;
             case '/perpetualtune/algo':
                 obj = {
                     param: {
@@ -1021,7 +1025,18 @@ class App extends React.Component {
                         }
                         return true;
                     } else {
-                        notify('error', `${miners[i].address}: ${body.error}`);
+                        const apiError = String(body.error || 'Unknown API error');
+                        const isOldFwErrorThrottleUnsupported =
+                            api === '/perpetualtune/errorthrottle' && apiError.toLowerCase().includes('invalid url');
+
+                        if (isOldFwErrorThrottleUnsupported) {
+                            notify(
+                                'warning',
+                                `${miners[i].address}: ${apiError} (this feature may require newer firmware)`
+                            );
+                        } else {
+                            notify('error', `${miners[i].address}: ${apiError}`);
+                        }
                         return false;
                     }
                 } catch (err) {
