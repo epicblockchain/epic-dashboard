@@ -338,6 +338,16 @@ export class PerpetualtuneTab extends React.Component {
                     >
                         Apply
                     </Button>
+                    <Button
+                        onClick={() => {
+                            this.props.handleApi('/perpetualtune/reset', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="error"
+                        disabled={disabled}
+                    >
+                        Reset Perpetual Tune
+                    </Button>
                 </div>
             </div>
         );
