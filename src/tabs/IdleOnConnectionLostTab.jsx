@@ -48,7 +48,7 @@ export class IdleOnConnectionLostTab extends React.Component {
                         </Typography>
                     </Grid>
                 </Grid>
-                <div className="password-apply password-apply-inline">
+                <div className="password-apply">
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
