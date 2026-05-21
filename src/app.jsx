@@ -877,7 +877,7 @@ class App extends React.Component {
                 success = `Perpetual tune algorithm changed to ${data.algo} with target ${data.num}`;
                 break;
             case '/perpetualtune/reset':
-                obj = {param: null, password: data.password};
+                obj = {param: data.algo, password: data.password};
                 success = 'Perpetual tune reset sent successfully';
                 break;
             case '/criticaltemp':

@@ -344,7 +344,7 @@ export class PerpetualtuneTab extends React.Component {
                         }}
                         variant="contained"
                         color="error"
-                        disabled={disabled}
+                        disabled={disabled || !this.state.algo}
                     >
                         Reset Perpetual Tune
                     </Button>
