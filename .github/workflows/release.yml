@@ -102,6 +102,7 @@ jobs:
                     - job_name: Build Windows x64
                       make_target: win64
                       needs_i386: true
+                      needs_wine: true
                       apt_packages: debianutils mono-devel wine wine32 wine64
                       build_setup: |
                           mkdir -p .github-home/.local/share .github-home/.wine
@@ -114,6 +115,7 @@ jobs:
                     - job_name: Build Windows ia32
                       make_target: win32
                       needs_i386: true
+                      needs_wine: true
                       apt_packages: debianutils mono-devel wine wine32 wine64
                       build_setup: |
                           mkdir -p .github-home/.local/share .github-home/.wine
@@ -140,6 +142,7 @@ jobs:
               env:
                   APT_PACKAGES: ${{ matrix.apt_packages }}
                   NEEDS_I386: ${{ matrix.needs_i386 }}
+                  NEEDS_WINE: ${{ matrix.needs_wine }}
               run: |
                   set -euo pipefail
                   if [[ "${NEEDS_I386:-}" == "true" ]]; then
@@ -150,6 +153,14 @@ jobs:
                     apt-get update
                     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
                       ${APT_PACKAGES}
+                  fi
+
+                  if [[ "${NEEDS_WINE:-}" == "true" ]]; then
+                    if ! command -v wine64 >/dev/null 2>&1; then
+                      ln -s "$(command -v wine)" /usr/local/bin/wine64
+                    fi
+                    command -v mono
+                    command -v wine64
                   fi
 
             - name: Install App Dependencies
