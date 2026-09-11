@@ -29,7 +29,7 @@ jobs:
     prepare-bump-ver:
         runs-on: ubuntu-24.04
         container:
-            image: node:22-bookworm
+            image: node:22-trixie
         steps:
             - name: Checkout main
               uses: actions/checkout@v6
@@ -51,7 +51,7 @@ jobs:
         needs: prepare-bump-ver
         runs-on: ubuntu-24.04
         container:
-            image: node:22-bookworm
+            image: node:22-trixie
         outputs:
             release_tag: ${{ steps.release_metadata.outputs.release_tag }}
         steps:
@@ -117,7 +117,7 @@ jobs:
         needs: bump-ver
         runs-on: ubuntu-24.04
         container:
-            image: node:22-bookworm
+            image: node:22-trixie
         steps:
             - name: Checkout main
               uses: actions/checkout@v6

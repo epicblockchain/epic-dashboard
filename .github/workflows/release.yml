@@ -58,7 +58,7 @@ jobs:
         needs: [prepare, create-release]
         runs-on: ubuntu-24.04
         container:
-            image: node:22-bookworm
+            image: node:22-trixie
         strategy:
             fail-fast: false
             matrix:
