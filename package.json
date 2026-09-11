@@ -125,5 +125,13 @@
         "react-window": "^1.8.6",
         "regenerator-runtime": "^0.13.7",
         "winston": "^3.3.3"
+    },
+    "overrides": {
+        "async": {
+            "async": "3.2.2"
+        },
+        "winston": {
+            "async": "3.2.2"
+        }
     }
 }
