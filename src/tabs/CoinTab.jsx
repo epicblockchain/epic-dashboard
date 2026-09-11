@@ -364,7 +364,6 @@ export class CoinTab extends React.Component {
             this.state.coin === 'Select Coin' ||
             !this.state.stratum_configs[0].pool ||
             !this.state.stratum_configs[0].address ||
-            !this.state.stratum_configs[0].worker ||
             !this.state.password ||
             !this.props.selected.length;
 
@@ -373,10 +372,7 @@ export class CoinTab extends React.Component {
             !this.props.selected.length ||
             this.state.hashrate_splits.some(
                 (split) =>
-                    split.coin === 'Select Coin' ||
-                    !split.stratum_configs[0].pool ||
-                    !split.stratum_configs[0].address ||
-                    !split.stratum_configs[0].worker
+                    split.coin === 'Select Coin' || !split.stratum_configs[0].pool || !split.stratum_configs[0].address
             );
 
         return (
