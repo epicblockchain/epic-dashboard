@@ -8,6 +8,8 @@ Download the appropriate zip/installer file for the OS you would like to run the
 
 Supported release targets are Windows x64 (Windows 10 or later), Linux x64/ARM64, and macOS x64/ARM64 (macOS 13 or later). Windows ia32 and Linux armv7l packages are no longer built.
 
+macOS releases are ad-hoc signed without an Apple Developer account. See [macOS releases](docs/macos.md) for architecture selection and download approval.
+
 ## Getting started from source
 
 Clone this repo
@@ -46,14 +48,22 @@ npm i
 
 ### Building
 
-To build all executables run
+On a Linux build host, build the Linux packages and Windows installer with:
 
 ```
-make all
-# see the makefile if you want to install for only one target+architecture
+make deb64
+make debarm64
+make rpm64
+make win64
 ```
 
-To build only a specific executable open the makefile and run the appropriate command ensureing --platform and --arch match your desired platform and architecture to build for.
+Build both signed macOS ZIPs on a Mac:
+
+```
+make mac
+```
+
+macOS signing requires a Mac build host; `make all` cannot build signed macOS releases on Linux. To build a specific target, use the corresponding Makefile target.
 
 # Usage
 

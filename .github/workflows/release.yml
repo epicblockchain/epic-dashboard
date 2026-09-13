@@ -75,15 +75,6 @@ jobs:
                       rename_commands: |
                           mv out/make/deb/arm64/*.deb "./epic-dashboard-${VERSION}-arm64.deb"
                       upload_files: ./epic-dashboard-*-arm64.deb
-                    - job_name: Build macOS zips
-                      make_target: mac
-                      apt_packages: zip
-                      rename_commands: |
-                          mv out/make/zip/darwin/x64/*.zip "./epic-dashboard-mac-${VERSION}-x64.zip"
-                          mv out/make/zip/darwin/arm64/*.zip "./epic-dashboard-mac-${VERSION}-ARM64.zip"
-                      upload_files: |
-                          ./epic-dashboard-mac-*-x64.zip
-                          ./epic-dashboard-mac-*-ARM64.zip
                     - job_name: Build RPM x64
                       make_target: rpm64
                       apt_packages: rpm
@@ -180,6 +171,73 @@ jobs:
                   files: ${{ matrix.upload_files }}
                   fail_on_unmatched_files: true
 
+    build-mac:
+        name: Build macOS ${{ matrix.arch }}
+        needs: [prepare, create-release]
+        runs-on: ${{ matrix.runner }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - arch: x64
+                      runner: macos-15-intel
+                      asset_arch: x64
+                    - arch: arm64
+                      runner: macos-15
+                      asset_arch: ARM64
+        env:
+            VERSION: ${{ needs.prepare.outputs.version }}
+            ARCH: ${{ matrix.arch }}
+            ASSET_ARCH: ${{ matrix.asset_arch }}
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.event.client_payload.release_tag || inputs.release_tag || github.ref_name }}
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '22'
+                  cache: npm
+
+            - name: Install App Dependencies
+              run: npm ci
+
+            - name: Verify App
+              run: |
+                  npm run lint
+                  npm exec -- prettier --check .
+                  npm test
+
+            - name: Build and ad-hoc sign App
+              run: |
+                  npm exec -- electron-forge make \
+                    --targets=@electron-forge/maker-zip --platform=darwin --arch="$ARCH"
+
+            - name: Verify signed release archive and native executable
+              run: |
+                  set -euo pipefail
+                  VERIFICATION_DIR="$(mktemp -d)"
+                  unzip -q out/make/zip/darwin/"$ARCH"/*.zip -d "$VERIFICATION_DIR"
+                  APP_PATH="$VERIFICATION_DIR/epic-dashboard.app"
+                  codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+                  ELECTRON_RUN_AS_NODE=1 "$APP_PATH/Contents/MacOS/epic-dashboard" -e \
+                    'if (process.arch !== process.env.ARCH) throw new Error("Wrong release architecture"); console.log(process.arch, process.versions.electron);'
+
+            - name: Rename artifact
+              run: mv out/make/zip/darwin/"$ARCH"/*.zip "./epic-dashboard-mac-${VERSION}-${ASSET_ARCH}.zip"
+
+            - name: Upload release asset
+              uses: softprops/action-gh-release@v2
+              with:
+                  repository: epicblockchain/epic-dashboard
+                  token: ${{ github.token }}
+                  tag_name: ${{ needs.prepare.outputs.release_tag }}
+                  files: ./epic-dashboard-mac-${{ needs.prepare.outputs.version }}-${{ matrix.asset_arch }}.zip
+                  fail_on_unmatched_files: true
+
     create-release:
         name: Ensure GitHub Release Exists
         needs: prepare
@@ -203,7 +261,7 @@ jobs:
 
     publish-release:
         name: Publish GitHub Release
-        needs: [prepare, build]
+        needs: [prepare, build, build-mac]
         runs-on: ubuntu-24.04
         steps:
             - name: Publish draft release
