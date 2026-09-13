@@ -69,12 +69,6 @@ jobs:
                       rename_commands: |
                           mv out/make/deb/x64/*.deb "./epic-dashboard-${VERSION}-x64.deb"
                       upload_files: ./epic-dashboard-*-x64.deb
-                    - job_name: Build Debian armhf
-                      make_target: debarmhf
-                      apt_packages: fakeroot
-                      rename_commands: |
-                          mv out/make/deb/armv7l/*.deb "./epic-dashboard-${VERSION}-armhf.deb"
-                      upload_files: ./epic-dashboard-*-armhf.deb
                     - job_name: Build Debian arm64
                       make_target: debarm64
                       apt_packages: fakeroot
@@ -112,19 +106,6 @@ jobs:
                       rename_commands: |
                           mv out/make/squirrel.windows/x64/*.exe "./epic-dashboard-${VERSION}-Setup-x64.exe"
                       upload_files: ./epic-dashboard-*-Setup-x64.exe
-                    - job_name: Build Windows ia32
-                      make_target: win32
-                      needs_i386: true
-                      needs_wine: true
-                      apt_packages: debianutils mono-devel wine wine32 wine64
-                      build_setup: |
-                          mkdir -p .github-home/.local/share .github-home/.wine
-                          export HOME="$PWD/.github-home"
-                          export XDG_DATA_HOME="$PWD/.github-home/.local/share"
-                          export WINEPREFIX="$PWD/.github-home/.wine"
-                      rename_commands: |
-                          mv out/make/squirrel.windows/ia32/*.exe "./epic-dashboard-${VERSION}-Setup-ia32.exe"
-                      upload_files: ./epic-dashboard-*-Setup-ia32.exe
         env:
             VERSION: ${{ needs.prepare.outputs.version }}
             RELEASE_TAG: ${{ needs.prepare.outputs.release_tag }}

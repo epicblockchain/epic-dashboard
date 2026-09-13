@@ -6,6 +6,8 @@ Please read COPYING and EULA before proceeding
 
 Download the appropriate zip/installer file for the OS you would like to run the program on.
 
+Supported release targets are Windows x64 (Windows 10 or later), Linux x64/ARM64, and macOS x64/ARM64 (macOS 13 or later). Windows ia32 and Linux armv7l packages are no longer built.
+
 ## Getting started from source
 
 Clone this repo
@@ -22,22 +24,22 @@ After bundling a window should open with the app running.
 
 ### Dependencies
 
-Some dependencies are required to build the dashboard, this process has been tested on Ubuntu 20.04 with a 64 bit cpu
+Use Node 22.21.0 or a later Node 22 release. The additional tools below are for Linux build hosts.
 
 ```
 sudo apt update
 sudo apt install -y curl make git wine mono-devel fakeroot zip rpm
-# if you need to build for 32 bit architectures
+# Wine may need 32 bit libraries even when building the Windows x64 installer
 sudo dpkg --add-architecture i386
 sudo apt update
 sudo apt install -y wine32
-# end of building for 32 bit
+# end of Wine library setup
 # or install the latest
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash nvm on your own
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 # end of nvm stuff
-nvm install 16
+nvm install 22
 cd /path/to/epic-dashboard
 npm i
 ```
@@ -47,7 +49,7 @@ npm i
 To build all executables run
 
 ```
-make dist
+make all
 # see the makefile if you want to install for only one target+architecture
 ```
 
