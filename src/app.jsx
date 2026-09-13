@@ -16,6 +16,7 @@ import {Eula} from './eula.jsx';
 import {
     Drawer,
     ListItem,
+    ListItemButton,
     ListItemText,
     Button,
     List,
@@ -1095,50 +1096,49 @@ class App extends React.Component {
                         </ListItem>
                         <Divider variant="middle" />
                         <Tooltip title="Dashboard" placement="right" arrow>
-                            <ListItem button key="Dashboard" onClick={() => this.setPage('main')}>
+                            <ListItemButton key="Dashboard" onClick={() => this.setPage('main')}>
                                 <AssessmentIcon color="primary" />
                                 <ListItemText primary="Dashboard" />
-                            </ListItem>
+                            </ListItemButton>
                         </Tooltip>
                         <Tooltip title="Table" placement="right" arrow>
-                            <ListItem button key="Table" onClick={() => this.setPage('table')}>
+                            <ListItemButton key="Table" onClick={() => this.setPage('table')}>
                                 <ListAltIcon color="primary" />
                                 <ListItemText primary="Table" />
-                            </ListItem>
+                            </ListItemButton>
                         </Tooltip>
                         <Tooltip title="Quick Scan" placement="right" arrow>
-                            <ListItem
-                                button
+                            <ListItemButton
                                 key="Quick Miner Scan"
                                 onClick={() => this.portscan(Object.entries(networks)[0][1][0], 24, 500)}
                             >
                                 <NetworkCheckIcon color="primary" />
                                 <ListItemText primary="Quick Miner Scan" />
-                            </ListItem>
+                            </ListItemButton>
                         </Tooltip>
                         <Tooltip title="Advanced Scan" placement="right" arrow>
-                            <ListItem button key="Advanced Scan" onClick={() => this.setState({portscan: true})}>
+                            <ListItemButton key="Advanced Scan" onClick={() => this.setState({portscan: true})}>
                                 <PermScanWifiIcon color="primary" />
                                 <ListItemText primary="Advanced Scan" />
-                            </ListItem>
+                            </ListItemButton>
                         </Tooltip>
                         <Tooltip title="Session Password" placement="right" arrow>
-                            <ListItem button key="Password" onClick={() => this.toggleModal(true)}>
+                            <ListItemButton key="Password" onClick={() => this.toggleModal(true)}>
                                 <VpnKeyIcon color="primary" />
                                 <ListItemText primary="Session Password" />
-                            </ListItem>
+                            </ListItemButton>
                         </Tooltip>
                         <Tooltip title="Preferences" placement="right" arrow>
-                            <ListItem button key="Preferences" onClick={() => this.setPage('preferences')}>
+                            <ListItemButton key="Preferences" onClick={() => this.setPage('preferences')}>
                                 <SettingsIcon color="primary" />
                                 <ListItemText primary="Preferences" />
-                            </ListItem>
+                            </ListItemButton>
                         </Tooltip>
                         <Tooltip title="Support" placement="right" arrow>
-                            <ListItem button key="Support" onClick={() => this.setPage('support')}>
+                            <ListItemButton key="Support" onClick={() => this.setPage('support')}>
                                 <ContactSupportIcon color="primary" />
                                 <ListItemText primary="Support" />
-                            </ListItem>
+                            </ListItemButton>
                         </Tooltip>
                     </List>
                     <div id="version" className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'}>
@@ -1177,12 +1177,15 @@ class App extends React.Component {
                             label="Network Address"
                             onChange={(e) => this.setScan(e, 'scanIp')}
                             value={this.state.scanIp}
-                            inputProps={{maxLength: prefix16 ? 7 : 11}}
-                            InputLabelProps={{shrink: true}}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">{prefix16 ? '.0.0/' : '.0/'}</InputAdornment>
-                                ),
+                            slotProps={{
+                                input: {
+                                    endAdornment: (
+                                        <InputAdornment position="end">{prefix16 ? '.0.0/' : '.0/'}</InputAdornment>
+                                    ),
+                                },
+
+                                htmlInput: {maxLength: prefix16 ? 7 : 11},
+                                inputLabel: {shrink: true},
                             }}
                         />
                         <FormControl variant="outlined" margin="dense">
@@ -1208,7 +1211,13 @@ class App extends React.Component {
                             style={{width: '120px', marginRight: 0}}
                         />
                         <br />
-                        <Typography display="inline" variant="overline" color="primary">
+                        <Typography
+                            variant="overline"
+                            color="primary"
+                            sx={{
+                                display: 'inline',
+                            }}
+                        >
                             Prefix:{' '}
                         </Typography>
                         <Link
@@ -1224,7 +1233,13 @@ class App extends React.Component {
                             Click for explanation
                         </Link>
                         <br />
-                        <Typography display="inline" variant="overline" color="primary">
+                        <Typography
+                            variant="overline"
+                            color="primary"
+                            sx={{
+                                display: 'inline',
+                            }}
+                        >
                             Timeout:{' '}
                         </Typography>
                         If no miners are found, try increasing the timeout.

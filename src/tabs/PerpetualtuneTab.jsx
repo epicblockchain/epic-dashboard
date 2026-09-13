@@ -180,8 +180,19 @@ export class PerpetualtuneTab extends React.Component {
         return (
             <div className="tab-body" style={{minHeight: '140px'}}>
                 <Grid container spacing={2}>
-                    <Grid item container spacing={2} alignItems="center" style={{width: '275px'}}>
-                        <Box pl={4}>
+                    <Grid
+                        container
+                        spacing={2}
+                        style={{width: '275px'}}
+                        sx={{
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                pl: 4,
+                            }}
+                        >
                             <FormControlLabel
                                 control={
                                     <MuiSwitchLarge
@@ -190,7 +201,15 @@ export class PerpetualtuneTab extends React.Component {
                                         onChange={this.updateCheck}
                                     />
                                 }
-                                label={<Box fontSize={20}>Perpetual Tuning</Box>}
+                                label={
+                                    <Box
+                                        sx={{
+                                            fontSize: 20,
+                                        }}
+                                    >
+                                        Perpetual Tuning
+                                    </Box>
+                                }
                                 labelPlacement="top"
                             />
                         </Box>
@@ -198,7 +217,13 @@ export class PerpetualtuneTab extends React.Component {
                     <Divider orientation="vertical" sx={{pt: 25}} style={{marginRight: '25px'}} />
 
                     <FormControl disabled={!this.state.checked}>
-                        <Typography fontSize={20}>Perpetual Tune Algorithm</Typography>
+                        <Typography
+                            sx={{
+                                fontSize: 20,
+                            }}
+                        >
+                            Perpetual Tune Algorithm
+                        </Typography>
                         <RadioGroup value={this.state.algo}>
                             {algo_info.map((x, index) => (
                                 <FormControlLabel
@@ -210,7 +235,9 @@ export class PerpetualtuneTab extends React.Component {
                                         <Radio
                                             onChange={this.updateAlgorithm}
                                             id={x.description}
-                                            inputProps={{min: x.min, max: x.max}}
+                                            slotProps={{
+                                                input: {min: x.min, max: x.max},
+                                            }}
                                         />
                                     }
                                 />
@@ -229,12 +256,30 @@ export class PerpetualtuneTab extends React.Component {
                     </FormControl>
 
                     <Divider orientation="vertical" sx={{pt: 25}} style={{margin: '0 25px'}} />
-                    <Grid item xs hidden={!this.state.checked || algo_info.length == 0 || this.state.algo == ''}>
-                        <Typography fontSize={20}>{this.state.name}</Typography>
-                        <Typography fontSize={14}>{this.state.desc}</Typography>
+                    <Grid hidden={!this.state.checked || algo_info.length == 0 || this.state.algo == ''} size="grow">
+                        <Typography
+                            sx={{
+                                fontSize: 20,
+                            }}
+                        >
+                            {this.state.name}
+                        </Typography>
+                        <Typography
+                            sx={{
+                                fontSize: 14,
+                            }}
+                        >
+                            {this.state.desc}
+                        </Typography>
                         <br />
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item xs="auto">
+                        <Grid
+                            container
+                            spacing={2}
+                            sx={{
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Grid size="auto">
                                 <Slider
                                     value={hasMinThrot ? [this.state.throttle, this.state.num] : this.state.num}
                                     min={hasMinThrot ? MIN_THROTTLE : Number(this.state.min)}
@@ -251,21 +296,28 @@ export class PerpetualtuneTab extends React.Component {
                                     style={{width: '250px'}}
                                 />
                             </Grid>
-                            <Grid item xs="auto">
-                                <Box pl={2} pb={3}>
+                            <Grid size="auto">
+                                <Box
+                                    sx={{
+                                        pl: 2,
+                                        pb: 3,
+                                    }}
+                                >
                                     <FormControl>
                                         <Input
                                             value={this.state.num}
                                             onChange={this.handleInputChange}
                                             onBlur={this.handleInputBlur}
                                             endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
-                                            inputProps={{
-                                                step: 1,
-                                                min: hasMinThrot ? this.state.throttle : this.state.min,
-                                                max: this.state.max,
-                                                type: 'number',
-                                            }}
                                             style={{width: 90}}
+                                            slotProps={{
+                                                input: {
+                                                    step: 1,
+                                                    min: hasMinThrot ? this.state.throttle : this.state.min,
+                                                    max: this.state.max,
+                                                    type: 'number',
+                                                },
+                                            }}
                                         />
                                         <Typography variant="subtitle2" color="textSecondary" component="a">
                                             Target
@@ -278,8 +330,10 @@ export class PerpetualtuneTab extends React.Component {
                                                 onChange={this.handleThrotChange}
                                                 onBlur={this.handleThrotBlur}
                                                 endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
-                                                inputProps={{step: 1, min: 10, max: this.state.num, type: 'number'}}
                                                 style={{width: 90}}
+                                                slotProps={{
+                                                    input: {step: 1, min: 10, max: this.state.num, type: 'number'},
+                                                }}
                                             />
                                             <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                                                 Min Throttle
@@ -299,13 +353,15 @@ export class PerpetualtuneTab extends React.Component {
                                                 onChange={this.handleStepChange}
                                                 onBlur={this.handleStepBlur}
                                                 endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
-                                                inputProps={{
-                                                    step: 1,
-                                                    min: 1,
-                                                    max: this.state.num - this.state.throttle,
-                                                    type: 'number',
-                                                }}
                                                 style={{width: 90}}
+                                                slotProps={{
+                                                    input: {
+                                                        step: 1,
+                                                        min: 1,
+                                                        max: this.state.num - this.state.throttle,
+                                                        type: 'number',
+                                                    },
+                                                }}
                                             />
                                             <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                                                 Throttle Step

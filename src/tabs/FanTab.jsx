@@ -240,16 +240,27 @@ export class FanTab extends React.Component {
 
         return (
             <div className="tab-body" style={{minHeight: '40%'}}>
-                <Grid container spacing={2} alignItems="stretch">
-                    <Grid item xs={6} md={4}>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        alignItems: 'stretch',
+                    }}
+                >
+                    <Grid
+                        size={{
+                            xs: 6,
+                            md: 4,
+                        }}
+                    >
                         <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                             <CardContent>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={12}>
+                                    <Grid size={12}>
                                         <Typography gutterBottom>Fan Speed</Typography>
                                     </Grid>
                                     {this.state.autofan_enabled ? (
-                                        <Grid item xs={12}>
+                                        <Grid size={12}>
                                             <Typography variant="subtitle2" color="textSecondary">
                                                 AutoFan
                                                 <Switch
@@ -263,15 +274,21 @@ export class FanTab extends React.Component {
                                         <></>
                                     )}
                                     {this.state.autofan ? (
-                                        <Grid item>
+                                        <Grid>
                                             <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                                                 Set the operating temperature of autofan
                                             </Typography>
-                                            <Grid container spacing={2} alignItems="center">
-                                                <Grid item>
+                                            <Grid
+                                                container
+                                                spacing={2}
+                                                sx={{
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <Grid>
                                                     <DeviceThermostatIcon color="primary" />
                                                 </Grid>
-                                                <Grid item>
+                                                <Grid>
                                                     <Slider
                                                         value={
                                                             typeof this.state.target_temp === 'number'
@@ -284,7 +301,7 @@ export class FanTab extends React.Component {
                                                         disabled={this.props.disabled || this.state.lock}
                                                     />
                                                 </Grid>
-                                                <Grid item>
+                                                <Grid>
                                                     <Input
                                                         value={this.state.target_temp}
                                                         margin="dense"
@@ -293,20 +310,28 @@ export class FanTab extends React.Component {
                                                         }
                                                         onChange={this.handleTargetTempInputChange}
                                                         onBlur={this.handleTargetTempInputBlur}
-                                                        inputProps={{step: 5, min: 45, max: 100, type: 'number'}}
                                                         disabled={this.props.disabled || this.state.lock}
                                                         style={{width: '70px'}}
+                                                        slotProps={{
+                                                            input: {step: 5, min: 45, max: 100, type: 'number'},
+                                                        }}
                                                     />
                                                 </Grid>
                                             </Grid>
                                             <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                                                 Set the fan speed when Idling
                                             </Typography>
-                                            <Grid container spacing={2} alignItems="center">
-                                                <Grid item>
+                                            <Grid
+                                                container
+                                                spacing={2}
+                                                sx={{
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <Grid>
                                                     <WindPowerIcon color="primary" />
                                                 </Grid>
-                                                <Grid item>
+                                                <Grid>
                                                     <Slider
                                                         value={
                                                             typeof this.state.idle_speed === 'number'
@@ -319,26 +344,28 @@ export class FanTab extends React.Component {
                                                         disabled={this.props.disabled || this.state.lock}
                                                     />
                                                 </Grid>
-                                                <Grid item>
+                                                <Grid>
                                                     <Input
                                                         value={this.state.idle_speed}
                                                         margin="dense"
                                                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
                                                         onChange={this.handleIdleSpeedInputChange}
                                                         onBlur={this.handleIdleSpeedInputBlur}
-                                                        inputProps={{step: 10, min: 10, max: 100, type: 'number'}}
                                                         disabled={this.props.disabled || this.state.lock}
                                                         style={{width: '70px'}}
+                                                        slotProps={{
+                                                            input: {step: 10, min: 10, max: 100, type: 'number'},
+                                                        }}
                                                     />
                                                 </Grid>
                                             </Grid>
                                         </Grid>
                                     ) : (
                                         <>
-                                            <Grid item>
+                                            <Grid>
                                                 <WindPowerIcon />
                                             </Grid>
-                                            <Grid item>
+                                            <Grid>
                                                 <Slider
                                                     value={typeof this.state.speed === 'number' ? this.state.speed : 1}
                                                     min={1}
@@ -347,7 +374,7 @@ export class FanTab extends React.Component {
                                                     disabled={this.props.disabled}
                                                 />
                                             </Grid>
-                                            <Grid item>
+                                            <Grid>
                                                 <Input
                                                     value={this.state.speed}
                                                     margin="dense"
@@ -362,8 +389,10 @@ export class FanTab extends React.Component {
                                                             );
                                                         }
                                                     }}
-                                                    inputProps={{step: 10, min: 1, max: 100, type: 'number'}}
                                                     disabled={this.props.disabled}
+                                                    slotProps={{
+                                                        input: {step: 10, min: 1, max: 100, type: 'number'},
+                                                    }}
                                                 />
                                             </Grid>
                                         </>
@@ -384,17 +413,28 @@ export class FanTab extends React.Component {
                             </CardActions>
                         </Card>
                     </Grid>
-                    <Grid item xs={6} md={4}>
+                    <Grid
+                        size={{
+                            xs: 6,
+                            md: 4,
+                        }}
+                    >
                         <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                             <CardContent>
-                                <Grid container spacing={2} alignItems="center">
-                                    <Grid item xs={12}>
+                                <Grid
+                                    container
+                                    spacing={2}
+                                    sx={{
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Grid size={12}>
                                         <Typography gutterBottom>Shutdown Temperature</Typography>
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <ThermostatIcon />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <Slider
                                             value={
                                                 typeof this.state.shutdowntemp === 'number'
@@ -408,7 +448,7 @@ export class FanTab extends React.Component {
                                             disabled={this.props.disabled}
                                         />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <Input
                                             value={this.state.shutdowntemp}
                                             margin="dense"
@@ -423,20 +463,28 @@ export class FanTab extends React.Component {
                                                     );
                                                 }
                                             }}
-                                            inputProps={{step: 5, min: 60, max: 110, type: 'number'}}
                                             disabled={this.props.disabled}
+                                            slotProps={{
+                                                input: {step: 5, min: 60, max: 110, type: 'number'},
+                                            }}
                                         />
                                     </Grid>
                                 </Grid>
                                 {this.state.crit_temp_enabled ? (
-                                    <Grid container spacing={2} alignItems="center">
-                                        <Grid item xs={12}>
+                                    <Grid
+                                        container
+                                        spacing={2}
+                                        sx={{
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <Grid size={12}>
                                             <Typography gutterBottom>Critical Temperature</Typography>
                                         </Grid>
-                                        <Grid item>
+                                        <Grid>
                                             <ThermostatIcon />
                                         </Grid>
-                                        <Grid item>
+                                        <Grid>
                                             <Slider
                                                 value={
                                                     typeof this.state.criticaltemp === 'number'
@@ -450,7 +498,7 @@ export class FanTab extends React.Component {
                                                 disabled={this.props.disabled}
                                             />
                                         </Grid>
-                                        <Grid item>
+                                        <Grid>
                                             <Input
                                                 value={this.state.criticaltemp}
                                                 margin="dense"
@@ -465,8 +513,10 @@ export class FanTab extends React.Component {
                                                         );
                                                     }
                                                 }}
-                                                inputProps={{step: 5, min: 60, max: 110, type: 'number'}}
                                                 disabled={this.props.disabled}
+                                                slotProps={{
+                                                    input: {step: 5, min: 60, max: 110, type: 'number'},
+                                                }}
                                             />
                                         </Grid>
                                     </Grid>
@@ -491,17 +541,28 @@ export class FanTab extends React.Component {
                             </CardActions>
                         </Card>
                     </Grid>
-                    <Grid item xs={6} md={4}>
+                    <Grid
+                        size={{
+                            xs: 6,
+                            md: 4,
+                        }}
+                    >
                         <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                             <CardContent>
-                                <Grid container spacing={2} alignItems="center">
-                                    <Grid item xs={12}>
+                                <Grid
+                                    container
+                                    spacing={2}
+                                    sx={{
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Grid size={12}>
                                         <Typography gutterBottom>Minimum Working Fans</Typography>
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <WarningIcon />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <Slider
                                             value={
                                                 typeof this.state.min_working_fans === 'number'
@@ -517,7 +578,7 @@ export class FanTab extends React.Component {
                                             marks
                                         />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <Input
                                             value={this.state.min_working_fans}
                                             margin="dense"
@@ -532,13 +593,21 @@ export class FanTab extends React.Component {
                                                     );
                                                 }
                                             }}
-                                            inputProps={{step: 1, min: 0, max: MAX_FANS, type: 'number'}}
                                             disabled={this.props.disabled}
+                                            slotProps={{
+                                                input: {step: 1, min: 0, max: MAX_FANS, type: 'number'},
+                                            }}
                                         />
                                     </Grid>
                                 </Grid>
-                                <Grid container spacing={2} alignItems="center">
-                                    <Grid item xs={12}>
+                                <Grid
+                                    container
+                                    spacing={2}
+                                    sx={{
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Grid size={12}>
                                         <Tooltip
                                             title="Sets the PreInitCooldown maximum duration in seconds. This is the maximum time the miner can spend in PreInitCooldown. If the max duration is reached, the miner will skip the initialization temperature checks and start mining. Default is 300 seconds. Setting to 0 means the PreInitCooldown state will last for at most 0 seconds."
                                             arrow
@@ -558,10 +627,10 @@ export class FanTab extends React.Component {
                                             </Typography>
                                         </Tooltip>
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <TimerIcon />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <Slider
                                             value={
                                                 typeof this.state.preinit_cooldown_max_duration === 'number'
@@ -576,7 +645,7 @@ export class FanTab extends React.Component {
                                             valueLabelDisplay="auto"
                                         />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <Input
                                             value={this.state.preinit_cooldown_max_duration}
                                             margin="dense"
@@ -592,13 +661,15 @@ export class FanTab extends React.Component {
                                                     );
                                                 }
                                             }}
-                                            inputProps={{
-                                                step: 10,
-                                                min: 0,
-                                                max: MAX_PREINIT_COOLDOWN_DURATION,
-                                                type: 'number',
-                                            }}
                                             disabled={this.props.disabled}
+                                            slotProps={{
+                                                input: {
+                                                    step: 10,
+                                                    min: 0,
+                                                    max: MAX_PREINIT_COOLDOWN_DURATION,
+                                                    type: 'number',
+                                                },
+                                            }}
                                         />
                                     </Grid>
                                 </Grid>
@@ -631,7 +702,12 @@ export class FanTab extends React.Component {
                             </CardActions>
                         </Card>
                     </Grid>
-                    <Grid item xs={6} md={4}>
+                    <Grid
+                        size={{
+                            xs: 6,
+                            md: 4,
+                        }}
+                    >
                         <TextField
                             value={this.state.password || ''}
                             variant="outlined"

@@ -50,8 +50,8 @@ export class SystemTab extends React.Component {
             })
             .then((args) => {
                 if (!args.canceled) {
-                    this.setState({filepath: args.filePaths[0]});
-                    this.setState({fileext: this.state.filepath.split('.').pop()});
+                    const filepath = args.filePaths[0];
+                    this.setState({filepath, fileext: filepath.split('.').pop()});
                 }
             })
             .catch((err) => {
@@ -87,7 +87,7 @@ export class SystemTab extends React.Component {
         return (
             <div className="tab-body" style={{minHeight: '200px'}}>
                 <Grid container>
-                    <Grid className="system-option" item xs={4}>
+                    <Grid className="system-option" size={4}>
                         <Typography>Update Firmware</Typography>
                         <Grid>
                             <TextField
@@ -97,19 +97,21 @@ export class SystemTab extends React.Component {
                                 disabled
                                 margin="dense"
                                 style={{width: '100%'}}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <Button
-                                                onClick={this.updateFilepath}
-                                                variant="contained"
-                                                color="primary"
-                                                size="small"
-                                            >
-                                                Browse
-                                            </Button>
-                                        </InputAdornment>
-                                    ),
+                                slotProps={{
+                                    input: {
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <Button
+                                                    onClick={this.updateFilepath}
+                                                    variant="contained"
+                                                    color="primary"
+                                                    size="small"
+                                                >
+                                                    Browse
+                                                </Button>
+                                            </InputAdornment>
+                                        ),
+                                    },
                                 }}
                             />
                             <br />
@@ -148,7 +150,7 @@ export class SystemTab extends React.Component {
                         </Grid>
                     </Grid>
                     <Divider className="system-divider" orientation="vertical" flexItem />
-                    <Grid className="system-option" item xs={4}>
+                    <Grid className="system-option" size={4}>
                         <Typography>Change System Timezone</Typography>
                         <TextField
                             variant="outlined"
@@ -170,7 +172,7 @@ export class SystemTab extends React.Component {
                         </Button>
                     </Grid>
                     <Divider className="system-divider" orientation="vertical" flexItem />
-                    <Grid className="system-option" item xs={4}>
+                    <Grid className="system-option" size={4}>
                         <Typography>Change password</Typography>
                         <TextField
                             variant="outlined"
@@ -207,10 +209,10 @@ export class SystemTab extends React.Component {
                             Apply
                         </Button>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                         <Divider />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                         <TextField
                             value={this.state.password || ''}
                             variant="outlined"

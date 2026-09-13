@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import * as React from 'react';
 import AddIcon from '@mui/icons-material/ControlPoint';
-import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
+import RemoveIcon from '@mui/icons-material/RemoveCircleOutlined';
 
 const MAX_HASHRATE_SPLITS = 3;
 
@@ -500,8 +500,10 @@ export class CoinTab extends React.Component {
                                                     e.target.value === '' ? 0 : Number(e.target.value),
                                                 )
                                             }
-                                            inputProps={{step: 5, min: 0, max: 100, type: 'number'}}
                                             style={{width: '70px'}}
+                                            slotProps={{
+                                                input: {step: 5, min: 0, max: 100, type: 'number'},
+                                            }}
                                         />
                                         <IconButton
                                             onClick={() => this.removeHashrateSplit(splitIndex)}

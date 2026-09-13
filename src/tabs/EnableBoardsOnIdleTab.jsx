@@ -35,11 +35,17 @@ export class EnableBoardsOnIdleTab extends React.Component {
                 <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                     Automatically re-enable any disabled boards if the miner remains idle for more than 10 minutes.
                 </Typography>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        alignItems: 'center',
+                    }}
+                >
+                    <Grid>
                         <Switch checked={this.state.enable_boards_on_idle} onChange={this.handleEnableBoardsOnIdle} />
                     </Grid>
-                    <Grid item>
+                    <Grid>
                         <Typography variant="body2" color="textSecondary">
                             {this.state.enable_boards_on_idle ? 'Enabled' : 'Disabled'}
                         </Typography>

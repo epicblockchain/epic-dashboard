@@ -177,15 +177,21 @@ export class TuneTab extends React.Component {
 
         return (
             <div className="tab-body" style={{minHeight: '140px'}}>
-                <Grid container alignItems="flex-start" spacing={2}>
-                    <Grid item container spacing={2} style={{width: '450px'}}>
-                        <Grid item xs={12}>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        alignItems: 'flex-start',
+                    }}
+                >
+                    <Grid container spacing={2} style={{width: '450px'}}>
+                        <Grid size={12}>
                             <Typography gutterBottom>Change Clock or Voltage settings</Typography>
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid size={2}>
                             <Schedule />
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid size={8}>
                             <Slider
                                 value={typeof this.state.clock === 'number' ? this.state.clock : 50}
                                 min={50}
@@ -195,20 +201,22 @@ export class TuneTab extends React.Component {
                                 style={{width: '250px'}}
                             />
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid size={2}>
                             <Input
                                 value={this.state.clock}
                                 margin="dense"
                                 onChange={(e) => this.handleInputClockChange(e)}
                                 onBlur={() => this.handleInputClockBlur}
-                                inputProps={{step: 5, min: 50, max: 1000, type: 'number'}}
                                 style={{width: '70px'}}
+                                slotProps={{
+                                    input: {step: 5, min: 50, max: 1000, type: 'number'},
+                                }}
                             />
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid size={2}>
                             <FlashOn />
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid size={8}>
                             <Slider
                                 value={typeof this.state.voltage === 'number' ? this.state.voltage : min_v}
                                 min={min_v}
@@ -219,23 +227,25 @@ export class TuneTab extends React.Component {
                                 style={{width: '250px'}}
                             />
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid size={2}>
                             <Input
                                 value={this.state.voltage}
                                 margin="dense"
                                 onChange={(e) => this.handleInputVoltageChange(e)}
                                 onBlur={() => this.handleInputVoltageBlur(min_v, max_v)}
-                                inputProps={{step: 0.05, min: min_v, max: max_v, type: 'number'}}
                                 style={{width: '70px'}}
+                                slotProps={{
+                                    input: {step: 0.05, min: min_v, max: max_v, type: 'number'},
+                                }}
                             />
                         </Grid>
                     </Grid>
                     <Divider orientation="vertical" flexItem style={{margin: '0 50px'}} />
-                    <Grid item>
-                        <Grid item>
+                    <Grid>
+                        <Grid>
                             <Typography style={{margin: '0 0 20px'}}> Tuning Presets for selected miners</Typography>
                         </Grid>
-                        <Grid item>
+                        <Grid>
                             <FormControl style={{width: '450px'}}>
                                 <InputLabel id="preset-select-label">Presets (Optional)</InputLabel>
                                 <Select
@@ -282,7 +292,7 @@ export class TuneTab extends React.Component {
                                     May provide better efficiency when overclocking
                                     <Typography
                                         variant="subtitle2"
-                                        color="white"
+                                        sx={{color: 'white'}}
                                         component="a"
                                         style={{display: 'inline'}}
                                     >
@@ -290,11 +300,17 @@ export class TuneTab extends React.Component {
                                         (BM1366 ASIC chips)
                                     </Typography>
                                 </Typography>
-                                <Grid container spacing={2} alignItems="center">
-                                    <Grid item>
+                                <Grid
+                                    container
+                                    spacing={2}
+                                    sx={{
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Grid>
                                         <Switch checked={this.state.overdrive} onChange={this.handleSwitch} />
                                     </Grid>
-                                    <Grid item>
+                                    <Grid>
                                         <Typography variant="body2" color="textSecondary">
                                             {this.state.overdrive ? 'Enabled' : 'Disabled'}
                                         </Typography>

@@ -35,14 +35,20 @@ export class IdleOnConnectionLostTab extends React.Component {
                 <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                     On connection lost, the miner will go to idle. When disabled, the miner will continue to draw power.
                 </Typography>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        alignItems: 'center',
+                    }}
+                >
+                    <Grid>
                         <Switch
                             checked={this.state.is_idle_on_connection_lost}
                             onChange={this.handleIdleOnConnectionLost}
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid>
                         <Typography variant="body2" color="textSecondary">
                             {this.state.is_idle_on_connection_lost ? 'Enabled' : 'Disabled'}
                         </Typography>

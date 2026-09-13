@@ -50,7 +50,8 @@ test('notification content renders a filled MUI alert with its severity and mess
     assert.equal(element.props.variant, 'filled');
     const markup = renderToStaticMarkup(element);
     assert.match(markup, /Miner request failed/);
-    assert.match(markup, /MuiAlert-filledError/);
+    assert.match(markup, /MuiAlert-filled/);
+    assert.match(markup, /MuiAlert-colorError/);
 });
 
 test('the alert close button reports a user dismissal using the v11 API', () => {

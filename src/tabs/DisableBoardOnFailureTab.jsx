@@ -35,14 +35,20 @@ export class DisableBoardOnFailureTab extends React.Component {
                 <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                     When enabled, a board experiencing a failure will be disabled to allow other boards to mine.
                 </Typography>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        alignItems: 'center',
+                    }}
+                >
+                    <Grid>
                         <Switch
                             checked={this.state.disable_board_on_failure}
                             onChange={this.handleDisableBoardOnFail}
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid>
                         <Typography variant="body2" color="textSecondary">
                             {this.state.disable_board_on_failure ? 'Enabled' : 'Disabled'}
                         </Typography>

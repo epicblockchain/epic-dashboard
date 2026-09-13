@@ -44,7 +44,7 @@ export class WifiTab extends React.Component {
         return (
             <div className="tab-body" style={{minHeight: '200px'}}>
                 <Grid container>
-                    <Grid item xs>
+                    <Grid size="grow">
                         <Typography>Change Wifi Config</Typography>
                         <TextField
                             variant="outlined"
@@ -61,19 +61,22 @@ export class WifiTab extends React.Component {
                             onChange={this.updatePsk}
                             value={this.state.psk}
                             margin="dense"
-                            inputProps={{minLength: 8}}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() => this.clickShowPassword()}
-                                            onMouseDown={(e) => this.mouseDownPassword(e)}
-                                        >
-                                            {this.state.visible ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
+                            slotProps={{
+                                input: {
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={() => this.clickShowPassword()}
+                                                onMouseDown={(e) => this.mouseDownPassword(e)}
+                                            >
+                                                {this.state.visible ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
+
+                                htmlInput: {minLength: 8},
                             }}
                         />
                     </Grid>

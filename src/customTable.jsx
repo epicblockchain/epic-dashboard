@@ -345,7 +345,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                         <IndeterminateCheckbox
                             checked={table.getIsAllRowsSelected()}
                             indeterminate={table.getIsSomeRowsSelected()}
-                            inputProps={{'aria-label': 'Select all miners'}}
+                            slotProps={{input: {'aria-label': 'Select all miners'}}}
                             onChange={(event) => {
                                 resetSelectionSession();
                                 table.toggleAllRowsSelected(event.target.checked);
@@ -357,7 +357,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                     <div className="check-wrap">
                         <IndeterminateCheckbox
                             checked={row.getIsSelected()}
-                            inputProps={{'aria-label': `Select miner ${row.original.ip}`}}
+                            slotProps={{input: {'aria-label': `Select miner ${row.original.ip}`}}}
                             onMouseDown={(event) => {
                                 selectionStateRef.current.shiftPressed = event.shiftKey;
                             }}
