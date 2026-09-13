@@ -17,6 +17,7 @@ import {LicenseTab} from './tabs/LicenseTab.jsx';
 import './table.css';
 
 import Table, {tableColumnIds} from './customTable.jsx';
+import {getOrderedSelectedMiners} from './minerTable.mjs';
 
 export const DEFAULT_HIDDEN_COLUMNS = [
     'model',
@@ -455,35 +456,6 @@ export class DataTable extends React.Component {
         this.setState({[model + '_sel']: sel_model});
     }
 
-    getOrderedSelectedMiners(model, selectedRowIds, data) {
-        const previousSelection = Array.from(this.state[model + '_sel'] || []);
-        const nextSelection = [];
-        const remainingSelected = new Set();
-
-        Object.keys(selectedRowIds || {}).forEach((id) => {
-            if (data[id]) remainingSelected.add(data[id].id);
-        });
-
-        previousSelection.forEach((minerId) => {
-            if (remainingSelected.has(minerId)) {
-                nextSelection.push(minerId);
-                remainingSelected.delete(minerId);
-            }
-        });
-
-        Object.keys(selectedRowIds || {}).forEach((id) => {
-            if (!data[id]) return;
-
-            const minerId = data[id].id;
-            if (remainingSelected.has(minerId)) {
-                nextSelection.push(minerId);
-                remainingSelected.delete(minerId);
-            }
-        });
-
-        return nextSelection;
-    }
-
     setList(event, newVal) {
         this.setState({list: newVal});
         this.setState({tab: 0});
@@ -512,19 +484,8 @@ export class DataTable extends React.Component {
         ) {
             this.props.saveDefault(getPersistedTable(newState));
             this.setState({[model + '_state']: nextModelState});
-        } else if (action.type == 'toggleRowSelected') {
-            const temp = Array.from(this.state[model + '_sel']);
-
-            if (action.value) {
-                temp.push(data[action.id].id);
-            } else {
-                temp.splice(temp.indexOf(data[action.id].id), 1);
-            }
-
-            this.setState({[model + '_sel']: temp, [model + '_state']: nextModelState});
-        } else if (action.type == 'toggleAllRowsSelected' || action.type == 'toggleRowRangeSelected') {
-            const sel = this.getOrderedSelectedMiners(model, newState.selectedRowIds, data);
-
+        } else if (action.type === 'rowSelection') {
+            const sel = getOrderedSelectedMiners(this.state[model + '_sel'] || [], newState.rowSelection, data);
             this.setState({[model + '_sel']: sel, [model + '_state']: nextModelState});
         } else {
             this.setState({[model + '_state']: nextModelState});

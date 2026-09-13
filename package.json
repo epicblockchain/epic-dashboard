@@ -123,8 +123,8 @@
         "@mui/lab": "^5.0.0-alpha.105",
         "@mui/material": "^5.10.11",
         "@mui/styles": "^6.5.0",
+        "@tanstack/react-table": "^9.2.4",
         "core-js": "^3.20.2",
-        "react-table": "^7.7.0",
         "react-window": "^1.8.6",
         "regenerator-runtime": "^0.14.1",
         "winston": "^3.3.3"
