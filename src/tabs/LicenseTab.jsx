@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, Typography, Grid, TextField, Switch, Box, Input} from '@mui/material';
+import {Button, Typography, TextField, Box} from '@mui/material';
 
 export class LicenseTab extends React.Component {
     constructor(props) {
@@ -42,7 +42,7 @@ export class LicenseTab extends React.Component {
                 } else {
                     alert('JSON file does not contain a "key" parameter');
                 }
-            } catch (error) {
+            } catch {
                 alert('Invalid JSON file. Please upload a valid JSON file with a "key" parameter.');
             }
         };

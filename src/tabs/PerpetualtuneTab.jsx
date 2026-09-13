@@ -73,7 +73,7 @@ export class PerpetualtuneTab extends React.Component {
 
     equalityCheck() {
         if (this.state.throttle > this.state.num) {
-            let newVal = Math.max(this.state.num, MIN_THROTTLE);
+            const newVal = Math.max(this.state.num, MIN_THROTTLE);
             this.setState({throttle: newVal});
         }
     }
@@ -112,7 +112,7 @@ export class PerpetualtuneTab extends React.Component {
 
     handleStepBlur() {
         if (this.state.step < 1) this.setState({step: 1});
-        let max = this.state.num - this.state.throttle;
+        const max = this.state.num - this.state.throttle;
         if (this.state.step > max) this.setState({step: max});
     }
 
@@ -144,8 +144,8 @@ export class PerpetualtuneTab extends React.Component {
             },
         }));
 
-        let algo_info = [];
-        let marks = [
+        const algo_info = [];
+        const marks = [
             {
                 value: this.state.min,
                 label: this.state.min,
@@ -158,8 +158,8 @@ export class PerpetualtuneTab extends React.Component {
 
         if (this.props.data[this.props.selected[0]]) {
             if (this.props.data[this.props.selected[0]].cap) {
-                let perpetualtune_cap = this.props.data[this.props.selected[0]].cap['PerpetualTune'];
-                for (let i in perpetualtune_cap) {
+                const perpetualtune_cap = this.props.data[this.props.selected[0]].cap['PerpetualTune'];
+                for (const i of Object.keys(perpetualtune_cap || {})) {
                     const algo = {
                         algorithm: perpetualtune_cap[i].algorithm,
                         name: perpetualtune_cap[i].name,
@@ -173,10 +173,8 @@ export class PerpetualtuneTab extends React.Component {
         }
 
         let hasMinThrot = false;
-        let hasThrotStep = false;
         if (this.state.algo === 'VoltageOptimizer' || this.state.algo === 'BoardTune') {
             hasMinThrot = true;
-            hasThrotStep = true;
         }
 
         return (

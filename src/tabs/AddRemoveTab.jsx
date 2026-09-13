@@ -2,7 +2,7 @@ const {ipcRenderer} = require('electron');
 import got from '../rendererHttp';
 const fs = require('fs');
 import * as React from 'react';
-import {Button, TextField, Typography, Divider} from '@mui/material';
+import {Button, TextField, Divider} from '@mui/material';
 
 export class AddRemoveTab extends React.Component {
     constructor(props) {
@@ -24,13 +24,13 @@ export class AddRemoveTab extends React.Component {
             .then(async (arg) => {
                 if (!arg.canceled) {
                     for (const i of this.props.selected) {
-                        let ip = this.props.data[i].ip;
-                        let data = await got(`http://${ip}:4028/log`);
+                        const ip = this.props.data[i].ip;
+                        const data = await got(`http://${ip}:4028/log`);
 
-                        let body = JSON.parse(data.body);
+                        const body = JSON.parse(data.body);
 
                         fs.mkdir(arg.filePaths[0] + `/${ip}`, {recursive: true}, (err) => console.log(err));
-                        for (let tuple of body) {
+                        for (const tuple of body) {
                             fs.writeFile(
                                 arg.filePaths[0] + `/${ip}/${ip}_${tuple[0].secs_since_epoch}.log`,
                                 tuple[1],

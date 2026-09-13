@@ -30,8 +30,8 @@ export class DebugTab extends React.Component {
             .then(async (arg) => {
                 if (!arg.canceled) {
                     for (const i of this.props.selected) {
-                        let ip = this.props.data[i].ip;
-                        let data = await got(`http://${ip}/${test}.log`);
+                        const ip = this.props.data[i].ip;
+                        const data = await got(`http://${ip}/${test}.log`);
 
                         fs.writeFile(arg.filePaths[0] + `/${test}-${ip}.log`, data.body, function (err) {
                             if (err) {
@@ -68,7 +68,7 @@ export class DebugTab extends React.Component {
             }
         }
         if (!options) options = ['Select miners'];
-        let types = ['Sphinx', 'Ra'];
+        const types = ['Sphinx', 'Ra'];
 
         return (
             <div className="tab-body">
@@ -124,7 +124,7 @@ export class DebugTab extends React.Component {
                 <Button
                     onClick={() => {
                         for (const i of this.props.selected) {
-                            let ip = this.props.data[i].ip;
+                            const ip = this.props.data[i].ip;
                             window.open(`http://${ip}/FT3.log`, `FT3 Log for ${ip}`, `popup=1,width=1000,height=600`);
                         }
                     }}
@@ -145,7 +145,7 @@ export class DebugTab extends React.Component {
                 <Button
                     onClick={() => {
                         for (const i of this.props.selected) {
-                            let ip = this.props.data[i].ip;
+                            const ip = this.props.data[i].ip;
                             window.open(`http://${ip}/FT4.log`, `FT4 Log for ${ip}`, `popup=1,width=1000,height=600`);
                         }
                     }}

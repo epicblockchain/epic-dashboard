@@ -17,7 +17,7 @@ export class PerformanceTab extends React.Component {
     }
 
     updatePreset(e) {
-        let obj = JSON.parse(e.target.value);
+        const obj = JSON.parse(e.target.value);
         this.setState({mode: obj.mode, power: obj.power});
     }
 

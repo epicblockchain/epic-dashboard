@@ -43,7 +43,9 @@ async function doWork(iterator) {
     for (const item of iterator) {
         try {
             results.push(await checkGet(item));
-        } catch {}
+        } catch {
+            // Unreachable hosts and non-miner responses are expected during a network scan.
+        }
     }
 }
 

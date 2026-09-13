@@ -96,7 +96,7 @@ function debounce1(func, timeout = 300) {
     return (...args) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
-            func.apply(this, args);
+            func(...args);
         }, timeout);
     };
 }
@@ -116,7 +116,7 @@ export class DataTable extends React.Component {
         window.onresize = debounce1(() => this.forceUpdate());
 
         if (this.props.models && this.props.models.length) {
-            var newState = {models: this.props.models};
+            const newState = {models: this.props.models};
             this.props.models.forEach((key) => {
                 newState[key + '_sel'] = [];
                 newState[key + '_state'] = {};
@@ -127,7 +127,7 @@ export class DataTable extends React.Component {
     }
 
     selectReset() {
-        var newState = {reset: true};
+        const newState = {reset: true};
         this.props.models.forEach((key) => {
             newState[key + '_sel'] = [];
         });
@@ -137,8 +137,8 @@ export class DataTable extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
-            var newModels = this.props.models.filter((x) => !prevProps.models.includes(x));
-            var newState = {models: this.props.models};
+            const newModels = this.props.models.filter((x) => !prevProps.models.includes(x));
+            const newState = {models: this.props.models};
             newModels.forEach((key) => {
                 newState[key + '_sel'] = [];
                 newState[key + '_state'] = {};
@@ -148,8 +148,8 @@ export class DataTable extends React.Component {
         }
 
         if (this.state.models && prevProps.data) {
-            let prev = prevProps.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
-            let curr = this.props.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
+            const prev = prevProps.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
+            const curr = this.props.data.filter((x) => x.cap && x.cap.Model == this.state.models[this.state.list]);
 
             if (curr.length !== prev.length) this.selectReset();
         }
@@ -160,13 +160,13 @@ export class DataTable extends React.Component {
     }
 
     hashrate_x_hr(row, x, noFormat) {
-        var sum = 0;
+        let sum = 0;
         if (x) {
             try {
                 if (row.hist.length < x) {
                     sum = 'N/A';
                 } else {
-                    for (let obj of row.hist.slice(-x)) {
+                    for (const obj of row.hist.slice(-x)) {
                         sum += obj.Hashrate;
                     }
                     sum /= x;
@@ -208,7 +208,7 @@ export class DataTable extends React.Component {
 
     avgVoltage(data) {
         const volt = data.map((a) => a['Input Voltage']);
-        var sum;
+        let sum;
         sum = volt.reduce((total, num) => {
             return total + num;
         }, 0);
@@ -218,7 +218,7 @@ export class DataTable extends React.Component {
 
     avgClock(data, cap) {
         const totals = [];
-        for (let hb in data) {
+        for (const hb of Object.keys(data || {})) {
             totals.push(String(data[hb]['Core Clock Avg']));
         }
 
@@ -288,7 +288,7 @@ export class DataTable extends React.Component {
         if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
             return 'N/A';
         } else {
-            for (let i in data.PerpetualTune.Algorithm) {
+            for (const i of Object.keys(data.PerpetualTune.Algorithm || {})) {
                 return i;
             }
         }
@@ -298,7 +298,7 @@ export class DataTable extends React.Component {
         if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
             return 'N/A';
         } else {
-            for (let i in data.PerpetualTune.Algorithm) {
+            for (const i of Object.keys(data.PerpetualTune.Algorithm || {})) {
                 return data.PerpetualTune.Algorithm[i].Optimized.toString();
             }
         }
@@ -308,7 +308,7 @@ export class DataTable extends React.Component {
         if (data.PerpetualTune == undefined || data.PerpetualTune == null) {
             return {value: 'N/A', tooltip: null};
         } else {
-            for (let i in data.PerpetualTune.Algorithm) {
+            for (const i of Object.keys(data.PerpetualTune.Algorithm || {})) {
                 const algo = data.PerpetualTune.Algorithm[i];
                 const target = algo.Target;
                 const throttleTarget = algo['Throttle Target'];
@@ -379,7 +379,7 @@ export class DataTable extends React.Component {
     hbperformance(hashrate, cap) {
         const totals = [];
         if (hashrate.length > 0) {
-            for (let hb in hashrate) {
+            for (const hb in hashrate) {
                 if (hashrate[hb].Hashrate !== undefined) {
                     totals.push(String(hashrate[hb].Hashrate[1]));
                 }
@@ -422,7 +422,7 @@ export class DataTable extends React.Component {
     getLowest(hashrate) {
         const totals = [];
         if (hashrate.length > 0) {
-            for (let hb in hashrate) {
+            for (const hb in hashrate) {
                 if (hashrate[hb].Hashrate !== undefined) {
                     totals.push(String(hashrate[hb].Hashrate[1]));
                 }
@@ -443,7 +443,7 @@ export class DataTable extends React.Component {
             if (cap['Max HBs'] == null) {
                 return 'N/A';
             } else {
-                for (let hb in hashrate) {
+                for (const hb of Object.keys(hashrate || {})) {
                     total += hashrate[hb].Hashrate[0];
                 }
             }
@@ -513,7 +513,7 @@ export class DataTable extends React.Component {
             this.props.saveDefault(getPersistedTable(newState));
             this.setState({[model + '_state']: nextModelState});
         } else if (action.type == 'toggleRowSelected') {
-            var temp = Array.from(this.state[model + '_sel']);
+            const temp = Array.from(this.state[model + '_sel']);
 
             if (action.value) {
                 temp.push(data[action.id].id);
@@ -523,7 +523,7 @@ export class DataTable extends React.Component {
 
             this.setState({[model + '_sel']: temp, [model + '_state']: nextModelState});
         } else if (action.type == 'toggleAllRowsSelected' || action.type == 'toggleRowRangeSelected') {
-            var sel = this.getOrderedSelectedMiners(model, newState.selectedRowIds, data);
+            const sel = this.getOrderedSelectedMiners(model, newState.selectedRowIds, data);
 
             this.setState({[model + '_sel']: sel, [model + '_state']: nextModelState});
         } else {
@@ -532,7 +532,7 @@ export class DataTable extends React.Component {
     }
 
     getLastError(a) {
-        let x = a.sum.Status['Last Error'];
+        const x = a.sum.Status['Last Error'];
         if (x === null || x === undefined) {
             return ' ';
         } else {
@@ -599,20 +599,20 @@ export class DataTable extends React.Component {
             fansrpm: this.failSafe(a.sum) || this.fansrpm(a.sum['Fans Rpm']),
         }));
 
-        var miners = {};
+        const miners = {};
 
-        for (let row of rows) {
+        for (const row of rows) {
             if (row.cap) {
                 if (miners[row.model]) miners[row.model].push(row);
                 else miners[row.model] = [row];
             } else miners['undefined'] ? miners['undefined'].push(row) : (miners['undefined'] = [row]);
         }
 
-        var selected = this.state[this.state.models[this.state.list] + '_sel'] || [];
+        let selected = this.state[this.state.models[this.state.list] + '_sel'] || [];
 
-        var capApi = true;
-        var eng_rig = true;
-        for (let i of selected) {
+        let capApi = true;
+        let eng_rig = true;
+        for (const i of selected) {
             if (!this.props.data[i]) {
                 selected = selected.filter((x) => x != i);
             } else if (!this.props.data[i].cap) {

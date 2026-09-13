@@ -123,7 +123,7 @@ export class FanTab extends React.Component {
     }
 
     handleShutdownTempSlider(e, newVal) {
-        let clamped_val = Math.max(Math.min(newVal, 105), 60);
+        const clamped_val = Math.max(Math.min(newVal, 105), 60);
         this.setState({shutdowntemp: clamped_val});
 
         if (this.state.criticaltemp < clamped_val + 5) {
@@ -132,7 +132,7 @@ export class FanTab extends React.Component {
     }
 
     handleCritTempSlider(e, newVal) {
-        let clamped_val = Math.max(Math.min(newVal, 110), 65);
+        const clamped_val = Math.max(Math.min(newVal, 110), 65);
         this.setState({criticaltemp: clamped_val});
 
         if (this.state.shutdowntemp > clamped_val - 5) {

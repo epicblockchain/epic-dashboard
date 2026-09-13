@@ -96,7 +96,7 @@ export class TuneTab extends React.Component {
             this.setState({preset: 'Select Preset'});
             return;
         }
-        let obj = JSON.parse(e.target.value);
+        const obj = JSON.parse(e.target.value);
         this.setState({preset: e.target.value});
         this.setState({clock: obj.clk});
         this.setState({voltage: obj.voltage / 1000});
@@ -113,7 +113,7 @@ export class TuneTab extends React.Component {
         let tunePresets = null;
         let min_v = 12;
         let max_v = 15;
-        var marksVOLT = [
+        let marksVOLT = [
             {
                 value: min_v,
                 label: `${min_v} V`,

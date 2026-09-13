@@ -63,8 +63,8 @@ export class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        let chart = am4core.create('chartdiv', am4charts.XYChart);
-        let hashrateData = {};
+        const chart = am4core.create('chartdiv', am4charts.XYChart);
+        const hashrateData = {};
         this.props.data.forEach((miner) => {
             try {
                 if (miner.hist) {
@@ -81,9 +81,9 @@ export class Dashboard extends React.Component {
                 console.log(this.props.data);
             }
         });
-        let chartHashrateData = [];
+        const chartHashrateData = [];
         let totalHashrate = 0;
-        for (const seconds in hashrateData) {
+        for (const seconds of Object.keys(hashrateData)) {
             chartHashrateData.push({
                 time: new Date(seconds * 1000),
                 hashrate: hashrateData[seconds] / 1000000,
@@ -91,11 +91,11 @@ export class Dashboard extends React.Component {
             totalHashrate += hashrateData[seconds];
         }
 
-        let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-        let yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
         yAxis.min = 0;
         yAxis.title.text = 'Hashrate (TH/s)';
-        let series = chart.series.push(new am4charts.LineSeries());
+        const series = chart.series.push(new am4charts.LineSeries());
         series.dataFields.valueY = 'hashrate';
         series.dataFields.dateX = 'time';
         series.name = 'Hashrate';
@@ -110,7 +110,7 @@ export class Dashboard extends React.Component {
         dateAxis.renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#ffffff');
         dateAxis.renderer.grid.template.strokeOpacity = 0.4;
 
-        let bullet = series.bullets.push(new am4charts.CircleBullet());
+        const bullet = series.bullets.push(new am4charts.CircleBullet());
         bullet.scale = 0.8;
         bullet.fill = am4core.color('#2FC1DE');
         bullet.tooltipText = 'Hashrate: [bold]{valueY} TH/s[/]';
@@ -128,7 +128,7 @@ export class Dashboard extends React.Component {
     }
 
     componentDidUpdate(oldProps) {
-        let hashrateData = {};
+        const hashrateData = {};
         this.props.data.forEach((miner) => {
             try {
                 if (miner.hist) {
@@ -145,9 +145,9 @@ export class Dashboard extends React.Component {
                 console.log(this.props.data);
             }
         });
-        let chartHashrateData = [];
+        const chartHashrateData = [];
         let totalHashrate = 0;
-        for (const seconds in hashrateData) {
+        for (const seconds of Object.keys(hashrateData)) {
             chartHashrateData.push({
                 time: new Date(seconds * 1000),
                 hashrate: hashrateData[seconds] / 1000000,
@@ -163,9 +163,9 @@ export class Dashboard extends React.Component {
             });
         }
 
-        let yAxes = this.chart.yAxes.values;
-        let dateAxes = this.chart.xAxes.values;
-        let series = this.chart.series.values;
+        const yAxes = this.chart.yAxes.values;
+        const dateAxes = this.chart.xAxes.values;
+        const series = this.chart.series.values;
 
         if (yAxes && dateAxes && series) {
             yAxes[0].title.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
@@ -191,7 +191,7 @@ export class Dashboard extends React.Component {
 
     getRows() {
         //one for each type of miner
-        let modelData = {};
+        const modelData = {};
         //check for no miners
         if (this.props.data.length < 1) {
             return [createData('', '', 0, '', '')];
@@ -210,8 +210,8 @@ export class Dashboard extends React.Component {
             }
         });
 
-        let rows = [];
-        for (let algo in modelData) {
+        const rows = [];
+        for (const algo of Object.keys(modelData)) {
             let totalHashrate = 0;
             let totalPower = 0;
             let activeMinerCount = 0;

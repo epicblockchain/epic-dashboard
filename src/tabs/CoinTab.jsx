@@ -180,7 +180,7 @@ export class CoinTab extends React.Component {
     async handleApplySettings() {
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-        let valid = false;
+        let valid;
         if (this.state.hashrate_split_enabled) {
             valid = await this.props.handleApi('/hashratesplit', this.state, this.props.selected);
         } else {

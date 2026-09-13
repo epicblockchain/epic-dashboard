@@ -50,7 +50,6 @@ import icon from './img/epic.png';
 import darkLogo from './img/EpicLogoDark.png';
 import lightLogo from './img/EpicLogoLight.png';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {ContactSupportOutlined} from '@mui/icons-material';
 
 const light = createTheme({
     palette: {
@@ -251,7 +250,6 @@ let blacklist = [];
 let app_path = '';
 let version = 'ePIC Dashboard v';
 const networks = {};
-let lock = false;
 
 switch (process.platform) {
     case 'darwin':
@@ -268,7 +266,7 @@ switch (process.platform) {
         ipcRenderer.send('quit');
 }
 
-const logger = createLogger({
+createLogger({
     exceptionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
     rejectionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
     exitOnError: false,
@@ -367,7 +365,7 @@ class App extends React.Component {
                 .catch((error) => {
                     if (retries > 0) {
                         console.log('retry');
-                        return retryPromise(fn, retries - 1)
+                        return this.retryPromise(fn, retries - 1)
                             .then(resolve)
                             .catch(reject);
                     } else {
@@ -395,10 +393,10 @@ class App extends React.Component {
                         timeout: {request: 2000},
                         retry: {limit: 0},
                     });
-                    let net = JSON.parse(network.body);
+                    const net = JSON.parse(network.body);
                     if (!sum.Hostname) sum = null;
 
-                    let match = this.state.miner_data.find((a) => a.ip == miner.address);
+                    const match = this.state.miner_data.find((a) => a.ip == miner.address);
 
                     if (
                         init ||
@@ -418,7 +416,7 @@ class App extends React.Component {
                                 timeout: {request: 2000},
                                 retry: {limit: 0},
                             });
-                            let content = JSON.parse(cap.body);
+                            const content = JSON.parse(cap.body);
 
                             if (content.Model) models.add(content.Model);
                             else models.add('undefined');
@@ -477,8 +475,8 @@ class App extends React.Component {
                             timer: 10,
                         };
                     }
-                } catch (err) {
-                    let match = this.state.miner_data.find((a) => a.ip == miner.address);
+                } catch {
+                    const match = this.state.miner_data.find((a) => a.ip == miner.address);
 
                     if (match) {
                         if (match.timer > 0) {
@@ -528,7 +526,7 @@ class App extends React.Component {
         let scan_results = await ipcRenderer.invoke('portscan', ip, range, timeout);
         scan_results = scan_results.filter((a) => !blacklist.includes(a.name));
 
-        let prev = miners.map((a) => a.address);
+        const prev = miners.map((a) => a.address);
         for (const obj of scan_results) {
             if (!prev.includes(obj.ip)) {
                 miners.push({address: obj.ip, name: obj.name});
@@ -561,8 +559,8 @@ class App extends React.Component {
                 toastId: i,
             });
 
-            let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
-            var temp = Array.from(this.state.miner_data);
+            const ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
+            const temp = Array.from(this.state.miner_data);
             temp[ind].sum = 'reboot';
             temp[ind].timer = 100; // 100 * 6sec = 10min
             this.setState({miner_data: temp});
@@ -642,14 +640,14 @@ class App extends React.Component {
     }
 
     addMiner(ip) {
-        let prev = miners.map((a) => a.address);
+        const prev = miners.map((a) => a.address);
         if (!prev.includes(ip)) {
             miners.push({address: ip});
 
-            var temp = Array.from(this.state.miner_data);
+            const temp = Array.from(this.state.miner_data);
             temp.push({ip: ip, sum: 'load', hist: 'load', network: 'load', timer: 0});
 
-            var models = Array.from(this.state.models);
+            const models = Array.from(this.state.models);
             if (!models.includes('undefined')) models.push('undefined');
 
             notify('success', `Successfully added ${ip}`);
@@ -660,8 +658,8 @@ class App extends React.Component {
     }
 
     async delMiner(ids) {
-        var temp = Array.from(this.state.miner_data);
-        for (let id of ids.sort(function (a, b) {
+        const temp = Array.from(this.state.miner_data);
+        for (const id of ids.sort(function (a, b) {
             return b - a;
         })) {
             miners.splice(id, 1);
@@ -674,7 +672,7 @@ class App extends React.Component {
     }
 
     async clearUndefined() {
-        var temp = Array.from(this.state.miner_data);
+        const temp = Array.from(this.state.miner_data);
         for (let i = temp.length - 1; i >= 0; i--) {
             if (!temp[i].sum && !temp[i].timer) {
                 miners.splice(i, 1);
@@ -688,7 +686,7 @@ class App extends React.Component {
     }
 
     savePreferences(json, notif) {
-        for (let key of Object.keys(json)) {
+        for (const key of Object.keys(json)) {
             if (json[key] !== this.state[key]) this.setState({[key]: json[key]});
         }
 
@@ -717,8 +715,8 @@ class App extends React.Component {
     }
 
     saveMiners() {
-        var string = '';
-        for (let miner of miners) {
+        let string = '';
+        for (const miner of miners) {
             string += miner.address + '\n';
         }
 
@@ -742,7 +740,7 @@ class App extends React.Component {
             }
             const ips = data.toString().split('\n');
             const prev = miners.map((a) => a.address);
-            for (let ip of ips) {
+            for (const ip of ips) {
                 if (ip && !prev.includes(ip)) miners.push({address: ip});
             }
 
@@ -751,8 +749,8 @@ class App extends React.Component {
     }
 
     async blacklist(ids) {
-        var temp = Array.from(this.state.miner_data);
-        for (let id of ids.sort(function (a, b) {
+        const temp = Array.from(this.state.miner_data);
+        for (const id of ids.sort(function (a, b) {
             return b - a;
         })) {
             blacklist.push(miners[id].name || (temp[id].sum ? temp[id].sum.Hostname : null));
@@ -774,7 +772,7 @@ class App extends React.Component {
     }
 
     async handleApi(api, data, selected) {
-        var obj, msg, success;
+        let obj, msg, success;
         switch (api) {
             case '/coin':
                 obj = {
@@ -795,12 +793,13 @@ class App extends React.Component {
                 msg = 'Updating coin';
                 success = 'Mining config updated successfully';
                 break;
-            case '/mode':
-                let param = data.power ? {preset: data.mode, power_target: data.power} : data.mode;
+            case '/mode': {
+                const param = data.power ? {preset: data.mode, power_target: data.power} : data.mode;
                 obj = {param: param, password: data.password};
                 msg = 'Updating operating mode';
                 success = `Operating mode set to ${data.mode} ${data.power ? `@ ${data.power}W` : ''}`;
                 break;
+            }
             case '/password':
                 obj = {param: data.pass1, password: data.password};
                 success = 'Changed miner password';
@@ -952,20 +951,20 @@ class App extends React.Component {
                 break;
         }
 
-        let slow_api =
+        const slow_api =
             api == '/coin' ||
             api == '/miner' ||
             api == '/mode' ||
             api == '/test' ||
             api == '/wifi' ||
             api == '/hashratesplit'; //sends response after completed
-        let soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
+        const soft_reboot = api == '/softreboot' || api == '/hwconfig' || api == '/power'; //sends response early
 
         const MAX_CONCURRENT_REQUESTS = 5;
         let promises = [];
         let allSuccess = true;
-        for (let i of selected) {
-            let promise = this.retryPromise(async () => {
+        for (const i of selected) {
+            const promise = this.retryPromise(async () => {
                 try {
                     if (slow_api) {
                         notify('info', `${miners[i].address}: ${msg}`, {
@@ -976,8 +975,8 @@ class App extends React.Component {
                         });
 
                         if (api !== '/test') {
-                            let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
-                            var temp = Array.from(this.state.miner_data);
+                            const ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
+                            const temp = Array.from(this.state.miner_data);
                             if (!temp[ind].sum.Status) {
                                 temp[ind].sum = 'reboot';
                                 temp[ind].timer = 10; //10 * 6sec = 1min
@@ -1006,8 +1005,8 @@ class App extends React.Component {
                         notify('success', `${miners[i].address}: ${success}`);
 
                         if (api == '/reboot' || soft_reboot) {
-                            let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
-                            var temp = Array.from(this.state.miner_data);
+                            const ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
+                            const temp = Array.from(this.state.miner_data);
                             if (!temp[ind].sum.Status) {
                                 temp[ind].sum = 'reboot';
                                 temp[ind].timer = 10; //10 * 6sec = 1min
@@ -1015,7 +1014,7 @@ class App extends React.Component {
                             }
                         } else if (api === '/identify') {
                             try {
-                                let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
+                                const ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
                                 const summary = await got(`http://${miners[i].address}:4028/summary`, {
                                     timeout: {request: 2000},
                                     retry: {limit: 0},
@@ -1072,11 +1071,7 @@ class App extends React.Component {
 
     render() {
         const prefix16 = this.state.scanRange === '16';
-        if (this.state.theme === 'light') {
-            var logo = lightLogo;
-        } else {
-            var logo = darkLogo;
-        }
+        const logo = this.state.theme === 'light' ? lightLogo : darkLogo;
 
         return (
             <ThemeProvider theme={this.state.theme == 'light' ? light : dark}>

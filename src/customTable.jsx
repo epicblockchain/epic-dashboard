@@ -76,8 +76,8 @@ function FilterIcon(props) {
 }
 
 function hashrateSort(a, b, c, d) {
-    let a_split = a.values[c].split(' ');
-    let b_split = b.values[c].split(' ');
+    const a_split = a.values[c].split(' ');
+    const b_split = b.values[c].split(' ');
     if (a_split[1] === b_split[1] && a.values[c] !== 'N/A') {
         if (parseFloat(a_split[0]) > parseFloat(b_split[0])) return 1;
         return -1;
@@ -434,7 +434,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             }),
             stateReducer: (a, b, c) => {
                 switch (b.type) {
-                    case 'autoColSize':
+                    case 'autoColSize': {
                         const clone = Object.assign({}, a.columnResizing);
                         clone.columnWidths[b.col] = b.val;
 
@@ -442,13 +442,15 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                             ...a,
                             columnResizing: clone,
                         };
-                    case 'toggleRowRangeSelected':
+                    }
+                    case 'toggleRowRangeSelected': {
                         const nextState = {
                             ...a,
                             selectedRowIds: b.selectedRowIds,
                         };
                         updateState(nextState, b, c, dataRaw, model);
                         return nextState;
+                    }
                 }
 
                 if (b.type != 'columnResizing' && b.type != 'columnStartResizing') {
