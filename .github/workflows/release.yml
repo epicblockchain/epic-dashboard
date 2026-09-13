@@ -147,6 +147,12 @@ jobs:
             - name: Install App Dependencies
               run: npm ci
 
+            - name: Verify App
+              run: |
+                  npm run lint
+                  npm exec -- prettier --check .
+                  npm test
+
             - name: Build App
               env:
                   BUILD_SETUP: ${{ matrix.build_setup }}

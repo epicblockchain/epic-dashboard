@@ -1,5 +1,5 @@
 const {ipcRenderer} = require('electron');
-const got = require('got');
+import got from '../rendererHttp';
 const fs = require('fs');
 import * as React from 'react';
 import {Button, FormControl, InputLabel, Select} from '@mui/material';

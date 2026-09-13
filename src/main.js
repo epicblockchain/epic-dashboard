@@ -1,9 +1,8 @@
 const {app, BrowserWindow, ipcMain, dialog, shell} = require('electron');
-const got = require('got');
-const fs = require('fs');
+import got from 'got';
+import {createFirmwareUpload} from './firmwareUpload.mjs';
+import {minerRequest} from './minerHttp.mjs';
 const path = require('path');
-const FormData = require('form-data');
-const sha256 = require('sha256-file');
 const {Worker} = require('worker_threads');
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -62,26 +61,15 @@ const createWindow = () => {
     ipcMain.on('form-post', (event, miners, api, data, selected) => {
         for (const i of selected) {
             (async () => {
-                const f = new FormData();
-                f.append('password', data.password);
-                f.append('checksum', sha256(data.filepath));
-                f.append('keepsettings', data.keep.toString());
-                switch (api) {
-                    case '/update':
-                        f.append('swupdate.swu', fs.createReadStream(data.filepath));
-                        break;
-                    case '/systemupdate':
-                        f.append('update.zip', fs.createReadStream(data.filepath));
-                        break;
-                }
-
                 try {
+                    const upload = await createFirmwareUpload(api, data);
                     event.reply('form-post-reply', i, 'info', `${miners[i].address}: Updating in progress`);
 
                     const {body} = await got.post(`http://${miners[i].address}:4028${api}`, {
-                        body: f,
+                        ...upload,
                         responseType: 'json',
-                        timeout: 600000, // 60000 was 1 min before
+                        timeout: {request: 600000},
+                        retry: {limit: 0},
                     });
 
                     if (body.result) {
@@ -101,6 +89,8 @@ const createWindow = () => {
         }
     });
 };
+
+ipcMain.handle('miner-request', (_event, url, options) => minerRequest(url, options));
 
 ipcMain.on('quit', () => {
     app.quit();

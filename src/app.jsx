@@ -1,5 +1,5 @@
 const {ipcRenderer} = require('electron');
-const got = require('got');
+import got from './rendererHttp';
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -386,14 +386,14 @@ class App extends React.Component {
             miners.map(async (miner, i) => {
                 try {
                     const summary = await got(`http://${miner.address}:4028/summary`, {
-                        timeout: 2000,
-                        retry: 0,
+                        timeout: {request: 2000},
+                        retry: {limit: 0},
                     });
                     let sum = JSON.parse(summary.body);
 
                     const network = await got(`http://${miner.address}:4028/network`, {
-                        timeout: 2000,
-                        retry: 0,
+                        timeout: {request: 2000},
+                        retry: {limit: 0},
                     });
                     let net = JSON.parse(network.body);
                     if (!sum.Hostname) sum = null;
@@ -410,13 +410,13 @@ class App extends React.Component {
                         (match && !match.cap)
                     ) {
                         const history = await got(`http://${miner.address}:4028/history`, {
-                            timeout: 2000,
-                            retry: 0,
+                            timeout: {request: 2000},
+                            retry: {limit: 0},
                         });
                         try {
                             const cap = await got(`http://${miner.address}:4028/capabilities`, {
-                                timeout: 2000,
-                                retry: 0,
+                                timeout: {request: 2000},
+                                retry: {limit: 0},
                             });
                             let content = JSON.parse(cap.body);
 
@@ -988,7 +988,15 @@ class App extends React.Component {
 
                     const {body} = await got.post(`http://${miners[i].address}:4028${api}`, {
                         json: obj,
-                        timeout: slow_api ? (api === '/test' ? (data.test !== 'Ft4' ? 220000 : 1000000) : 60000) : 5000,
+                        timeout: {
+                            request: slow_api
+                                ? api === '/test'
+                                    ? data.test !== 'Ft4'
+                                        ? 220000
+                                        : 1000000
+                                    : 60000
+                                : 5000,
+                        },
                         responseType: 'json',
                     });
 
@@ -1009,8 +1017,8 @@ class App extends React.Component {
                             try {
                                 let ind = this.state.miner_data.findIndex((a) => a.ip == miners[i].address);
                                 const summary = await got(`http://${miners[i].address}:4028/summary`, {
-                                    timeout: 2000,
-                                    retry: 0,
+                                    timeout: {request: 2000},
+                                    retry: {limit: 0},
                                 });
 
                                 const sum = JSON.parse(summary.body);

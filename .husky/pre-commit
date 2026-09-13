@@ -7,6 +7,7 @@ if printf '%s\n' "$GIT_EMAIL" | grep -iq 'epicblockchain[.]io'; then
     echo "running lint and format..."
 
     npm run lint
+    npm test
     npm exec -- prettier --check .
     git diff --exit-code
 else
