@@ -16,19 +16,18 @@ module.exports = [
     },
     {
         test: /\.jsx?$/,
+        exclude: /node_modules/,
         use: {
             loader: 'babel-loader',
             options: {
-                exclude: /node_modules/,
-                presets: [
-                    '@babel/preset-react',
+                targets: {electron: require('electron/package.json').version},
+                presets: [['@babel/preset-react', {runtime: 'automatic', development: false}], '@babel/preset-env'],
+                plugins: [
                     [
-                        '@babel/preset-env',
+                        'babel-plugin-polyfill-corejs3',
                         {
-                            useBuiltIns: 'usage', // alternative mode: "entry"
-                            corejs: '3.20', // default would be 2
-                            targets: '> 0.25%, not dead',
-                            // set your own target environment here (see Browserslist)
+                            method: 'usage-global',
+                            version: require('core-js/package.json').version,
                         },
                     ],
                 ],
