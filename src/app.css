@@ -1,10 +1,11 @@
-div.Toastify__toast--default {
+.Toastify__toast.dashboard-toast {
     min-height: 0;
     padding: 0;
 }
 
-div.Toastify__toast-body {
-    padding: 0;
+.dashboard-toast .MuiAlert-root {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 body {

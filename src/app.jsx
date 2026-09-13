@@ -32,11 +32,10 @@ import {
     Typography,
     Tooltip,
     Link,
-    Alert,
     InputAdornment,
 } from '@mui/material';
-import {ToastContainer, toast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {toast} from 'react-toastify';
+import {Notifications, notify} from './notifications.jsx';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
@@ -294,17 +293,6 @@ fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
     blacklist = data.toString().split('\n');
     console.log(blacklist);
 });
-
-const notify = (sev, text, options) => {
-    toast(
-        ({closeToast}) => (
-            <Alert elevation={6} variant="filled" onClose={closeToast} severity={sev}>
-                {text}
-            </Alert>
-        ),
-        options,
-    );
-};
 
 class Mutex {
     constructor() {
@@ -1266,17 +1254,7 @@ class App extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <ToastContainer
-                    position="top-right"
-                    autoClose={5000}
-                    hideProgressBar
-                    newestOnTop={false}
-                    closeOnClick
-                    draggable={false}
-                    closeButton={false}
-                    rtl={false}
-                    pauseOnFocusLoss={false}
-                />
+                <Notifications />
                 <div className={this.state.drawerOpen ? 'main mainShift' : 'main'}>
                     {this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme} />}
                     <div hidden={this.state.page !== 'table'}>
