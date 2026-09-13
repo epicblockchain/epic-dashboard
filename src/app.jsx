@@ -506,7 +506,7 @@ class App extends React.Component {
 
     async portscan(ip, range, timeout) {
         notify('info', 'Scanning for miners...', {
-            autoClose: range === '16' ? 120000 + parseInt(timeout) : 2000 + parseInt(timeout),
+            autoClose: (range === '16' ? 120000 : range === '22' ? 8000 : 2000) + parseInt(timeout),
             hideProgressBar: false,
             pauseOnHover: false,
             toastId: 'scan',
@@ -607,9 +607,11 @@ class App extends React.Component {
                 if (count > 3) return;
             }
         } else if (key === 'scanRange') {
+            const split = this.state.scanIp.split('.');
             if (e.target.value === '16') {
-                const split = this.state.scanIp.split('.');
                 obj.scanIp = `${split[0]}.${split[1]}`;
+            } else if (split.length === 2) {
+                obj.scanIp = `${split[0]}.${split[1]}.0`;
             }
         }
         this.setState(obj);
@@ -1193,12 +1195,13 @@ class App extends React.Component {
                             <Select
                                 native
                                 id="ipRange"
-                                label="Command"
+                                label="Prefix"
                                 size="small"
                                 value={this.state.scanRange}
                                 onChange={(e) => this.setScan(e, 'scanRange')}
                             >
                                 <option>16</option>
+                                <option>22</option>
                                 <option>24</option>
                             </Select>
                         </FormControl>

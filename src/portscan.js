@@ -56,10 +56,13 @@ parentPort.on('message', async ({ip, range, timeout}) => {
     const split = ip.split('.');
 
     const ips = [];
+    const prefix = Number(range);
+    const subnetCount = prefix === 16 ? 256 : prefix === 22 ? 4 : 1;
+    const firstSubnet = prefix === 16 ? 0 : prefix === 22 ? Math.floor(Number(split[2]) / 4) * 4 : Number(split[2]);
 
-    for (let i = 0; i < (range === '16' ? 256 : 1); i++) {
+    for (let i = 0; i < subnetCount; i++) {
         for (let j = 0; j < 256; j++) {
-            ips.push(`${split[0]}.${split[1]}.${range === '16' ? i : split[2]}.${j}`);
+            ips.push(`${split[0]}.${split[1]}.${firstSubnet + i}.${j}`);
         }
     }
 
