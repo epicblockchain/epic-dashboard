@@ -41,7 +41,7 @@ import {
     moveColumnOrder,
 } from './minerTable.mjs';
 export {tableColumnIds} from './minerTable.mjs';
-import {FixedSizeGrid} from 'react-window';
+import {VirtualizedTableBody} from './virtualizedTable.jsx';
 import {
     closestCenter,
     DndContext,
@@ -503,8 +503,11 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         setDraggedColumnId(null);
     }, []);
 
-    const scroll = React.useCallback((obj) => {
-        document.getElementById('header').style.transform = `translateX(${-obj.scrollLeft}px)`;
+    const headerRef = React.useRef(null);
+    const scroll = React.useCallback((event) => {
+        if (headerRef.current) {
+            headerRef.current.style.transform = `translateX(${-event.currentTarget.scrollLeft}px)`;
+        }
     }, []);
 
     const resizeCol = React.useCallback(
@@ -532,14 +535,15 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         [data, getTextWidth, table.setColumnSizing],
     );
 
-    const RenderRow = React.useCallback(
-        ({rowIndex, style}) => {
+    const renderRow = React.useCallback(
+        ({rowIndex, style, ariaRowIndex}) => {
             const row = rows[rowIndex];
             const led = data[row.id].misc ? data[row.id].misc['Locate Miner State'] : null;
             return (
                 <TableRow
                     key={row.id}
                     role="row"
+                    aria-rowindex={ariaRowIndex}
                     style={{...style, display: 'flex'}}
                     component="div"
                     className={row.getIsSelected() ? 'Mui-selected' : ''}
@@ -778,8 +782,15 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 onDragEnd={handleColumnDragEnd}
                 onDragCancel={handleColumnDragCancel}
             >
-                <MaUTable component="div" role="table" id="datatable" style={{width: totalColumnsWidth}}>
-                    <TableHead component="div" role="rowgroup" id="header" style={{display: 'block'}}>
+                <MaUTable
+                    component="div"
+                    role="table"
+                    id="datatable"
+                    aria-rowcount={rows.length + headerGroups.length}
+                    aria-colcount={headerGroups[0]?.headers.length}
+                    style={{width: totalColumnsWidth}}
+                >
+                    <TableHead component="div" role="rowgroup" id="header" ref={headerRef} style={{display: 'block'}}>
                         {headerGroups.map((headerGroup) => (
                             <TableRow key={headerGroup.id} component="div" role="row" style={{display: 'flex'}}>
                                 {headerGroup.headers.map((header) => (
@@ -794,19 +805,15 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                         ))}
                     </TableHead>
 
-                    <TableBody component="div" role="rowgroup" style={{display: 'block'}}>
-                        <FixedSizeGrid
+                    <TableBody component="div" role="presentation" style={{display: 'block'}}>
+                        <VirtualizedTableBody
+                            rows={rows}
+                            rowWidth={totalColumnsWidth + 8}
                             height={tableViewportHeight}
-                            rowHeight={32}
-                            rowCount={rows.length}
-                            columnCount={1}
-                            columnWidth={totalColumnsWidth + 8}
                             width={document.getElementById('width').offsetWidth - (drawer ? 216 : 59)}
                             onScroll={scroll}
-                            className="grid"
-                        >
-                            {RenderRow}
-                        </FixedSizeGrid>
+                            renderRow={renderRow}
+                        />
                     </TableBody>
                 </MaUTable>
                 <DragOverlay>
