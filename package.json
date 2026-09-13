@@ -12,7 +12,7 @@
         "prestart": "npm run lint -- --fix",
         "lint": "eslint --ignore-path .gitignore .",
         "format": "prettier --write .",
-        "prepare": "husky install",
+        "prepare": "husky",
         "release": "release-it --no-npm.publish",
         "release-pub": "release-it --no-npm.publish --git.commitMessage='Release public version ${version}'"
     },
@@ -100,7 +100,7 @@
         "eslint-config-prettier": "^10.1.8",
         "form-data": "^4.0.0",
         "got": "^11.8.2",
-        "husky": "^7.0.4",
+        "husky": "^9.1.7",
         "node-loader": "^2.1.0",
         "prettier": "3.9.6",
         "react": "^17.0.2",

@@ -1,15 +1,13 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+set -e
 
 echo "running pre-commit script ..."
 GIT_EMAIL=$(git config --get user.email)
 
-if [ ! -z $(echo $GIT_EMAIL | grep -iPo "epicblockchain.io") ]; then
+if printf '%s\n' "$GIT_EMAIL" | grep -iq 'epicblockchain[.]io'; then
     echo "running lint and format..."
 
-    npm install
     npm run lint
-    npm run format
+    npm exec -- prettier --check .
     git diff --exit-code
 else
     echo "Forgot to configure epicblockchain.io email:
