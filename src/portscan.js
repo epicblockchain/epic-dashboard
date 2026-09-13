@@ -4,6 +4,19 @@ const http = require('http');
 let gtimeout = 200;
 const results = [];
 
+function* generateIPs(ip, range) {
+    const split = ip.split('.');
+    const prefix = Number(range);
+    const subnetCount = prefix === 16 ? 256 : prefix === 22 ? 4 : 1;
+    const firstSubnet = prefix === 16 ? 0 : prefix === 22 ? Math.floor(Number(split[2]) / 4) * 4 : Number(split[2]);
+
+    for (let i = 0; i < subnetCount; i++) {
+        for (let j = 0; j < 256; j++) {
+            yield `${split[0]}.${split[1]}.${firstSubnet + i}.${j}`;
+        }
+    }
+}
+
 function checkGet(ip) {
     return new Promise((resolve, reject) => {
         const options = {
@@ -53,20 +66,8 @@ parentPort.on('message', async ({ip, range, timeout}) => {
     console.log(ip, range, timeout);
     gtimeout = parseInt(timeout);
     const start = Date.now();
-    const split = ip.split('.');
 
-    const ips = [];
-    const prefix = Number(range);
-    const subnetCount = prefix === 16 ? 256 : prefix === 22 ? 4 : 1;
-    const firstSubnet = prefix === 16 ? 0 : prefix === 22 ? Math.floor(Number(split[2]) / 4) * 4 : Number(split[2]);
-
-    for (let i = 0; i < subnetCount; i++) {
-        for (let j = 0; j < 256; j++) {
-            ips.push(`${split[0]}.${split[1]}.${firstSubnet + i}.${j}`);
-        }
-    }
-
-    const iterator = ips.values();
+    const iterator = generateIPs(ip, range);
     const workers = new Array(1000).fill(iterator).map(doWork);
 
     await Promise.allSettled(workers);

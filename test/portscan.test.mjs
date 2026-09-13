@@ -56,6 +56,8 @@ const {App} = compiled.exports;
 
 async function scan(ip, range, miners = new Map()) {
     const requests = [];
+    let activeRequests = 0;
+    let maxActiveRequests = 0;
     let receive;
     let result;
     const parentPort = {
@@ -70,8 +72,11 @@ async function scan(ip, range, miners = new Map()) {
     const http = {
         get: (options, callback) => {
             requests.push(options);
+            activeRequests++;
+            maxActiveRequests = Math.max(maxActiveRequests, activeRequests);
             const request = new EventEmitter();
             queueMicrotask(() => {
+                activeRequests--;
                 if (!miners.has(options.hostname)) {
                     request.emit('error', new Error('Unreachable fixture host'));
                     return;
@@ -94,8 +99,49 @@ async function scan(ip, range, miners = new Map()) {
         console: {log: () => {}},
     });
     await receive({ip, range, timeout: '500'});
-    return {requests, result: JSON.parse(JSON.stringify(result))};
+    return {requests, result: JSON.parse(JSON.stringify(result)), maxActiveRequests};
 }
+
+test('IP generation is iterable and constructs only the addresses requested', () => {
+    const context = vm.createContext({
+        require: (name) => {
+            if (name === 'worker_threads') return {parentPort: {on: () => {}}};
+            assert.equal(name, 'http');
+            return {};
+        },
+    });
+    vm.runInContext(workerSource, context);
+    let splitCalls = 0;
+    let addressesGenerated = 0;
+    const ip = {
+        split: (separator) => {
+            splitCalls++;
+            assert.equal(separator, '.');
+            return [
+                {
+                    toString: () => {
+                        addressesGenerated++;
+                        return '10';
+                    },
+                },
+                '34',
+                '7',
+                '123',
+            ];
+        },
+    };
+    const iterator = context.generateIPs(ip, '22');
+    assert.equal(iterator[Symbol.iterator](), iterator);
+    assert.equal(splitCalls, 0);
+    assert.equal(addressesGenerated, 0);
+    assert.equal(iterator.next().value, '10.34.4.0');
+    assert.equal(splitCalls, 1);
+    assert.equal(addressesGenerated, 1);
+    assert.equal(iterator.next().value, '10.34.4.1');
+    assert.equal(addressesGenerated, 2);
+    assert.equal(iterator.return().done, true);
+    assert.equal(addressesGenerated, 2);
+});
 
 for (const prefix of ['22', 22]) {
     test(`/22 (${typeof prefix}) scans exactly the four /24 subnets in 10.34.0.0/22`, async () => {
@@ -106,7 +152,12 @@ for (const prefix of ['22', 22]) {
             ['10.34.3.40', 'miner-3'],
             ['10.34.4.50', 'outside-range'],
         ]);
-        const {requests, result} = await scan(typeof prefix === 'string' ? '10.34.0.0' : '10.34.0', prefix, miners);
+        const {requests, result, maxActiveRequests} = await scan(
+            typeof prefix === 'string' ? '10.34.0.0' : '10.34.0',
+            prefix,
+            miners,
+        );
+        assert.equal(maxActiveRequests, 1000);
         const expected = Array.from({length: 1024}, (_, index) => `10.34.${Math.floor(index / 256)}.${index % 256}`);
         assert.deepEqual(
             requests.map((request) => request.hostname),
