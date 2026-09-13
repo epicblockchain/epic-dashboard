@@ -6,7 +6,7 @@ const os = require('os');
 const {createLogger, transports} = require('winston');
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import {Dashboard} from './dashboard.jsx';
 import {DataTable, DEFAULT_HIDDEN_COLUMNS, normalizeTablePreferences} from './table.jsx';
 import {Preferences} from './preferences.jsx';
@@ -1318,4 +1318,4 @@ class App extends React.Component {
     }
 }
 
-ReactDOM.render(<App />, document.getElementById('react'));
+createRoot(document.getElementById('react')).render(<App />);
