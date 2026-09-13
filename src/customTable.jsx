@@ -338,7 +338,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             maxWidth: 500,
             Filter: DefaultColumnFilter,
         }),
-        []
+        [],
     );
 
     const data = React.useMemo(() => dataRaw, [dataRaw]);
@@ -376,7 +376,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             activationConstraint: {
                 distance: 4,
             },
-        })
+        }),
     );
     const resetSelectionSession = React.useCallback((anchorRowId = null) => {
         selectionStateRef.current.anchorRowId = anchorRowId;
@@ -502,7 +502,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 },
                 ...columns,
             ]);
-        }
+        },
     );
 
     const tablePreferredHeight = Math.round(window.innerHeight * 0.52);
@@ -517,17 +517,17 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             state.columnOrder && state.columnOrder.length
                 ? state.columnOrder.concat(tableColumnIds.filter((columnId) => !state.columnOrder.includes(columnId)))
                 : tableColumnIds,
-        [state.columnOrder]
+        [state.columnOrder],
     );
 
     const visibleColumnIds = React.useMemo(
         () => headerGroups[0]?.headers.filter((column) => column.id != 'selection').map((column) => column.id) || [],
-        [headerGroups]
+        [headerGroups],
     );
 
     const draggedColumn = React.useMemo(
         () => headerGroups[0]?.headers.find((column) => column.id === draggedColumnId) || null,
-        [draggedColumnId, headerGroups]
+        [draggedColumnId, headerGroups],
     );
 
     const buildMovedColumnOrder = React.useCallback(
@@ -555,7 +555,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 return nextVisibleColumnIds[insertIndex++];
             });
         },
-        [currentColumnOrder, visibleColumnIds]
+        [currentColumnOrder, visibleColumnIds],
     );
 
     React.useEffect(() => {
@@ -619,7 +619,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 selectedRowIds: nextSelectedRowIds,
             });
         },
-        [dispatch, resetSelectionSession]
+        [dispatch, resetSelectionSession],
     );
 
     const handleColumnDragStart = React.useCallback(({active}) => {
@@ -641,7 +641,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 setPreviewColumnOrder(nextColumnOrder);
             }
         },
-        [buildMovedColumnOrder, currentColumnOrder, previewColumnOrder]
+        [buildMovedColumnOrder, currentColumnOrder, previewColumnOrder],
     );
 
     const handleColumnDragEnd = React.useCallback(() => {
@@ -686,7 +686,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 });
             }
         },
-        [data]
+        [data],
     );
 
     const RenderRow = React.useCallback(
@@ -715,32 +715,32 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                                 ? 'text.success'
                                                 : 'text.error'
                                             : cell.column.id === 'performance'
-                                            ? cell.value == 'N/A' || cell.value == 'Error'
-                                                ? 'text.error'
-                                                : getColorText(data[row.id].lowest)
-                                            : cell.column.id === 'voltage'
-                                            ? cell.value <= 11.9
-                                                ? 'text.error'
-                                                : null
-                                            : cell.column.id === 'lasterror'
-                                            ? cell.value !== ' '
-                                                ? 'text.error'
-                                                : null
-                                            : cell.column.id === 'ip'
-                                            ? 'ip-col'
-                                            : cell.column.id === 'status'
-                                            ? data[row.id].lasterror !== ' '
-                                                ? data[row.id].status
+                                              ? cell.value == 'N/A' || cell.value == 'Error'
+                                                  ? 'text.error'
+                                                  : getColorText(data[row.id].lowest)
+                                              : cell.column.id === 'voltage'
+                                                ? cell.value <= 11.9
                                                     ? 'text.error'
                                                     : null
-                                                : null
-                                            : cell.column.id === 'pool'
-                                            ? data[row.id].connected !== 'Error'
-                                                ? data[row.id].connected
-                                                    ? 'text.success'
-                                                    : 'text.error'
-                                                : null
-                                            : null
+                                                : cell.column.id === 'lasterror'
+                                                  ? cell.value !== ' '
+                                                      ? 'text.error'
+                                                      : null
+                                                  : cell.column.id === 'ip'
+                                                    ? 'ip-col'
+                                                    : cell.column.id === 'status'
+                                                      ? data[row.id].lasterror !== ' '
+                                                          ? data[row.id].status
+                                                              ? 'text.error'
+                                                              : null
+                                                          : null
+                                                      : cell.column.id === 'pool'
+                                                        ? data[row.id].connected !== 'Error'
+                                                            ? data[row.id].connected
+                                                                ? 'text.success'
+                                                                : 'text.error'
+                                                            : null
+                                                        : null
                                         : null,
                                     backgroundColor: cell.column
                                         ? cell.column.id === 'hbs'
@@ -748,32 +748,32 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                                 ? 'success.main'
                                                 : 'error.main'
                                             : cell.column.id === 'performance'
-                                            ? cell.value == 'N/A' || cell.value == 'Error'
-                                                ? 'error.main'
-                                                : getColor(data[row.id].lowest)
-                                            : cell.column.id === 'voltage'
-                                            ? cell.value <= 11.9
-                                                ? 'error.main'
-                                                : null
-                                            : cell.column.id === 'lasterror'
-                                            ? cell.value !== ' '
-                                                ? 'error.main'
-                                                : null
-                                            : cell.column.id === 'ip'
-                                            ? 'ip-col'
-                                            : cell.column.id === 'status'
-                                            ? data[row.id].lasterror !== ' '
-                                                ? data[row.id].status
+                                              ? cell.value == 'N/A' || cell.value == 'Error'
+                                                  ? 'error.main'
+                                                  : getColor(data[row.id].lowest)
+                                              : cell.column.id === 'voltage'
+                                                ? cell.value <= 11.9
                                                     ? 'error.main'
                                                     : null
-                                                : null
-                                            : cell.column.id === 'pool'
-                                            ? data[row.id].connected !== 'Error'
-                                                ? data[row.id].connected
-                                                    ? 'success.main'
-                                                    : 'error.main'
-                                                : 'error.main'
-                                            : null
+                                                : cell.column.id === 'lasterror'
+                                                  ? cell.value !== ' '
+                                                      ? 'error.main'
+                                                      : null
+                                                  : cell.column.id === 'ip'
+                                                    ? 'ip-col'
+                                                    : cell.column.id === 'status'
+                                                      ? data[row.id].lasterror !== ' '
+                                                          ? data[row.id].status
+                                                              ? 'error.main'
+                                                              : null
+                                                          : null
+                                                      : cell.column.id === 'pool'
+                                                        ? data[row.id].connected !== 'Error'
+                                                            ? data[row.id].connected
+                                                                ? 'success.main'
+                                                                : 'error.main'
+                                                            : 'error.main'
+                                                        : null
                                         : null,
                                 }}
                                 className={getColumnClassName(cell.column.id)}
@@ -812,7 +812,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 </TableRow>
             );
         },
-        [prepareRow, rows, state.selectedRowIds, window.innerWidth]
+        [prepareRow, rows, state.selectedRowIds, window.innerWidth],
     );
 
     return (
@@ -850,7 +850,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                 handleApiM(
                                     '/identify',
                                     {checked: true, password: ''},
-                                    Object.keys(state.selectedRowIds).map((id) => data[id].id)
+                                    Object.keys(state.selectedRowIds).map((id) => data[id].id),
                                 );
                             }}
                         >
@@ -866,7 +866,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                 handleApiM(
                                     '/identify',
                                     {checked: false, password: ''},
-                                    Object.keys(state.selectedRowIds).map((id) => data[id].id)
+                                    Object.keys(state.selectedRowIds).map((id) => data[id].id),
                                 );
                             }}
                         >

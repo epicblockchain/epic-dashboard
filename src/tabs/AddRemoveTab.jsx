@@ -38,7 +38,7 @@ export class AddRemoveTab extends React.Component {
                                     if (err) {
                                         throw err;
                                     }
-                                }
+                                },
                             );
                         }
 

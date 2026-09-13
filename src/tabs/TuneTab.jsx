@@ -151,11 +151,11 @@ export class TuneTab extends React.Component {
                         }
                     }
                 } else {
-                    (this.state.preset = 'Select Preset'), (tunePresets = null);
+                    ((this.state.preset = 'Select Preset'), (tunePresets = null));
                     break;
                 }
             } else {
-                (this.state.preset = 'Select Preset'), (tunePresets = null);
+                ((this.state.preset = 'Select Preset'), (tunePresets = null));
                 break;
             }
         }

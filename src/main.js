@@ -89,7 +89,7 @@ const createWindow = () => {
                             'form-result',
                             i,
                             'success',
-                            `${miners[i].address}: Done firmware update`
+                            `${miners[i].address}: Done firmware update`,
                         );
                     } else {
                         mainWindow.webContents.send('form-result', i, 'error', `${miners[i].address}: ${body.error}`);

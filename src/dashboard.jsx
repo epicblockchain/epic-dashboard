@@ -172,10 +172,10 @@ export class Dashboard extends React.Component {
             yAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
             yAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#ffffff');
             dateAxes[0].renderer.labels.template.fill = am4core.color(
-                this.props.theme == 'light' ? '#0068B4' : '#2FC1DE'
+                this.props.theme == 'light' ? '#0068B4' : '#2FC1DE',
             );
             dateAxes[0].renderer.grid.template.stroke = am4core.color(
-                this.props.theme == 'light' ? '#0068B4' : '#ffffff'
+                this.props.theme == 'light' ? '#0068B4' : '#ffffff',
             );
             series[0].tooltip.label.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#fafafa');
             series[0].tooltip.background.fill = am4core.color(this.props.theme == 'light' ? '#fafafa' : '#515151');
@@ -241,8 +241,8 @@ export class Dashboard extends React.Component {
                     formatPowerString(totalPower),
                     activeMinerCount,
                     `${acceptedCount} / ${rejectedCount}`,
-                    new Date(timeSince * 1000).toString()
-                )
+                    new Date(timeSince * 1000).toString(),
+                ),
             );
         }
 

@@ -168,18 +168,18 @@ These will be stored in a line seperated text file:
 
 #### Linux:
 
--   ~/.ePIC-Dashboard/ipaddr.txt contains saved miners by ip
--   ~/.ePIC-Dashboard/blacklist.txt contains blacklisted miners by their hostname/unique id: (e.g. "epicminer30032518")
+- ~/.ePIC-Dashboard/ipaddr.txt contains saved miners by ip
+- ~/.ePIC-Dashboard/blacklist.txt contains blacklisted miners by their hostname/unique id: (e.g. "epicminer30032518")
 
 #### Windows:
 
--   %APPDATA%/ePIC-Dashboard/ipaddr.txt
--   %APPDATA%/ePIC-Dashboard/blacklist.txt
+- %APPDATA%/ePIC-Dashboard/ipaddr.txt
+- %APPDATA%/ePIC-Dashboard/blacklist.txt
 
 #### Mac:
 
--   ~/Library/Application Support/ePIC-Dashboard/ipaddr.txt
--   ~/Library/Application Support/ePIC-Dashboard/blacklist.txt
+- ~/Library/Application Support/ePIC-Dashboard/ipaddr.txt
+- ~/Library/Application Support/ePIC-Dashboard/blacklist.txt
 
 ## Saving Miner Log Files
 

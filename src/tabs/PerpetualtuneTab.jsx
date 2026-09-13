@@ -339,7 +339,7 @@ export class PerpetualtuneTab extends React.Component {
                                     this.props.handleApi(
                                         '/perpetualtune/errorthrottle',
                                         this.state,
-                                        this.props.selected
+                                        this.props.selected,
                                     );
                                 }
                             }

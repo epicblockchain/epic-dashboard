@@ -66,7 +66,7 @@ function getHiddenColumns(tablePreferences = {}) {
     return tableColumnIds.filter(
         (columnId) =>
             tablePreferences[columnId] === false ||
-            (tablePreferences[columnId] !== true && DEFAULT_HIDDEN_COLUMN_SET.has(columnId))
+            (tablePreferences[columnId] !== true && DEFAULT_HIDDEN_COLUMN_SET.has(columnId)),
     );
 }
 
@@ -403,7 +403,7 @@ export class DataTable extends React.Component {
                             i--;
                         } else {
                             text += (String(i + count) + ': ' + String(parseFloat(totals[i]).toFixed(1)) + '%').padEnd(
-                                10
+                                10,
                             );
                             if (parseFloat(totals[i]) < 100) {
                                 text += ' ';

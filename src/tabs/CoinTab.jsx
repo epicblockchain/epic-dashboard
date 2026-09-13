@@ -372,7 +372,7 @@ export class CoinTab extends React.Component {
             !this.props.selected.length ||
             this.state.hashrate_splits.some(
                 (split) =>
-                    split.coin === 'Select Coin' || !split.stratum_configs[0].pool || !split.stratum_configs[0].address
+                    split.coin === 'Select Coin' || !split.stratum_configs[0].pool || !split.stratum_configs[0].address,
             );
 
         return (
@@ -497,7 +497,7 @@ export class CoinTab extends React.Component {
                                             onChange={(e) =>
                                                 this.updateSplitRatio(
                                                     splitIndex,
-                                                    e.target.value === '' ? 0 : Number(e.target.value)
+                                                    e.target.value === '' ? 0 : Number(e.target.value),
                                                 )
                                             }
                                             inputProps={{step: 5, min: 0, max: 100, type: 'number'}}

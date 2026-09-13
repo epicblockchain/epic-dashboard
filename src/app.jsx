@@ -304,7 +304,7 @@ const notify = (sev, text, options) => {
                 {text}
             </Alert>
         ),
-        options
+        options,
     );
 };
 
@@ -499,7 +499,7 @@ class App extends React.Component {
                         return {ip: miner.address, sum: null, hist: null, network: null, timer: 0};
                     }
                 }
-            })
+            }),
         );
 
         models = Array.from(models).sort();
@@ -1032,7 +1032,7 @@ class App extends React.Component {
                         if (isOldFwErrorThrottleUnsupported) {
                             notify(
                                 'warning',
-                                `${miners[i].address}: ${apiError} (this feature may require newer firmware)`
+                                `${miners[i].address}: ${apiError} (this feature may require newer firmware)`,
                             );
                         } else {
                             notify('error', `${miners[i].address}: ${apiError}`);
@@ -1226,7 +1226,7 @@ class App extends React.Component {
                             onClick={() =>
                                 ipcRenderer.invoke(
                                     'open-external',
-                                    'https://docs.netgate.com/pfsense/en/latest/network/cidr.html'
+                                    'https://docs.netgate.com/pfsense/en/latest/network/cidr.html',
                                 )
                             }
                         >

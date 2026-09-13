@@ -358,7 +358,7 @@ export class FanTab extends React.Component {
                                                             this.props.handleApi(
                                                                 '/fanspeed',
                                                                 this.state,
-                                                                this.props.selected
+                                                                this.props.selected,
                                                             );
                                                         }
                                                     }}
@@ -419,7 +419,7 @@ export class FanTab extends React.Component {
                                                     this.props.handleApi(
                                                         '/shutdowntemp',
                                                         this.state,
-                                                        this.props.selected
+                                                        this.props.selected,
                                                     );
                                                 }
                                             }}
@@ -461,7 +461,7 @@ export class FanTab extends React.Component {
                                                         this.props.handleApi(
                                                             '/critcaltemp',
                                                             this.state,
-                                                            this.props.selected
+                                                            this.props.selected,
                                                         );
                                                     }
                                                 }}
@@ -528,7 +528,7 @@ export class FanTab extends React.Component {
                                                     this.props.handleApi(
                                                         '/fans/minimum',
                                                         this.state,
-                                                        this.props.selected
+                                                        this.props.selected,
                                                     );
                                                 }
                                             }}
@@ -588,7 +588,7 @@ export class FanTab extends React.Component {
                                                     this.props.handleApi(
                                                         '/preinitcooldownmaxduration',
                                                         this.state,
-                                                        this.props.selected
+                                                        this.props.selected,
                                                     );
                                                 }
                                             }}
@@ -619,7 +619,7 @@ export class FanTab extends React.Component {
                                         this.props.handleApi(
                                             '/preinitcooldownmaxduration',
                                             this.state,
-                                            this.props.selected
+                                            this.props.selected,
                                         );
                                     }}
                                     variant="contained"
@@ -647,7 +647,7 @@ export class FanTab extends React.Component {
                                     this.props.handleApi(
                                         '/preinitcooldownmaxduration',
                                         this.state,
-                                        this.props.selected
+                                        this.props.selected,
                                     );
                                 }
                             }}

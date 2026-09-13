@@ -81,7 +81,7 @@ export class PerformanceTab extends React.Component {
             powerArray.push(
                 ...Object.entries(powers)
                     .map((entry) => entry[1].map((power) => ({mode: entry[0], power: power})))
-                    .flat()
+                    .flat(),
             );
         else if (oldPresets) powerArray.push(...Object.entries(oldPresets).map((preset) => ({mode: preset[1]})));
 
