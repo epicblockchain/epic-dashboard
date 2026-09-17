@@ -130,6 +130,59 @@ div.system-apply {
     background-color: #b71c1c;
 }
 
+/* BoardControlTab */
+
+.board-control-tab {
+    height: auto;
+    min-height: 260px;
+    max-height: none;
+}
+
+.board-control-header,
+.board-control-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.board-control-actions {
+    margin: 12px 0;
+}
+
+.board-control-actions .MuiButton-root {
+    margin-right: 8px;
+}
+
+.board-state-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.board-state-item {
+    padding: 4px 8px;
+}
+
+.board-state-item .MuiFormControlLabel-root {
+    width: 100%;
+    margin: 0;
+}
+
+.board-state-label {
+    display: inline-block;
+    padding: 4px 0;
+}
+
+.board-control-apply {
+    justify-content: flex-end;
+}
+
+.board-control-apply .MuiTextField-root {
+    margin-right: auto;
+}
+
 @media (max-height: 760px) {
     .tab-body {
         height: auto;

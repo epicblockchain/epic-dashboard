@@ -11,6 +11,7 @@ import {
     getTablePreferences,
     moveColumnOrder,
     getRangeSelection,
+    getMinerRowId,
     getOrderedSelectedMiners,
 } from '../src/minerTable.mjs';
 
@@ -151,6 +152,12 @@ test('selection resolves original miner IDs rather than sorted row positions', (
     table.getRowModel().rows[1].toggleSelected(true);
     assert.deepEqual(getOrderedSelectedMiners([7], table.atoms.rowSelection.get(), data), [7, 4]);
     assert.deepEqual(getOrderedSelectedMiners([12, 7, 4], {1: true, 3: true, 99: true, 0: false}, data), [7, 4]);
+});
+
+test('selection remains attached to a miner IP across data refreshes', () => {
+    const rowSelection = {[getMinerRowId(data[1])]: true};
+    assert.deepEqual(getOrderedSelectedMiners([], rowSelection, data), [4]);
+    assert.deepEqual(getOrderedSelectedMiners([], rowSelection, [...data].reverse()), [4]);
 });
 
 test('Shift selection follows the displayed sorted and filtered range', () => {

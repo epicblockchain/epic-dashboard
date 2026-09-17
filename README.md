@@ -106,6 +106,12 @@ Click on the "MINER CONTROL" tab. Fill out the password and then click the desir
 
 ![reboot](docs/images/miner_control.png)
 
+### Enabling and disabling hashboards
+
+Click on the "BOARD CONTROL" tab. The available boards are based on the selected model's `Max HBs` capability. Select one or more miners, choose the target enabled state for each board, enter the password, and click Apply. Use "Select all" or "Clear all" to update every board shown.
+
+When exactly one miner is selected, "Copy selected system settings" loads its current board states from `HBStatus`. When applying to multiple miners, each request is limited to the number of boards supported by that miner's model.
+
 ### Updating Mining Configuration
 
 Click on the "MINING CONFIG" tab. The latest firmware supports 3 mining pools in case a connection cannot be made, which takes precedence from top to bottom. "Unique ID" will append the unique miner id at the end of the worker name if enabled.

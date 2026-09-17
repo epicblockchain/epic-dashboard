@@ -38,6 +38,7 @@ import {
     getColumnVisibility,
     getTablePreferences,
     getRangeSelection,
+    getMinerRowId,
     moveColumnOrder,
 } from './minerTable.mjs';
 export {tableColumnIds} from './minerTable.mjs';
@@ -112,6 +113,12 @@ function renderTooltipCell(value) {
 
 function isSameOrder(a = [], b = []) {
     return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+function isSameSelection(a = {}, b = {}) {
+    const aKeys = Object.keys(a).filter((key) => a[key]);
+    const bKeys = Object.keys(b).filter((key) => b[key]);
+    return aKeys.length === bKeys.length && aKeys.every((key) => b[key]);
 }
 
 export const tableColumns = minerColumns.map((column) =>
@@ -318,6 +325,14 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     };
     const stateRef = React.useRef(state);
     stateRef.current = state;
+    React.useEffect(() => {
+        const externalSelection = extstate?.rowSelection || {};
+        setLocalState((current) =>
+            isSameSelection(current.rowSelection, externalSelection)
+                ? current
+                : {...current, rowSelection: externalSelection},
+        );
+    }, [extstate?.rowSelection]);
     const changeState = React.useCallback(
         (key, updater, type = 'tableState') => {
             const previous = stateRef.current;
@@ -374,6 +389,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         features: minerTableFeatures,
         columns,
         data,
+        getRowId: getMinerRowId,
         defaultColumn: minerDefaultColumn,
         state,
         columnResizeMode: 'onChange',
@@ -538,7 +554,8 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     const renderRow = React.useCallback(
         ({rowIndex, style, ariaRowIndex}) => {
             const row = rows[rowIndex];
-            const led = data[row.id].misc ? data[row.id].misc['Locate Miner State'] : null;
+            const rowData = row.original;
+            const led = rowData.misc ? rowData.misc['Locate Miner State'] : null;
             return (
                 <TableRow
                     key={row.id}
@@ -566,7 +583,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                             : cell.column.id === 'performance'
                                               ? value == 'N/A' || value == 'Error'
                                                   ? 'text.error'
-                                                  : getColorText(data[row.id].lowest)
+                                                  : getColorText(rowData.lowest)
                                               : cell.column.id === 'voltage'
                                                 ? value <= 11.9
                                                     ? 'text.error'
@@ -578,14 +595,14 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                                   : cell.column.id === 'ip'
                                                     ? 'ip-col'
                                                     : cell.column.id === 'status'
-                                                      ? data[row.id].lasterror !== ' '
-                                                          ? data[row.id].status
+                                                      ? rowData.lasterror !== ' '
+                                                          ? rowData.status
                                                               ? 'text.error'
                                                               : null
                                                           : null
                                                       : cell.column.id === 'pool'
-                                                        ? data[row.id].connected !== 'Error'
-                                                            ? data[row.id].connected
+                                                        ? rowData.connected !== 'Error'
+                                                            ? rowData.connected
                                                                 ? 'text.success'
                                                                 : 'text.error'
                                                             : null
@@ -599,7 +616,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                             : cell.column.id === 'performance'
                                               ? value == 'N/A' || value == 'Error'
                                                   ? 'error.main'
-                                                  : getColor(data[row.id].lowest)
+                                                  : getColor(rowData.lowest)
                                               : cell.column.id === 'voltage'
                                                 ? value <= 11.9
                                                     ? 'error.main'
@@ -611,14 +628,14 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                                   : cell.column.id === 'ip'
                                                     ? 'ip-col'
                                                     : cell.column.id === 'status'
-                                                      ? data[row.id].lasterror !== ' '
-                                                          ? data[row.id].status
+                                                      ? rowData.lasterror !== ' '
+                                                          ? rowData.status
                                                               ? 'error.main'
                                                               : null
                                                           : null
                                                       : cell.column.id === 'pool'
-                                                        ? data[row.id].connected !== 'Error'
-                                                            ? data[row.id].connected
+                                                        ? rowData.connected !== 'Error'
+                                                            ? rowData.connected
                                                                 ? 'success.main'
                                                                 : 'error.main'
                                                             : 'error.main'
@@ -629,16 +646,13 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                             >
                                 {cell.column.id === 'ip' && (
                                     <>
-                                        {/* {console.log(data[row.id])} */}
                                         <IconButton
                                             className="led-toggle"
                                             size="small"
-                                            disabled={!data[row.id].misc || data[row.id].name === 'Error'}
+                                            disabled={!rowData.misc || rowData.name === 'Error'}
                                             title={led ? 'Toggle LED Off' : 'Toggle LED On'}
                                             onClick={() =>
-                                                handleApiM('/identify', {checked: !led, password: ''}, [
-                                                    data[row.id].id,
-                                                ])
+                                                handleApiM('/identify', {checked: !led, password: ''}, [rowData.id])
                                             }
                                         >
                                             <LightOutlinedIcon className={led ? 'led-on' : ''} />
@@ -646,9 +660,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                         <IconButton
                                             className="open-browser"
                                             size="small"
-                                            onClick={() =>
-                                                ipcRenderer.invoke('open-external', `http://${data[row.id].ip}`)
-                                            }
+                                            onClick={() => ipcRenderer.invoke('open-external', `http://${rowData.ip}`)}
                                         >
                                             <OpenInNewIcon />
                                         </IconButton>
@@ -701,7 +713,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                 handleApiM(
                                     '/identify',
                                     {checked: true, password: ''},
-                                    Object.keys(state.rowSelection).map((id) => data[id].id),
+                                    selectedFlatRows.map((row) => row.original.id),
                                 );
                             }}
                         >
@@ -717,7 +729,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                 handleApiM(
                                     '/identify',
                                     {checked: false, password: ''},
-                                    Object.keys(state.rowSelection).map((id) => data[id].id),
+                                    selectedFlatRows.map((row) => row.original.id),
                                 );
                             }}
                         >

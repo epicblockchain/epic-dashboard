@@ -12,6 +12,7 @@ import {DataTable, DEFAULT_HIDDEN_COLUMNS, normalizeTablePreferences} from './ta
 import {Preferences} from './preferences.jsx';
 import {Support} from './support.jsx';
 import {Eula} from './eula.jsx';
+import {buildBoardEnableRequest} from './boardControl.mjs';
 
 import {
     Drawer,
@@ -914,6 +915,9 @@ class App extends React.Component {
                 obj = {param: data.enable_boards_on_idle, password: data.password};
                 success = `Enable boards on idle set to ${data.enable_boards_on_idle}`;
                 break;
+            case '/boardenable':
+                success = 'Board settings updated successfully';
+                break;
             case '/loadlicense':
                 obj = {param: {key: data.license_key}, password: data.password};
                 success = `License uploaded`;
@@ -976,8 +980,17 @@ class App extends React.Component {
                         }
                     }
 
+                    const requestBody =
+                        api === '/boardenable'
+                            ? buildBoardEnableRequest(
+                                  data.board_states,
+                                  this.state.miner_data[i]?.sum,
+                                  data.password,
+                                  this.state.miner_data[i]?.cap?.['Max HBs'],
+                              )
+                            : obj;
                     const {body} = await got.post(`http://${miners[i].address}:4028${api}`, {
-                        json: obj,
+                        json: requestBody,
                         timeout: {
                             request: slow_api
                                 ? api === '/test'

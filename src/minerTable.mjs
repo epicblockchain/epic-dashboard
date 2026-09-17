@@ -137,11 +137,16 @@ export function getRangeSelection(rows, anchorId, rowId, baseSelection, shouldSe
     return selection;
 }
 
+export function getMinerRowId(row) {
+    return String(row?.ip || row?.id);
+}
+
 export function getOrderedSelectedMiners(previousSelection, rowSelection, data) {
+    const rowsById = new Map(data.map((row) => [getMinerRowId(row), row]));
     const remaining = new Set(
         Object.keys(rowSelection)
-            .filter((id) => rowSelection[id] && data[id])
-            .map((id) => data[id].id),
+            .filter((id) => rowSelection[id] && (rowsById.has(id) || data[id]))
+            .map((id) => (rowsById.get(id) || data[id]).id),
     );
     const selected = previousSelection.filter((id) => {
         if (!remaining.has(id)) return false;
