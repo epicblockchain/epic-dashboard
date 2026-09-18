@@ -161,8 +161,7 @@ export class PerpetualtuneTab extends React.Component {
                                     onChange={this.updateCheck}
                                 />
                             }
-                            label={<Typography variant="subtitle1">Perpetual Tuning</Typography>}
-                            labelPlacement="top"
+                            label={<Typography variant="body2">Perpetual Tuning</Typography>}
                         />
                     </section>
 
@@ -192,6 +191,7 @@ export class PerpetualtuneTab extends React.Component {
                                 ))}
                             </RadioGroup>
                             <FormControlLabel
+                                className="perpetual-error-toggle"
                                 control={
                                     <Switch
                                         size="small"

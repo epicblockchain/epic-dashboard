@@ -420,17 +420,18 @@ export class CoinTab extends React.Component {
                             })}
                         </Select>
                     </FormControl>
-                    <FormControl margin="dense" style={{height: '40px'}}>
-                        <div className="unique-id-label">Unique ID</div>
+                    <div className="mining-inline-toggle">
+                        <Typography variant="caption" color="textSecondary">
+                            Unique ID
+                        </Typography>
                         <Switch
                             size="small"
                             color="primary"
-                            className="unique-id"
                             checked={this.state.checked}
                             onChange={this.updateCheck}
                             disabled={this.state.hashrate_split_enabled}
                         />
-                    </FormControl>
+                    </div>
                     <FormControl
                         variant="outlined"
                         margin="dense"
@@ -450,16 +451,17 @@ export class CoinTab extends React.Component {
                             <MenuItem value={'CpuId'}>CPU ID</MenuItem>
                         </Select>
                     </FormControl>
-                    <FormControl margin="dense" style={{height: '40px', marginLeft: '20px'}}>
-                        <div className="unique-id-label">Hashrate Split</div>
+                    <div className="mining-inline-toggle">
+                        <Typography variant="caption" color="textSecondary">
+                            Hashrate Split
+                        </Typography>
                         <Switch
                             size="small"
                             color="primary"
-                            className="unique-id"
                             checked={this.state.hashrate_split_enabled}
                             onChange={this.updateHashrateSplitEnabled}
                         />
-                    </FormControl>
+                    </div>
                     {this.state.hashrate_split_enabled && (
                         <div className="hashrate-split-nav">
                             {this.state.hashrate_splits.map((split, splitIndex) => (

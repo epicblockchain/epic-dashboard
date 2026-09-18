@@ -302,7 +302,6 @@ export class FanTab extends React.Component {
                                                         }
                                                         min={45}
                                                         onChange={this.handleTargetTempSlider}
-                                                        style={{width: '250px'}}
                                                         disabled={this.props.disabled || this.state.lock}
                                                     />
                                                 </Grid>
@@ -345,7 +344,6 @@ export class FanTab extends React.Component {
                                                         }
                                                         min={10}
                                                         onChange={this.handleIdleSpeedSlider}
-                                                        style={{width: '250px'}}
                                                         disabled={this.props.disabled || this.state.lock}
                                                     />
                                                 </Grid>
@@ -375,7 +373,6 @@ export class FanTab extends React.Component {
                                                     value={typeof this.state.speed === 'number' ? this.state.speed : 1}
                                                     min={1}
                                                     onChange={this.handleSlider}
-                                                    style={{width: '250px'}}
                                                     disabled={this.props.disabled}
                                                 />
                                             </Grid>
@@ -437,7 +434,6 @@ export class FanTab extends React.Component {
                                             min={60}
                                             max={110}
                                             onChange={this.handleShutdownTempSlider}
-                                            style={{width: '250px'}}
                                             disabled={this.props.disabled}
                                         />
                                     </Grid>
@@ -487,7 +483,6 @@ export class FanTab extends React.Component {
                                                 min={60}
                                                 max={110}
                                                 onChange={this.handleCritTempSlider}
-                                                style={{width: '250px'}}
                                                 disabled={this.props.disabled}
                                             />
                                         </Grid>
@@ -550,7 +545,6 @@ export class FanTab extends React.Component {
                                             min={0}
                                             max={MAX_FANS}
                                             onChange={this.handleMinWorkingFansSlider}
-                                            style={{width: '250px'}}
                                             disabled={this.props.disabled}
                                             valueLabelDisplay="auto"
                                             marks
@@ -618,7 +612,6 @@ export class FanTab extends React.Component {
                                             min={0}
                                             max={MAX_PREINIT_COOLDOWN_DURATION}
                                             onChange={this.handlePreinitCooldownSlider}
-                                            style={{width: '250px'}}
                                             disabled={this.props.disabled}
                                             valueLabelDisplay="auto"
                                         />
