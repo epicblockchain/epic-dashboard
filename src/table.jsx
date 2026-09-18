@@ -642,26 +642,26 @@ export class DataTable extends React.Component {
                         <Tab value="system" label="System" />
                         <Tab value="cooling" label="Cooling" disabled={!capApi} />
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab value="tune" label="tune" />
+                            <Tab value="tune" label="Tune" />
                         )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab value="perpetual-tune" label="Perpetual tune" />
+                            <Tab value="perpetual-tune" label="Perpetual Tune" />
                         )}
                         <Tab value="board-control" label="Board Control" />
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab value="idle-on-connection-lost" label="Idle On Connection Lost" />
+                            <Tab value="idle-on-connection-lost" label="Idle on Connection Lost" />
                         )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab value="disable-board-on-fail" label="Disable Board On Fail" />
+                            <Tab value="disable-board-on-fail" label="Disable Board on Fail" />
                         )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab value="enable-boards-on-idle" label="Enable Boards On Idle" />
+                            <Tab value="enable-boards-on-idle" label="Enable Boards on Idle" />
                         )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab value="license" label="License" />
                         )}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && (
-                            <Tab value="wifi" label="Wifi" />
+                            <Tab value="wifi" label="Wi-Fi" />
                         )}
                         {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && (
                             <Tab value="debug" label="Debug" />

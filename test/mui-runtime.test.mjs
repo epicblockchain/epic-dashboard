@@ -77,6 +77,8 @@ function elements(element, predicate) {
 
 const numericInputs = (tab) =>
     elements(tab.render(), (element) => element.type === Input).map((element) => element.props.slotProps?.input);
+const isApplyAction = (element) =>
+    typeof element.props.children === 'string' && element.props.children.startsWith('Apply');
 
 test('Material UI and icons use matching v9 versions without unused Lab or legacy JSS dependencies', () => {
     const material = require('@mui/material/package.json').version;
@@ -157,14 +159,15 @@ test('Wifi retains native password limits, visibility controls and command paylo
     const markup = renderToStaticMarkup(tab.render());
     assert.match(markup, /minLength="8"/);
     assert.match(markup, /toggle password visibility/);
-    const apply = elements(tab.render(), (element) => element.props.children === 'Apply')[0];
+    const apply = elements(tab.render(), isApplyAction)[0];
+    assert.equal(apply.props.children, 'Apply to 1 miner');
     assert.equal(apply.props.disabled, false);
     apply.props.onClick();
     assert.equal(requests[0].api, '/wifi');
     assert.equal(requests[0].data.psk, '12345678');
     assert.deepEqual(requests[0].selected, [0]);
     tab.state.psk = 'short';
-    assert.equal(elements(tab.render(), (element) => element.props.children === 'Apply')[0].props.disabled, true);
+    assert.equal(elements(tab.render(), isApplyAction)[0].props.disabled, true);
 });
 
 test('tuning preserves native limits, note styling and separate tuning/overdrive commands', () => {
@@ -184,7 +187,7 @@ test('tuning preserves native limits, note styling and separate tuning/overdrive
             .includes('BM1366 ASIC chips'),
     )[0];
     assert.equal(note.props.sx.color, 'white');
-    const applies = elements(tab.render(), (element) => element.props.children === 'Apply');
+    const applies = elements(tab.render(), isApplyAction);
     applies[0].props.onClick();
     applies.at(-1).props.onClick();
     assert.deepEqual(
@@ -202,10 +205,11 @@ test('cooling preserves numeric limits and fan-speed command submission', () => 
     const markup = renderToStaticMarkup(tab.render());
     assert.match(markup, /type="number"/);
     assert.match(markup, /max="100"/);
-    const columns = elements(tab.render(), (element) => element.type === Grid && element.props.size?.xs === 6);
-    assert.equal(columns.length, 4);
+    assert.match(markup, /settings-tab-footer/);
+    const columns = elements(tab.render(), (element) => element.type === Grid && element.props.size?.xs === 12);
+    assert.equal(columns.length, 3);
     assert.ok(columns.every((column) => column.props.size.md === 4));
-    const apply = elements(tab.render(), (element) => element.props.children === 'Apply')[0];
+    const apply = elements(tab.render(), isApplyAction)[0];
     apply.props.onClick();
     assert.equal(requests[0].api, '/fanspeed');
     assert.equal(requests[0].data.speed, 75);
@@ -247,8 +251,8 @@ test('PerpetualTune keeps target, throttle and step limits and forwards algorith
         {step: 1, min: 1, max: 80, type: 'number'},
     ]);
     const markup = renderToStaticMarkup(tab.render());
-    assert.match(markup, /tab-body perpetual-tune-tab/);
-    assert.match(markup, /password-apply-inline perpetual-tune-actions/);
+    assert.match(markup, /tab-body settings-tab perpetual-tune-tab/);
+    assert.match(markup, /settings-tab-footer perpetual-tune-actions/);
     assert.match(markup, /max="200"/);
     assert.match(markup, /max="80"/);
     assert.match(markup, /value="VoltageOptimizer"/);
@@ -288,12 +292,12 @@ test('firmware Browse remains interactive inside the disabled file field and pre
     assert.equal(dialogRequests[0][0], 'dialog-open');
     assert.deepEqual(dialogRequests[0][1].filters[0].extensions, ['zip', 'swu']);
     assert.equal(tab.state.fileext, 'swu');
-    const apply = elements(tab.render(), (element) => element.props.children === 'Apply')[0];
+    const apply = elements(tab.render(), isApplyAction)[0];
     assert.equal(apply.props.disabled, false);
     apply.props.onClick();
     assert.equal(requests[0].api, '/update');
     assert.deepEqual(requests[0].selected, [0]);
     tab.state.fileext = 'zip';
-    elements(tab.render(), (element) => element.props.children === 'Apply')[0].props.onClick();
+    elements(tab.render(), isApplyAction)[0].props.onClick();
     assert.equal(requests[1].api, '/systemupdate');
 });

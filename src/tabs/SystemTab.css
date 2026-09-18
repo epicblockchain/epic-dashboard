@@ -5,3 +5,9 @@
 .system-option {
     padding: 8px;
 }
+
+@media (max-width: 899px) {
+    .system-divider {
+        display: none;
+    }
+}

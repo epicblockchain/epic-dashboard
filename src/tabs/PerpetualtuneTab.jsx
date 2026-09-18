@@ -18,6 +18,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import InfoIcon from '@mui/icons-material/Info';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 const MIN_THROTTLE = 10;
 export class PerpetualtuneTab extends React.Component {
     constructor(props) {
@@ -178,7 +179,11 @@ export class PerpetualtuneTab extends React.Component {
         }
 
         return (
-            <div className="tab-body perpetual-tune-tab">
+            <div className="tab-body settings-tab perpetual-tune-tab">
+                <TabHeader
+                    title="Perpetual Tune"
+                    description="Choose an optimization mode and target for the selected miners."
+                />
                 <Grid container spacing={2}>
                     <Grid
                         container
@@ -377,7 +382,7 @@ export class PerpetualtuneTab extends React.Component {
                     </Grid>
                 </Grid>
 
-                <div className="password-apply-inline perpetual-tune-actions">
+                <TabFooter className="perpetual-tune-actions">
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -412,19 +417,19 @@ export class PerpetualtuneTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
                     <Button
                         onClick={() => {
                             this.props.handleApi('/perpetualtune/reset', this.state, this.props.selected);
                         }}
-                        variant="contained"
+                        variant="outlined"
                         color="error"
                         disabled={disabled || !this.state.algo}
                     >
                         Reset Perpetual Tune
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

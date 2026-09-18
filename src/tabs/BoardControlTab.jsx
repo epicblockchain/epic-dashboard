@@ -7,6 +7,7 @@ import {
     getSelectedBoardCount,
     resizeBoardStates,
 } from '../boardControl.mjs';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 const DEFAULT_BOARD_COUNT = 3;
 
@@ -95,16 +96,8 @@ export class BoardControlTab extends React.Component {
         }
 
         return (
-            <div className="tab-body board-control-tab">
-                <div className="board-control-header">
-                    <div>
-                        <Typography variant="h6" gutterBottom>
-                            Board Control
-                        </Typography>
-                        <Typography variant="subtitle2" color="textSecondary">
-                            {selectionText}
-                        </Typography>
-                    </div>
+            <div className="tab-body settings-tab board-control-tab">
+                <TabHeader title="Board Control" description={selectionText}>
                     {selected.length === 1 && (
                         <Button
                             onClick={this.copySettings}
@@ -115,7 +108,7 @@ export class BoardControlTab extends React.Component {
                             Copy selected system settings
                         </Button>
                     )}
-                </div>
+                </TabHeader>
 
                 <div className="board-control-actions">
                     <div>
@@ -164,7 +157,7 @@ export class BoardControlTab extends React.Component {
                     })}
                 </div>
 
-                <div className="password-apply-inline board-control-apply">
+                <TabFooter className="board-control-apply">
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -183,11 +176,9 @@ export class BoardControlTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        {selected.length
-                            ? `Apply to ${selected.length} system${selected.length === 1 ? '' : 's'}`
-                            : 'Apply'}
+                        {getMinerActionLabel('Apply', selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

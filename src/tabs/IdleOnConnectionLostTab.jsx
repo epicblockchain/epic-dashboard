@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {Button, Typography, Grid, TextField, Switch} from '@mui/material';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class IdleOnConnectionLostTab extends React.Component {
     constructor(props) {
@@ -28,13 +29,11 @@ export class IdleOnConnectionLostTab extends React.Component {
         const disabled = !this.state.password || !this.props.selected.length;
 
         return (
-            <div className="tab-body">
-                <Typography variant="h6" gutterBottom>
-                    Idle On Connection Lost
-                </Typography>
-                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                    On connection lost, the miner will go to idle. When disabled, the miner will continue to draw power.
-                </Typography>
+            <div className="tab-body settings-tab">
+                <TabHeader
+                    title="Idle On Connection Lost"
+                    description="On connection loss, the miner goes idle. When disabled, it continues drawing power."
+                />
                 <Grid
                     container
                     spacing={2}
@@ -54,7 +53,7 @@ export class IdleOnConnectionLostTab extends React.Component {
                         </Typography>
                     </Grid>
                 </Grid>
-                <div className="password-apply">
+                <TabFooter>
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -72,9 +71,9 @@ export class IdleOnConnectionLostTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

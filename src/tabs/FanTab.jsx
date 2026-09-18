@@ -19,6 +19,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import WindPowerIcon from '@mui/icons-material/WindPower';
 import TimerIcon from '@mui/icons-material/Timer';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 const MAX_FANS = 4;
 const MAX_PREINIT_COOLDOWN_DURATION = 600;
@@ -239,7 +240,11 @@ export class FanTab extends React.Component {
         const disabled = !this.state.password || !this.props.selected.length || this.props.disabled;
 
         return (
-            <div className="tab-body" style={{minHeight: '40%'}}>
+            <div className="tab-body settings-tab">
+                <TabHeader
+                    title="Cooling"
+                    description="Configure fan behavior, temperature limits, and cooldown safeguards."
+                />
                 <Grid
                     container
                     spacing={2}
@@ -249,7 +254,7 @@ export class FanTab extends React.Component {
                 >
                     <Grid
                         size={{
-                            xs: 6,
+                            xs: 12,
                             md: 4,
                         }}
                     >
@@ -408,14 +413,14 @@ export class FanTab extends React.Component {
                                     color="primary"
                                     disabled={disabled}
                                 >
-                                    Apply
+                                    {getMinerActionLabel('Apply', this.props.selected)}
                                 </Button>
                             </CardActions>
                         </Card>
                     </Grid>
                     <Grid
                         size={{
-                            xs: 6,
+                            xs: 12,
                             md: 4,
                         }}
                     >
@@ -536,14 +541,14 @@ export class FanTab extends React.Component {
                                     color="primary"
                                     disabled={disabled}
                                 >
-                                    Apply
+                                    {getMinerActionLabel('Apply', this.props.selected)}
                                 </Button>
                             </CardActions>
                         </Card>
                     </Grid>
                     <Grid
                         size={{
-                            xs: 6,
+                            xs: 12,
                             md: 4,
                         }}
                     >
@@ -683,7 +688,7 @@ export class FanTab extends React.Component {
                                     color="primary"
                                     disabled={disabled}
                                 >
-                                    Apply Fans
+                                    {getMinerActionLabel('Apply Fans', this.props.selected)}
                                 </Button>
                                 <Button
                                     onClick={() => {
@@ -697,38 +702,35 @@ export class FanTab extends React.Component {
                                     color="primary"
                                     disabled={disabled}
                                 >
-                                    Apply Cooldown
+                                    {getMinerActionLabel('Apply Cooldown', this.props.selected)}
                                 </Button>
                             </CardActions>
                         </Card>
                     </Grid>
-                    <Grid
-                        size={{
-                            xs: 6,
-                            md: 4,
-                        }}
-                    >
-                        <TextField
-                            value={this.state.password || ''}
-                            variant="outlined"
-                            label="Password"
-                            type="password"
-                            onChange={this.updatePassword}
-                            margin="dense"
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter' && !disabled) {
-                                    this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                                    this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
-                                    this.props.handleApi('/fans/minimum', this.state, this.props.selected);
-                                    this.props.handleApi(
-                                        '/preinitcooldownmaxduration',
-                                        this.state,
-                                        this.props.selected,
-                                    );
-                                }
-                            }}
-                            error={!this.state.password}
-                        />
+                    <Grid size={12}>
+                        <TabFooter>
+                            <TextField
+                                value={this.state.password || ''}
+                                variant="outlined"
+                                label="Password"
+                                type="password"
+                                onChange={this.updatePassword}
+                                margin="dense"
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter' && !disabled) {
+                                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                                        this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
+                                        this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                                        this.props.handleApi(
+                                            '/preinitcooldownmaxduration',
+                                            this.state,
+                                            this.props.selected,
+                                        );
+                                    }
+                                }}
+                                error={!this.state.password}
+                            />
+                        </TabFooter>
                     </Grid>
                 </Grid>
             </div>

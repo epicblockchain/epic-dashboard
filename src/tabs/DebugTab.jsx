@@ -3,6 +3,7 @@ import got from '../rendererHttp';
 const fs = require('fs');
 import * as React from 'react';
 import {Button, FormControl, InputLabel, Select} from '@mui/material';
+import {TabHeader} from './TabLayout.jsx';
 
 export class DebugTab extends React.Component {
     constructor(props) {
@@ -71,98 +72,106 @@ export class DebugTab extends React.Component {
         const types = ['Sphinx', 'Ra'];
 
         return (
-            <div className="tab-body">
-                <FormControl variant="outlined" margin="dense">
-                    <InputLabel htmlFor="test">Test</InputLabel>
-                    <Select
-                        native
-                        id="test"
-                        label="Test"
-                        size="small"
-                        value={this.state.test}
-                        onChange={this.updateTest}
+            <div className="tab-body settings-tab">
+                <TabHeader title="Debug" description="Run diagnostics and inspect or export test logs." />
+                <div className="settings-tab-action-row">
+                    <FormControl variant="outlined" margin="dense">
+                        <InputLabel htmlFor="test">Test</InputLabel>
+                        <Select
+                            native
+                            id="test"
+                            label="Test"
+                            size="small"
+                            value={this.state.test}
+                            onChange={this.updateTest}
+                        >
+                            {options.map((a, i) => {
+                                return (
+                                    <option key={i} value={a}>
+                                        {a}
+                                    </option>
+                                );
+                            })}
+                        </Select>
+                    </FormControl>
+                    <FormControl variant="outlined" margin="dense">
+                        <InputLabel htmlFor="type">Type</InputLabel>
+                        <Select
+                            native
+                            id="type"
+                            label="Type"
+                            size="small"
+                            value={this.state.type}
+                            onChange={this.updateType}
+                        >
+                            {types.map((a, i) => {
+                                return (
+                                    <option key={i} value={a}>
+                                        {a}
+                                    </option>
+                                );
+                            })}
+                        </Select>
+                    </FormControl>
+                    <Button
+                        onClick={() => {
+                            this.props.handleApi('/test', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={this.props.disabled || !this.props.selected.length}
                     >
-                        {options.map((a, i) => {
-                            return (
-                                <option key={i} value={a}>
-                                    {a}
-                                </option>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-                <FormControl variant="outlined" margin="dense">
-                    <InputLabel htmlFor="type">Type</InputLabel>
-                    <Select
-                        native
-                        id="type"
-                        label="Type"
-                        size="small"
-                        value={this.state.type}
-                        onChange={this.updateType}
+                        Start Test
+                    </Button>
+                </div>
+                <div className="settings-tab-action-row">
+                    <Button
+                        onClick={() => {
+                            for (const i of this.props.selected) {
+                                const ip = this.props.data[i].ip;
+                                window.open(
+                                    `http://${ip}/FT3.log`,
+                                    `FT3 Log for ${ip}`,
+                                    `popup=1,width=1000,height=600`,
+                                );
+                            }
+                        }}
+                        variant="outlined"
+                        disabled={!this.props.selected.length}
                     >
-                        {types.map((a, i) => {
-                            return (
-                                <option key={i} value={a}>
-                                    {a}
-                                </option>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-                <Button
-                    onClick={() => {
-                        this.props.handleApi('/test', this.state, this.props.selected);
-                    }}
-                    variant="contained"
-                    color="primary"
-                    disabled={this.props.disabled || !this.props.selected.length}
-                >
-                    Start Test
-                </Button>
-                <br />
-                <Button
-                    onClick={() => {
-                        for (const i of this.props.selected) {
-                            const ip = this.props.data[i].ip;
-                            window.open(`http://${ip}/FT3.log`, `FT3 Log for ${ip}`, `popup=1,width=1000,height=600`);
-                        }
-                    }}
-                    variant="contained"
-                    color="secondary"
-                    disabled={!this.props.selected.length}
-                >
-                    View FT3 Logs
-                </Button>
-                <Button
-                    onClick={() => this.saveLogs('FT3')}
-                    variant="contained"
-                    color="primary"
-                    disabled={!this.props.selected.length}
-                >
-                    Save FT3 Logs
-                </Button>
-                <Button
-                    onClick={() => {
-                        for (const i of this.props.selected) {
-                            const ip = this.props.data[i].ip;
-                            window.open(`http://${ip}/FT4.log`, `FT4 Log for ${ip}`, `popup=1,width=1000,height=600`);
-                        }
-                    }}
-                    variant="contained"
-                    color="secondary"
-                    disabled={!this.props.selected.length}
-                >
-                    View FT4 Logs
-                </Button>
-                <Button
-                    onClick={() => this.saveLogs('FT4')}
-                    variant="contained"
-                    color="primary"
-                    disabled={!this.props.selected.length}
-                >
-                    Save FT4 Logs
-                </Button>
+                        View FT3 Logs
+                    </Button>
+                    <Button
+                        onClick={() => this.saveLogs('FT3')}
+                        variant="outlined"
+                        disabled={!this.props.selected.length}
+                    >
+                        Save FT3 Logs
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            for (const i of this.props.selected) {
+                                const ip = this.props.data[i].ip;
+                                window.open(
+                                    `http://${ip}/FT4.log`,
+                                    `FT4 Log for ${ip}`,
+                                    `popup=1,width=1000,height=600`,
+                                );
+                            }
+                        }}
+                        variant="outlined"
+                        disabled={!this.props.selected.length}
+                    >
+                        View FT4 Logs
+                    </Button>
+                    <Button
+                        onClick={() => this.saveLogs('FT4')}
+                        variant="outlined"
+                        disabled={!this.props.selected.length}
+                    >
+                        Save FT4 Logs
+                    </Button>
+                </div>
             </div>
         );
     }

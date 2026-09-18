@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 
 import './SystemTab.css';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class SystemTab extends React.Component {
     constructor(props) {
@@ -85,9 +86,13 @@ export class SystemTab extends React.Component {
 
     render() {
         return (
-            <div className="tab-body" style={{minHeight: '200px'}}>
+            <div className="tab-body settings-tab">
+                <TabHeader
+                    title="System"
+                    description="Update firmware, timezone, or authentication settings for selected miners."
+                />
                 <Grid container>
-                    <Grid className="system-option" size={4}>
+                    <Grid className="system-option" size={{xs: 12, md: 4}}>
                         <Typography>Update Firmware</Typography>
                         <Grid>
                             <TextField
@@ -101,12 +106,7 @@ export class SystemTab extends React.Component {
                                     input: {
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                                <Button
-                                                    onClick={this.updateFilepath}
-                                                    variant="contained"
-                                                    color="primary"
-                                                    size="small"
-                                                >
+                                                <Button onClick={this.updateFilepath} variant="outlined" size="small">
                                                     Browse
                                                 </Button>
                                             </InputAdornment>
@@ -145,12 +145,12 @@ export class SystemTab extends React.Component {
                                     !this.props.selected.length
                                 }
                             >
-                                Apply
+                                {getMinerActionLabel('Apply', this.props.selected)}
                             </Button>
                         </Grid>
                     </Grid>
                     <Divider className="system-divider" orientation="vertical" flexItem />
-                    <Grid className="system-option" size={4}>
+                    <Grid className="system-option" size={{xs: 12, md: 4}}>
                         <Typography>Change System Timezone</Typography>
                         <TextField
                             variant="outlined"
@@ -168,11 +168,11 @@ export class SystemTab extends React.Component {
                             color="primary"
                             disabled={!this.state.timezone || !this.state.password || !this.props.selected.length}
                         >
-                            Apply
+                            {getMinerActionLabel('Apply', this.props.selected)}
                         </Button>
                     </Grid>
                     <Divider className="system-divider" orientation="vertical" flexItem />
-                    <Grid className="system-option" size={4}>
+                    <Grid className="system-option" size={{xs: 12, md: 4}}>
                         <Typography>Change password</Typography>
                         <TextField
                             variant="outlined"
@@ -206,22 +206,21 @@ export class SystemTab extends React.Component {
                                 !this.props.selected.length
                             }
                         >
-                            Apply
+                            {getMinerActionLabel('Apply', this.props.selected)}
                         </Button>
                     </Grid>
                     <Grid size={12}>
-                        <Divider />
-                    </Grid>
-                    <Grid size={12}>
-                        <TextField
-                            value={this.state.password || ''}
-                            variant="outlined"
-                            label="Password"
-                            type="password"
-                            onChange={this.updatePassword}
-                            margin="dense"
-                            error={!this.state.password}
-                        />
+                        <TabFooter>
+                            <TextField
+                                value={this.state.password || ''}
+                                variant="outlined"
+                                label="Password"
+                                type="password"
+                                onChange={this.updatePassword}
+                                margin="dense"
+                                error={!this.state.password}
+                            />
+                        </TabFooter>
                     </Grid>
                 </Grid>
             </div>

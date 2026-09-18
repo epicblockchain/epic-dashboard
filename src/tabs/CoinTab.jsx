@@ -13,6 +13,7 @@ import {
 import * as React from 'react';
 import AddIcon from '@mui/icons-material/ControlPoint';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutlined';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 const MAX_HASHRATE_SPLITS = 3;
 
@@ -376,77 +377,83 @@ export class CoinTab extends React.Component {
             );
 
         return (
-            <div className="tab-body">
-                <FormControl variant="outlined" margin="dense">
-                    <InputLabel htmlFor="coin">Coin</InputLabel>
-                    <Select
-                        native
-                        id="coin"
-                        label="Coin"
-                        size="small"
-                        value={this.state.coin}
-                        onChange={this.updateCoin}
-                        disabled={this.state.hashrate_split_enabled}
-                    >
-                        {options.map((a, i) => {
-                            return (
-                                <option key={i} value={a}>
-                                    {a}
-                                </option>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-                <FormControl margin="dense" style={{height: '40px'}}>
-                    <div className="unique-id-label">Unique ID</div>
-                    <Switch
-                        color="primary"
-                        className="unique-id"
-                        checked={this.state.checked}
-                        onChange={this.updateCheck}
-                        disabled={this.state.hashrate_split_enabled}
-                    />
-                </FormControl>
-                <FormControl
-                    variant="outlined"
-                    margin="dense"
-                    style={{width: '200px'}}
-                    disabled={!this.state.checked || this.state.hashrate_split_enabled}
+            <div className="tab-body settings-tab">
+                <TabHeader
+                    title="Mining Config"
+                    description="Configure pools, worker identity, and optional hashrate splitting."
                 >
-                    <InputLabel>Unique ID Variant</InputLabel>
-                    <Select
-                        id="variant"
-                        label="Unique ID Variant"
-                        size="small"
-                        value={this.state.unique_variant}
-                        onChange={this.updateVariant}
-                    >
-                        <MenuItem value={'IpAddress'}>Ip Address</MenuItem>
-                        <MenuItem value={'MacAddress'}>Mac Address</MenuItem>
-                        <MenuItem value={'CpuId'}>CPU ID</MenuItem>
-                    </Select>
-                </FormControl>
-                <FormControl margin="dense" style={{height: '40px', marginLeft: '20px'}}>
-                    <div className="unique-id-label">Hashrate Split</div>
-                    <Switch
+                    <Button onClick={() => this.clearFields()} variant="outlined">
+                        Clear fields
+                    </Button>
+                    <Button
+                        onClick={() => this.cloneFields()}
+                        variant="contained"
                         color="primary"
-                        className="unique-id"
-                        checked={this.state.hashrate_split_enabled}
-                        onChange={this.updateHashrateSplitEnabled}
-                    />
-                </FormControl>
-                <Button onClick={() => this.clearFields()} variant="contained" className="float stop">
-                    Clear fields
-                </Button>
-                <Button
-                    onClick={() => this.cloneFields()}
-                    variant="contained"
-                    className="float"
-                    color="primary"
-                    disabled={!this.props.selected.length}
-                >
-                    Copy miner settings
-                </Button>
+                        disabled={!this.props.selected.length}
+                    >
+                        Copy miner settings
+                    </Button>
+                </TabHeader>
+                <div className="settings-tab-action-row">
+                    <FormControl variant="outlined" margin="dense">
+                        <InputLabel htmlFor="coin">Coin</InputLabel>
+                        <Select
+                            native
+                            id="coin"
+                            label="Coin"
+                            size="small"
+                            value={this.state.coin}
+                            onChange={this.updateCoin}
+                            disabled={this.state.hashrate_split_enabled}
+                        >
+                            {options.map((a, i) => {
+                                return (
+                                    <option key={i} value={a}>
+                                        {a}
+                                    </option>
+                                );
+                            })}
+                        </Select>
+                    </FormControl>
+                    <FormControl margin="dense" style={{height: '40px'}}>
+                        <div className="unique-id-label">Unique ID</div>
+                        <Switch
+                            color="primary"
+                            className="unique-id"
+                            checked={this.state.checked}
+                            onChange={this.updateCheck}
+                            disabled={this.state.hashrate_split_enabled}
+                        />
+                    </FormControl>
+                    <FormControl
+                        variant="outlined"
+                        margin="dense"
+                        style={{width: '200px'}}
+                        disabled={!this.state.checked || this.state.hashrate_split_enabled}
+                    >
+                        <InputLabel>Unique ID Variant</InputLabel>
+                        <Select
+                            id="variant"
+                            label="Unique ID Variant"
+                            size="small"
+                            value={this.state.unique_variant}
+                            onChange={this.updateVariant}
+                        >
+                            <MenuItem value={'IpAddress'}>Ip Address</MenuItem>
+                            <MenuItem value={'MacAddress'}>Mac Address</MenuItem>
+                            <MenuItem value={'CpuId'}>CPU ID</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl margin="dense" style={{height: '40px', marginLeft: '20px'}}>
+                        <div className="unique-id-label">Hashrate Split</div>
+                        <Switch
+                            color="primary"
+                            className="unique-id"
+                            checked={this.state.hashrate_split_enabled}
+                            onChange={this.updateHashrateSplitEnabled}
+                        />
+                    </FormControl>
+                </div>
 
                 {!this.state.hashrate_split_enabled ? (
                     <>
@@ -578,7 +585,7 @@ export class CoinTab extends React.Component {
                         </IconButton>
                     </>
                 )}
-                <div style={{display: 'flex', gap: '10px', marginTop: '20px', alignItems: 'center'}}>
+                <TabFooter>
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -602,9 +609,9 @@ export class CoinTab extends React.Component {
                         color="primary"
                         disabled={this.state.hashrate_split_enabled ? hashrateSplitDisabled : disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

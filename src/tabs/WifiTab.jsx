@@ -1,7 +1,8 @@
 import * as React from 'react';
-import {Button, TextField, Grid, Typography, InputAdornment, IconButton} from '@mui/material';
+import {Button, TextField, Grid, InputAdornment, IconButton} from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class WifiTab extends React.Component {
     constructor(props) {
@@ -42,10 +43,10 @@ export class WifiTab extends React.Component {
     render() {
         const disabled = this.state.ssid.length < 1 || this.state.psk.length < 8;
         return (
-            <div className="tab-body" style={{minHeight: '200px'}}>
+            <div className="tab-body settings-tab">
+                <TabHeader title="Wi-Fi" description="Update the wireless network used by the selected miners." />
                 <Grid container>
                     <Grid size="grow">
-                        <Typography>Change Wifi Config</Typography>
                         <TextField
                             variant="outlined"
                             label="Wifi Name"
@@ -81,7 +82,7 @@ export class WifiTab extends React.Component {
                         />
                     </Grid>
                 </Grid>
-                <div className="password-apply">
+                <TabFooter>
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -104,9 +105,9 @@ export class WifiTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

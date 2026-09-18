@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {Button, TextField, FormControl, InputLabel, Select} from '@mui/material';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class PerformanceTab extends React.Component {
     constructor(props) {
@@ -88,7 +89,11 @@ export class PerformanceTab extends React.Component {
         const disabled = this.state.mode === 'Select Preset' || !this.state.password || !this.props.selected.length;
 
         return (
-            <div className="tab-body" style={{minHeight: '124px'}}>
+            <div className="tab-body settings-tab">
+                <TabHeader
+                    title="Performance"
+                    description="Apply a supported performance preset to the selected miners."
+                />
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="preset">Preset</InputLabel>
                     <Select
@@ -110,7 +115,7 @@ export class PerformanceTab extends React.Component {
                             })}
                     </Select>
                 </FormControl>
-                <div className="password-apply">
+                <TabFooter>
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -133,9 +138,9 @@ export class PerformanceTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

@@ -31,10 +31,66 @@ div.MuiFormControl-root {
 }
 
 .tab-body {
-    padding: 12px 0;
+    padding: 16px 0 20px;
     position: relative;
-    height: calc(100vh - 540px);
-    max-height: 280px;
+    height: auto;
+    min-height: 160px;
+    max-height: none;
+}
+
+.settings-tab {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-tab-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.settings-tab-header .MuiTypography-root {
+    margin-bottom: 0;
+}
+
+.settings-tab-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.settings-tab-action-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.settings-tab-footer,
+.password-apply-inline {
+    position: static !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+.settings-tab-footer .MuiTextField-root,
+.password-apply-inline .MuiTextField-root {
+    margin-right: auto;
+}
+
+#table .settings-tab .MuiButton-root {
+    min-height: 36px;
+    margin: 0;
 }
 
 .table-region {
@@ -42,17 +98,12 @@ div.MuiFormControl-root {
 }
 
 .password-apply-inline {
-    position: static !important;
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    margin-top: 4px;
 }
 
 div.password-apply {
-    position: absolute;
-    bottom: 8px;
+    position: static;
+    margin-top: 4px;
 }
 
 div.system-apply {
@@ -133,9 +184,7 @@ div.system-apply {
 /* BoardControlTab */
 
 .board-control-tab {
-    height: auto;
     min-height: 260px;
-    max-height: none;
 }
 
 .board-control-header,
@@ -186,9 +235,7 @@ div.system-apply {
 /* PerpetualtuneTab */
 
 .perpetual-tune-tab {
-    height: auto;
     min-height: 140px;
-    max-height: none;
 }
 
 .perpetual-tune-actions {
@@ -196,15 +243,22 @@ div.system-apply {
 }
 
 @media (max-height: 760px) {
-    .tab-body {
-        height: auto;
-        min-height: 120px;
-        max-height: none;
-    }
-
     div.password-apply,
     div.system-apply {
         position: static;
         margin-top: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .settings-tab-footer,
+    .password-apply-inline {
+        justify-content: flex-start;
+    }
+
+    .settings-tab-footer .MuiTextField-root,
+    .password-apply-inline .MuiTextField-root {
+        width: 100%;
+        margin-right: 0;
     }
 }

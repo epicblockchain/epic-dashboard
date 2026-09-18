@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {Button, Typography, Grid, TextField, Switch} from '@mui/material';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class DisableBoardOnFailureTab extends React.Component {
     constructor(props) {
@@ -28,13 +29,11 @@ export class DisableBoardOnFailureTab extends React.Component {
         const disabled = !this.state.password || !this.props.selected.length;
 
         return (
-            <div className="tab-body">
-                <Typography variant="h6" gutterBottom>
-                    Disable Board On Failure
-                </Typography>
-                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                    When enabled, a board experiencing a failure will be disabled to allow other boards to mine.
-                </Typography>
+            <div className="tab-body settings-tab">
+                <TabHeader
+                    title="Disable Board On Failure"
+                    description="Automatically disable a failed board so the remaining boards can continue mining."
+                />
                 <Grid
                     container
                     spacing={2}
@@ -54,7 +53,7 @@ export class DisableBoardOnFailureTab extends React.Component {
                         </Typography>
                     </Grid>
                 </Grid>
-                <div className="password-apply">
+                <TabFooter>
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -72,9 +71,9 @@ export class DisableBoardOnFailureTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

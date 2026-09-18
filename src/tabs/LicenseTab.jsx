@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Button, Typography, TextField, Box} from '@mui/material';
+import {Button, TextField, Box} from '@mui/material';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class LicenseTab extends React.Component {
     constructor(props) {
@@ -60,13 +61,8 @@ export class LicenseTab extends React.Component {
         const disabled = !this.state.license_key || !this.state.password || !this.props.selected.length;
 
         return (
-            <div className="tab-body">
-                <Typography variant="h6" gutterBottom>
-                    License
-                </Typography>
-                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                    Upload a JSON file containing your key.
-                </Typography>
+            <div className="tab-body settings-tab">
+                <TabHeader title="License" description="Upload a JSON license file or enter a key manually." />
 
                 <Box sx={{mb: 2, display: 'flex', gap: 1}}>
                     <input
@@ -78,10 +74,10 @@ export class LicenseTab extends React.Component {
                         accept=".json,application/json"
                         style={{display: 'none'}}
                     />
-                    <Button variant="contained" onClick={() => this.fileInput.click()}>
+                    <Button variant="outlined" onClick={() => this.fileInput.click()}>
                         Upload JSON
                     </Button>
-                    <Button variant="contained" onClick={this.clearFields} color="secondary">
+                    <Button variant="outlined" onClick={this.clearFields}>
                         Clear Fields
                     </Button>
                 </Box>
@@ -95,7 +91,7 @@ export class LicenseTab extends React.Component {
                     fullWidth
                     placeholder="Enter license key manually or upload JSON file above"
                 />
-                <div className="password-apply">
+                <TabFooter>
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -113,9 +109,9 @@ export class LicenseTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

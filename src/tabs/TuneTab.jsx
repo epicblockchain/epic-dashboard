@@ -15,6 +15,7 @@ import {
     Divider,
     Switch,
 } from '@mui/material';
+import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 const marksCLK = [
     {
@@ -176,7 +177,11 @@ export class TuneTab extends React.Component {
         if (tunePresets) powerArray.push(...Object.entries(tunePresets).map((entry) => entry[1]));
 
         return (
-            <div className="tab-body" style={{minHeight: '140px'}}>
+            <div className="tab-body settings-tab">
+                <TabHeader
+                    title="Tune"
+                    description="Adjust clock, voltage, presets, and overdrive for selected miners."
+                />
                 <Grid
                     container
                     spacing={2}
@@ -327,13 +332,13 @@ export class TuneTab extends React.Component {
                                         !this.state.password || !this.props.selected.length || this.props.disabled
                                     }
                                 >
-                                    Apply
+                                    {getMinerActionLabel('Apply', this.props.selected)}
                                 </Button>
                             </FormControl>
                         </Grid>
                     </Grid>
                 </Grid>
-                <div className="password-apply">
+                <TabFooter>
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"
@@ -356,9 +361,9 @@ export class TuneTab extends React.Component {
                         color="primary"
                         disabled={disabled}
                     >
-                        Apply
+                        {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
-                </div>
+                </TabFooter>
             </div>
         );
     }

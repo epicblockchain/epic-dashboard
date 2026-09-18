@@ -50,7 +50,7 @@ function createConfig() {
 }
 
 function findApply(element) {
-    if (element?.props?.children === 'Apply') return element;
+    if (typeof element?.props?.children === 'string' && element.props.children.startsWith('Apply')) return element;
     for (const child of React.Children.toArray(element?.props?.children)) {
         const button = findApply(child);
         if (button) return button;
