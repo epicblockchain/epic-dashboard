@@ -589,14 +589,18 @@ export class DataTable extends React.Component {
         return (
             <div id="table">
                 <Tabs
+                    className="model-tabs"
                     value={this.state.list}
                     onChange={this.setList}
                     indicatorColor="primary"
                     textColor="primary"
-                    centered
+                    variant="scrollable"
+                    scrollButtons
+                    allowScrollButtonsMobile
+                    aria-label="Miner models"
                 >
                     {this.state.models.map((model) => {
-                        return <Tab id="minerTab" key={model} label={model} />;
+                        return <Tab className="miner-model-tab" key={model} label={model} />;
                     })}
                 </Tabs>
                 <canvas id="canvas" hidden></canvas>

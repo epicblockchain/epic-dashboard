@@ -2,7 +2,7 @@
     button.MuiTab-root {
         min-width: 0;
     }
-    #minerTab {
+    .miner-model-tab {
         min-width: 140px;
     }
 }
@@ -26,6 +26,15 @@
     min-height: 42px;
     padding: 6px 12px;
     font-size: 0.8rem;
+}
+
+.model-tabs .MuiTabs-scrollButtons {
+    flex: 0 0 36px;
+    width: 36px;
+}
+
+.model-tabs .MuiTabs-scrollButtons.Mui-disabled {
+    opacity: 0.25;
 }
 
 div.MuiFormControl-root {
