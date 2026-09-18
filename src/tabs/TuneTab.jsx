@@ -321,19 +321,6 @@ export class TuneTab extends React.Component {
                                         </Typography>
                                     </Grid>
                                 </Grid>
-                                <Button
-                                    onClick={() => {
-                                        this.props.handleApi('/overdrive', this.state, this.props.selected);
-                                    }}
-                                    variant="contained"
-                                    color="primary"
-                                    style={{width: 78}}
-                                    disabled={
-                                        !this.state.password || !this.props.selected.length || this.props.disabled
-                                    }
-                                >
-                                    {getMinerActionLabel('Apply', this.props.selected)}
-                                </Button>
                             </FormControl>
                         </Grid>
                     </Grid>
@@ -355,13 +342,23 @@ export class TuneTab extends React.Component {
                     />
                     <Button
                         onClick={() => {
+                            this.props.handleApi('/overdrive', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={!this.state.password || !this.props.selected.length || this.props.disabled}
+                    >
+                        {getMinerActionLabel('Apply Overdrive', this.props.selected)}
+                    </Button>
+                    <Button
+                        onClick={() => {
                             this.props.handleApi('/tune', this.state, this.props.selected);
                         }}
                         variant="contained"
                         color="primary"
                         disabled={disabled}
                     >
-                        {getMinerActionLabel('Apply', this.props.selected)}
+                        {getMinerActionLabel('Apply Tune', this.props.selected)}
                     </Button>
                 </TabFooter>
             </div>

@@ -128,26 +128,6 @@ export class SystemTab extends React.Component {
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid>
-                            <Button
-                                onClick={() => {
-                                    if (this.state.fileext == 'swu') {
-                                        this.props.handleFormApi('/update', this.state, this.props.selected);
-                                    } else if (this.state.fileext == 'zip') {
-                                        this.props.handleFormApi('/systemupdate', this.state, this.props.selected);
-                                    }
-                                }}
-                                variant="contained"
-                                color="primary"
-                                disabled={
-                                    (!this.state.filepath && !this.state.filepath2) ||
-                                    !this.state.password ||
-                                    !this.props.selected.length
-                                }
-                            >
-                                {getMinerActionLabel('Apply', this.props.selected)}
-                            </Button>
-                        </Grid>
                     </Grid>
                     <Divider className="system-divider" orientation="vertical" flexItem />
                     <Grid className="system-option" size={{xs: 12, md: 4}}>
@@ -160,16 +140,6 @@ export class SystemTab extends React.Component {
                             style={{width: '100%'}}
                             margin="dense"
                         />
-                        <Button
-                            onClick={() => {
-                                this.props.handleApi('/timezone', this.state, this.props.selected);
-                            }}
-                            variant="contained"
-                            color="primary"
-                            disabled={!this.state.timezone || !this.state.password || !this.props.selected.length}
-                        >
-                            {getMinerActionLabel('Apply', this.props.selected)}
-                        </Button>
                     </Grid>
                     <Divider className="system-divider" orientation="vertical" flexItem />
                     <Grid className="system-option" size={{xs: 12, md: 4}}>
@@ -192,25 +162,9 @@ export class SystemTab extends React.Component {
                             margin="dense"
                             helperText={this.state.error ? 'Passwords do not match' : ''}
                         />
-                        <Button
-                            onClick={() => {
-                                this.props.handleApi('/password', this.state, this.props.selected);
-                            }}
-                            variant="contained"
-                            color="primary"
-                            disabled={
-                                this.state.error ||
-                                !this.state.pass1 ||
-                                !this.state.pass2 ||
-                                !this.state.password ||
-                                !this.props.selected.length
-                            }
-                        >
-                            {getMinerActionLabel('Apply', this.props.selected)}
-                        </Button>
                     </Grid>
                     <Grid size={12}>
-                        <TabFooter>
+                        <TabFooter className="multi-action-footer">
                             <TextField
                                 value={this.state.password || ''}
                                 variant="outlined"
@@ -220,6 +174,50 @@ export class SystemTab extends React.Component {
                                 margin="dense"
                                 error={!this.state.password}
                             />
+                            <Button
+                                onClick={() => {
+                                    if (this.state.fileext == 'swu') {
+                                        this.props.handleFormApi('/update', this.state, this.props.selected);
+                                    } else if (this.state.fileext == 'zip') {
+                                        this.props.handleFormApi('/systemupdate', this.state, this.props.selected);
+                                    }
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={
+                                    (!this.state.filepath && !this.state.filepath2) ||
+                                    !this.state.password ||
+                                    !this.props.selected.length
+                                }
+                            >
+                                {getMinerActionLabel('Apply Firmware', this.props.selected)}
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    this.props.handleApi('/timezone', this.state, this.props.selected);
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={!this.state.timezone || !this.state.password || !this.props.selected.length}
+                            >
+                                {getMinerActionLabel('Apply Timezone', this.props.selected)}
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    this.props.handleApi('/password', this.state, this.props.selected);
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={
+                                    this.state.error ||
+                                    !this.state.pass1 ||
+                                    !this.state.pass2 ||
+                                    !this.state.password ||
+                                    !this.props.selected.length
+                                }
+                            >
+                                {getMinerActionLabel('Apply Password', this.props.selected)}
+                            </Button>
                         </TabFooter>
                     </Grid>
                 </Grid>

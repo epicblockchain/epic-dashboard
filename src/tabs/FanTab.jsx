@@ -10,7 +10,6 @@ import {
     Switch,
     Card,
     CardContent,
-    CardActions,
     Tooltip,
 } from '@mui/material';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
@@ -404,18 +403,6 @@ export class FanTab extends React.Component {
                                     )}
                                 </Grid>
                             </CardContent>
-                            <CardActions style={{marginTop: 'auto'}}>
-                                <Button
-                                    onClick={() => {
-                                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                                    }}
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={disabled}
-                                >
-                                    {getMinerActionLabel('Apply', this.props.selected)}
-                                </Button>
-                            </CardActions>
                         </Card>
                     </Grid>
                     <Grid
@@ -529,21 +516,6 @@ export class FanTab extends React.Component {
                                     <></>
                                 )}
                             </CardContent>
-                            <CardActions style={{marginTop: 'auto'}}>
-                                <Button
-                                    onClick={() => {
-                                        if (this.state.crit_temp_enabled) {
-                                            this.props.handleApi('/criticaltemp', this.state, this.props.selected);
-                                        }
-                                        this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
-                                    }}
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={disabled}
-                                >
-                                    {getMinerActionLabel('Apply', this.props.selected)}
-                                </Button>
-                            </CardActions>
                         </Card>
                     </Grid>
                     <Grid
@@ -679,36 +651,10 @@ export class FanTab extends React.Component {
                                     </Grid>
                                 </Grid>
                             </CardContent>
-                            <CardActions style={{marginTop: 'auto'}}>
-                                <Button
-                                    onClick={() => {
-                                        this.props.handleApi('/fans/minimum', this.state, this.props.selected);
-                                    }}
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={disabled}
-                                >
-                                    {getMinerActionLabel('Apply Fans', this.props.selected)}
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        this.props.handleApi(
-                                            '/preinitcooldownmaxduration',
-                                            this.state,
-                                            this.props.selected,
-                                        );
-                                    }}
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={disabled}
-                                >
-                                    {getMinerActionLabel('Apply Cooldown', this.props.selected)}
-                                </Button>
-                            </CardActions>
                         </Card>
                     </Grid>
                     <Grid size={12}>
-                        <TabFooter>
+                        <TabFooter className="multi-action-footer">
                             <TextField
                                 value={this.state.password || ''}
                                 variant="outlined"
@@ -730,6 +676,53 @@ export class FanTab extends React.Component {
                                 }}
                                 error={!this.state.password}
                             />
+                            <Button
+                                onClick={() => {
+                                    this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={disabled}
+                            >
+                                {getMinerActionLabel('Apply Fan Speed', this.props.selected)}
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    if (this.state.crit_temp_enabled) {
+                                        this.props.handleApi('/criticaltemp', this.state, this.props.selected);
+                                    }
+                                    this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={disabled}
+                            >
+                                {getMinerActionLabel('Apply Temperatures', this.props.selected)}
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={disabled}
+                            >
+                                {getMinerActionLabel('Apply Fans', this.props.selected)}
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    this.props.handleApi(
+                                        '/preinitcooldownmaxduration',
+                                        this.state,
+                                        this.props.selected,
+                                    );
+                                }}
+                                variant="contained"
+                                color="primary"
+                                disabled={disabled}
+                            >
+                                {getMinerActionLabel('Apply Cooldown', this.props.selected)}
+                            </Button>
                         </TabFooter>
                     </Grid>
                 </Grid>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Typography} from '@mui/material';
+import {Paper, Typography} from '@mui/material';
 
 export function TabHeader({title, description, children}) {
     return React.createElement(
@@ -16,7 +16,17 @@ export function TabHeader({title, description, children}) {
 }
 
 export function TabFooter({children, className = ''}) {
-    return React.createElement('div', {className: `settings-tab-footer ${className}`.trim()}, children);
+    return React.createElement(
+        Paper,
+        {
+            className: `settings-tab-footer ${className}`.trim(),
+            component: 'div',
+            elevation: 0,
+            square: true,
+            sx: {backgroundColor: 'background.default'},
+        },
+        children,
+    );
 }
 
 export function getMinerActionLabel(action, selected) {

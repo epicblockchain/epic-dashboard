@@ -1,7 +1,8 @@
-const {app, BrowserWindow, ipcMain, dialog, shell} = require('electron');
+const {app, BrowserWindow, ipcMain, dialog, shell, screen} = require('electron');
 import got from 'got';
 import {createFirmwareUpload} from './firmwareUpload.mjs';
 import {minerRequest} from './minerHttp.mjs';
+import {getInitialWindowBounds} from './windowLayout.mjs';
 const path = require('path');
 const {Worker} = require('worker_threads');
 import 'core-js/stable';
@@ -13,12 +14,12 @@ if (require('electron-squirrel-startup')) {
 }
 
 const createWindow = () => {
+    const workArea = screen.getPrimaryDisplay().workAreaSize;
+
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 1536,
-        minWidth: 800,
-        height: 1100,
-        minHeight: 620,
+        ...getInitialWindowBounds(workArea),
+        center: true,
         frame: false,
         icon: __dirname + '/img/epic.ico',
         webPreferences: {

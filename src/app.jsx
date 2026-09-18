@@ -1288,7 +1288,7 @@ class App extends React.Component {
                 <Notifications />
                 <div className={this.state.drawerOpen ? 'main mainShift' : 'main'}>
                     {this.state.page == 'main' && <Dashboard data={this.state.miner_data} theme={this.state.theme} />}
-                    <div hidden={this.state.page !== 'table'}>
+                    <div className="table-page" hidden={this.state.page !== 'table'}>
                         <DataTable
                             saveDefault={this.saveDefault}
                             defaultTable={this.state.defaultTable}

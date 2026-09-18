@@ -43,6 +43,7 @@ import {
 } from './minerTable.mjs';
 export {tableColumnIds} from './minerTable.mjs';
 import {VirtualizedTableBody} from './virtualizedTable.jsx';
+import {getMinerTableViewportHeight} from './windowLayout.mjs';
 import {
     closestCenter,
     DndContext,
@@ -413,9 +414,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
         }
     }, [reset, resetSelectionSession, table.setRowSelection]);
 
-    const tablePreferredHeight = Math.round(window.innerHeight * 0.52);
-    const tableMaxViewportHeight = Math.max(180, window.innerHeight - 360);
-    const tableViewportHeight = Math.max(180, Math.min(tablePreferredHeight, tableMaxViewportHeight));
+    const tableViewportHeight = getMinerTableViewportHeight(window.innerHeight);
 
     selectionStateRef.current.rows = rows;
     selectionStateRef.current.selectedRowIds = state.rowSelection || {};

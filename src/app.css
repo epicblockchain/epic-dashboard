@@ -12,6 +12,11 @@ body {
     overflow-y: hidden;
 }
 
+#react {
+    height: 100%;
+    min-height: 0;
+}
+
 #topbar {
     position: fixed;
     display: flex;
@@ -70,12 +75,19 @@ body {
 .main {
     margin-left: 57px;
     width: calc(100% - 57px);
+    height: 100%;
+    min-height: 0;
     transition: ease 0.25s !important;
 }
 
 .mainShift {
     margin-left: 214px;
     width: calc(100% - 214px);
+}
+
+.table-page {
+    height: 100%;
+    min-height: 0;
 }
 
 .drawer {

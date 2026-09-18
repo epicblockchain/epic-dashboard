@@ -626,7 +626,7 @@ export class DataTable extends React.Component {
                         ) : null;
                     })}
                 </div>
-                <div style={{maxWidth: '1400px', margin: '0 auto'}}>
+                <div className="settings-region">
                     <Tabs
                         value={this.state.tab}
                         onChange={this.setTab}
@@ -667,7 +667,7 @@ export class DataTable extends React.Component {
                             <Tab value="debug" label="Debug" />
                         )}
                     </Tabs>
-                    <div hidden={this.state.tab != 'home'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'home'}>
                         <AddRemoveTab
                             addMiner={this.props.addMiner}
                             delMiner={this.props.delMiner}
@@ -682,14 +682,14 @@ export class DataTable extends React.Component {
                             notify={this.props.notify}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'control'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'control'}>
                         <ControlTab
                             handleApi={this.props.handleApi}
                             selected={selected}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'mining-config'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'mining-config'}>
                         <CoinTab
                             handleApi={this.props.handleApi}
                             list={this.state.list}
@@ -701,7 +701,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'performance'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'performance'}>
                         <PerformanceTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -712,7 +712,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'system'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'system'}>
                         <SystemTab
                             handleApi={this.props.handleApi}
                             handleFormApi={this.props.handleFormApi}
@@ -720,7 +720,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'cooling'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'cooling'}>
                         <FanTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -729,7 +729,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'tune'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'tune'}>
                         <TuneTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -738,7 +738,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'perpetual-tune'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'perpetual-tune'}>
                         <PerpetualtuneTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -747,7 +747,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'board-control'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'board-control'}>
                         <BoardControlTab
                             handleApi={this.props.handleApi}
                             selected={selected}
@@ -756,7 +756,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'idle-on-connection-lost'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'idle-on-connection-lost'}>
                         <IdleOnConnectionLostTab
                             handleApi={this.props.handleApi}
                             disabled={!capApi}
@@ -765,7 +765,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'disable-board-on-fail'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'disable-board-on-fail'}>
                         <DisableBoardOnFailureTab
                             handleApi={this.props.handleApi}
                             disabled={!capApi}
@@ -774,7 +774,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'enable-boards-on-idle'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'enable-boards-on-idle'}>
                         <EnableBoardsOnIdleTab
                             handleApi={this.props.handleApi}
                             disabled={!capApi}
@@ -783,7 +783,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'license'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'license'}>
                         <LicenseTab
                             handleApi={this.props.handleApi}
                             handleFormApi={this.props.handleFormApi}
@@ -792,7 +792,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'wifi'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'wifi'}>
                         <WifiTab
                             handleApi={this.props.handleApi}
                             handleFormApi={this.props.handleFormApi}
@@ -801,7 +801,7 @@ export class DataTable extends React.Component {
                             sessionPass={this.props.sessionPass}
                         />
                     </div>
-                    <div hidden={this.state.tab != 'debug'}>
+                    <div className="settings-panel" hidden={this.state.tab != 'debug'}>
                         <DebugTab
                             handleApi={this.props.handleApi}
                             selected={selected}
