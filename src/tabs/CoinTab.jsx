@@ -84,6 +84,7 @@ export class CoinTab extends React.Component {
             ],
             checked: true,
             hashrate_split_enabled: false,
+            active_split: 0,
             hashrate_splits: [
                 {
                     coin: 'Select Coin',
@@ -172,6 +173,7 @@ export class CoinTab extends React.Component {
             this.setState({
                 hashrate_split_enabled: enabled,
                 hashrate_splits: [initialSplit],
+                active_split: 0,
             });
         } else {
             this.setState({hashrate_split_enabled: enabled});
@@ -213,6 +215,7 @@ export class CoinTab extends React.Component {
             };
             this.setState({
                 hashrate_splits: [...this.state.hashrate_splits, newSplit],
+                active_split: this.state.hashrate_splits.length,
             });
         }
     }
@@ -221,7 +224,7 @@ export class CoinTab extends React.Component {
         if (this.state.hashrate_splits.length > 1) {
             const temp = this.state.hashrate_splits.slice();
             temp.splice(index, 1);
-            this.setState({hashrate_splits: temp});
+            this.setState({hashrate_splits: temp, active_split: Math.min(this.state.active_split, temp.length - 1)});
         }
     }
 
@@ -375,6 +378,8 @@ export class CoinTab extends React.Component {
                 (split) =>
                     split.coin === 'Select Coin' || !split.stratum_configs[0].pool || !split.stratum_configs[0].address,
             );
+        const activeSplitIndex = Math.min(this.state.active_split, this.state.hashrate_splits.length - 1);
+        const activeSplit = this.state.hashrate_splits[activeSplitIndex];
 
         return (
             <div className="tab-body settings-tab mining-config-tab">
@@ -418,6 +423,7 @@ export class CoinTab extends React.Component {
                     <FormControl margin="dense" style={{height: '40px'}}>
                         <div className="unique-id-label">Unique ID</div>
                         <Switch
+                            size="small"
                             color="primary"
                             className="unique-id"
                             checked={this.state.checked}
@@ -447,12 +453,35 @@ export class CoinTab extends React.Component {
                     <FormControl margin="dense" style={{height: '40px', marginLeft: '20px'}}>
                         <div className="unique-id-label">Hashrate Split</div>
                         <Switch
+                            size="small"
                             color="primary"
                             className="unique-id"
                             checked={this.state.hashrate_split_enabled}
                             onChange={this.updateHashrateSplitEnabled}
                         />
                     </FormControl>
+                    {this.state.hashrate_split_enabled && (
+                        <div className="hashrate-split-nav">
+                            {this.state.hashrate_splits.map((split, splitIndex) => (
+                                <Button
+                                    key={splitIndex}
+                                    variant={splitIndex === activeSplitIndex ? 'contained' : 'outlined'}
+                                    onClick={() => this.setState({active_split: splitIndex})}
+                                >
+                                    Group {splitIndex + 1} · {split.ratio}%
+                                </Button>
+                            ))}
+                            <IconButton
+                                aria-label="Add hashrate split group"
+                                onClick={() => this.addHashrateSplit()}
+                                disabled={this.state.hashrate_splits.length >= MAX_HASHRATE_SPLITS}
+                                color="primary"
+                                size="small"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </div>
+                    )}
                 </div>
 
                 {!this.state.hashrate_split_enabled ? (
@@ -475,61 +504,47 @@ export class CoinTab extends React.Component {
                     </>
                 ) : (
                     <>
-                        {this.state.hashrate_splits.map((split, splitIndex) => (
-                            <div
-                                key={splitIndex}
-                                style={{
-                                    border: '1px solid #ccc',
-                                    padding: '10px',
-                                    marginBottom: '10px',
-                                    borderRadius: '4px',
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        marginBottom: '10px',
-                                    }}
+                        <div className="hashrate-split-editor">
+                            <div className="hashrate-split-toolbar">
+                                <Typography variant="subtitle2">Group {activeSplitIndex + 1}</Typography>
+                                <Typography variant="caption" color="textSecondary">
+                                    Ratio
+                                </Typography>
+                                <Input
+                                    value={activeSplit.ratio}
+                                    margin="dense"
+                                    onChange={(e) =>
+                                        this.updateSplitRatio(
+                                            activeSplitIndex,
+                                            e.target.value === '' ? 0 : Number(e.target.value),
+                                        )
+                                    }
+                                    style={{width: '62px'}}
+                                    slotProps={{input: {step: 5, min: 0, max: 100, type: 'number'}}}
+                                />
+                                <Typography variant="caption" color="textSecondary">
+                                    %
+                                </Typography>
+                                <IconButton
+                                    aria-label="Remove hashrate split group"
+                                    onClick={() => this.removeHashrateSplit(activeSplitIndex)}
+                                    disabled={this.state.hashrate_splits.length <= 1}
+                                    color="error"
+                                    size="small"
                                 >
-                                    <Typography variant="h6">Pool Config {splitIndex + 1}</Typography>
-                                    <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-                                        <Typography variant="body2" style={{marginRight: '10px'}}>
-                                            Ratio: {split.ratio}%
-                                        </Typography>
-                                        <Input
-                                            value={split.ratio}
-                                            margin="dense"
-                                            onChange={(e) =>
-                                                this.updateSplitRatio(
-                                                    splitIndex,
-                                                    e.target.value === '' ? 0 : Number(e.target.value),
-                                                )
-                                            }
-                                            style={{width: '70px'}}
-                                            slotProps={{
-                                                input: {step: 5, min: 0, max: 100, type: 'number'},
-                                            }}
-                                        />
-                                        <IconButton
-                                            onClick={() => this.removeHashrateSplit(splitIndex)}
-                                            disabled={this.state.hashrate_splits.length <= 1}
-                                            color="error"
-                                        >
-                                            <RemoveIcon />
-                                        </IconButton>
-                                    </div>
-                                </div>
-                                <FormControl variant="outlined" margin="dense" style={{minWidth: '200px'}}>
-                                    <InputLabel htmlFor={`coin-${splitIndex}`}>Coin</InputLabel>
+                                    <RemoveIcon />
+                                </IconButton>
+                            </div>
+                            <div className="hashrate-split-options">
+                                <FormControl variant="outlined" margin="dense" style={{minWidth: '180px'}}>
+                                    <InputLabel htmlFor={`coin-${activeSplitIndex}`}>Coin</InputLabel>
                                     <Select
                                         native
-                                        id={`coin-${splitIndex}`}
+                                        id={`coin-${activeSplitIndex}`}
                                         label="Coin"
                                         size="small"
-                                        value={split.coin}
-                                        onChange={(e) => this.updateSplitCoin(e, splitIndex)}
+                                        value={activeSplit.coin}
+                                        onChange={(e) => this.updateSplitCoin(e, activeSplitIndex)}
                                     >
                                         {options.map((a, i) => {
                                             return (
@@ -540,18 +555,14 @@ export class CoinTab extends React.Component {
                                         })}
                                     </Select>
                                 </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    margin="dense"
-                                    style={{width: '200px', marginLeft: '10px'}}
-                                >
+                                <FormControl variant="outlined" margin="dense" style={{width: '180px'}}>
                                     <InputLabel>Unique ID Variant</InputLabel>
                                     <Select
-                                        id={`variant-${splitIndex}`}
+                                        id={`variant-${activeSplitIndex}`}
                                         label="Unique ID Variant"
                                         size="small"
-                                        value={split.unique_variant}
-                                        onChange={(e) => this.updateSplitVariant(e, splitIndex)}
+                                        value={activeSplit.unique_variant}
+                                        onChange={(e) => this.updateSplitVariant(e, activeSplitIndex)}
                                     >
                                         <MenuItem value={''}>None</MenuItem>
                                         <MenuItem value={'IpAddress'}>Ip Address</MenuItem>
@@ -559,30 +570,23 @@ export class CoinTab extends React.Component {
                                         <MenuItem value={'CpuId'}>CPU ID</MenuItem>
                                     </Select>
                                 </FormControl>
-                                {[0, 1, 2].map((configIndex) => (
-                                    <PoolConfigFields
-                                        key={configIndex}
-                                        pool={split.stratum_configs[configIndex].pool}
-                                        address={split.stratum_configs[configIndex].address}
-                                        worker={split.stratum_configs[configIndex].worker}
-                                        password={split.stratum_configs[configIndex].password}
-                                        index={configIndex}
-                                        onPoolChange={(e) => this.updateSplitPool(e, splitIndex, configIndex)}
-                                        onAddressChange={(e) => this.updateSplitAddress(e, splitIndex, configIndex)}
-                                        onWorkerChange={(e) => this.updateSplitWorker(e, splitIndex, configIndex)}
-                                        onPasswordChange={(e) => this.updateSplitPassword(e, splitIndex, configIndex)}
-                                        disabled={this.props.disabled}
-                                    />
-                                ))}
                             </div>
-                        ))}
-                        <IconButton
-                            onClick={() => this.addHashrateSplit()}
-                            disabled={this.state.hashrate_splits.length >= MAX_HASHRATE_SPLITS}
-                            color="primary"
-                        >
-                            <AddIcon /> Add Group
-                        </IconButton>
+                            {[0, 1, 2].map((configIndex) => (
+                                <PoolConfigFields
+                                    key={configIndex}
+                                    pool={activeSplit.stratum_configs[configIndex].pool}
+                                    address={activeSplit.stratum_configs[configIndex].address}
+                                    worker={activeSplit.stratum_configs[configIndex].worker}
+                                    password={activeSplit.stratum_configs[configIndex].password}
+                                    index={configIndex}
+                                    onPoolChange={(e) => this.updateSplitPool(e, activeSplitIndex, configIndex)}
+                                    onAddressChange={(e) => this.updateSplitAddress(e, activeSplitIndex, configIndex)}
+                                    onWorkerChange={(e) => this.updateSplitWorker(e, activeSplitIndex, configIndex)}
+                                    onPasswordChange={(e) => this.updateSplitPassword(e, activeSplitIndex, configIndex)}
+                                    disabled={this.props.disabled}
+                                />
+                            ))}
+                        </div>
                     </>
                 )}
                 <TabFooter>

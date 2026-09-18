@@ -268,6 +268,7 @@ export class FanTab extends React.Component {
                                             <Typography variant="subtitle2" color="textSecondary">
                                                 AutoFan
                                                 <Switch
+                                                    size="small"
                                                     color="primary"
                                                     checked={this.state.autofan}
                                                     onChange={this.updateCheck}
@@ -684,7 +685,7 @@ export class FanTab extends React.Component {
                                 color="primary"
                                 disabled={disabled}
                             >
-                                {getMinerActionLabel('Apply Fan Speed', this.props.selected)}
+                                {getMinerActionLabel('Apply Fan', this.props.selected)}
                             </Button>
                             <Button
                                 onClick={() => {
@@ -697,7 +698,7 @@ export class FanTab extends React.Component {
                                 color="primary"
                                 disabled={disabled}
                             >
-                                {getMinerActionLabel('Apply Temperatures', this.props.selected)}
+                                {getMinerActionLabel('Apply Temps', this.props.selected)}
                             </Button>
                             <Button
                                 onClick={() => {
@@ -707,7 +708,7 @@ export class FanTab extends React.Component {
                                 color="primary"
                                 disabled={disabled}
                             >
-                                {getMinerActionLabel('Apply Fans', this.props.selected)}
+                                {getMinerActionLabel('Apply Min Fans', this.props.selected)}
                             </Button>
                             <Button
                                 onClick={() => {

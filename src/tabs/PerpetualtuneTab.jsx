@@ -154,7 +154,12 @@ export class PerpetualtuneTab extends React.Component {
                     <section className="perpetual-tune-section perpetual-tune-enable">
                         <FormControlLabel
                             control={
-                                <Switch color="primary" checked={this.state.checked} onChange={this.updateCheck} />
+                                <Switch
+                                    size="small"
+                                    color="primary"
+                                    checked={this.state.checked}
+                                    onChange={this.updateCheck}
+                                />
                             }
                             label={<Typography variant="subtitle1">Perpetual Tuning</Typography>}
                             labelPlacement="top"

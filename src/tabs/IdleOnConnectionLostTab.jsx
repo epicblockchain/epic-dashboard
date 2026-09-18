@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button, Typography, Grid, TextField, Switch} from '@mui/material';
-import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
+import {Button, TextField} from '@mui/material';
+import {getMinerActionLabel, SettingToggle, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class IdleOnConnectionLostTab extends React.Component {
     constructor(props) {
@@ -34,25 +34,12 @@ export class IdleOnConnectionLostTab extends React.Component {
                     title="Idle On Connection Lost"
                     description="On connection loss, the miner goes idle. When disabled, it continues drawing power."
                 />
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{
-                        alignItems: 'center',
-                    }}
-                >
-                    <Grid>
-                        <Switch
-                            checked={this.state.is_idle_on_connection_lost}
-                            onChange={this.handleIdleOnConnectionLost}
-                        />
-                    </Grid>
-                    <Grid>
-                        <Typography variant="body2" color="textSecondary">
-                            {this.state.is_idle_on_connection_lost ? 'Enabled' : 'Disabled'}
-                        </Typography>
-                    </Grid>
-                </Grid>
+                <SettingToggle
+                    checked={this.state.is_idle_on_connection_lost}
+                    onChange={this.handleIdleOnConnectionLost}
+                    label={this.state.is_idle_on_connection_lost ? 'Enabled' : 'Disabled'}
+                    description="Idle on connection loss instead of continuing to draw mining power."
+                />
                 <TabFooter>
                     <TextField
                         value={this.state.password || ''}

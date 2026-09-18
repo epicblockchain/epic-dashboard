@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button, Typography, Grid, TextField, Switch} from '@mui/material';
-import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
+import {Button, TextField} from '@mui/material';
+import {getMinerActionLabel, SettingToggle, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class EnableBoardsOnIdleTab extends React.Component {
     constructor(props) {
@@ -34,22 +34,12 @@ export class EnableBoardsOnIdleTab extends React.Component {
                     title="Enable Boards On Idle"
                     description="Re-enable disabled boards automatically after the miner remains idle for 10 minutes."
                 />
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{
-                        alignItems: 'center',
-                    }}
-                >
-                    <Grid>
-                        <Switch checked={this.state.enable_boards_on_idle} onChange={this.handleEnableBoardsOnIdle} />
-                    </Grid>
-                    <Grid>
-                        <Typography variant="body2" color="textSecondary">
-                            {this.state.enable_boards_on_idle ? 'Enabled' : 'Disabled'}
-                        </Typography>
-                    </Grid>
-                </Grid>
+                <SettingToggle
+                    checked={this.state.enable_boards_on_idle}
+                    onChange={this.handleEnableBoardsOnIdle}
+                    label={this.state.enable_boards_on_idle ? 'Enabled' : 'Disabled'}
+                    description="Re-enable disabled boards after ten minutes of idle time."
+                />
                 <TabFooter>
                     <TextField
                         value={this.state.password || ''}

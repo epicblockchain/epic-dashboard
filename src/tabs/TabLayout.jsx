@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Paper, Typography} from '@mui/material';
+import {FormControlLabel, Paper, Switch, Typography} from '@mui/material';
 
 export function TabHeader({title, description, children}) {
     return React.createElement(
@@ -26,6 +26,23 @@ export function TabFooter({children, className = ''}) {
             sx: {backgroundColor: 'background.default'},
         },
         children,
+    );
+}
+
+export function SettingToggle({checked, onChange, label, description, disabled = false}) {
+    return React.createElement(
+        Paper,
+        {className: 'setting-toggle', variant: 'outlined', elevation: 0},
+        React.createElement(FormControlLabel, {
+            control: React.createElement(Switch, {checked, onChange, disabled, size: 'small'}),
+            label: React.createElement(
+                'span',
+                {className: 'setting-toggle-copy'},
+                React.createElement(Typography, {variant: 'body2'}, label),
+                description &&
+                    React.createElement(Typography, {variant: 'caption', color: 'textSecondary'}, description),
+            ),
+        }),
     );
 }
 

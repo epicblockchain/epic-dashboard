@@ -57,6 +57,14 @@ function findApply(element) {
     }
 }
 
+function elements(element, predicate) {
+    if (!React.isValidElement(element)) return [];
+    return [
+        ...(predicate(element) ? [element] : []),
+        ...React.Children.toArray(element.props.children).flatMap((child) => elements(child, predicate)),
+    ];
+}
+
 test('an empty worker permits Apply and preserves the normal miner command', async () => {
     const {config, requests} = createConfig();
     const button = findApply(config.render());
@@ -88,4 +96,34 @@ test('required pool, wallet, password, coin and miner selection still gate Apply
         else config.props.selected = [];
         assert.equal(Boolean(findApply(config.render()).props.disabled), true, missing);
     }
+});
+
+test('hashrate split mode renders only the active group editor', () => {
+    const {config} = createConfig();
+    const secondGroup = {
+        coin: 'BTC',
+        ratio: 40,
+        unique_variant: '',
+        stratum_configs: [
+            {pool: 'second-group-pool', address: 'wallet', worker: '', password: ''},
+            {pool: '', address: '', worker: '', password: ''},
+            {pool: '', address: '', worker: '', password: ''},
+        ],
+    };
+    config.state.hashrate_split_enabled = true;
+    config.state.hashrate_splits = [
+        {coin: 'BTC', ratio: 60, unique_variant: '', stratum_configs: config.state.stratum_configs},
+        secondGroup,
+    ];
+    config.state.active_split = 1;
+
+    const editors = elements(config.render(), (element) => element.props.className === 'hashrate-split-editor');
+    const poolGroups = elements(
+        editors[0],
+        (element) => element.props.index !== undefined && typeof element.props.onPoolChange === 'function',
+    );
+
+    assert.equal(editors.length, 1);
+    assert.equal(poolGroups.length, 3);
+    assert.equal(poolGroups[0].props.pool, 'second-group-pool');
 });

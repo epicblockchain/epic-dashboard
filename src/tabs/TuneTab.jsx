@@ -6,13 +6,11 @@ import {
     TextField,
     Slider,
     Input,
-    Grid,
     Typography,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
-    Divider,
     Switch,
 } from '@mui/material';
 import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
@@ -177,36 +175,23 @@ export class TuneTab extends React.Component {
         if (tunePresets) powerArray.push(...Object.entries(tunePresets).map((entry) => entry[1]));
 
         return (
-            <div className="tab-body settings-tab">
+            <div className="tab-body settings-tab tune-tab">
                 <TabHeader
                     title="Tune"
                     description="Adjust clock, voltage, presets, and overdrive for selected miners."
                 />
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{
-                        alignItems: 'flex-start',
-                    }}
-                >
-                    <Grid container spacing={2} style={{width: '450px'}}>
-                        <Grid size={12}>
-                            <Typography gutterBottom>Change Clock or Voltage settings</Typography>
-                        </Grid>
-                        <Grid size={2}>
+                <div className="tune-layout">
+                    <section className="tune-section tune-controls">
+                        <Typography className="compact-section-title">Clock and voltage</Typography>
+                        <div className="tune-control-row">
                             <Schedule />
-                        </Grid>
-                        <Grid size={8}>
                             <Slider
                                 value={typeof this.state.clock === 'number' ? this.state.clock : 50}
                                 min={50}
                                 max={1000}
                                 marks={marksCLK}
                                 onChange={this.handleSliderClockChange}
-                                style={{width: '250px'}}
                             />
-                        </Grid>
-                        <Grid size={2}>
                             <Input
                                 value={this.state.clock}
                                 margin="dense"
@@ -217,11 +202,9 @@ export class TuneTab extends React.Component {
                                     input: {step: 5, min: 50, max: 1000, type: 'number'},
                                 }}
                             />
-                        </Grid>
-                        <Grid size={2}>
+                        </div>
+                        <div className="tune-control-row">
                             <FlashOn />
-                        </Grid>
-                        <Grid size={8}>
                             <Slider
                                 value={typeof this.state.voltage === 'number' ? this.state.voltage : min_v}
                                 min={min_v}
@@ -229,10 +212,7 @@ export class TuneTab extends React.Component {
                                 step={0.001}
                                 marks={marksVOLT}
                                 onChange={this.handleSliderVoltageChange}
-                                style={{width: '250px'}}
                             />
-                        </Grid>
-                        <Grid size={2}>
                             <Input
                                 value={this.state.voltage}
                                 margin="dense"
@@ -243,88 +223,64 @@ export class TuneTab extends React.Component {
                                     input: {step: 0.05, min: min_v, max: max_v, type: 'number'},
                                 }}
                             />
-                        </Grid>
-                    </Grid>
-                    <Divider orientation="vertical" flexItem style={{margin: '0 50px'}} />
-                    <Grid>
-                        <Grid>
-                            <Typography style={{margin: '0 0 20px'}}> Tuning Presets for selected miners</Typography>
-                        </Grid>
-                        <Grid>
-                            <FormControl style={{width: '450px'}}>
-                                <InputLabel id="preset-select-label">Presets (Optional)</InputLabel>
-                                <Select
-                                    labelId="preset-select-label"
-                                    label="Presets (Optional)"
-                                    onChange={(e) => this.handlePresetChange(e)}
-                                    value={this.state.preset}
-                                    displayEmpty
-                                    fullWidth
-                                >
-                                    <MenuItem value="Select Preset">
-                                        <em>Select Preset</em>
-                                    </MenuItem>
-                                    {powerArray
-                                        .sort((a, b) => a.hashrate - b.hashrate)
-                                        .map((obj, i) => {
-                                            return (
-                                                <MenuItem
-                                                    key={i}
-                                                    value={JSON.stringify({
-                                                        clk: obj.clk,
-                                                        voltage: obj.voltage,
-                                                        hashrate: obj.hashrate,
-                                                        power: obj.power,
-                                                    })}
-                                                >
-                                                    {obj.hashrate ? ` ${obj.hashrate}TH/s` : ''}
-                                                    {obj.clk ? ` @ (${obj.clk}MHz` : ''}
-                                                    {obj.voltage ? ` : ${obj.voltage / 1000}V)` : ''}
-                                                    {obj.power ? ` ~${obj.power}W` : ''}
-                                                </MenuItem>
-                                            );
-                                        })}
-                                </Select>
-                                <Typography gutterBottom style={{marginTop: '20px'}}>
-                                    Overdrive mode
-                                </Typography>
-                                <Typography
-                                    variant="subtitle2"
-                                    color="textSecondary"
-                                    gutterBottom
-                                    style={{whiteSpace: 'pre-line'}}
-                                >
-                                    May provide better efficiency when overclocking
-                                    <Typography
-                                        variant="subtitle2"
-                                        sx={{color: 'white'}}
-                                        component="a"
-                                        style={{display: 'inline'}}
-                                    >
-                                        {' '}
+                        </div>
+                    </section>
+                    <section className="tune-section tune-presets">
+                        <Typography className="compact-section-title">Presets and overdrive</Typography>
+                        <FormControl fullWidth size="small">
+                            <InputLabel id="preset-select-label">Presets (Optional)</InputLabel>
+                            <Select
+                                labelId="preset-select-label"
+                                label="Presets (Optional)"
+                                onChange={(e) => this.handlePresetChange(e)}
+                                value={this.state.preset}
+                                displayEmpty
+                                fullWidth
+                            >
+                                <MenuItem value="Select Preset">
+                                    <em>Select Preset</em>
+                                </MenuItem>
+                                {powerArray
+                                    .sort((a, b) => a.hashrate - b.hashrate)
+                                    .map((obj, i) => {
+                                        return (
+                                            <MenuItem
+                                                key={i}
+                                                value={JSON.stringify({
+                                                    clk: obj.clk,
+                                                    voltage: obj.voltage,
+                                                    hashrate: obj.hashrate,
+                                                    power: obj.power,
+                                                })}
+                                            >
+                                                {obj.hashrate ? ` ${obj.hashrate}TH/s` : ''}
+                                                {obj.clk ? ` @ (${obj.clk}MHz` : ''}
+                                                {obj.voltage ? ` : ${obj.voltage / 1000}V)` : ''}
+                                                {obj.power ? ` ~${obj.power}W` : ''}
+                                            </MenuItem>
+                                        );
+                                    })}
+                            </Select>
+                        </FormControl>
+                        <div className="tune-overdrive">
+                            <div>
+                                <Typography className="overdrive-title">Overdrive mode</Typography>
+                                <Typography variant="subtitle2" color="textSecondary">
+                                    May improve overclocking efficiency{' '}
+                                    <Typography component="span" variant="subtitle2" sx={{color: 'white'}}>
                                         (BM1366 ASIC chips)
                                     </Typography>
                                 </Typography>
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    sx={{
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Grid>
-                                        <Switch checked={this.state.overdrive} onChange={this.handleSwitch} />
-                                    </Grid>
-                                    <Grid>
-                                        <Typography variant="body2" color="textSecondary">
-                                            {this.state.overdrive ? 'Enabled' : 'Disabled'}
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                </Grid>
+                            </div>
+                            <div className="tune-overdrive-control">
+                                <Switch size="small" checked={this.state.overdrive} onChange={this.handleSwitch} />
+                                <Typography variant="body2" color="textSecondary">
+                                    {this.state.overdrive ? 'Enabled' : 'Disabled'}
+                                </Typography>
+                            </div>
+                        </div>
+                    </section>
+                </div>
                 <TabFooter>
                     <TextField
                         value={this.state.password || ''}

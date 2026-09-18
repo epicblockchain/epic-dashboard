@@ -137,6 +137,7 @@ export class BoardControlTab extends React.Component {
                                 <FormControlLabel
                                     control={
                                         <Switch
+                                            size="small"
                                             checked={enabled}
                                             onChange={() => this.toggleBoard(index)}
                                             slotProps={{input: {'aria-label': `Enable board ${index + 1}`}}}

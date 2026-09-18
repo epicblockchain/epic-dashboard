@@ -64,7 +64,7 @@ export class LicenseTab extends React.Component {
             <div className="tab-body settings-tab">
                 <TabHeader title="License" description="Upload a JSON license file or enter a key manually." />
 
-                <Box sx={{mb: 2, display: 'flex', gap: 1}}>
+                <Box sx={{mb: 0.5, display: 'flex', gap: 0.75}}>
                     <input
                         type="file"
                         ref={(input) => {

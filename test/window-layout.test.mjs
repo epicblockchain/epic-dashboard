@@ -24,8 +24,9 @@ test('the app starts at 1280x720 without exceeding the display work area', () =>
 });
 
 test('the miner table reserves enough settings space across common window heights', () => {
-    assert.equal(getMinerTableViewportHeight(720), 140);
+    assert.equal(getMinerTableViewportHeight(720), 200);
     assert.equal(getMinerTableViewportHeight(620), 140);
-    assert.equal(getMinerTableViewportHeight(1080), 380);
-    assert.equal(getMinerTableViewportHeight(1100), 400);
+    assert.equal(getMinerTableViewportHeight(1080), 560);
+    assert.equal(getMinerTableViewportHeight(1100), 580);
+    assert.equal(getMinerTableViewportHeight(1440), 920);
 });

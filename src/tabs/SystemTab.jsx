@@ -7,7 +7,6 @@ import {
     FormControl,
     FormControlLabel,
     Checkbox,
-    Divider,
     Grid,
     Typography,
 } from '@mui/material';
@@ -91,7 +90,7 @@ export class SystemTab extends React.Component {
                     title="System"
                     description="Update firmware, timezone, or authentication settings for selected miners."
                 />
-                <Grid container>
+                <Grid container className="system-options">
                     <Grid className="system-option" size={{xs: 12, md: 4}}>
                         <Typography>Update Firmware</Typography>
                         <Grid>
@@ -119,6 +118,7 @@ export class SystemTab extends React.Component {
                                 <FormControlLabel
                                     control={
                                         <Checkbox
+                                            size="small"
                                             color="primary"
                                             checked={this.state.keep}
                                             onChange={this.updateKeep}
@@ -129,7 +129,6 @@ export class SystemTab extends React.Component {
                             </FormControl>
                         </Grid>
                     </Grid>
-                    <Divider className="system-divider" orientation="vertical" flexItem />
                     <Grid className="system-option" size={{xs: 12, md: 4}}>
                         <Typography>Change System Timezone</Typography>
                         <TextField
@@ -141,7 +140,6 @@ export class SystemTab extends React.Component {
                             margin="dense"
                         />
                     </Grid>
-                    <Divider className="system-divider" orientation="vertical" flexItem />
                     <Grid className="system-option" size={{xs: 12, md: 4}}>
                         <Typography>Change password</Typography>
                         <TextField

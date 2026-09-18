@@ -10,6 +10,8 @@
 /* General */
 
 #table {
+    --compact-control-height: 32px;
+    --compact-gap: 6px;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -59,7 +61,7 @@ div.MuiFormControl-root {
 }
 
 .tab-body {
-    padding: 10px 0 12px;
+    padding: 6px 0 7px;
     box-sizing: border-box;
     height: 100%;
     min-height: 0;
@@ -69,40 +71,58 @@ div.MuiFormControl-root {
 .settings-tab {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    gap: var(--compact-gap);
+    overflow: hidden;
 }
 
 .settings-tab:has(.settings-tab-footer) {
-    padding-bottom: 62px;
+    padding-bottom: 44px;
 }
 
 .settings-tab-header {
     display: flex;
-    align-items: flex-start;
+    min-height: 28px;
+    align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
+    gap: var(--compact-gap);
 }
 
-.settings-tab-header .MuiTypography-root {
+.settings-tab-header > div:first-child {
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.settings-tab-header .MuiTypography-h6 {
+    flex: 0 0 auto;
     margin-bottom: 0;
-    line-height: 1.3;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.settings-tab-header .MuiTypography-subtitle2 {
+    overflow: hidden;
+    margin-bottom: 0;
+    font-size: 0.7rem;
+    font-weight: 400;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .settings-tab-header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    flex: 0 0 auto;
+    gap: var(--compact-gap);
 }
 
 .settings-tab-action-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: var(--compact-gap);
 }
 
 .settings-tab-footer,
@@ -115,10 +135,10 @@ div.MuiFormControl-root {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 8px;
-    flex-wrap: wrap;
+    min-height: 40px;
+    gap: var(--compact-gap);
     margin: 0;
-    padding: 6px 0;
+    padding: 3px 0;
     border-top: 1px solid rgba(127, 127, 127, 0.25);
 }
 
@@ -128,37 +148,73 @@ div.MuiFormControl-root {
 }
 
 #table .settings-tab .MuiButton-root {
-    min-height: 32px;
+    flex-shrink: 0;
+    min-height: 28px;
     margin: 0;
-    padding: 4px 12px;
-    font-size: 0.8rem;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    line-height: 1.25;
+    white-space: nowrap;
+}
+
+#table .settings-tab .MuiIconButton-root {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+}
+
+#table .settings-tab .MuiIconButton-root svg {
+    font-size: 1.1rem;
 }
 
 #table .settings-tab .MuiFormControl-marginDense {
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+#table .settings-tab .MuiFormControl-root {
+    margin-right: 0;
+}
+
+#table .settings-tab .MuiInputBase-root:not(.MuiInput-root) {
+    min-height: var(--compact-control-height);
+}
+
+#table .settings-tab .MuiInputBase-input,
+#table .settings-tab .MuiSelect-select {
+    font-size: 0.78rem;
 }
 
 #table .settings-tab .MuiOutlinedInput-input {
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
 #table .settings-tab .MuiInputLabel-root:not(.MuiInputLabel-shrink) {
-    transform: translate(14px, 8px) scale(1);
+    transform: translate(14px, 7px) scale(1);
+}
+
+#table .settings-tab .MuiInputLabel-root,
+#table .settings-tab .MuiFormHelperText-root {
+    font-size: 0.72rem;
+}
+
+#table .settings-tab .MuiFormHelperText-root {
+    margin-top: 1px;
+    margin-bottom: 0;
 }
 
 #table .settings-tab .MuiGrid-container {
-    --Grid-rowSpacing: 10px !important;
-    --Grid-columnSpacing: 10px !important;
+    --Grid-rowSpacing: 6px !important;
+    --Grid-columnSpacing: 6px !important;
 }
 
 #table .settings-tab .MuiCardContent-root {
-    padding: 12px;
+    padding: 7px 8px;
 }
 
 #table .settings-tab .MuiCardContent-root:last-child {
-    padding-bottom: 12px;
+    padding-bottom: 7px;
 }
 
 #table .settings-tab .MuiTypography-gutterBottom {
@@ -167,6 +223,40 @@ div.MuiFormControl-root {
 
 #table .settings-tab .MuiSlider-root {
     max-width: 190px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+#table .settings-tab .MuiSvgIcon-root {
+    font-size: 1.15rem;
+}
+
+#table .settings-tab .MuiTypography-body2,
+#table .settings-tab .MuiTypography-subtitle2 {
+    font-size: 0.76rem;
+    line-height: 1.25;
+}
+
+#table .settings-tab .MuiTypography-caption {
+    font-size: 0.68rem;
+    line-height: 1.2;
+}
+
+.setting-toggle {
+    display: flex;
+    width: fit-content;
+    min-width: 300px;
+    padding: 4px 8px;
+}
+
+.setting-toggle .MuiFormControlLabel-root {
+    margin: 0;
+}
+
+.setting-toggle-copy {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
 }
 
 .table-region {
@@ -176,10 +266,11 @@ div.MuiFormControl-root {
 
 .settings-region {
     display: flex;
-    flex: 1 1 auto;
+    flex: 0 0 320px;
     flex-direction: column;
     width: 100%;
     max-width: 1400px;
+    height: 320px;
     min-height: 0;
     margin: 0 auto;
     overflow: hidden;
@@ -224,10 +315,10 @@ div.system-apply {
 }
 
 .period {
-    font-size: 1rem;
+    font-size: 0.8rem;
     display: inline-block;
-    margin: 8px 1px 4px 1px;
-    padding: 13px 0 6px 0;
+    margin: 1px 0;
+    padding: 8px 0 0;
     line-height: 1.1876em;
 }
 
@@ -250,6 +341,8 @@ div.system-apply {
 
 .flex-line {
     display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .flex-line > div {
@@ -257,7 +350,7 @@ div.system-apply {
 }
 
 .mining-config-tab {
-    gap: 6px;
+    gap: 4px;
 }
 
 #table .mining-config-tab > .flex-line .MuiFormControl-marginDense {
@@ -266,10 +359,37 @@ div.system-apply {
 }
 
 .mining-config-tab .period {
-    margin-top: 2px;
+    margin: 0;
+    padding-top: 5px;
+    padding-bottom: 0;
+}
+
+.hashrate-split-nav,
+.hashrate-split-toolbar,
+.hashrate-split-options {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hashrate-split-nav {
+    min-height: 28px;
+}
+
+.hashrate-split-editor {
+    padding: 4px 6px;
+    border: 1px solid rgba(127, 127, 127, 0.35);
+    border-radius: 4px;
+}
+
+.hashrate-split-toolbar {
+    float: right;
+    height: 34px;
+}
+
+.hashrate-split-options {
+    min-height: 34px;
     margin-bottom: 2px;
-    padding-top: 9px;
-    padding-bottom: 4px;
 }
 
 .float {
@@ -279,9 +399,8 @@ div.system-apply {
 /* ControlTab */
 
 #control-tab button.but-group {
-    padding: 6px 15px;
-    width: 154px;
-    margin: 2px;
+    width: 146px;
+    margin: 3px;
 }
 
 #control-tab button.but-group.stop:hover {
@@ -295,12 +414,12 @@ div.system-apply {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: var(--compact-gap);
 }
 
 .board-control-actions {
-    margin: 12px 0;
+    min-height: 34px;
+    margin: 0;
 }
 
 .board-control-actions .MuiButton-root {
@@ -309,12 +428,12 @@ div.system-apply {
 
 .board-state-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 5px;
 }
 
 .board-state-item {
-    padding: 4px 8px;
+    padding: 1px 6px;
 }
 
 .board-state-item .MuiFormControlLabel-root {
@@ -324,7 +443,7 @@ div.system-apply {
 
 .board-state-label {
     display: inline-block;
-    padding: 4px 0;
+    padding: 2px 0;
 }
 
 .board-control-apply {
@@ -338,7 +457,7 @@ div.system-apply {
 /* PerpetualtuneTab */
 
 .perpetual-tune-actions {
-    padding-top: 6px;
+    padding-top: 3px;
 }
 
 .perpetual-tune-layout {
@@ -349,7 +468,7 @@ div.system-apply {
 
 .perpetual-tune-section {
     min-width: 0;
-    padding: 4px 20px;
+    padding: 2px 14px;
 }
 
 .perpetual-tune-section + .perpetual-tune-section {
@@ -367,21 +486,21 @@ div.system-apply {
 }
 
 .perpetual-tune-options .MuiFormControlLabel-root {
-    min-height: 32px;
+    min-height: 26px;
     margin: 0;
 }
 
 .perpetual-tune-options .MuiRadio-root,
 .perpetual-tune-options .MuiSwitch-root {
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .perpetual-tune-target-description {
     display: -webkit-box;
     overflow: hidden;
-    min-height: 34px;
-    margin-top: 2px !important;
+    min-height: 28px;
+    margin-top: 1px !important;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
 }
@@ -389,8 +508,8 @@ div.system-apply {
 .perpetual-tune-target-controls {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-top: 8px;
+    gap: 10px;
+    margin-top: 4px;
 }
 
 .perpetual-tune-target-controls .MuiSlider-root {
@@ -401,7 +520,7 @@ div.system-apply {
 .perpetual-tune-target-inputs {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
@@ -412,30 +531,102 @@ div.system-apply {
 .perpetual-tune-placeholder {
     display: flex;
     align-items: center;
-    min-height: 120px;
+    min-height: 80px;
 }
 
 /* Cooling */
 
 .cooling-tab {
-    gap: 8px;
+    gap: 5px;
 }
 
 #table .cooling-tab .MuiGrid-container {
-    --Grid-rowSpacing: 8px !important;
-    --Grid-columnSpacing: 8px !important;
+    --Grid-rowSpacing: 5px !important;
+    --Grid-columnSpacing: 6px !important;
 }
 
 #table .cooling-tab .MuiCardContent-root,
 #table .cooling-tab .MuiCardContent-root:last-child {
-    padding: 10px;
+    padding: 6px 8px;
+}
+
+#table .cooling-tab .MuiCardContent-root > .MuiGrid-container > .MuiGrid-root > .MuiTypography-root {
+    line-height: 1.15;
+}
+
+/* Tune */
+
+.tune-layout {
+    display: grid !important;
+    grid-template-columns: minmax(420px, 1.15fr) minmax(340px, 0.85fr);
+    min-height: 0;
+    align-items: stretch;
+}
+
+.tune-section {
+    min-width: 0;
+    padding: 3px 16px 5px;
+}
+
+.compact-section-title {
+    min-height: 22px;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+}
+
+.tune-controls {
+    padding-left: 6px;
+}
+
+.tune-presets {
+    border-left: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+.tune-control-row {
+    display: grid;
+    grid-template-columns: 24px minmax(180px, 1fr) 70px;
+    max-width: 540px;
+    min-height: 48px;
+    align-items: center;
+    gap: 10px;
+}
+
+.tune-control-row .MuiSlider-root {
+    width: 100%;
+    max-width: none !important;
+}
+
+.tune-overdrive {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 6px;
+}
+
+.tune-overdrive .overdrive-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.tune-overdrive-control {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 2px;
 }
 
 @media (max-height: 760px) {
+    .settings-region {
+        flex: 1 1 auto;
+        height: auto;
+    }
+
     div.password-apply,
     div.system-apply {
         position: static;
-        margin-top: 12px;
+        margin-top: 6px;
     }
 }
 
@@ -453,10 +644,6 @@ div.system-apply {
 }
 
 @media (max-width: 1000px) {
-    .settings-tab:has(.multi-action-footer) {
-        padding-bottom: 108px;
-    }
-
     .perpetual-tune-layout {
         grid-template-columns: minmax(160px, 0.7fr) minmax(210px, 1fr) minmax(260px, 1.3fr);
     }

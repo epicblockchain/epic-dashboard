@@ -1,13 +1,26 @@
-.MuiGrid-container > .MuiDivider-vertical.MuiDivider-flexItem {
-    margin-right: -1px;
+.system-options {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
 }
 
 .system-option {
-    padding: 8px;
+    width: auto !important;
+    min-width: 0;
+    padding: 5px 8px;
+}
+
+.system-option + .system-option {
+    border-left: 1px solid rgba(127, 127, 127, 0.35);
 }
 
 @media (max-width: 899px) {
-    .system-divider {
-        display: none;
+    .system-options {
+        grid-template-columns: 1fr;
+    }
+
+    .system-option + .system-option {
+        border-top: 1px solid rgba(127, 127, 127, 0.35);
+        border-left: 0;
     }
 }
