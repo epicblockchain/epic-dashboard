@@ -377,7 +377,7 @@ export class CoinTab extends React.Component {
             );
 
         return (
-            <div className="tab-body settings-tab">
+            <div className="tab-body settings-tab mining-config-tab">
                 <TabHeader
                     title="Mining Config"
                     description="Configure pools, worker identity, and optional hashrate splitting."

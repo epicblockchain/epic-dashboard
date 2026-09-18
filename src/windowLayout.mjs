@@ -14,6 +14,6 @@ export function getInitialWindowBounds(workArea) {
 
 export function getMinerTableViewportHeight(viewportHeight) {
     const preferredHeight = Math.round(viewportHeight * 0.52);
-    const maxHeight = Math.max(140, viewportHeight - 540);
+    const maxHeight = Math.max(140, viewportHeight - 700);
     return Math.max(140, Math.min(preferredHeight, maxHeight));
 }

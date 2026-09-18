@@ -1,18 +1,5 @@
 import * as React from 'react';
-import {styled} from '@mui/material/styles';
-import {
-    Box,
-    Button,
-    TextField,
-    Slider,
-    Input,
-    Switch,
-    Typography,
-    Grid,
-    Divider,
-    InputAdornment,
-    Tooltip,
-} from '@mui/material';
+import {Button, TextField, Slider, Input, Switch, Typography, InputAdornment, Tooltip} from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -124,27 +111,6 @@ export class PerpetualtuneTab extends React.Component {
     render() {
         const disabled = !this.state.password || !this.props.selected.length || this.props.disabled;
 
-        const MuiSwitchLarge = styled(Switch)(({theme}) => ({
-            width: 88,
-            height: 34,
-            padding: 7,
-            '& .MuiSwitch-switchBase': {
-                margin: 1,
-                padding: 0,
-                transform: 'translateX(6px)',
-                '&.Mui-checked': {
-                    transform: 'translateX(50px)',
-                },
-            },
-            '& .MuiSwitch-thumb': {
-                width: 32,
-                height: 32,
-            },
-            '& .MuiSwitch-track': {
-                borderRadius: 20 / 2,
-            },
-        }));
-
         const algo_info = [];
         const marks = [
             {
@@ -184,203 +150,165 @@ export class PerpetualtuneTab extends React.Component {
                     title="Perpetual Tune"
                     description="Choose an optimization mode and target for the selected miners."
                 />
-                <Grid container spacing={2}>
-                    <Grid
-                        container
-                        spacing={2}
-                        style={{width: '275px'}}
-                        sx={{
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                pl: 4,
-                            }}
-                        >
-                            <FormControlLabel
-                                control={
-                                    <MuiSwitchLarge
-                                        color="primary"
-                                        checked={this.state.checked}
-                                        onChange={this.updateCheck}
-                                    />
-                                }
-                                label={
-                                    <Box
-                                        sx={{
-                                            fontSize: 20,
-                                        }}
-                                    >
-                                        Perpetual Tuning
-                                    </Box>
-                                }
-                                labelPlacement="top"
-                            />
-                        </Box>
-                    </Grid>
-                    <Divider orientation="vertical" sx={{pt: 25}} style={{marginRight: '25px'}} />
-
-                    <FormControl disabled={!this.state.checked}>
-                        <Typography
-                            sx={{
-                                fontSize: 20,
-                            }}
-                        >
-                            Perpetual Tune Algorithm
-                        </Typography>
-                        <RadioGroup value={this.state.algo}>
-                            {algo_info.map((x, index) => (
-                                <FormControlLabel
-                                    key={index}
-                                    value={x.algorithm}
-                                    label={x.name}
-                                    name={x.name}
-                                    control={
-                                        <Radio
-                                            onChange={this.updateAlgorithm}
-                                            id={x.description}
-                                            slotProps={{
-                                                input: {min: x.min, max: x.max},
-                                            }}
-                                        />
-                                    }
-                                />
-                            ))}
-                        </RadioGroup>
+                <div className="perpetual-tune-layout">
+                    <section className="perpetual-tune-section perpetual-tune-enable">
                         <FormControlLabel
                             control={
-                                <Switch
-                                    checked={this.state.errorthrottle}
-                                    onChange={this.updateErrorThrottle}
-                                    disabled={!this.state.checked}
-                                />
+                                <Switch color="primary" checked={this.state.checked} onChange={this.updateCheck} />
                             }
-                            label="Error Throttle"
+                            label={<Typography variant="subtitle1">Perpetual Tuning</Typography>}
+                            labelPlacement="top"
                         />
-                    </FormControl>
+                    </section>
 
-                    <Divider orientation="vertical" sx={{pt: 25}} style={{margin: '0 25px'}} />
-                    <Grid hidden={!this.state.checked || algo_info.length == 0 || this.state.algo == ''} size="grow">
-                        <Typography
-                            sx={{
-                                fontSize: 20,
-                            }}
-                        >
-                            {this.state.name}
-                        </Typography>
-                        <Typography
-                            sx={{
-                                fontSize: 14,
-                            }}
-                        >
-                            {this.state.desc}
-                        </Typography>
-                        <br />
-                        <Grid
-                            container
-                            spacing={2}
-                            sx={{
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Grid size="auto">
-                                <Slider
-                                    value={hasMinThrot ? [this.state.throttle, this.state.num] : this.state.num}
-                                    min={hasMinThrot ? MIN_THROTTLE : Number(this.state.min)}
-                                    max={Number(this.state.max)}
-                                    marks={marks}
-                                    valueLabelDisplay="auto"
-                                    valueLabelFormat={(x) => {
-                                        if (x === this.state.throttle) {
-                                            return 'Throttle';
-                                        }
-                                        return 'Target';
-                                    }}
-                                    onChange={this.handleSlider}
-                                    style={{width: '250px'}}
-                                />
-                            </Grid>
-                            <Grid size="auto">
-                                <Box
-                                    sx={{
-                                        pl: 2,
-                                        pb: 3,
-                                    }}
-                                >
-                                    <FormControl>
-                                        <Input
-                                            value={this.state.num}
-                                            onChange={this.handleInputChange}
-                                            onBlur={this.handleInputBlur}
-                                            endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
-                                            style={{width: 90}}
-                                            slotProps={{
-                                                input: {
-                                                    step: 1,
-                                                    min: hasMinThrot ? this.state.throttle : this.state.min,
-                                                    max: this.state.max,
-                                                    type: 'number',
-                                                },
-                                            }}
-                                        />
-                                        <Typography variant="subtitle2" color="textSecondary" component="a">
-                                            Target
-                                        </Typography>
-                                    </FormControl>
-                                    {hasMinThrot && (
-                                        <FormControl>
-                                            <Input
-                                                value={this.state.throttle}
-                                                onChange={this.handleThrotChange}
-                                                onBlur={this.handleThrotBlur}
-                                                endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
-                                                style={{width: 90}}
+                    <section className="perpetual-tune-section perpetual-tune-options">
+                        <FormControl disabled={!this.state.checked}>
+                            <Typography variant="subtitle1" gutterBottom>
+                                Perpetual Tune Algorithm
+                            </Typography>
+                            <RadioGroup value={this.state.algo}>
+                                {algo_info.map((x, index) => (
+                                    <FormControlLabel
+                                        key={index}
+                                        value={x.algorithm}
+                                        label={x.name}
+                                        name={x.name}
+                                        control={
+                                            <Radio
+                                                size="small"
+                                                onChange={this.updateAlgorithm}
+                                                id={x.description}
                                                 slotProps={{
-                                                    input: {step: 1, min: 10, max: this.state.num, type: 'number'},
+                                                    input: {min: x.min, max: x.max},
                                                 }}
                                             />
-                                            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                                Min Throttle
-                                                <Tooltip
-                                                    title="Minimum throttling hashrate before idling"
-                                                    placement="right"
-                                                >
-                                                    <InfoIcon sx={{fontSize: 14}} />
-                                                </Tooltip>
-                                            </Typography>
-                                        </FormControl>
-                                    )}
-                                    {hasMinThrot && (
+                                        }
+                                    />
+                                ))}
+                            </RadioGroup>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        size="small"
+                                        checked={this.state.errorthrottle}
+                                        onChange={this.updateErrorThrottle}
+                                        disabled={!this.state.checked}
+                                    />
+                                }
+                                label="Error Throttle"
+                            />
+                        </FormControl>
+                    </section>
+
+                    <section className="perpetual-tune-section perpetual-tune-target">
+                        {this.state.checked && algo_info.length > 0 && this.state.algo != '' ? (
+                            <>
+                                <Typography variant="subtitle1">{this.state.name}</Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    className="perpetual-tune-target-description"
+                                    title={this.state.desc}
+                                >
+                                    {this.state.desc}
+                                </Typography>
+                                <div className="perpetual-tune-target-controls">
+                                    <Slider
+                                        value={hasMinThrot ? [this.state.throttle, this.state.num] : this.state.num}
+                                        min={hasMinThrot ? MIN_THROTTLE : Number(this.state.min)}
+                                        max={Number(this.state.max)}
+                                        marks={marks}
+                                        valueLabelDisplay="auto"
+                                        valueLabelFormat={(x) => {
+                                            if (x === this.state.throttle) {
+                                                return 'Throttle';
+                                            }
+                                            return 'Target';
+                                        }}
+                                        onChange={this.handleSlider}
+                                    />
+                                    <div className="perpetual-tune-target-inputs">
                                         <FormControl>
                                             <Input
-                                                value={this.state.step}
-                                                onChange={this.handleStepChange}
-                                                onBlur={this.handleStepBlur}
+                                                value={this.state.num}
+                                                onChange={this.handleInputChange}
+                                                onBlur={this.handleInputBlur}
                                                 endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
                                                 style={{width: 90}}
                                                 slotProps={{
                                                     input: {
                                                         step: 1,
-                                                        min: 1,
-                                                        max: this.state.num - this.state.throttle,
+                                                        min: hasMinThrot ? this.state.throttle : this.state.min,
+                                                        max: this.state.max,
                                                         type: 'number',
                                                     },
                                                 }}
                                             />
-                                            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                                Throttle Step
-                                                <Tooltip title="Amount to step down when throttling" placement="right">
-                                                    <InfoIcon sx={{fontSize: 14}} />
-                                                </Tooltip>
+                                            <Typography variant="subtitle2" color="textSecondary" component="a">
+                                                Target
                                             </Typography>
                                         </FormControl>
-                                    )}
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
+                                        {hasMinThrot && (
+                                            <FormControl>
+                                                <Input
+                                                    value={this.state.throttle}
+                                                    onChange={this.handleThrotChange}
+                                                    onBlur={this.handleThrotBlur}
+                                                    endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                                    style={{width: 90}}
+                                                    slotProps={{
+                                                        input: {step: 1, min: 10, max: this.state.num, type: 'number'},
+                                                    }}
+                                                />
+                                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                                    Min Throttle
+                                                    <Tooltip
+                                                        title="Minimum throttling hashrate before idling"
+                                                        placement="right"
+                                                    >
+                                                        <InfoIcon sx={{fontSize: 14}} />
+                                                    </Tooltip>
+                                                </Typography>
+                                            </FormControl>
+                                        )}
+                                        {hasMinThrot && (
+                                            <FormControl>
+                                                <Input
+                                                    value={this.state.step}
+                                                    onChange={this.handleStepChange}
+                                                    onBlur={this.handleStepBlur}
+                                                    endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                                    style={{width: 90}}
+                                                    slotProps={{
+                                                        input: {
+                                                            step: 1,
+                                                            min: 1,
+                                                            max: this.state.num - this.state.throttle,
+                                                            type: 'number',
+                                                        },
+                                                    }}
+                                                />
+                                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                                    Throttle Step
+                                                    <Tooltip
+                                                        title="Amount to step down when throttling"
+                                                        placement="right"
+                                                    >
+                                                        <InfoIcon sx={{fontSize: 14}} />
+                                                    </Tooltip>
+                                                </Typography>
+                                            </FormControl>
+                                        )}
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <Typography variant="body2" color="textSecondary" className="perpetual-tune-placeholder">
+                                Enable tuning and choose an algorithm to configure its target.
+                            </Typography>
+                        )}
+                    </section>
+                </div>
 
                 <TabFooter className="perpetual-tune-actions">
                     <TextField

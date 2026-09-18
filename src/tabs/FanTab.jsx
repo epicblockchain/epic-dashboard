@@ -239,7 +239,7 @@ export class FanTab extends React.Component {
         const disabled = !this.state.password || !this.props.selected.length || this.props.disabled;
 
         return (
-            <div className="tab-body settings-tab">
+            <div className="tab-body settings-tab cooling-tab">
                 <TabHeader
                     title="Cooling"
                     description="Configure fan behavior, temperature limits, and cooldown safeguards."
