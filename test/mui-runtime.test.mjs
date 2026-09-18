@@ -247,6 +247,8 @@ test('PerpetualTune keeps target, throttle and step limits and forwards algorith
         {step: 1, min: 1, max: 80, type: 'number'},
     ]);
     const markup = renderToStaticMarkup(tab.render());
+    assert.match(markup, /tab-body perpetual-tune-tab/);
+    assert.match(markup, /password-apply-inline perpetual-tune-actions/);
     assert.match(markup, /max="200"/);
     assert.match(markup, /max="80"/);
     assert.match(markup, /value="VoltageOptimizer"/);

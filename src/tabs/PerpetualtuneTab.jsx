@@ -178,7 +178,7 @@ export class PerpetualtuneTab extends React.Component {
         }
 
         return (
-            <div className="tab-body" style={{minHeight: '140px'}}>
+            <div className="tab-body perpetual-tune-tab">
                 <Grid container spacing={2}>
                     <Grid
                         container
@@ -377,7 +377,7 @@ export class PerpetualtuneTab extends React.Component {
                     </Grid>
                 </Grid>
 
-                <div className="password-apply">
+                <div className="password-apply-inline perpetual-tune-actions">
                     <TextField
                         value={this.state.password || ''}
                         variant="outlined"

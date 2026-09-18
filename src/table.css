@@ -183,6 +183,18 @@ div.system-apply {
     margin-right: auto;
 }
 
+/* PerpetualtuneTab */
+
+.perpetual-tune-tab {
+    height: auto;
+    min-height: 140px;
+    max-height: none;
+}
+
+.perpetual-tune-actions {
+    padding-top: 12px;
+}
+
 @media (max-height: 760px) {
     .tab-body {
         height: auto;
