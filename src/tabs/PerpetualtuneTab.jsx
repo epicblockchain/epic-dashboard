@@ -139,10 +139,7 @@ export class PerpetualtuneTab extends React.Component {
             }
         }
 
-        let hasMinThrot = false;
-        if (this.state.algo === 'VoltageOptimizer' || this.state.algo === 'BoardTune') {
-            hasMinThrot = true;
-        }
+        const hasMinThrot = this.state.algo !== '';
 
         return (
             <div className="tab-body settings-tab perpetual-tune-tab">
@@ -249,7 +246,12 @@ export class PerpetualtuneTab extends React.Component {
                                                     },
                                                 }}
                                             />
-                                            <Typography variant="subtitle2" color="textSecondary" component="a">
+                                            <Typography
+                                                variant="caption"
+                                                color="textSecondary"
+                                                component="div"
+                                                className="perpetual-tune-input-label"
+                                            >
                                                 Target
                                             </Typography>
                                         </FormControl>
@@ -265,13 +267,18 @@ export class PerpetualtuneTab extends React.Component {
                                                         input: {step: 1, min: 10, max: this.state.num, type: 'number'},
                                                     }}
                                                 />
-                                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                                    Min Throttle
+                                                <Typography
+                                                    variant="caption"
+                                                    color="textSecondary"
+                                                    component="div"
+                                                    className="perpetual-tune-input-label"
+                                                >
+                                                    <span>Min Throttle</span>
                                                     <Tooltip
                                                         title="Minimum throttling hashrate before idling"
                                                         placement="right"
                                                     >
-                                                        <InfoIcon sx={{fontSize: 14}} />
+                                                        <InfoIcon className="perpetual-tune-info-icon" />
                                                     </Tooltip>
                                                 </Typography>
                                             </FormControl>
@@ -293,13 +300,18 @@ export class PerpetualtuneTab extends React.Component {
                                                         },
                                                     }}
                                                 />
-                                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                                    Throttle Step
+                                                <Typography
+                                                    variant="caption"
+                                                    color="textSecondary"
+                                                    component="div"
+                                                    className="perpetual-tune-input-label"
+                                                >
+                                                    <span>Throttle Step</span>
                                                     <Tooltip
                                                         title="Amount to step down when throttling"
                                                         placement="right"
                                                     >
-                                                        <InfoIcon sx={{fontSize: 14}} />
+                                                        <InfoIcon className="perpetual-tune-info-icon" />
                                                     </Tooltip>
                                                 </Typography>
                                             </FormControl>

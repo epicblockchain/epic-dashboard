@@ -250,6 +250,11 @@ test('PerpetualTune keeps target, throttle and step limits and forwards algorith
         {step: 1, min: 10, max: 100, type: 'number'},
         {step: 1, min: 1, max: 80, type: 'number'},
     ]);
+    for (const algorithm of ['BoardTune', 'ChipTune', 'PowerTune']) {
+        tab.state.algo = algorithm;
+        assert.equal(numericInputs(tab).length, 3, `${algorithm} should render all three tuning inputs`);
+    }
+    tab.state.algo = 'VoltageOptimizer';
     const markup = renderToStaticMarkup(tab.render());
     assert.match(markup, /tab-body settings-tab perpetual-tune-tab/);
     assert.match(markup, /settings-tab-footer perpetual-tune-actions/);
