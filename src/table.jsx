@@ -21,8 +21,14 @@ import Table, {tableColumnIds} from './customTable.jsx';
 import {getOrderedSelectedMiners} from './minerTable.mjs';
 
 export const DEFAULT_HIDDEN_COLUMNS = [
+    'name',
+    'mode',
     'model',
     'start',
+    'perpetualtuneminthrottle',
+    'perpetualtunethrottlestep',
+    'shutdowntemp',
+    'criticaltemp',
     'hashrate1hr',
     'hashrate6hr',
     'hashrate24hr',
