@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {getInitialWindowBounds, getMinerTableViewportHeight} from '../src/windowLayout.mjs';
+import {getInitialWindowBounds, getMinerTableBodyHeight} from '../src/windowLayout.mjs';
 
 test('the app starts at 1280x720 without exceeding the display work area', () => {
     assert.deepEqual(getInitialWindowBounds({width: 1920, height: 1080}), {
@@ -23,10 +23,10 @@ test('the app starts at 1280x720 without exceeding the display work area', () =>
     });
 });
 
-test('the miner table reserves enough settings space across common window heights', () => {
-    assert.equal(getMinerTableViewportHeight(720), 200);
-    assert.equal(getMinerTableViewportHeight(620), 140);
-    assert.equal(getMinerTableViewportHeight(1080), 560);
-    assert.equal(getMinerTableViewportHeight(1100), 580);
-    assert.equal(getMinerTableViewportHeight(1440), 920);
+test('the virtualized table body uses the measured container height', () => {
+    assert.equal(getMinerTableBodyHeight(720), 720);
+    assert.equal(getMinerTableBodyHeight(320.8), 320);
+    assert.equal(getMinerTableBodyHeight(0), 1);
+    assert.equal(getMinerTableBodyHeight(-10), 1);
+    assert.equal(getMinerTableBodyHeight(Number.NaN), 1);
 });

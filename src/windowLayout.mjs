@@ -12,8 +12,7 @@ export function getInitialWindowBounds(workArea) {
     };
 }
 
-export function getMinerTableViewportHeight(viewportHeight) {
-    const preferredHeight = Math.round(viewportHeight * 0.68);
-    const maxHeight = Math.max(140, viewportHeight - 520);
-    return Math.max(140, Math.min(preferredHeight, maxHeight));
+export function getMinerTableBodyHeight(containerHeight) {
+    const measuredHeight = Number.isFinite(containerHeight) ? Math.floor(containerHeight) : 0;
+    return Math.max(1, measuredHeight);
 }

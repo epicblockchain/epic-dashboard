@@ -43,7 +43,7 @@ import {
 } from './minerTable.mjs';
 export {tableColumnIds} from './minerTable.mjs';
 import {VirtualizedTableBody} from './virtualizedTable.jsx';
-import {getMinerTableViewportHeight} from './windowLayout.mjs';
+import {getMinerTableBodyHeight} from './windowLayout.mjs';
 import {
     closestCenter,
     DndContext,
@@ -127,6 +127,68 @@ export const tableColumns = minerColumns.map((column) =>
         ? {...column, cell: ({getValue}) => renderTooltipCell(getValue())}
         : column,
 );
+
+const PTUNE_COLUMN_IDS = new Set([
+    'perpetualtune',
+    'perpetualtunealgo',
+    'perpetualtuneoptimized',
+    'perpetualtunetarget',
+    'perpetualtuneminthrottle',
+    'perpetualtunethrottlestep',
+]);
+
+function PtuneGroupHeader({headers}) {
+    const cells = [];
+    let index = 0;
+
+    while (index < headers.length) {
+        const header = headers[index];
+        if (!PTUNE_COLUMN_IDS.has(header.column.id)) {
+            cells.push(
+                <TableCell
+                    key={`ptune-spacer-${header.id}`}
+                    component="div"
+                    role="columnheader"
+                    aria-hidden="true"
+                    className="ptune-group-spacer"
+                    style={{flex: `0 0 ${header.getSize()}px`, width: header.getSize()}}
+                />,
+            );
+            index += 1;
+            continue;
+        }
+
+        const groupHeaders = [];
+        while (index < headers.length && PTUNE_COLUMN_IDS.has(headers[index].column.id)) {
+            groupHeaders.push(headers[index]);
+            index += 1;
+        }
+        const groupWidth = groupHeaders.reduce((total, groupHeader) => total + groupHeader.getSize(), 0);
+
+        cells.push(
+            <TableCell
+                key={`ptune-group-${groupHeaders[0].id}`}
+                component="div"
+                role="columnheader"
+                aria-label="Perpetual Tune"
+                className="ptune-group-header"
+                style={{flex: `0 0 ${groupWidth}px`, width: groupWidth}}
+            >
+                Perpetual Tune
+            </TableCell>,
+        );
+    }
+
+    return (
+        <TableRow component="div" role="row" className="ptune-group-row" style={{display: 'flex'}}>
+            {cells}
+        </TableRow>
+    );
+}
+
+function getColumnMenuLabel(column) {
+    return PTUNE_COLUMN_IDS.has(column.id) ? `Perpetual Tune: ${column.columnDef.header}` : column.columnDef.header;
+}
 
 function getColumnClassName(columnId) {
     if (columnId == 'selection') {
@@ -403,6 +465,8 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     });
     const rows = table.getRowModel().rows;
     const headerGroups = table.getHeaderGroups();
+    const leafHeaders = headerGroups[headerGroups.length - 1]?.headers || [];
+    const hasPtuneGroup = leafHeaders.some((header) => PTUNE_COLUMN_IDS.has(header.column.id));
     const allColumns = table.getAllLeafColumns();
     const totalColumnsWidth = table.getTotalSize();
     const selectedFlatRows = table.getFilteredSelectedRowModel().flatRows;
@@ -413,8 +477,6 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
             resetSelectionSession();
         }
     }, [reset, resetSelectionSession, table.setRowSelection]);
-
-    const tableViewportHeight = getMinerTableViewportHeight(window.innerHeight);
 
     selectionStateRef.current.rows = rows;
     selectionStateRef.current.selectedRowIds = state.rowSelection || {};
@@ -430,13 +492,13 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     );
 
     const visibleColumnIds = React.useMemo(
-        () => headerGroups[0]?.headers.filter((column) => column.id != 'selection').map((column) => column.id) || [],
-        [headerGroups],
+        () => leafHeaders.filter((header) => header.column.id != 'selection').map((header) => header.column.id),
+        [leafHeaders],
     );
 
     const draggedColumn = React.useMemo(
-        () => headerGroups[0]?.headers.find((header) => header.column.id === draggedColumnId)?.column || null,
-        [draggedColumnId, headerGroups],
+        () => leafHeaders.find((header) => header.column.id === draggedColumnId)?.column || null,
+        [draggedColumnId, leafHeaders],
     );
 
     const buildMovedColumnOrder = React.useCallback(
@@ -519,6 +581,30 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     }, []);
 
     const headerRef = React.useRef(null);
+    const tableBodyRef = React.useRef(null);
+    const [tableBodyHeight, setTableBodyHeight] = React.useState(1);
+    React.useLayoutEffect(() => {
+        const tableBody = tableBodyRef.current;
+        if (!tableBody) {
+            return undefined;
+        }
+
+        const updateTableBodyHeight = () => {
+            const nextHeight = getMinerTableBodyHeight(tableBody.clientHeight);
+            setTableBodyHeight((currentHeight) => (currentHeight === nextHeight ? currentHeight : nextHeight));
+        };
+
+        updateTableBodyHeight();
+        if (typeof ResizeObserver === 'undefined') {
+            window.addEventListener('resize', updateTableBodyHeight);
+            return () => window.removeEventListener('resize', updateTableBodyHeight);
+        }
+
+        const observer = new ResizeObserver(updateTableBodyHeight);
+        observer.observe(tableBody);
+        return () => observer.disconnect();
+    }, []);
+
     const scroll = React.useCallback((event) => {
         if (headerRef.current) {
             headerRef.current.style.transform = `translateX(${-event.currentTarget.scrollLeft}px)`;
@@ -678,7 +764,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     );
 
     return (
-        <React.Fragment>
+        <div className="miner-table-layout">
             <div className="toolbar">
                 <Button
                     startIcon={<ViewWeekIcon />}
@@ -773,7 +859,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                                         checked={col.getIsVisible()}
                                                         onChange={null}
                                                     />
-                                                    {col.columnDef.header}
+                                                    {getColumnMenuLabel(col)}
                                                 </MenuItem>
                                             ) : null;
                                         })}
@@ -784,53 +870,67 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                     )}
                 </Popper>
             </div>
-            <DndContext
-                sensors={sensors}
-                modifiers={[restrictToHorizontalAxis]}
-                collisionDetection={closestCenter}
-                onDragStart={handleColumnDragStart}
-                onDragOver={handleColumnDragOver}
-                onDragEnd={handleColumnDragEnd}
-                onDragCancel={handleColumnDragCancel}
-            >
-                <MaUTable
-                    component="div"
-                    role="table"
-                    id="datatable"
-                    aria-rowcount={rows.length + headerGroups.length}
-                    aria-colcount={headerGroups[0]?.headers.length}
-                    style={{width: totalColumnsWidth}}
+            <div className="miner-table-main">
+                <DndContext
+                    sensors={sensors}
+                    modifiers={[restrictToHorizontalAxis]}
+                    collisionDetection={closestCenter}
+                    onDragStart={handleColumnDragStart}
+                    onDragOver={handleColumnDragOver}
+                    onDragEnd={handleColumnDragEnd}
+                    onDragCancel={handleColumnDragCancel}
                 >
-                    <TableHead component="div" role="rowgroup" id="header" ref={headerRef} style={{display: 'block'}}>
-                        {headerGroups.map((headerGroup) => (
-                            <TableRow key={headerGroup.id} component="div" role="row" style={{display: 'flex'}}>
-                                {headerGroup.headers.map((header) => (
-                                    <ColumnHeaderCell
-                                        key={header.id}
-                                        header={header}
-                                        draggedColumnId={draggedColumnId}
-                                        resizeCol={resizeCol}
-                                    />
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHead>
+                    <MaUTable
+                        component="div"
+                        role="table"
+                        id="datatable"
+                        aria-rowcount={rows.length + headerGroups.length + (hasPtuneGroup ? 1 : 0)}
+                        aria-colcount={leafHeaders.length}
+                        style={{width: totalColumnsWidth}}
+                    >
+                        <TableHead
+                            component="div"
+                            role="rowgroup"
+                            id="header"
+                            ref={headerRef}
+                            style={{display: 'block'}}
+                        >
+                            {hasPtuneGroup && <PtuneGroupHeader headers={leafHeaders} />}
+                            {headerGroups.map((headerGroup) => (
+                                <TableRow key={headerGroup.id} component="div" role="row" style={{display: 'flex'}}>
+                                    {headerGroup.headers.map((header) => (
+                                        <ColumnHeaderCell
+                                            key={header.id}
+                                            header={header}
+                                            draggedColumnId={draggedColumnId}
+                                            resizeCol={resizeCol}
+                                        />
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableHead>
 
-                    <TableBody component="div" role="presentation" style={{display: 'block'}}>
-                        <VirtualizedTableBody
-                            rows={rows}
-                            rowWidth={totalColumnsWidth + 8}
-                            height={tableViewportHeight}
-                            width={document.getElementById('width').offsetWidth - (drawer ? 216 : 59)}
-                            onScroll={scroll}
-                            renderRow={renderRow}
-                        />
-                    </TableBody>
-                </MaUTable>
-                <DragOverlay>
-                    <ColumnDragPreview column={draggedColumn} />
-                </DragOverlay>
-            </DndContext>
+                        <TableBody
+                            component="div"
+                            role="presentation"
+                            ref={tableBodyRef}
+                            style={{display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden'}}
+                        >
+                            <VirtualizedTableBody
+                                rows={rows}
+                                rowWidth={totalColumnsWidth + 8}
+                                height={tableBodyHeight}
+                                width={document.getElementById('width').offsetWidth - (drawer ? 216 : 59)}
+                                onScroll={scroll}
+                                renderRow={renderRow}
+                            />
+                        </TableBody>
+                    </MaUTable>
+                    <DragOverlay>
+                        <ColumnDragPreview column={draggedColumn} />
+                    </DragOverlay>
+                </DndContext>
+            </div>
             <TableFooter component="div">
                 {selectedFlatRows.length > 0 && (
                     <span>
@@ -839,7 +939,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                 )}
                 <span style={{float: 'right'}}>Total Rows: {rows.length}</span>
             </TableFooter>
-        </React.Fragment>
+        </div>
     );
 }
 

@@ -65,6 +65,15 @@
     width: initial !important;
 }
 
+#datatable #header {
+    flex: 0 0 auto;
+}
+
+#datatable .MuiTableBody-root {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
 #datatable .MuiCheckbox-root {
     top: -10px;
     left: -6px;
@@ -77,6 +86,24 @@
     box-sizing: border-box;
     white-space: nowrap;
     padding: 10px 56px 10px 10px;
+}
+
+#datatable .ptune-group-row .MuiTableCell-head {
+    height: 32px;
+    min-height: 32px;
+    padding: 6px 10px;
+}
+
+#datatable .ptune-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+#datatable .ptune-group-spacer {
+    padding: 0;
+    visibility: hidden;
 }
 
 #datatable .MuiTableCell-head.selection-col,
