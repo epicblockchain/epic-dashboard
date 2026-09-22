@@ -723,24 +723,24 @@ export class DataTable extends React.Component {
                         <Tab value="home" label="Home" />
                         <Tab value="control" label="Miner Control" />
                         <Tab value="mining-config" label="Mining Config" disabled={!capApi} />
-                        <Tab value="performance" label="Performance" />
                         <Tab value="system" label="System" />
-                        <Tab value="cooling" label="Cooling" disabled={!capApi} />
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab value="tune" label="Tune" />
-                        )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab value="perpetual-tune" label="Perpetual Tune" />
                         )}
+                        <Tab value="cooling" label="Cooling" disabled={!capApi} />
                         <Tab value="board-control" label="Board Control" />
+                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                            <Tab value="tune" label="Tune" />
+                        )}
+                        <Tab value="performance" label="Performance" />
+                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                            <Tab value="enable-boards-on-idle" label="Enable Boards on Idle" />
+                        )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab value="idle-on-connection-lost" label="Idle on Connection Lost" />
                         )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab value="disable-board-on-fail" label="Disable Board on Fail" />
-                        )}
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
-                            <Tab value="enable-boards-on-idle" label="Enable Boards on Idle" />
                         )}
                         {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
                             <Tab value="license" label="License" />
