@@ -43,8 +43,29 @@ export const DEFAULT_HIDDEN_COLUMNS = [
     'fansrpm',
 ];
 
+const LEGACY_DEFAULT_HIDDEN_COLUMNS = [
+    'model',
+    'start',
+    'hashrate1hr',
+    'hashrate6hr',
+    'hashrate24hr',
+    'efficiency1hr',
+    'accepted',
+    'rejected',
+    'difficulty',
+    'power',
+    'fanspeed',
+    'voltage',
+    'mac',
+    'fansrpm',
+];
+
 const DEFAULT_HIDDEN_COLUMN_SET = new Set(DEFAULT_HIDDEN_COLUMNS);
 const AVAILABLE_COLUMNS = new Set(tableColumnIds);
+
+function hasSameColumns(first = [], second = []) {
+    return first.length === second.length && first.every((columnId) => second.includes(columnId));
+}
 
 function getColumnOrder(tablePreferences = {}) {
     const seenColumns = new Set();
@@ -68,7 +89,17 @@ function getColumnOrder(tablePreferences = {}) {
 
 function getHiddenColumns(tablePreferences = {}) {
     if (Array.isArray(tablePreferences.hiddenColumns)) {
-        return tablePreferences.hiddenColumns.filter((columnId) => AVAILABLE_COLUMNS.has(columnId));
+        const hiddenColumns = tablePreferences.hiddenColumns.filter((columnId) => AVAILABLE_COLUMNS.has(columnId));
+
+        // Apply newly introduced defaults to an untouched pre-migration preference file while
+        // preserving any explicit customizations.
+        if (hasSameColumns(hiddenColumns, LEGACY_DEFAULT_HIDDEN_COLUMNS)) {
+            return tableColumnIds.filter(
+                (columnId) => hiddenColumns.includes(columnId) || DEFAULT_HIDDEN_COLUMN_SET.has(columnId),
+            );
+        }
+
+        return hiddenColumns;
     }
 
     return tableColumnIds.filter(
@@ -78,10 +109,45 @@ function getHiddenColumns(tablePreferences = {}) {
     );
 }
 
+function getColumnSizing(tablePreferences = {}) {
+    if (!tablePreferences.columnSizing || typeof tablePreferences.columnSizing !== 'object') {
+        return {};
+    }
+
+    return Object.fromEntries(
+        Object.entries(tablePreferences.columnSizing).filter(
+            ([columnId, size]) => AVAILABLE_COLUMNS.has(columnId) && Number.isFinite(size) && size > 0,
+        ),
+    );
+}
+
+function getSorting(tablePreferences = {}) {
+    if (!Array.isArray(tablePreferences.sorting)) {
+        return [];
+    }
+
+    return tablePreferences.sorting.filter(
+        (sort) => sort && AVAILABLE_COLUMNS.has(sort.id) && typeof sort.desc === 'boolean',
+    );
+}
+
+function getColumnFilters(tablePreferences = {}) {
+    if (!Array.isArray(tablePreferences.columnFilters)) {
+        return [];
+    }
+
+    return tablePreferences.columnFilters.filter(
+        (filter) => filter && AVAILABLE_COLUMNS.has(filter.id) && filter.value !== undefined,
+    );
+}
+
 function getSharedTableState(tablePreferences = {}) {
     return {
         hiddenColumns: getHiddenColumns(tablePreferences),
         columnOrder: getColumnOrder(tablePreferences),
+        columnSizing: getColumnSizing(tablePreferences),
+        sorting: getSorting(tablePreferences),
+        columnFilters: getColumnFilters(tablePreferences),
     };
 }
 
@@ -89,6 +155,9 @@ export function normalizeTablePreferences(tablePreferences = {}) {
     return {
         hiddenColumns: getHiddenColumns(tablePreferences),
         __columnOrder: getColumnOrder(tablePreferences),
+        columnSizing: getColumnSizing(tablePreferences),
+        sorting: getSorting(tablePreferences),
+        columnFilters: getColumnFilters(tablePreferences),
     };
 }
 
@@ -96,6 +165,9 @@ function getPersistedTable(tableState = {}) {
     return normalizeTablePreferences({
         hiddenColumns: tableState.hiddenColumns,
         __columnOrder: tableState.columnOrder,
+        columnSizing: tableState.columnSizing,
+        sorting: tableState.sorting,
+        columnFilters: tableState.columnFilters,
     });
 }
 
@@ -483,7 +555,10 @@ export class DataTable extends React.Component {
         if (
             action.type == 'toggleHideColumn' ||
             action.type == 'toggleHideAllColumns' ||
-            action.type == 'setColumnOrder'
+            action.type == 'setColumnOrder' ||
+            action.type == 'setColumnSizing' ||
+            action.type == 'setSorting' ||
+            action.type == 'setColumnFilters'
         ) {
             this.props.saveDefault(getPersistedTable(newState));
             this.setState({[model + '_state']: nextModelState});
@@ -612,7 +687,7 @@ export class DataTable extends React.Component {
                 <canvas id="canvas" hidden></canvas>
                 <div className="table-region">
                     {this.state.models.map((model, i) => {
-                        return this.state.list == i ? (
+                        return this.props.defaultTableLoaded && this.state.list == i ? (
                             <Paper
                                 variant="outlined"
                                 className="datatable-wrap"

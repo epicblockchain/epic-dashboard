@@ -8,6 +8,33 @@ const {Worker} = require('worker_threads');
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
+let mainWindow;
+let isQuitting = false;
+let waitingForRenderer = false;
+let quitFallbackTimer;
+
+function finishQuit() {
+    if (isQuitting) return;
+    isQuitting = true;
+    waitingForRenderer = false;
+    clearTimeout(quitFallbackTimer);
+    app.quit();
+}
+
+function requestRendererFlush() {
+    if (isQuitting || waitingForRenderer) return;
+
+    const window = BrowserWindow.getAllWindows()[0];
+    if (!window || window.isDestroyed()) {
+        finishQuit();
+        return;
+    }
+
+    waitingForRenderer = true;
+    window.webContents.send('flush-before-quit');
+    quitFallbackTimer = setTimeout(finishQuit, 5000);
+}
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
     app.quit();
@@ -17,7 +44,7 @@ const createWindow = () => {
     const workArea = screen.getPrimaryDisplay().workAreaSize;
 
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         ...getInitialWindowBounds(workArea),
         center: true,
         frame: false,
@@ -26,6 +53,11 @@ const createWindow = () => {
             nodeIntegration: true,
             contextIsolation: false,
         },
+    });
+    mainWindow.on('close', (event) => {
+        if (isQuitting) return;
+        event.preventDefault();
+        requestRendererFlush();
     });
     // scrolls log file to bottom of page
     mainWindow.webContents.on('did-create-window', (childWindow) => {
@@ -90,10 +122,20 @@ const createWindow = () => {
     });
 };
 
+ipcMain.handle('user-data-path', () => app.getPath('userData'));
+
 ipcMain.handle('miner-request', (_event, url, options) => minerRequest(url, options));
 
 ipcMain.on('quit', () => {
     app.quit();
+});
+
+ipcMain.on('quit-ready', finishQuit);
+
+app.on('before-quit', (event) => {
+    if (isQuitting) return;
+    event.preventDefault();
+    requestRendererFlush();
 });
 
 // This method will be called when Electron has finished

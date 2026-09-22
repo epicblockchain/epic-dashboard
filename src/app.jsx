@@ -267,10 +267,56 @@ switch (process.platform) {
         ipcRenderer.send('quit');
 }
 
-createLogger({
-    exceptionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
-    rejectionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
-    exitOnError: false,
+const legacyAppPath = app_path;
+
+async function migrateLegacyAppData(userDataPath) {
+    if (path.resolve(legacyAppPath) === path.resolve(userDataPath)) {
+        return;
+    }
+
+    const files = ['settings.json', 'default.json', 'ipaddr.txt', 'blacklist.txt', 'errors.log'];
+    await fs.promises.mkdir(userDataPath, {recursive: true});
+
+    for (const filename of files) {
+        const source = path.join(legacyAppPath, filename);
+        const target = path.join(userDataPath, filename);
+
+        try {
+            await fs.promises.access(source);
+            await fs.promises.access(target);
+            continue;
+        } catch {
+            // Either the legacy file or the destination is missing.
+        }
+
+        try {
+            await fs.promises.copyFile(source, target);
+        } catch {
+            // There may be no legacy file to migrate.
+        }
+    }
+}
+
+const appPathReady = ipcRenderer
+    .invoke('user-data-path')
+    .then(async (userDataPath) => {
+        await migrateLegacyAppData(userDataPath);
+        await fs.promises.mkdir(userDataPath, {recursive: true});
+        app_path = userDataPath;
+        return app_path;
+    })
+    .catch(async (error) => {
+        console.log('Unable to resolve the Electron user data path:', error);
+        await fs.promises.mkdir(app_path, {recursive: true}).catch(() => {});
+        return app_path;
+    });
+
+appPathReady.then(() => {
+    createLogger({
+        exceptionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
+        rejectionHandlers: [new transports.File({filename: path.join(app_path, 'errors.log')})],
+        exitOnError: false,
+    });
 });
 
 const nets = os.networkInterfaces();
@@ -287,13 +333,15 @@ for (const name of Object.keys(nets)) {
     }
 }
 
-fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
-    if (err) {
-        console.log('blacklist.txt not found');
-        return;
-    }
-    blacklist = data.toString().split('\n');
-    console.log(blacklist);
+appPathReady.then(() => {
+    fs.readFile(path.join(app_path, 'blacklist.txt'), (err, data) => {
+        if (err) {
+            console.log('blacklist.txt not found');
+            return;
+        }
+        blacklist = data.toString().split('\n');
+        console.log(blacklist);
+    });
 });
 
 class Mutex {
@@ -309,6 +357,26 @@ class Mutex {
 }
 
 const minerMutex = new Mutex();
+
+async function writeJsonAtomically(filename, value) {
+    const tempFilename = `${filename}.${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}.tmp`;
+    let fileHandle;
+
+    try {
+        fileHandle = await fs.promises.open(tempFilename, 'w');
+        await fileHandle.writeFile(value, 'utf8');
+        await fileHandle.sync();
+        await fileHandle.close();
+        fileHandle = null;
+        await fs.promises.rename(tempFilename, filename);
+    } catch (error) {
+        if (fileHandle) {
+            await fileHandle.close().catch(() => {});
+        }
+        await fs.promises.unlink(tempFilename).catch(() => {});
+        throw error;
+    }
+}
 
 class App extends React.Component {
     constructor(props) {
@@ -330,8 +398,16 @@ class App extends React.Component {
             defaultTable: {
                 hiddenColumns: Array.from(DEFAULT_HIDDEN_COLUMNS),
                 __columnOrder: [],
+                columnSizing: {},
+                sorting: [],
+                columnFilters: [],
             },
+            defaultTableLoaded: false,
         };
+
+        this.defaultTableWrite = Promise.resolve();
+        this.defaultTableWriteActive = false;
+        this.pendingDefaultTable = null;
 
         this.setPage = this.setPage.bind(this);
         this.addMiner = this.addMiner.bind(this);
@@ -346,6 +422,7 @@ class App extends React.Component {
         this.setScan = this.setScan.bind(this);
         this.clearUndefined = this.clearUndefined.bind(this);
         this.retryPromise = this.retryPromise.bind(this);
+        this.flushBeforeQuit = this.flushBeforeQuit.bind(this);
     }
 
     retryPromise(fn, retries = 3) {
@@ -364,6 +441,43 @@ class App extends React.Component {
                     }
                 });
         });
+    }
+
+    queueDefaultTableWrite(defaultTable) {
+        this.pendingDefaultTable = defaultTable;
+        if (this.defaultTableWriteActive) {
+            return this.defaultTableWrite;
+        }
+
+        this.defaultTableWriteActive = true;
+        this.defaultTableWrite = (async () => {
+            try {
+                const directory = await appPathReady;
+                await fs.promises.mkdir(directory, {recursive: true});
+
+                while (this.pendingDefaultTable) {
+                    const nextTable = this.pendingDefaultTable;
+                    this.pendingDefaultTable = null;
+                    await writeJsonAtomically(path.join(directory, 'default.json'), JSON.stringify(nextTable));
+                }
+            } catch (error) {
+                console.log('Unable to save table preferences:', error);
+                this.pendingDefaultTable = null;
+            } finally {
+                this.defaultTableWriteActive = false;
+            }
+        })();
+
+        return this.defaultTableWrite;
+    }
+
+    async flushBeforeQuit() {
+        let write = this.defaultTableWrite;
+        do {
+            await write;
+            write = this.defaultTableWrite;
+        } while (this.defaultTableWriteActive || write !== this.defaultTableWrite);
+        ipcRenderer.send('quit-ready');
     }
 
     async summary(init) {
@@ -541,6 +655,8 @@ class App extends React.Component {
     }
 
     async componentDidMount() {
+        ipcRenderer.on('flush-before-quit', this.flushBeforeQuit);
+
         ipcRenderer.on('form-post-reply', (event, i, sev, text) => {
             notify(sev, text, {
                 autoClose: 600000, //10 min
@@ -563,17 +679,32 @@ class App extends React.Component {
 
         version += await ipcRenderer.invoke('version');
 
+        await appPathReady;
+
         fs.readFile(path.join(app_path, 'settings.json'), (err, data) => {
             if (err) {
                 this.setState({eula: true});
             } else {
-                this.init(JSON.parse(data));
+                try {
+                    this.init(JSON.parse(data));
+                } catch (error) {
+                    console.log('Unable to load settings:', error);
+                    this.setState({eula: true});
+                }
             }
         });
 
         fs.readFile(path.join(app_path, 'default.json'), (err, data) => {
-            if (!err) {
-                this.setState({defaultTable: normalizeTablePreferences(JSON.parse(data))});
+            if (err) {
+                this.setState({defaultTableLoaded: true});
+                return;
+            }
+
+            try {
+                this.setState({defaultTable: normalizeTablePreferences(JSON.parse(data)), defaultTableLoaded: true});
+            } catch (error) {
+                console.log('Unable to load table preferences:', error);
+                this.setState({defaultTableLoaded: true});
             }
         });
     }
@@ -696,14 +827,7 @@ class App extends React.Component {
         const defaultTable = normalizeTablePreferences(json);
 
         this.setState({defaultTable});
-
-        fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
-        fs.writeFile(path.join(app_path, 'default.json'), JSON.stringify(defaultTable), function (err) {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-        });
+        return this.queueDefaultTableWrite(defaultTable);
     }
 
     saveMiners() {
@@ -1292,6 +1416,7 @@ class App extends React.Component {
                         <DataTable
                             saveDefault={this.saveDefault}
                             defaultTable={this.state.defaultTable}
+                            defaultTableLoaded={this.state.defaultTableLoaded}
                             data={this.state.miner_data}
                             models={this.state.models}
                             tunecap={this.state.tunecap}
