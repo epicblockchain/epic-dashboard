@@ -17,6 +17,11 @@ import {
     createMinerErrorRow,
     haveSameModels,
     normalizeTargetCell,
+    getMinerGroupName,
+    getMinerModelGroups,
+    normalizeMinerModelName,
+    normalizeMinerDisplayValue,
+    UNKNOWN_MODEL,
 } from '../src/minerTable.mjs';
 
 const data = [
@@ -95,13 +100,34 @@ test('malformed miner rows keep a complete, renderable table shape', () => {
     assert.deepEqual(row.perpetualtunetarget, {value: 'Error', tooltip: null});
 });
 
+test('a single miner with malformed capabilities gets a readable table group and error row', () => {
+    const miner = {ip: '192.0.2.12', cap: {Model: 'undefined'}};
+    const modelName = normalizeMinerModelName(miner.cap.Model);
+    const row = createMinerErrorRow(0, miner);
+
+    assert.equal(modelName, null);
+    assert.equal(getMinerGroupName(modelName), UNKNOWN_MODEL);
+    assert.equal(row.ip, '192.0.2.12');
+    assert.equal(row.status, 'Error');
+    assert.equal(row.model, UNKNOWN_MODEL);
+    assert.deepEqual(getMinerModelGroups(new Set(), [miner]), [UNKNOWN_MODEL]);
+    assert.deepEqual(getMinerModelGroups(['undefined', 'M50'], [{cap: {Model: 'M50'}}]), ['M50']);
+    assert.equal(getMinerGroupName(' M50 '), 'M50');
+    assert.notEqual(getMinerGroupName('undefined'), 'undefined');
+});
+
 test('target cells safely render missing or non-text API values', () => {
     assert.deepEqual(normalizeTargetCell(undefined), {value: 'N/A', tooltip: null});
     assert.deepEqual(normalizeTargetCell({value: 0, tooltip: 'No error'}), {value: 0, tooltip: 'No error'});
+    assert.deepEqual(normalizeTargetCell({value: 'undefined', tooltip: null}), {value: 'N/A', tooltip: null});
     assert.deepEqual(normalizeTargetCell({value: {target: 1}, tooltip: 4}), {
         value: '[object Object]',
         tooltip: '4',
     });
+    assert.equal(normalizeMinerDisplayValue('undefined'), 'N/A');
+    assert.equal(normalizeMinerDisplayValue('-Infinity °C'), 'N/A');
+    assert.equal(normalizeMinerDisplayValue('Fan 1: undefined | Fan 2: null'), 'Fan 1: N/A | Fan 2: N/A');
+    assert.equal(normalizeMinerDisplayValue(0), 0);
 });
 
 test('all existing column IDs and custom sizing survive the migration', () => {

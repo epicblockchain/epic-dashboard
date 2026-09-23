@@ -13,6 +13,44 @@ import {
     tableFeatures,
 } from '@tanstack/react-table';
 
+export const UNKNOWN_MODEL = 'Unknown model';
+
+export function normalizeMinerModelName(value) {
+    if (typeof value !== 'string') return null;
+
+    const model = value.trim();
+    return model && model.toLowerCase() !== 'undefined' && model.toLowerCase() !== 'null' ? model : null;
+}
+
+export function getMinerGroupName(value) {
+    return normalizeMinerModelName(value) || UNKNOWN_MODEL;
+}
+
+export function getMinerModelGroups(models, minerData) {
+    const modelNames = models instanceof Set ? Array.from(models) : Array.isArray(models) ? models : [];
+    const modelGroups = new Set(modelNames.map((model) => normalizeMinerModelName(model)).filter(Boolean));
+
+    if (Array.isArray(minerData) && minerData.some((miner) => !normalizeMinerModelName(miner?.cap?.Model))) {
+        modelGroups.add(UNKNOWN_MODEL);
+    } else {
+        modelGroups.delete(UNKNOWN_MODEL);
+    }
+
+    return Array.from(modelGroups).sort();
+}
+
+export function normalizeMinerDisplayValue(value, fallback = 'N/A') {
+    if (value == null) return fallback;
+    if (typeof value === 'number') return Number.isFinite(value) ? value : fallback;
+    if (Array.isArray(value)) return value.map((item) => normalizeMinerDisplayValue(item, fallback));
+    if (typeof value !== 'string') return value;
+
+    const invalidValue = /^\s*(?:undefined|null|NaN|[-+]?Infinity)(?:\b.*)?$/i;
+    if (invalidValue.test(value)) return fallback;
+
+    return value.replace(/\b(?:undefined|null|NaN)\b|[-+]?Infinity\b/gi, fallback);
+}
+
 export const minerTableFeatures = tableFeatures({
     columnFilteringFeature,
     columnOrderingFeature,
@@ -163,7 +201,7 @@ export function haveSameModels(first, second) {
 export function normalizeTargetCell(value) {
     const target = value && typeof value === 'object' ? value.value : value;
     const tooltip = value && typeof value === 'object' ? value.tooltip : null;
-    const safeTarget = target == null ? 'N/A' : typeof target === 'object' ? String(target) : target;
+    const safeTarget = target && typeof target === 'object' ? String(target) : normalizeMinerDisplayValue(target);
     const safeTooltip = tooltip == null || typeof tooltip === 'string' ? tooltip : String(tooltip);
 
     return {value: safeTarget, tooltip: safeTooltip};
@@ -172,7 +210,7 @@ export function normalizeTargetCell(value) {
 export function createMinerErrorRow(id, miner) {
     const candidateCap = miner?.cap;
     const cap =
-        candidateCap && typeof candidateCap === 'object' && typeof candidateCap.Model === 'string'
+        candidateCap && typeof candidateCap === 'object' && normalizeMinerModelName(candidateCap.Model) !== null
             ? candidateCap
             : undefined;
     const error = 'Error';
@@ -183,7 +221,7 @@ export function createMinerErrorRow(id, miner) {
         status: error,
         name: error,
         firmware: error,
-        model: cap?.Model || error,
+        model: getMinerGroupName(cap?.Model),
         mode: error,
         pool: error,
         user: error,

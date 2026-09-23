@@ -18,7 +18,15 @@ import {LicenseTab} from './tabs/LicenseTab.jsx';
 import './table.css';
 
 import Table, {tableColumnIds} from './customTable.jsx';
-import {createMinerErrorRow, getOrderedSelectedMiners, getSelectedModelIndex} from './minerTable.mjs';
+import {
+    createMinerErrorRow,
+    getMinerGroupName,
+    getOrderedSelectedMiners,
+    getSelectedModelIndex,
+    normalizeMinerDisplayValue,
+    normalizeTargetCell,
+    UNKNOWN_MODEL,
+} from './minerTable.mjs';
 
 export const DEFAULT_HIDDEN_COLUMNS = [
     'name',
@@ -196,7 +204,8 @@ export class DataTable extends React.Component {
     componentDidMount() {
         window.onresize = debounce1(() => this.forceUpdate());
 
-        const models = Array.isArray(this.props.models) && this.props.models.length ? this.props.models : ['undefined'];
+        const models =
+            Array.isArray(this.props.models) && this.props.models.length ? this.props.models : [UNKNOWN_MODEL];
         const newState = {
             models,
             list: getSelectedModelIndex(models, this.state.models[this.state.list], this.state.list),
@@ -221,7 +230,7 @@ export class DataTable extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
             const models =
-                Array.isArray(this.props.models) && this.props.models.length ? this.props.models : ['undefined'];
+                Array.isArray(this.props.models) && this.props.models.length ? this.props.models : [UNKNOWN_MODEL];
             const previousModels = Array.isArray(prevProps.models) ? prevProps.models : [];
             const newModels = models.filter((x) => !previousModels.includes(x));
             const newState = {
@@ -591,12 +600,12 @@ export class DataTable extends React.Component {
     render() {
         const rows = this.props.data.map((a, i) => {
             try {
-                return {
+                const row = {
                     id: i,
                     ip: a ? a.ip : '', //TODO: figure out why this is was falsey
                     name: this.failSafe(a.sum) || a.sum.Hostname,
                     firmware: this.failSafe(a.sum) || a.sum.Software.split(' ')[1],
-                    model: this.failSafe(a.cap) || a.cap.Model,
+                    model: this.failSafe(a.cap) || getMinerGroupName(a.cap?.Model),
                     mode:
                         this.failSafe(a.sum) ||
                         (a.sum.PresetInfo
@@ -651,6 +660,19 @@ export class DataTable extends React.Component {
                     mac: this.failSafe(a.sum) || a.network?.dhcp?.mac_address || a.network?.static?.mac_address || ' ',
                     fansrpm: this.failSafe(a.sum) || this.fansrpm(a.sum['Fans Rpm']),
                 };
+
+                for (const columnId of tableColumnIds) {
+                    if (columnId === 'perpetualtunetarget') {
+                        row[columnId] = normalizeTargetCell(row[columnId]);
+                    } else {
+                        row[columnId] = normalizeMinerDisplayValue(
+                            row[columnId],
+                            columnId === 'lasterror' ? ' ' : 'N/A',
+                        );
+                    }
+                }
+
+                return row;
             } catch (error) {
                 const key = a?.ip || String(i);
                 if (!loggedMinerRenderErrors.has(key)) {
@@ -664,15 +686,15 @@ export class DataTable extends React.Component {
         const miners = {};
 
         for (const row of rows) {
-            if (row.cap) {
-                if (miners[row.model]) miners[row.model].push(row);
-                else miners[row.model] = [row];
-            } else miners['undefined'] ? miners['undefined'].push(row) : (miners['undefined'] = [row]);
+            const model = getMinerGroupName(row.cap?.Model);
+            if (miners[model]) miners[model].push(row);
+            else miners[model] = [row];
         }
 
-        const modelList = Array.isArray(this.state.models) ? this.state.models : [];
+        const modelList =
+            Array.isArray(this.state.models) && this.state.models.length ? this.state.models : [UNKNOWN_MODEL];
         const activeListIndex = getSelectedModelIndex(modelList, modelList[this.state.list], this.state.list);
-        const activeModel = String(modelList[activeListIndex] ?? 'undefined');
+        const activeModel = String(modelList[activeListIndex] ?? UNKNOWN_MODEL);
         const activeTableState = this.state[activeModel + '_state'] || {};
         let selected = getOrderedSelectedMiners([], activeTableState.rowSelection || {}, miners[activeModel] || []);
 
@@ -729,7 +751,7 @@ export class DataTable extends React.Component {
                                     extmodel={model}
                                     reset={this.state.reset}
                                     drawerOpen={this.props.drawerOpen}
-                                    clear={model === 'undefined' ? this.props.clear : null}
+                                    clear={model === UNKNOWN_MODEL ? this.props.clear : null}
                                     handleApi={this.props.handleApi}
                                 />
                             </Paper>

@@ -11,6 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import {buildHashrateSeries} from './dashboardData.mjs';
 
 am4core.useTheme(am4themes_animated);
 
@@ -64,32 +65,7 @@ export class Dashboard extends React.Component {
 
     componentDidMount() {
         const chart = am4core.create('chartdiv', am4charts.XYChart);
-        const hashrateData = {};
-        this.props.data.forEach((miner) => {
-            try {
-                if (miner.hist) {
-                    miner.hist.forEach((sample) => {
-                        if (!(sample.Timestamp in hashrateData)) {
-                            hashrateData[sample.Timestamp] = sample.Hashrate;
-                        } else {
-                            hashrateData[sample.Timestamp] += sample.Hashrate;
-                        }
-                    });
-                }
-            } catch (err) {
-                console.log(err);
-                console.log(this.props.data);
-            }
-        });
-        const chartHashrateData = [];
-        let totalHashrate = 0;
-        for (const seconds of Object.keys(hashrateData)) {
-            chartHashrateData.push({
-                time: new Date(seconds * 1000),
-                hashrate: hashrateData[seconds] / 1000000,
-            });
-            totalHashrate += hashrateData[seconds];
-        }
+        const {chartHashrateData, totalHashrate} = buildHashrateSeries(this.props.data);
 
         const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
         const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -122,43 +98,19 @@ export class Dashboard extends React.Component {
         chart.data = chartHashrateData;
         this.chart = chart;
         this.setState({
-            numMiners: this.props.data.length,
+            numMiners: Array.isArray(this.props.data) ? this.props.data.length : 0,
             totalHistHashrateSum: totalHashrate,
         });
     }
 
     componentDidUpdate(oldProps) {
-        const hashrateData = {};
-        this.props.data.forEach((miner) => {
-            try {
-                if (miner.hist) {
-                    miner.hist.forEach((sample) => {
-                        if (!(sample.Timestamp in hashrateData)) {
-                            hashrateData[sample.Timestamp] = sample.Hashrate;
-                        } else {
-                            hashrateData[sample.Timestamp] += sample.Hashrate;
-                        }
-                    });
-                }
-            } catch (err) {
-                console.log(err);
-                console.log(this.props.data);
-            }
-        });
-        const chartHashrateData = [];
-        let totalHashrate = 0;
-        for (const seconds of Object.keys(hashrateData)) {
-            chartHashrateData.push({
-                time: new Date(seconds * 1000),
-                hashrate: hashrateData[seconds] / 1000000,
-            });
-            totalHashrate += hashrateData[seconds];
-        }
+        const {chartHashrateData, totalHashrate} = buildHashrateSeries(this.props.data);
+        const numMiners = Array.isArray(this.props.data) ? this.props.data.length : 0;
 
-        if (!isSameData(this.state, {numMiners: this.props.data.length, totalHistHashrateSum: totalHashrate})) {
+        if (!isSameData(this.state, {numMiners, totalHistHashrateSum: totalHashrate})) {
             this.chart.data = chartHashrateData;
             this.setState({
-                numMiners: this.props.data.length,
+                numMiners,
                 totalHistHashrateSum: totalHashrate,
             });
         }

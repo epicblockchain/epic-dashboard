@@ -41,6 +41,7 @@ import {
     getMinerRowId,
     moveColumnOrder,
     normalizeTargetCell,
+    UNKNOWN_MODEL,
 } from './minerTable.mjs';
 export {tableColumnIds} from './minerTable.mjs';
 import {VirtualizedTableBody} from './virtualizedTable.jsx';
@@ -789,7 +790,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                         Clear Miners
                     </Button>
                 )}
-                {model !== 'undefined' && (
+                {model !== UNKNOWN_MODEL && (
                     <>
                         <Button
                             startIcon={<LightOutlinedIcon />}

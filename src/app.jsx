@@ -13,7 +13,7 @@ import {Preferences} from './preferences.jsx';
 import {Support} from './support.jsx';
 import {Eula} from './eula.jsx';
 import {buildBoardEnableRequest} from './boardControl.mjs';
-import {haveSameModels} from './minerTable.mjs';
+import {getMinerModelGroups, haveSameModels, normalizeMinerModelName, UNKNOWN_MODEL} from './minerTable.mjs';
 
 import {
     Drawer,
@@ -422,6 +422,15 @@ async function writeJsonAtomically(filename, value) {
     }
 }
 
+function parseHistorySamples(body) {
+    try {
+        const history = JSON.parse(body)?.History;
+        return Array.isArray(history) ? history.slice(-48) : [];
+    } catch {
+        return [];
+    }
+}
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -525,7 +534,7 @@ class App extends React.Component {
     }
 
     async summary(init) {
-        let models = new Set(this.state.models);
+        let models = new Set(this.state.models.map((model) => normalizeMinerModelName(model)).filter(Boolean));
         let tunecap = new Set(this.state.tunecap);
         const unlock = await minerMutex.lock();
         let miner_data = await Promise.all(
@@ -552,13 +561,14 @@ class App extends React.Component {
                         match.sum == 'load' ||
                         match.sum == 'reboot' ||
                         match.sum == null ||
-                        match.cap?.Model === 'undefined' ||
+                        !normalizeMinerModelName(match.cap?.Model) ||
                         !match.cap
                     ) {
                         const history = await got(`http://${miner.address}:4028/history`, {
                             timeout: {request: 2000},
                             retry: {limit: 0},
                         });
+                        const historySamples = parseHistorySamples(history.body);
                         try {
                             const cap = await got(`http://${miner.address}:4028/capabilities`, {
                                 timeout: {request: 2000},
@@ -566,13 +576,12 @@ class App extends React.Component {
                             });
                             const content = JSON.parse(cap.body);
 
-                            const modelName = typeof content.Model === 'string' ? content.Model : '';
+                            const modelName = normalizeMinerModelName(content?.Model);
                             if (modelName) models.add(modelName);
-                            else models.add('undefined');
+                            else models.add(UNKNOWN_MODEL);
 
                             if (
                                 modelName &&
-                                modelName !== 'undefined' &&
                                 typeof content.Display === 'string' &&
                                 content.Display.includes('ClksAndVoltage')
                             )
@@ -582,18 +591,18 @@ class App extends React.Component {
                                 ip: miner.address,
                                 sum: sum,
                                 network: net,
-                                hist: JSON.parse(history.body).History.slice(-48),
+                                hist: historySamples,
                                 cap: modelName ? content : undefined,
                                 timer: 10,
                             };
                         } catch (err) {
                             console.log(err);
-                            models.add('undefined');
+                            models.add(UNKNOWN_MODEL);
                             return {
                                 ip: miner.address,
                                 sum: sum,
                                 network: net,
-                                hist: JSON.parse(history.body).History.slice(-48),
+                                hist: historySamples,
                                 timer: 10,
                             };
                         }
@@ -602,24 +611,32 @@ class App extends React.Component {
 
                         if (lastMHs == null) {
                             return {ip: miner.address, sum: sum, hist: [], cap: match.cap, network: net, timer: 10};
-                        } else if (match.hist.length == 0) {
+                        } else if (!Array.isArray(match.hist) || match.hist.length === 0) {
                             return {
                                 ip: miner.address,
                                 sum: sum,
                                 network: net,
-                                hist: [lastMHs],
+                                hist: lastMHs ? [lastMHs] : [],
                                 cap: match.cap,
                                 timer: 10,
                             };
-                        } else if (!match.hist.map((a) => a.Timestamp).includes(lastMHs.Timestamp)) {
-                            if (match.hist.length >= 48) match.hist.slice(1);
-                            match.hist.push(lastMHs);
+                        } else if (!match.hist.some((sample) => sample?.Timestamp === lastMHs.Timestamp)) {
+                            const hist = match.hist.slice(-47);
+                            hist.push(lastMHs);
+                            return {
+                                ip: miner.address,
+                                sum: sum,
+                                network: net,
+                                hist,
+                                cap: match.cap,
+                                timer: 10,
+                            };
                         }
                         return {
                             ip: miner.address,
                             sum: sum,
                             network: net,
-                            hist: match.hist,
+                            hist: Array.isArray(match.hist) ? match.hist : [],
                             cap: match.cap,
                             timer: 10,
                         };
@@ -631,29 +648,27 @@ class App extends React.Component {
                         if (match.timer > 0) {
                             return {
                                 ip: miner.address,
-                                sum: match.sum ? match.sum : null,
+                                sum: match.sum && typeof match.sum === 'object' ? match.sum : null,
                                 network: match.network ? match.network : null,
-                                hist: match.sum ? match.hist : null,
+                                hist: Array.isArray(match.hist) ? match.hist : [],
                                 cap: match.cap ? match.cap : null,
                                 timer: match.timer - 1,
                             };
                         }
 
-                        models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, network: null, timer: 0};
+                        models.add(UNKNOWN_MODEL);
+                        return {ip: miner.address, sum: null, hist: [], network: null, timer: 0};
                     } else {
-                        models.add('undefined');
-                        return {ip: miner.address, sum: null, hist: null, network: null, timer: 0};
+                        models.add(UNKNOWN_MODEL);
+                        return {ip: miner.address, sum: null, hist: [], network: null, timer: 0};
                     }
                 }
             }),
         );
 
-        models = Array.from(models).sort();
         tunecap = Array.from(tunecap).sort();
         miner_data = miner_data.filter((x) => x !== undefined);
-        if (miner_data.some((miner) => !miner.cap)) models = [...new Set([...models, 'undefined'])].sort();
-        else models = models.filter((model) => model !== 'undefined');
+        models = getMinerModelGroups(models, miner_data);
         if (tunecap.length != this.state.tunecap.length) this.setState({tunecap: tunecap});
         if (!haveSameModels(models, this.state.models)) this.setState({miner_data, models}, () => unlock());
         else this.setState({miner_data: miner_data}, () => unlock());
@@ -697,10 +712,10 @@ class App extends React.Component {
             this.setState(
                 (state) => ({
                     miner_data: state.miner_data.concat(
-                        discovered.map(({ip}) => ({ip, sum: 'load', hist: 'load', network: 'load', timer: 0})),
+                        discovered.map(({ip}) => ({ip, sum: 'load', hist: [], network: 'load', timer: 0})),
                     ),
                     // Give newly discovered miners a table while their model information loads.
-                    models: state.models.length ? state.models : ['undefined'],
+                    models: state.models.length ? state.models : [UNKNOWN_MODEL],
                 }),
                 () => this.summary(false),
             );
@@ -838,13 +853,14 @@ class App extends React.Component {
             miners.push({address: ip});
 
             const temp = Array.from(this.state.miner_data);
-            temp.push({ip: ip, sum: 'load', hist: 'load', network: 'load', timer: 0});
+            temp.push({ip: ip, sum: 'load', hist: [], network: 'load', timer: 0});
 
             const models = Array.from(this.state.models);
-            if (!models.includes('undefined')) models.push('undefined');
+            const classifiedModels = models.filter((model) => normalizeMinerModelName(model));
+            if (!classifiedModels.includes(UNKNOWN_MODEL)) classifiedModels.push(UNKNOWN_MODEL);
 
             notify('success', `Successfully added ${ip}`);
-            this.setState({models: models, miner_data: temp});
+            this.setState({models: classifiedModels, miner_data: temp});
         } else {
             notify('info', `${ip} already tracked`);
         }
