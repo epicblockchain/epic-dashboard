@@ -607,6 +607,8 @@ class App extends React.Component {
         models = Array.from(models).sort();
         tunecap = Array.from(tunecap).sort();
         miner_data = miner_data.filter((x) => x !== undefined);
+        if (miner_data.some((miner) => !miner.cap)) models = [...new Set([...models, 'undefined'])].sort();
+        else models = models.filter((model) => model !== 'undefined');
         if (tunecap.length != this.state.tunecap.length) this.setState({tunecap: tunecap});
         if (models.length != this.state.models.length)
             this.setState({miner_data: miner_data, models: models}, () => unlock());
@@ -631,10 +633,25 @@ class App extends React.Component {
         scan_results = scan_results.filter((a) => !blacklist.includes(a.name));
 
         const prev = miners.map((a) => a.address);
+        const discovered = [];
         for (const obj of scan_results) {
             if (!prev.includes(obj.ip)) {
                 miners.push({address: obj.ip, name: obj.name});
+                discovered.push(obj);
             }
+        }
+
+        if (discovered.length) {
+            this.setState(
+                (state) => ({
+                    miner_data: state.miner_data.concat(
+                        discovered.map(({ip}) => ({ip, sum: 'load', hist: 'load', network: 'load', timer: 0})),
+                    ),
+                    // Give newly discovered miners a table while their model information loads.
+                    models: state.models.length ? state.models : ['undefined'],
+                }),
+                () => this.summary(false),
+            );
         }
 
         toast.dismiss('scan');
