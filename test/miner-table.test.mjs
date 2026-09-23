@@ -127,6 +127,9 @@ test('target cells safely render missing or non-text API values', () => {
     assert.equal(normalizeMinerDisplayValue('undefined'), 'N/A');
     assert.equal(normalizeMinerDisplayValue('-Infinity °C'), 'N/A');
     assert.equal(normalizeMinerDisplayValue('Fan 1: undefined | Fan 2: null'), 'Fan 1: N/A | Fan 2: N/A');
+    assert.equal(normalizeMinerDisplayValue({unexpected: true}), 'N/A');
+    assert.deepEqual(normalizeMinerDisplayValue([null, {unexpected: true}]), ['N/A', 'N/A']);
+    assert.equal(normalizeMinerDisplayValue(false), 'false');
     assert.equal(normalizeMinerDisplayValue(0), 0);
 });
 

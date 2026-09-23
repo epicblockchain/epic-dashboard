@@ -43,7 +43,8 @@ export function normalizeMinerDisplayValue(value, fallback = 'N/A') {
     if (value == null) return fallback;
     if (typeof value === 'number') return Number.isFinite(value) ? value : fallback;
     if (Array.isArray(value)) return value.map((item) => normalizeMinerDisplayValue(item, fallback));
-    if (typeof value !== 'string') return value;
+    if (typeof value === 'boolean') return String(value);
+    if (typeof value !== 'string') return fallback;
 
     const invalidValue = /^\s*(?:undefined|null|NaN|[-+]?Infinity)(?:\b.*)?$/i;
     if (invalidValue.test(value)) return fallback;
