@@ -1,8 +1,19 @@
 # macOS releases
 
-Release builds use native macOS runners for both Intel (`x64`) and Apple silicon (`arm64`), with Node 22. Forge ad-hoc signs the completed app and its nested helpers/frameworks before creating the ZIP. CI verifies the signature and launches the native executable from the extracted release ZIP; signing failures fail the build.
+The public release workflow builds macOS releases on native runners for Intel (`x64`) and Apple silicon (`arm64`). It signs each app with the Developer ID Application certificate, enables hardened runtime, submits it to Apple's notary service, and validates the stapled ticket before uploading the ZIP to the GitHub release. If Forge fails after producing an app bundle but before creating its ZIP, the workflow staples and validates the app, then creates the ZIP. Before upload, recovery validates the ticket in an existing ZIP or staples and validates the app before repackaging it. Build or verification errors do not block upload when recovery confirms a valid notarization ticket.
 
-Ad-hoc signing requires no Apple Developer account. It provides a valid local code signature, but does not identify a trusted publisher or provide Apple notarization. Downloaded apps may still require explicit approval in System Settings → Privacy & Security → Open Anyway. Only approve a release whose source and download you trust; do not disable Gatekeeper globally.
+Add these GitHub Actions repository secrets for the release workflow:
+
+- `MACOS_EPICDASHBOARD_DEVELOPER_ID_CERTIFICATE_BASE64`: base64-encoded `.p12` export of the Developer ID Application certificate and private key.
+- `MACOS_EPICDASHBOARD_DEVELOPER_ID_CERTIFICATE_PASSWORD`: password used to export that `.p12` file.
+- `MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_BASE64`: base64-encoded App Store Connect Team API key `.p8` file.
+- `MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_ID`: the key's 10-character Key ID.
+- `MACOS_EPIC_APPSTORE_CONNECT_ISSUER_ID`: the App Store Connect Issuer ID.
+- `MACOS_EPIC_DEVELOPER_IDENTITY`: exact signing identity name, such as `Developer ID Application: Example, Inc. (ABCDE12345)`.
+
+The Apple Developer Program membership, Developer ID Application certificate, and an App Store Connect Team API key are required. Create a Team API key with App Manager access in App Store Connect; Apple lets you download its `.p8` file only once. Base64-encode the `.p8` file without line breaks for the API key secret. To create the certificate secret, export the certificate and private key from Keychain Access as a `.p12` file and base64-encode it.
+
+For local notarization, you can store App Store Connect credentials in a `notarytool` Keychain profile instead of exporting API key variables. First save and validate the profile with `xcrun notarytool store-credentials`. Then set `APPLE_KEYCHAIN_PROFILE` to that profile name and `APPLE_SIGNING_IDENTITY` to the exact Developer ID Application identity installed in your Keychain. Builds without notarization credentials continue to use ad-hoc signing. Apple describes the notarization flow and the required Developer ID signature and hardened runtime in its [notarization documentation](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
 
 On a Mac, `make mac` builds and signs both architectures. Signing macOS releases on Linux is not supported.
 

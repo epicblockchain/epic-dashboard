@@ -5,7 +5,20 @@ import {test} from 'node:test';
 
 const require = createRequire(import.meta.url);
 const manifest = require('../package.json');
+const notarizationEnvNames = [
+    'APPLE_API_KEY',
+    'APP_STORE_CONNECT_API_KEY_ID',
+    'APP_STORE_CONNECT_ISSUER_ID',
+    'APPLE_KEYCHAIN_PROFILE',
+    'APPLE_SIGNING_IDENTITY',
+];
+const savedNotarizationEnv = new Map(notarizationEnvNames.map((name) => [name, process.env[name]]));
+for (const name of notarizationEnvNames) delete process.env[name];
 const forge = require(`../${manifest.config.forge}`);
+for (const [name, value] of savedNotarizationEnv) {
+    if (value === undefined) delete process.env[name];
+    else process.env[name] = value;
+}
 
 test('Forge retains the existing packaging targets and renderer entry point', () => {
     assert.equal(forge.packagerConfig.icon, 'src/img/epic');
@@ -26,7 +39,7 @@ test('Forge retains the existing packaging targets and renderer entry point', ()
     ]);
 });
 
-test('macOS signing is ad-hoc, needs no certificate, and fails packaging on signing errors', () => {
+test('local macOS builds use ad-hoc signing when release credentials are absent', () => {
     const sign = forge.packagerConfig.osxSign;
     assert.equal(sign.identity, '-');
     assert.equal(sign.identityValidation, false);
@@ -39,13 +52,31 @@ test('macOS signing is ad-hoc, needs no certificate, and fails packaging on sign
 
 test('macOS releases build on native Mac runners with Node 22 and verify the actual uploaded ZIP', async () => {
     const workflow = await readFile(new URL('../.github/workflows/release.yml', import.meta.url), 'utf8');
+    const forgeConfig = await readFile(new URL('../forge.config.cjs', import.meta.url), 'utf8');
     const mac = workflow.split('    build-mac:')[1].split('    create-release:')[0];
     assert.match(mac, /arch: x64\s+runner: macos-15-intel/);
     assert.match(mac, /arch: arm64\s+runner: macos-15\s+asset_arch: ARM64/);
     assert.match(mac, /node-version: '22'/);
+    assert.match(mac, /Build, sign, and notarize App/);
     assert.match(mac, /unzip -q out\/make\/zip\/darwin/);
     assert.match(mac, /codesign --verify --deep --strict/);
+    assert.match(mac, /xcrun stapler validate/);
+    assert.match(mac, /spctl --assess --type execute/);
     assert.match(mac, /ELECTRON_RUN_AS_NODE=1/);
+    assert.match(mac, /apple-actions\/import-codesign-certs@v7/);
+    assert.match(mac, /secrets\.MACOS_EPICDASHBOARD_DEVELOPER_ID_CERTIFICATE_BASE64/);
+    assert.match(mac, /secrets\.MACOS_EPICDASHBOARD_DEVELOPER_ID_CERTIFICATE_PASSWORD/);
+    assert.match(mac, /secrets\.MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_BASE64/);
+    assert.match(mac, /secrets\.MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_ID/);
+    assert.match(mac, /secrets\.MACOS_EPIC_APPSTORE_CONNECT_ISSUER_ID/);
+    assert.match(mac, /secrets\.MACOS_EPIC_DEVELOPER_IDENTITY/);
+    assert.match(mac, /Ensure release ZIP contains a valid notarization ticket/);
+    assert.match(mac, /softprops\/action-gh-release@v2/);
+    assert.match(forgeConfig, /process\.env\.APP_STORE_CONNECT_API_KEY_ID/);
+    assert.match(forgeConfig, /process\.env\.APP_STORE_CONNECT_ISSUER_ID/);
+    assert.match(forgeConfig, /process\.env\.APPLE_SIGNING_IDENTITY/);
+    assert.match(forgeConfig, /timestamp: 'http:\/\/timestamp\.apple\.com\/ts01'/);
+    assert.match(forgeConfig, /appleApiKey, appleApiKeyId, appleApiIssuer/);
     assert.match(workflow, /needs: \[prepare, build, build-mac\]/);
     assert.doesNotMatch(workflow.split('    build-mac:')[0], /make_target: mac/);
 });
