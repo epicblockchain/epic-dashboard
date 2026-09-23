@@ -26,6 +26,63 @@ export function getMinerGroupName(value) {
     return normalizeMinerModelName(value) || UNKNOWN_MODEL;
 }
 
+export function isMinerTuneCapable(capabilities) {
+    const model = normalizeMinerModelName(capabilities?.Model);
+    const display = capabilities?.Display;
+
+    return Boolean(
+        model &&
+        ((typeof display === 'string' && display.includes('ClksAndVoltage')) ||
+            (Array.isArray(display) && display.includes('ClksAndVoltage'))),
+    );
+}
+
+export function getTuneCapableModels(minerData) {
+    if (!Array.isArray(minerData)) return [];
+
+    return Array.from(
+        new Set(
+            minerData
+                .filter((miner) => isMinerTuneCapable(miner?.cap))
+                .map((miner) => normalizeMinerModelName(miner.cap.Model).toLowerCase()),
+        ),
+    ).sort();
+}
+
+export function getSettingsTabs(activeModel, tuneCapableModels = []) {
+    const model = typeof activeModel === 'string' ? activeModel.toLowerCase() : '';
+    const hasTuneSupport = Array.isArray(tuneCapableModels) && tuneCapableModels.includes(model);
+    const tabs = [
+        {value: 'home', label: 'Home'},
+        {value: 'control', label: 'Miner Control'},
+        {value: 'mining-config', label: 'Mining Config', requiresCap: true},
+        {value: 'performance', label: 'Performance'},
+        {value: 'system', label: 'System'},
+        {value: 'cooling', label: 'Cooling', requiresCap: true},
+    ];
+
+    if (hasTuneSupport) {
+        tabs.push({value: 'tune', label: 'Tune'}, {value: 'perpetual-tune', label: 'Perpetual Tune'});
+    }
+
+    tabs.push({value: 'board-control', label: 'Board Control'});
+
+    if (hasTuneSupport) {
+        tabs.push(
+            {value: 'idle-on-connection-lost', label: 'Idle on Connection Lost'},
+            {value: 'disable-board-on-fail', label: 'Disable Board on Fail'},
+            {value: 'enable-boards-on-idle', label: 'Enable Boards on Idle'},
+            {value: 'license', label: 'License'},
+        );
+    }
+
+    if (model === 'eng_rig') {
+        tabs.push({value: 'wifi', label: 'Wi-Fi'}, {value: 'debug', label: 'Debug'});
+    }
+
+    return tabs;
+}
+
 export function getMinerModelGroups(models, minerData) {
     const modelNames = models instanceof Set ? Array.from(models) : Array.isArray(models) ? models : [];
     const modelGroups = new Set(modelNames.map((model) => normalizeMinerModelName(model)).filter(Boolean));

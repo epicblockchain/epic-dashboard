@@ -19,7 +19,10 @@ import {
     normalizeTargetCell,
     getMinerGroupName,
     getMinerModelGroups,
+    getSettingsTabs,
+    getTuneCapableModels,
     normalizeMinerModelName,
+    isMinerTuneCapable,
     normalizeMinerDisplayValue,
     UNKNOWN_MODEL,
 } from '../src/minerTable.mjs';
@@ -87,6 +90,27 @@ test('model list comparison notices a changed label when the tab count stays the
     assert.equal(haveSameModels(['undefined'], ['M50']), false);
     assert.equal(haveSameModels(['M30', 'M50'], ['M30', 'M50']), true);
     assert.equal(haveSameModels([], ['undefined']), false);
+});
+
+test('array capability displays keep tune tabs available for their miner model', () => {
+    const minerData = [
+        {cap: {Model: 'AntMiner S19j Pro', Display: ['ClksAndVoltage', 'Fans']}},
+        {cap: {Model: 'AntMiner S19j Pro+', Display: ['ClksAndVoltage']}},
+        {cap: {Model: 'M50', Display: ['Fans']}},
+    ];
+
+    assert.equal(isMinerTuneCapable(minerData[0].cap), true);
+    assert.equal(isMinerTuneCapable({Model: 'M50', Display: 'ClksAndVoltage'}), true);
+    assert.equal(isMinerTuneCapable({Model: 'M50', Display: {ClksAndVoltage: true}}), false);
+    assert.deepEqual(getTuneCapableModels(minerData), ['antminer s19j pro', 'antminer s19j pro+']);
+
+    const tabs = getSettingsTabs('AntMiner S19j Pro', getTuneCapableModels(minerData));
+    assert.equal(
+        tabs.findIndex(({value}) => value === 'performance'),
+        3,
+    );
+    assert.ok(tabs.some(({value, label}) => value === 'perpetual-tune' && label === 'Perpetual Tune'));
+    assert.ok(tabs.some(({value}) => value === 'tune'));
 });
 
 test('malformed miner rows keep a complete, renderable table shape', () => {

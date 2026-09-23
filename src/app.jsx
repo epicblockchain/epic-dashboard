@@ -13,7 +13,13 @@ import {Preferences} from './preferences.jsx';
 import {Support} from './support.jsx';
 import {Eula} from './eula.jsx';
 import {buildBoardEnableRequest} from './boardControl.mjs';
-import {getMinerModelGroups, haveSameModels, normalizeMinerModelName, UNKNOWN_MODEL} from './minerTable.mjs';
+import {
+    getMinerModelGroups,
+    getTuneCapableModels,
+    haveSameModels,
+    normalizeMinerModelName,
+    UNKNOWN_MODEL,
+} from './minerTable.mjs';
 
 import {
     Drawer,
@@ -535,7 +541,6 @@ class App extends React.Component {
 
     async summary(init) {
         let models = new Set(this.state.models.map((model) => normalizeMinerModelName(model)).filter(Boolean));
-        let tunecap = new Set(this.state.tunecap);
         const unlock = await minerMutex.lock();
         let miner_data = await Promise.all(
             miners.map(async (miner, i) => {
@@ -579,13 +584,6 @@ class App extends React.Component {
                             const modelName = normalizeMinerModelName(content?.Model);
                             if (modelName) models.add(modelName);
                             else models.add(UNKNOWN_MODEL);
-
-                            if (
-                                modelName &&
-                                typeof content.Display === 'string' &&
-                                content.Display.includes('ClksAndVoltage')
-                            )
-                                tunecap.add(modelName.toLowerCase());
 
                             return {
                                 ip: miner.address,
@@ -666,10 +664,10 @@ class App extends React.Component {
             }),
         );
 
-        tunecap = Array.from(tunecap).sort();
         miner_data = miner_data.filter((x) => x !== undefined);
+        const tunecap = getTuneCapableModels(miner_data);
         models = getMinerModelGroups(models, miner_data);
-        if (tunecap.length != this.state.tunecap.length) this.setState({tunecap: tunecap});
+        if (!haveSameModels(tunecap, this.state.tunecap)) this.setState({tunecap});
         if (!haveSameModels(models, this.state.models)) this.setState({miner_data, models}, () => unlock());
         else this.setState({miner_data: miner_data}, () => unlock());
     }

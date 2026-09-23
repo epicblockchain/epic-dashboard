@@ -23,6 +23,7 @@ import {
     getMinerGroupName,
     getOrderedSelectedMiners,
     getSelectedModelIndex,
+    getSettingsTabs,
     normalizeMinerDisplayValue,
     normalizeTargetCell,
     UNKNOWN_MODEL,
@@ -766,34 +767,11 @@ export class DataTable extends React.Component {
                         textColor="primary"
                         scrollButtons="auto"
                         variant="scrollable"
+                        aria-label="Miner settings"
                     >
-                        <Tab value="home" label="Home" />
-                        <Tab value="control" label="Miner Control" />
-                        <Tab value="mining-config" label="Mining Config" disabled={!capApi} />
-                        <Tab value="system" label="System" />
-                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
-                            <Tab value="perpetual-tune" label="Perpetual Tune" />
-                        )}
-                        <Tab value="cooling" label="Cooling" disabled={!capApi} />
-                        <Tab value="board-control" label="Board Control" />
-                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
-                            <Tab value="tune" label="Tune" />
-                        )}
-                        <Tab value="performance" label="Performance" />
-                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
-                            <Tab value="enable-boards-on-idle" label="Enable Boards on Idle" />
-                        )}
-                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
-                            <Tab value="idle-on-connection-lost" label="Idle on Connection Lost" />
-                        )}
-                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
-                            <Tab value="disable-board-on-fail" label="Disable Board on Fail" />
-                        )}
-                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
-                            <Tab value="license" label="License" />
-                        )}
-                        {activeModel.toLowerCase() == 'eng_rig' && <Tab value="wifi" label="Wi-Fi" />}
-                        {activeModel.toLowerCase() == 'eng_rig' && <Tab value="debug" label="Debug" />}
+                        {getSettingsTabs(activeModel, this.props.tunecap).map(({value, label, requiresCap}) => (
+                            <Tab key={value} value={value} label={label} disabled={requiresCap && !capApi} />
+                        ))}
                     </Tabs>
                     <div className="settings-panel" hidden={this.state.tab != 'home'}>
                         <AddRemoveTab
