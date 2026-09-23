@@ -13,6 +13,10 @@ import {
     getRangeSelection,
     getMinerRowId,
     getOrderedSelectedMiners,
+    getSelectedModelIndex,
+    createMinerErrorRow,
+    haveSameModels,
+    normalizeTargetCell,
 } from '../src/minerTable.mjs';
 
 const data = [
@@ -66,6 +70,39 @@ function createTable(initialState = {}) {
 }
 
 const ids = (table) => table.getRowModel().rows.map((row) => row.original.id);
+
+test('model selection follows the current model and remains in range after tabs change', () => {
+    assert.equal(getSelectedModelIndex(['M30', 'M50'], 'M50', 0), 1);
+    assert.equal(getSelectedModelIndex(['M30'], 'undefined', 1), 0);
+    assert.equal(getSelectedModelIndex([], 'M50', 8), 0);
+    assert.equal(getSelectedModelIndex(['M30', 'M50'], 'missing', -1), 0);
+});
+
+test('model list comparison notices a changed label when the tab count stays the same', () => {
+    assert.equal(haveSameModels(['undefined'], ['M50']), false);
+    assert.equal(haveSameModels(['M30', 'M50'], ['M30', 'M50']), true);
+    assert.equal(haveSameModels([], ['undefined']), false);
+});
+
+test('malformed miner rows keep a complete, renderable table shape', () => {
+    const row = createMinerErrorRow(12, {ip: '192.0.2.12', cap: {Model: 'M50'}});
+
+    assert.equal(row.id, 12);
+    assert.equal(row.ip, '192.0.2.12');
+    assert.equal(row.model, 'M50');
+    assert.equal(row.cap.Model, 'M50');
+    assert.equal(row.name, 'Error');
+    assert.deepEqual(row.perpetualtunetarget, {value: 'Error', tooltip: null});
+});
+
+test('target cells safely render missing or non-text API values', () => {
+    assert.deepEqual(normalizeTargetCell(undefined), {value: 'N/A', tooltip: null});
+    assert.deepEqual(normalizeTargetCell({value: 0, tooltip: 'No error'}), {value: 0, tooltip: 'No error'});
+    assert.deepEqual(normalizeTargetCell({value: {target: 1}, tooltip: 4}), {
+        value: '[object Object]',
+        tooltip: '4',
+    });
+});
 
 test('all existing column IDs and custom sizing survive the migration', () => {
     assert.equal(tableColumnIds.length, 37);

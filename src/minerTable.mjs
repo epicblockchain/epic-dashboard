@@ -141,6 +141,88 @@ export function getMinerRowId(row) {
     return String(row?.ip || row?.id);
 }
 
+export function getSelectedModelIndex(models, selectedModel, fallbackIndex = 0) {
+    if (!Array.isArray(models) || models.length === 0) return 0;
+
+    const selectedIndex = models.indexOf(selectedModel);
+    if (selectedIndex >= 0) return selectedIndex;
+
+    const safeFallback = Number.isInteger(fallbackIndex) ? fallbackIndex : 0;
+    return Math.min(Math.max(safeFallback, 0), models.length - 1);
+}
+
+export function haveSameModels(first, second) {
+    return (
+        Array.isArray(first) &&
+        Array.isArray(second) &&
+        first.length === second.length &&
+        first.every((model, index) => model === second[index])
+    );
+}
+
+export function normalizeTargetCell(value) {
+    const target = value && typeof value === 'object' ? value.value : value;
+    const tooltip = value && typeof value === 'object' ? value.tooltip : null;
+    const safeTarget = target == null ? 'N/A' : typeof target === 'object' ? String(target) : target;
+    const safeTooltip = tooltip == null || typeof tooltip === 'string' ? tooltip : String(tooltip);
+
+    return {value: safeTarget, tooltip: safeTooltip};
+}
+
+export function createMinerErrorRow(id, miner) {
+    const candidateCap = miner?.cap;
+    const cap =
+        candidateCap && typeof candidateCap === 'object' && typeof candidateCap.Model === 'string'
+            ? candidateCap
+            : undefined;
+    const error = 'Error';
+
+    return {
+        id,
+        ip: typeof miner?.ip === 'string' ? miner.ip : '',
+        status: error,
+        name: error,
+        firmware: error,
+        model: cap?.Model || error,
+        mode: error,
+        pool: error,
+        user: error,
+        start: error,
+        uptime: error,
+        hbs: error,
+        perpetualtune: error,
+        perpetualtunealgo: error,
+        perpetualtuneoptimized: error,
+        perpetualtunetarget: {value: error, tooltip: null},
+        perpetualtuneminthrottle: error,
+        perpetualtunethrottlestep: error,
+        shutdowntemp: error,
+        criticaltemp: error,
+        performance: error,
+        lowest: 0,
+        realtimehashrate: error,
+        hashrate15min: error,
+        hashrate1hr: error,
+        hashrate6hr: error,
+        hashrate24hr: error,
+        efficiency1hr: error,
+        accepted: error,
+        rejected: error,
+        difficulty: error,
+        temperature: error,
+        power: error,
+        fanspeed: error,
+        cap,
+        voltage: error,
+        clock: error,
+        misc: null,
+        connected: error,
+        lasterror: error,
+        mac: error,
+        fansrpm: error,
+    };
+}
+
 export function getOrderedSelectedMiners(previousSelection, rowSelection, data) {
     const rowsById = new Map(data.map((row) => [getMinerRowId(row), row]));
     const remaining = new Set(

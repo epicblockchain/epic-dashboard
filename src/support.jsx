@@ -20,8 +20,11 @@ export class Support extends React.Component {
             })
             .then((arg) => {
                 if (!arg.canceled) {
-                    fs.writeFile(arg.filePaths[0] + '/epicminers.log', JSON.stringify(this.props.data), function (err) {
-                        if (err) throw err;
+                    fs.writeFile(arg.filePaths[0] + '/epicminers.log', JSON.stringify(this.props.data), (err) => {
+                        if (err) {
+                            console.error('Unable to save support logs:', err);
+                            return;
+                        }
                         console.log('Logs written.');
                     });
                 }

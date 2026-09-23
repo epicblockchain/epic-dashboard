@@ -18,7 +18,7 @@ import {LicenseTab} from './tabs/LicenseTab.jsx';
 import './table.css';
 
 import Table, {tableColumnIds} from './customTable.jsx';
-import {getOrderedSelectedMiners} from './minerTable.mjs';
+import {createMinerErrorRow, getOrderedSelectedMiners, getSelectedModelIndex} from './minerTable.mjs';
 
 export const DEFAULT_HIDDEN_COLUMNS = [
     'name',
@@ -62,6 +62,7 @@ const LEGACY_DEFAULT_HIDDEN_COLUMNS = [
 
 const DEFAULT_HIDDEN_COLUMN_SET = new Set(DEFAULT_HIDDEN_COLUMNS);
 const AVAILABLE_COLUMNS = new Set(tableColumnIds);
+const loggedMinerRenderErrors = new Set();
 
 function hasSameColumns(first = [], second = []) {
     return first.length === second.length && first.every((columnId) => second.includes(columnId));
@@ -195,15 +196,17 @@ export class DataTable extends React.Component {
     componentDidMount() {
         window.onresize = debounce1(() => this.forceUpdate());
 
-        if (this.props.models && this.props.models.length) {
-            const newState = {models: this.props.models};
-            this.props.models.forEach((key) => {
-                newState[key + '_sel'] = [];
-                newState[key + '_state'] = {};
-            });
+        const models = Array.isArray(this.props.models) && this.props.models.length ? this.props.models : ['undefined'];
+        const newState = {
+            models,
+            list: getSelectedModelIndex(models, this.state.models[this.state.list], this.state.list),
+        };
+        models.forEach((key) => {
+            newState[key + '_sel'] = [];
+            newState[key + '_state'] = {};
+        });
 
-            this.setState(newState);
-        }
+        this.setState(newState);
     }
 
     selectReset() {
@@ -217,8 +220,14 @@ export class DataTable extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.models != this.props.models) {
-            const newModels = this.props.models.filter((x) => !prevProps.models.includes(x));
-            const newState = {models: this.props.models};
+            const models =
+                Array.isArray(this.props.models) && this.props.models.length ? this.props.models : ['undefined'];
+            const previousModels = Array.isArray(prevProps.models) ? prevProps.models : [];
+            const newModels = models.filter((x) => !previousModels.includes(x));
+            const newState = {
+                models,
+                list: getSelectedModelIndex(models, this.state.models[this.state.list], this.state.list),
+            };
             newModels.forEach((key) => {
                 newState[key + '_sel'] = [];
                 newState[key + '_state'] = {};
@@ -580,63 +589,77 @@ export class DataTable extends React.Component {
     }
 
     render() {
-        const rows = this.props.data.map((a, i) => ({
-            id: i,
-            ip: a ? a.ip : '', //TODO: figure out why this is was falsey
-            name: this.failSafe(a.sum) || a.sum.Hostname,
-            firmware: this.failSafe(a.sum) || a.sum.Software.split(' ')[1],
-            model: this.failSafe(a.cap) || a.cap.Model,
-            mode:
-                this.failSafe(a.sum) ||
-                (a.sum.PresetInfo ? `${a.sum.PresetInfo.Preset} @ ${a.sum.PresetInfo['Target Power']}W` : a.sum.Preset),
-            pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
-            user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
-            start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
-            uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
-            hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
-            perpetualtune: this.failSafe(a.sum) || this.perpetualtune(a.sum),
-            perpetualtunealgo: this.failSafe(a.sum) || this.perpetualtuneAlgo(a.sum),
-            perpetualtuneoptimized: this.failSafe(a.sum) || this.perpetualtuneOptimized(a.sum),
-            perpetualtunetarget: this.failSafe(a.sum)
-                ? {value: this.failSafe(a.sum), tooltip: null}
-                : this.perpetualtuneTarget(a.sum),
-            perpetualtuneminthrottle:
-                this.failSafe(a.sum) ||
-                Object.values(a.sum?.PerpetualTune?.Algorithm || {})[0]?.['Min Throttle Target'] ||
-                'N/A',
-            perpetualtunethrottlestep:
-                this.failSafe(a.sum) ||
-                Object.values(a.sum?.PerpetualTune?.Algorithm || {})[0]?.['Throttle Step'] ||
-                'N/A',
-            shutdowntemp: this.failSafe(a.sum) || this.shutdowntemp(a.sum),
-            criticaltemp: this.failSafe(a.sum) || this.critialtemp(a.sum),
-            performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
-            lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
-            realtimehashrate: this.failSafe(a.sum) || this.realtime_hashrate(a.sum.HBs, a.cap),
-            hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null, false),
-            hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1, false),
-            hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6, false),
-            hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 24, false),
-            efficiency1hr: this.failSafe(a.sum) || this.efficiency(a),
-            accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
-            rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
-            difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
-            temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs).toFixed(1) + ' \u00b0C',
-            power: this.failSafe(a.sum) || this.totalPower(a.sum),
-            fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
-            cap: a.cap,
-            voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
-            clock: this.failSafe(a.sum) || this.avgClock(a.sum.HBs, a.cap),
-            status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A'),
-            misc: this.failSafe(a.sum) || a.sum.Misc,
-            connected:
-                this.failSafe(a.sum) ||
-                (a.sum.Stratum.IsPoolConnected !== undefined ? a.sum.Stratum.IsPoolConnected : 'Error'),
-            lasterror:
-                this.failSafe(a.sum) || (a.sum.Status && a.sum.Status['Last Error'] ? this.getLastError(a) : ' '),
-            mac: this.failSafe(a.sum) || a.network?.dhcp?.mac_address || a.network?.static?.mac_address || ' ',
-            fansrpm: this.failSafe(a.sum) || this.fansrpm(a.sum['Fans Rpm']),
-        }));
+        const rows = this.props.data.map((a, i) => {
+            try {
+                return {
+                    id: i,
+                    ip: a ? a.ip : '', //TODO: figure out why this is was falsey
+                    name: this.failSafe(a.sum) || a.sum.Hostname,
+                    firmware: this.failSafe(a.sum) || a.sum.Software.split(' ')[1],
+                    model: this.failSafe(a.cap) || a.cap.Model,
+                    mode:
+                        this.failSafe(a.sum) ||
+                        (a.sum.PresetInfo
+                            ? `${a.sum.PresetInfo.Preset} @ ${a.sum.PresetInfo['Target Power']}W`
+                            : a.sum.Preset),
+                    pool: this.failSafe(a.sum) || a.sum.Stratum['Current Pool'],
+                    user: this.failSafe(a.sum) || a.sum.Stratum['Current User'],
+                    start: this.failSafe(a.sum) || a.sum.Session['Startup Timestamp'],
+                    uptime: this.failSafe(a.sum) || this.secondsToHumanReadable(a.sum.Session.Uptime),
+                    hbs: this.failSafe(a.sum) || this.activeHBs(a.sum.HBs),
+                    perpetualtune: this.failSafe(a.sum) || this.perpetualtune(a.sum),
+                    perpetualtunealgo: this.failSafe(a.sum) || this.perpetualtuneAlgo(a.sum),
+                    perpetualtuneoptimized: this.failSafe(a.sum) || this.perpetualtuneOptimized(a.sum),
+                    perpetualtunetarget: this.failSafe(a.sum)
+                        ? {value: this.failSafe(a.sum), tooltip: null}
+                        : this.perpetualtuneTarget(a.sum),
+                    perpetualtuneminthrottle:
+                        this.failSafe(a.sum) ||
+                        Object.values(a.sum?.PerpetualTune?.Algorithm || {})[0]?.['Min Throttle Target'] ||
+                        'N/A',
+                    perpetualtunethrottlestep:
+                        this.failSafe(a.sum) ||
+                        Object.values(a.sum?.PerpetualTune?.Algorithm || {})[0]?.['Throttle Step'] ||
+                        'N/A',
+                    shutdowntemp: this.failSafe(a.sum) || this.shutdowntemp(a.sum),
+                    criticaltemp: this.failSafe(a.sum) || this.critialtemp(a.sum),
+                    performance: this.failSafe(a.sum) || this.hbperformance(a.sum.HBs, a.cap),
+                    lowest: this.failSafe(a.sum) || this.getLowest(a.sum.HBs),
+                    realtimehashrate: this.failSafe(a.sum) || this.realtime_hashrate(a.sum.HBs, a.cap),
+                    hashrate15min: this.failSafe(a.sum) || this.hashrate_x_hr(a, null, false),
+                    hashrate1hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 1, false),
+                    hashrate6hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 6, false),
+                    hashrate24hr: this.failSafe(a.sum) || this.hashrate_x_hr(a, 24, false),
+                    efficiency1hr: this.failSafe(a.sum) || this.efficiency(a),
+                    accepted: this.failSafe(a.sum) || a.sum.Session.Accepted,
+                    rejected: this.failSafe(a.sum) || a.sum.Session.Rejected,
+                    difficulty: this.failSafe(a.sum) || a.sum.Session.Difficulty,
+                    temperature: this.failSafe(a.sum) || this.maxTemp(a.sum.HBs).toFixed(1) + ' \u00b0C',
+                    power: this.failSafe(a.sum) || this.totalPower(a.sum),
+                    fanspeed: this.failSafe(a.sum) || a.sum.Fans['Fans Speed'],
+                    cap: a.cap,
+                    voltage: this.failSafe(a.sum) || this.avgVoltage(a.sum.HBs),
+                    clock: this.failSafe(a.sum) || this.avgClock(a.sum.HBs, a.cap),
+                    status: this.failSafe(a.sum) || (a.sum.Status ? a.sum.Status['Operating State'] : 'N/A'),
+                    misc: this.failSafe(a.sum) || a.sum.Misc,
+                    connected:
+                        this.failSafe(a.sum) ||
+                        (a.sum.Stratum.IsPoolConnected !== undefined ? a.sum.Stratum.IsPoolConnected : 'Error'),
+                    lasterror:
+                        this.failSafe(a.sum) ||
+                        (a.sum.Status && a.sum.Status['Last Error'] ? this.getLastError(a) : ' '),
+                    mac: this.failSafe(a.sum) || a.network?.dhcp?.mac_address || a.network?.static?.mac_address || ' ',
+                    fansrpm: this.failSafe(a.sum) || this.fansrpm(a.sum['Fans Rpm']),
+                };
+            } catch (error) {
+                const key = a?.ip || String(i);
+                if (!loggedMinerRenderErrors.has(key)) {
+                    loggedMinerRenderErrors.add(key);
+                    console.error(`Unable to render miner ${key}:`, error);
+                }
+                return createMinerErrorRow(i, a);
+            }
+        });
 
         const miners = {};
 
@@ -647,7 +670,9 @@ export class DataTable extends React.Component {
             } else miners['undefined'] ? miners['undefined'].push(row) : (miners['undefined'] = [row]);
         }
 
-        const activeModel = this.state.models[this.state.list];
+        const modelList = Array.isArray(this.state.models) ? this.state.models : [];
+        const activeListIndex = getSelectedModelIndex(modelList, modelList[this.state.list], this.state.list);
+        const activeModel = String(modelList[activeListIndex] ?? 'undefined');
         const activeTableState = this.state[activeModel + '_state'] || {};
         let selected = getOrderedSelectedMiners([], activeTableState.rowSelection || {}, miners[activeModel] || []);
 
@@ -671,7 +696,7 @@ export class DataTable extends React.Component {
             <div id="table">
                 <Tabs
                     className="model-tabs"
-                    value={this.state.list}
+                    value={activeListIndex}
                     onChange={this.setList}
                     indicatorColor="primary"
                     textColor="primary"
@@ -680,14 +705,14 @@ export class DataTable extends React.Component {
                     allowScrollButtonsMobile
                     aria-label="Miner models"
                 >
-                    {this.state.models.map((model) => {
+                    {modelList.map((model) => {
                         return <Tab className="miner-model-tab" key={model} label={model} />;
                     })}
                 </Tabs>
                 <canvas id="canvas" hidden></canvas>
                 <div className="table-region">
-                    {this.state.models.map((model, i) => {
-                        return this.props.defaultTableLoaded && this.state.list == i ? (
+                    {modelList.map((model, i) => {
+                        return this.props.defaultTableLoaded && activeListIndex === i ? (
                             <Paper
                                 variant="outlined"
                                 className="datatable-wrap"
@@ -724,33 +749,29 @@ export class DataTable extends React.Component {
                         <Tab value="control" label="Miner Control" />
                         <Tab value="mining-config" label="Mining Config" disabled={!capApi} />
                         <Tab value="system" label="System" />
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
                             <Tab value="perpetual-tune" label="Perpetual Tune" />
                         )}
                         <Tab value="cooling" label="Cooling" disabled={!capApi} />
                         <Tab value="board-control" label="Board Control" />
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
                             <Tab value="tune" label="Tune" />
                         )}
                         <Tab value="performance" label="Performance" />
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
                             <Tab value="enable-boards-on-idle" label="Enable Boards on Idle" />
                         )}
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
                             <Tab value="idle-on-connection-lost" label="Idle on Connection Lost" />
                         )}
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
                             <Tab value="disable-board-on-fail" label="Disable Board on Fail" />
                         )}
-                        {this.props.tunecap.includes(this.state.models[this.state.list].toLocaleLowerCase()) && (
+                        {this.props.tunecap.includes(activeModel.toLocaleLowerCase()) && (
                             <Tab value="license" label="License" />
                         )}
-                        {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && (
-                            <Tab value="wifi" label="Wi-Fi" />
-                        )}
-                        {this.state.models[this.state.list].toLowerCase() == 'eng_rig' && (
-                            <Tab value="debug" label="Debug" />
-                        )}
+                        {activeModel.toLowerCase() == 'eng_rig' && <Tab value="wifi" label="Wi-Fi" />}
+                        {activeModel.toLowerCase() == 'eng_rig' && <Tab value="debug" label="Debug" />}
                     </Tabs>
                     <div className="settings-panel" hidden={this.state.tab != 'home'}>
                         <AddRemoveTab
@@ -759,7 +780,7 @@ export class DataTable extends React.Component {
                             blacklist={this.props.blacklist}
                             saveMiners={this.props.saveMiners}
                             loadMiners={this.props.loadMiners}
-                            list={this.state.list}
+                            list={activeListIndex}
                             data={this.props.data}
                             models={this.state.models}
                             selected={selected}
@@ -777,7 +798,7 @@ export class DataTable extends React.Component {
                     <div className="settings-panel" hidden={this.state.tab != 'mining-config'}>
                         <CoinTab
                             handleApi={this.props.handleApi}
-                            list={this.state.list}
+                            list={activeListIndex}
                             disabled={!capApi}
                             selected={selected}
                             data={this.props.data}
@@ -792,7 +813,7 @@ export class DataTable extends React.Component {
                             selected={selected}
                             miners={miners}
                             data={this.props.data}
-                            list={this.state.list}
+                            list={activeListIndex}
                             models={this.state.models}
                             sessionPass={this.props.sessionPass}
                         />
@@ -837,7 +858,7 @@ export class DataTable extends React.Component {
                             handleApi={this.props.handleApi}
                             selected={selected}
                             data={this.props.data}
-                            model={this.state.models[this.state.list]}
+                            model={activeModel}
                             sessionPass={this.props.sessionPass}
                         />
                     </div>

@@ -40,6 +40,7 @@ import {
     getRangeSelection,
     getMinerRowId,
     moveColumnOrder,
+    normalizeTargetCell,
 } from './minerTable.mjs';
 export {tableColumnIds} from './minerTable.mjs';
 import {VirtualizedTableBody} from './virtualizedTable.jsx';
@@ -100,15 +101,16 @@ function getColorText(lowest) {
 }
 
 function renderTooltipCell(value) {
-    return value.tooltip ? (
-        <Tooltip title={value.tooltip}>
+    const cell = normalizeTargetCell(value);
+    return cell.tooltip ? (
+        <Tooltip title={cell.tooltip}>
             <span style={{display: 'flex', alignItems: 'center'}}>
-                {value.value}
+                {cell.value}
                 <InfoIcon fontSize="small" style={{marginLeft: 4}} />
             </span>
         </Tooltip>
     ) : (
-        value.value
+        cell.value
     );
 }
 
@@ -639,6 +641,7 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
     const renderRow = React.useCallback(
         ({rowIndex, style, ariaRowIndex}) => {
             const row = rows[rowIndex];
+            if (!row) return null;
             const rowData = row.original;
             const led = rowData.misc ? rowData.misc['Locate Miner State'] : null;
             return (
@@ -920,7 +923,11 @@ function Table({dataRaw, update, extstate, extmodel, reset, drawerOpen, clear, h
                                 rows={rows}
                                 rowWidth={totalColumnsWidth + 8}
                                 height={tableBodyHeight}
-                                width={document.getElementById('width').offsetWidth - (drawer ? 216 : 59)}
+                                width={Math.max(
+                                    1,
+                                    (document.getElementById('width')?.offsetWidth || window.innerWidth) -
+                                        (drawer ? 216 : 59),
+                                )}
                                 onScroll={scroll}
                                 renderRow={renderRow}
                             />

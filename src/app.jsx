@@ -13,6 +13,7 @@ import {Preferences} from './preferences.jsx';
 import {Support} from './support.jsx';
 import {Eula} from './eula.jsx';
 import {buildBoardEnableRequest} from './boardControl.mjs';
+import {haveSameModels} from './minerTable.mjs';
 
 import {
     Drawer,
@@ -358,6 +359,49 @@ class Mutex {
 
 const minerMutex = new Mutex();
 
+class RendererErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {error: null};
+    }
+
+    static getDerivedStateFromError(error) {
+        return {error};
+    }
+
+    componentDidCatch(error, info) {
+        console.error('Dashboard rendering failed:', error, info.componentStack);
+    }
+
+    render() {
+        if (this.state.error) {
+            return (
+                <div
+                    role="alert"
+                    style={{
+                        alignItems: 'center',
+                        background: '#f6f6f6',
+                        boxSizing: 'border-box',
+                        color: '#222',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                        justifyContent: 'center',
+                        padding: 24,
+                        textAlign: 'center',
+                    }}
+                >
+                    <h1>Dashboard view failed to load</h1>
+                    <p>The dashboard hit an unexpected error. Reload the app to continue.</p>
+                    <button onClick={() => window.location.reload()}>Reload dashboard</button>
+                </div>
+            );
+        }
+
+        return this.props.children;
+    }
+}
+
 async function writeJsonAtomically(filename, value) {
     const tempFilename = `${filename}.${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}.tmp`;
     let fileHandle;
@@ -508,8 +552,8 @@ class App extends React.Component {
                         match.sum == 'load' ||
                         match.sum == 'reboot' ||
                         match.sum == null ||
-                        match.cap.Model === 'undefined' ||
-                        (match && !match.cap)
+                        match.cap?.Model === 'undefined' ||
+                        !match.cap
                     ) {
                         const history = await got(`http://${miner.address}:4028/history`, {
                             timeout: {request: 2000},
@@ -522,23 +566,24 @@ class App extends React.Component {
                             });
                             const content = JSON.parse(cap.body);
 
-                            if (content.Model) models.add(content.Model);
+                            const modelName = typeof content.Model === 'string' ? content.Model : '';
+                            if (modelName) models.add(modelName);
                             else models.add('undefined');
 
                             if (
-                                content.Model &&
-                                content.Model != 'undefined' &&
-                                content.Display &&
+                                modelName &&
+                                modelName !== 'undefined' &&
+                                typeof content.Display === 'string' &&
                                 content.Display.includes('ClksAndVoltage')
                             )
-                                tunecap.add(content.Model.toLowerCase());
+                                tunecap.add(modelName.toLowerCase());
 
                             return {
                                 ip: miner.address,
                                 sum: sum,
                                 network: net,
                                 hist: JSON.parse(history.body).History.slice(-48),
-                                cap: content.Model ? content : undefined,
+                                cap: modelName ? content : undefined,
                                 timer: 10,
                             };
                         } catch (err) {
@@ -610,8 +655,7 @@ class App extends React.Component {
         if (miner_data.some((miner) => !miner.cap)) models = [...new Set([...models, 'undefined'])].sort();
         else models = models.filter((model) => model !== 'undefined');
         if (tunecap.length != this.state.tunecap.length) this.setState({tunecap: tunecap});
-        if (models.length != this.state.models.length)
-            this.setState({miner_data: miner_data, models: models}, () => unlock());
+        if (!haveSameModels(models, this.state.models)) this.setState({miner_data, models}, () => unlock());
         else this.setState({miner_data: miner_data}, () => unlock());
     }
 
@@ -629,7 +673,15 @@ class App extends React.Component {
             toastId: 'scan',
         });
 
-        let scan_results = await ipcRenderer.invoke('portscan', ip, range, timeout);
+        let scan_results;
+        try {
+            scan_results = await ipcRenderer.invoke('portscan', ip, range, timeout);
+        } catch (error) {
+            toast.dismiss('scan');
+            console.error('Miner scan failed:', error);
+            notify('error', `Miner scan failed: ${String(error)}`);
+            return;
+        }
         scan_results = scan_results.filter((a) => !blacklist.includes(a.name));
 
         const prev = miners.map((a) => a.address);
@@ -659,13 +711,14 @@ class App extends React.Component {
     }
 
     init(settings) {
-        const ip = Object.entries(networks)[0][1][0].split('.');
-        this.setState(Object.assign(this.state, settings, {scanIp: `${ip[0]}.${ip[1]}.${ip[2]}`}));
+        const firstIp = Object.values(networks).flat()[0];
+        const scanIp = firstIp ? firstIp.split('.').slice(0, 3).join('.') : '';
+        this.setState({...settings, scanIp});
 
         if (settings.sessionpass) this.toggleModal(true);
         if (settings.autoload) this.loadMiners();
         if (settings.drawer !== this.state.drawerOpen) this.setState({drawerOpen: settings.drawer});
-        if (settings.autoscan) this.portscan(Object.entries(networks)[0][1][0], 24, 500);
+        if (settings.autoscan && firstIp) this.portscan(firstIp, 24, 500);
 
         this.summary(true);
         setInterval(() => this.summary(false), 6000);
@@ -831,10 +884,11 @@ class App extends React.Component {
         }
 
         fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
-        fs.writeFile(path.join(app_path, 'settings.json'), JSON.stringify(json), function (err) {
+        fs.writeFile(path.join(app_path, 'settings.json'), JSON.stringify(json), (err) => {
             if (err) {
                 console.log(err);
-                throw err;
+                notify('error', `Unable to save preferences: ${String(err)}`);
+                return;
             }
             if (notif) notify('success', 'Preferences saved');
         });
@@ -854,14 +908,14 @@ class App extends React.Component {
         }
 
         fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
-        fs.writeFile(path.join(app_path, 'ipaddr.txt'), string, function (err) {
+        fs.writeFile(path.join(app_path, 'ipaddr.txt'), string, (err) => {
             if (err) {
                 console.log(err);
-                throw err;
+                notify('error', `Unable to save miners: ${String(err)}`);
+                return;
             }
+            notify('success', 'Successfully saved miners');
         });
-
-        notify('success', 'Successfully saved miners');
     }
 
     loadMiners() {
@@ -892,10 +946,10 @@ class App extends React.Component {
         }
 
         fs.mkdir(app_path, {recursive: true}, (err) => console.log(err));
-        fs.writeFile(path.join(app_path, 'blacklist.txt'), blacklist.join('\n'), function (err) {
+        fs.writeFile(path.join(app_path, 'blacklist.txt'), blacklist.join('\n'), (err) => {
             if (err) {
                 console.log(err);
-                throw err;
+                notify('error', `Unable to save blacklist: ${String(err)}`);
             }
         });
 
@@ -1469,4 +1523,11 @@ class App extends React.Component {
     }
 }
 
-createRoot(document.getElementById('react')).render(<App />);
+const rootElement = document.getElementById('react');
+if (rootElement) {
+    createRoot(rootElement).render(
+        <RendererErrorBoundary>
+            <App />
+        </RendererErrorBoundary>,
+    );
+}

@@ -34,9 +34,10 @@ export class DebugTab extends React.Component {
                         const ip = this.props.data[i].ip;
                         const data = await got(`http://${ip}/${test}.log`);
 
-                        fs.writeFile(arg.filePaths[0] + `/${test}-${ip}.log`, data.body, function (err) {
+                        fs.writeFile(arg.filePaths[0] + `/${test}-${ip}.log`, data.body, (err) => {
                             if (err) {
-                                throw err;
+                                console.error(`Unable to save debug log for ${ip}:`, err);
+                                this.props.notify('error', `${ip}: Unable to save debug log: ${String(err)}`);
                             }
                         });
                         this.props.notify('success', `Logs written to  ${arg.filePaths[0]}`);

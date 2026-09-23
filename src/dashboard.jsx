@@ -167,7 +167,7 @@ export class Dashboard extends React.Component {
         const dateAxes = this.chart.xAxes.values;
         const series = this.chart.series.values;
 
-        if (yAxes && dateAxes && series) {
+        if (yAxes?.length && dateAxes?.length && series?.length) {
             yAxes[0].title.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
             yAxes[0].renderer.labels.template.fill = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#2FC1DE');
             yAxes[0].renderer.grid.template.stroke = am4core.color(this.props.theme == 'light' ? '#0068B4' : '#ffffff');
@@ -191,22 +191,24 @@ export class Dashboard extends React.Component {
 
     getRows() {
         //one for each type of miner
-        const modelData = {};
+        const modelData = Object.create(null);
         //check for no miners
         if (this.props.data.length < 1) {
             return [createData('', '', 0, '', '')];
         }
 
         this.props.data.forEach((miner) => {
-            if (miner.sum) {
-                try {
-                    if (!(miner.sum.Mining.Algorithm in modelData)) {
-                        modelData[miner.sum.Mining.Algorithm] = [];
-                    }
-                    modelData[miner.sum.Mining.Algorithm].push(miner.sum);
-                } catch (err) {
-                    console.log(err);
-                }
+            const summary = miner?.sum;
+            const algorithm = summary?.Mining?.Algorithm;
+            if (
+                typeof algorithm === 'string' &&
+                summary.Session &&
+                typeof summary.Session === 'object' &&
+                Array.isArray(summary.HBs) &&
+                summary.HBs.every((hashboard) => hashrateBoardIsObject(hashboard))
+            ) {
+                if (!modelData[algorithm]) modelData[algorithm] = [];
+                modelData[algorithm].push(summary);
             }
         });
 
@@ -220,13 +222,13 @@ export class Dashboard extends React.Component {
             let timeSince = null;
 
             modelData[algo].forEach((miner) => {
-                totalHashrate += miner['Session']['Average MHs'];
+                totalHashrate += Number(miner['Session']['Average MHs']) || 0;
                 miner['HBs'].forEach((hb) => {
-                    totalPower += hb['Input Power'];
+                    totalPower += Number(hb['Input Power']) || 0;
                 });
                 activeMinerCount += 1;
-                acceptedCount += miner['Session']['Accepted'];
-                rejectedCount += miner['Session']['Rejected'];
+                acceptedCount += Number(miner['Session']['Accepted']) || 0;
+                rejectedCount += Number(miner['Session']['Rejected']) || 0;
                 if (!timeSince) {
                     timeSince = miner['Session']['Last Accepted Share Timestamp'];
                 } else if (timeSince < miner['Session']['Last Accepted Share Timestamp']) {
@@ -284,4 +286,8 @@ export class Dashboard extends React.Component {
             </div>
         );
     }
+}
+
+function hashrateBoardIsObject(hashboard) {
+    return Boolean(hashboard && typeof hashboard === 'object');
 }

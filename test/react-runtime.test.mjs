@@ -35,10 +35,19 @@ test('the app mounts through createRoot instead of the removed legacy render API
         imports.some((node) => node.source.value === 'react-dom'),
         false,
     );
-    const mount = ast.program.body.at(-1).expression;
+    const mount = ast.program.body
+        .flatMap((statement) => (statement.type === 'IfStatement' ? statement.consequent.body : [statement]))
+        .map((statement) => statement.expression)
+        .find(
+            (expression) =>
+                expression?.callee?.property?.name === 'render' &&
+                expression.callee.object?.callee?.name === 'createRoot',
+        );
+    assert.ok(mount);
     assert.equal(mount.callee.property.name, 'render');
     assert.equal(mount.callee.object.callee.name, 'createRoot');
-    assert.equal(mount.callee.object.arguments[0].arguments[0].value, 'react');
+    assert.equal(mount.callee.object.arguments[0].name, 'rootElement');
+    assert.match(source, /<RendererErrorBoundary>\s*<App \/>/);
 });
 
 test('the unsupported v7 table dependency is replaced without a compatibility shim', () => {

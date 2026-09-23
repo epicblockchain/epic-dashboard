@@ -35,9 +35,10 @@ export class AddRemoveTab extends React.Component {
                             fs.writeFile(
                                 arg.filePaths[0] + `/${ip}/${ip}_${tuple[0].secs_since_epoch}.log`,
                                 tuple[1],
-                                function (err) {
+                                (err) => {
                                     if (err) {
-                                        throw err;
+                                        console.error(`Unable to save miner log for ${ip}:`, err);
+                                        this.props.notify('error', `${ip}: Unable to save miner log: ${String(err)}`);
                                     }
                                 },
                             );
