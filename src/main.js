@@ -1,6 +1,7 @@
 const {app, BrowserWindow, ipcMain, dialog, shell, screen} = require('electron');
 import got from 'got';
 import {createFirmwareUpload} from './firmwareUpload.mjs';
+import {formatApiError} from './apiCompatibility.mjs';
 import {minerRequest} from './minerHttp.mjs';
 import {getInitialWindowBounds} from './windowLayout.mjs';
 const path = require('path');
@@ -112,7 +113,12 @@ const createWindow = () => {
                             `${miners[i].address}: Done firmware update`,
                         );
                     } else {
-                        mainWindow.webContents.send('form-result', i, 'error', `${miners[i].address}: ${body.error}`);
+                        mainWindow.webContents.send(
+                            'form-result',
+                            i,
+                            'error',
+                            `${miners[i].address}: ${formatApiError(body.error)}`,
+                        );
                     }
                 } catch (err) {
                     console.log(err);

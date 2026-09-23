@@ -1,98 +1,68 @@
 import * as React from 'react';
 import {Button, TextField, FormControl, InputLabel, Select} from '@mui/material';
+import {
+    buildPerformancePresetAction,
+    getCommonPerformancePresets,
+    getPerformancePresetLabel,
+} from '../apiCompatibility.mjs';
 import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 
 export class PerformanceTab extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {mode: 'Select Preset', power: '', password: this.props.sessionPass};
+        this.state = {preset: '', password: this.props.sessionPass};
 
         this.updatePreset = this.updatePreset.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
+        this.applyPreset = this.applyPreset.bind(this);
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.sessionPass != this.props.sessionPass) {
             this.setState({password: this.props.sessionPass});
+        }
+        const previousSelection = Array.isArray(prevProps.selected) ? prevProps.selected : [];
+        const currentSelection = Array.isArray(this.props.selected) ? this.props.selected : [];
+        if (
+            previousSelection.length !== currentSelection.length ||
+            previousSelection.some((index, position) => index !== currentSelection[position])
+        ) {
+            this.setState({preset: ''});
         }
     }
 
     updatePreset(e) {
-        const obj = JSON.parse(e.target.value);
-        this.setState({mode: obj.mode, power: obj.power});
+        this.setState({preset: e.target.value});
     }
 
     updatePassword(e) {
         this.setState({password: e.target.value});
     }
 
+    applyPreset() {
+        let preset;
+        try {
+            preset = JSON.parse(this.state.preset);
+        } catch {
+            return;
+        }
+
+        const action = buildPerformancePresetAction(preset);
+        if (!action) return;
+        this.props.handleApi(action.api, {...this.state, ...action.data}, this.props.selected);
+    }
+
     render() {
-        let powers = null;
-        let oldPresets = null;
-
-        for (const selected of this.props.selected) {
-            if (this.props.data[selected].cap) {
-                if (!oldPresets && this.props.data[selected].cap.PresetsPowerLevels) {
-                    if (!powers) {
-                        powers = Object.assign({}, this.props.data[selected].cap.PresetsPowerLevels);
-                        continue;
-                    }
-
-                    for (const power of Object.keys(powers)) {
-                        if (!this.props.data[selected].cap.PresetsPowerLevels[power]) {
-                            powers[power] = null;
-                        }
-                    }
-                } else {
-                    if (!oldPresets) {
-                        oldPresets = Object.assign({}, this.props.data[selected].cap.Presets);
-                        powers = null;
-                        continue;
-                    }
-
-                    for (const preset in oldPresets) {
-                        if (!this.props.data[selected].cap.Presets[preset]) {
-                            oldPresets[preset] = null;
-                        }
-                    }
-                }
-            } else {
-                break;
-            }
-        }
-
-        if (powers != null) {
-            for (const power of Object.keys(powers)) {
-                if (powers[power] === null) {
-                    delete powers[power];
-                }
-            }
-        }
-
-        if (oldPresets != null) {
-            for (const preset of Object.keys(oldPresets)) {
-                if (oldPresets[preset] === null) {
-                    delete oldPresets[preset];
-                }
-            }
-        }
-
-        const powerArray = [{mode: 'Select Preset'}];
-        if (powers)
-            powerArray.push(
-                ...Object.entries(powers)
-                    .map((entry) => entry[1].map((power) => ({mode: entry[0], power: power})))
-                    .flat(),
-            );
-        else if (oldPresets) powerArray.push(...Object.entries(oldPresets).map((preset) => ({mode: preset[1]})));
-
-        const disabled = this.state.mode === 'Select Preset' || !this.state.password || !this.props.selected.length;
+        const capabilities = this.props.selected.map((index) => this.props.data?.[index]?.cap);
+        const presets = getCommonPerformancePresets(capabilities);
+        const selectedPreset = presets.find((preset) => JSON.stringify(preset) === this.state.preset);
+        const disabled = !selectedPreset || !this.state.password || !this.props.selected.length || this.props.disabled;
 
         return (
             <div className="tab-body settings-tab">
                 <TabHeader
                     title="Performance"
-                    description="Apply a supported performance preset to the selected miners."
+                    description="Apply a supported operating or clock and voltage preset to the selected miners."
                 />
                 <FormControl variant="outlined" margin="dense">
                     <InputLabel htmlFor="preset">Preset</InputLabel>
@@ -101,18 +71,21 @@ export class PerformanceTab extends React.Component {
                         id="preset"
                         label="Preset"
                         size="small"
-                        value={JSON.stringify({mode: this.state.mode, power: this.state.power})}
+                        value={this.state.preset}
                         onChange={this.updatePreset}
                     >
-                        {powerArray
-                            .sort((a, b) => b.power - a.power)
-                            .map((obj, i) => {
-                                return obj.mode === 'Select Preset' || obj.power % 100 === 0 || !obj.power ? (
-                                    <option key={i} value={JSON.stringify({mode: obj.mode, power: obj.power})}>
-                                        {obj.mode} {obj.power ? `@ ${obj.power}W` : ''}
-                                    </option>
-                                ) : null;
-                            })}
+                        <option value="">Select Preset</option>
+                        {[...presets]
+                            .sort((a, b) => {
+                                if (a.type === 'tune') return (b.hashrate || 0) - (a.hashrate || 0);
+                                return (b.power || 0) - (a.power || 0);
+                            })
+                            .filter((preset) => preset.type !== 'mode' || !preset.power || preset.power % 100 === 0)
+                            .map((preset) => (
+                                <option key={JSON.stringify(preset)} value={JSON.stringify(preset)}>
+                                    {getPerformancePresetLabel(preset)}
+                                </option>
+                            ))}
                     </Select>
                 </FormControl>
                 <TabFooter>
@@ -124,20 +97,11 @@ export class PerformanceTab extends React.Component {
                         onChange={this.updatePassword}
                         margin="dense"
                         onKeyPress={(e) => {
-                            if (e.key === 'Enter' && !disabled) {
-                                this.props.handleApi('/mode', this.state, this.props.selected);
-                            }
+                            if (e.key === 'Enter' && !disabled) this.applyPreset();
                         }}
                         error={!this.state.password}
                     />
-                    <Button
-                        onClick={() => {
-                            this.props.handleApi('/mode', this.state, this.props.selected);
-                        }}
-                        variant="contained"
-                        color="primary"
-                        disabled={disabled}
-                    >
+                    <Button onClick={this.applyPreset} variant="contained" color="primary" disabled={disabled}>
                         {getMinerActionLabel('Apply', this.props.selected)}
                     </Button>
                 </TabFooter>

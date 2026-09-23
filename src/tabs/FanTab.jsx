@@ -237,6 +237,12 @@ export class FanTab extends React.Component {
 
     render() {
         const disabled = !this.state.password || !this.props.selected.length || this.props.disabled;
+        const supportsPreInitCooldown =
+            this.props.selected.length > 0 &&
+            this.props.selected.every((index) => {
+                const duration = this.props.data?.[index]?.sum?.['PreInitCooldown Max Duration'];
+                return duration !== undefined && duration !== null;
+            });
 
         return (
             <div className="tab-body settings-tab cooling-tab">
@@ -572,78 +578,80 @@ export class FanTab extends React.Component {
                                         />
                                     </Grid>
                                 </Grid>
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    sx={{
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Grid size={12}>
-                                        <Tooltip
-                                            title="Sets the PreInitCooldown maximum duration in seconds. This is the maximum time the miner can spend in PreInitCooldown. If the max duration is reached, the miner will skip the initialization temperature checks and start mining. Default is 300 seconds. Setting to 0 means the PreInitCooldown state will last for at most 0 seconds."
-                                            arrow
-                                            placement="top"
-                                        >
-                                            <Typography
-                                                gutterBottom
-                                                style={{
-                                                    cursor: 'help',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '4px',
-                                                }}
+                                {supportsPreInitCooldown && (
+                                    <Grid
+                                        container
+                                        spacing={2}
+                                        sx={{
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <Grid size={12}>
+                                            <Tooltip
+                                                title="Sets the PreInitCooldown maximum duration in seconds. This is the maximum time the miner can spend in PreInitCooldown. If the max duration is reached, the miner will skip the initialization temperature checks and start mining. Default is 300 seconds. Setting to 0 means the PreInitCooldown state will last for at most 0 seconds."
+                                                arrow
+                                                placement="top"
                                             >
-                                                PreInit Cooldown Max Duration
-                                                <InfoOutlinedIcon fontSize="small" />
-                                            </Typography>
-                                        </Tooltip>
-                                    </Grid>
-                                    <Grid>
-                                        <TimerIcon />
-                                    </Grid>
-                                    <Grid>
-                                        <Slider
-                                            value={
-                                                typeof this.state.preinit_cooldown_max_duration === 'number'
-                                                    ? this.state.preinit_cooldown_max_duration
-                                                    : 0
-                                            }
-                                            min={0}
-                                            max={MAX_PREINIT_COOLDOWN_DURATION}
-                                            onChange={this.handlePreinitCooldownSlider}
-                                            disabled={this.props.disabled}
-                                            valueLabelDisplay="auto"
-                                        />
-                                    </Grid>
-                                    <Grid>
-                                        <Input
-                                            value={this.state.preinit_cooldown_max_duration}
-                                            margin="dense"
-                                            endAdornment={<InputAdornment position="end">s</InputAdornment>}
-                                            onChange={this.handlePreinitCooldownInputChange}
-                                            onBlur={this.handlePreinitCooldownBlur}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    this.props.handleApi(
-                                                        '/preinitcooldownmaxduration',
-                                                        this.state,
-                                                        this.props.selected,
-                                                    );
+                                                <Typography
+                                                    gutterBottom
+                                                    style={{
+                                                        cursor: 'help',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
+                                                    }}
+                                                >
+                                                    PreInit Cooldown Max Duration
+                                                    <InfoOutlinedIcon fontSize="small" />
+                                                </Typography>
+                                            </Tooltip>
+                                        </Grid>
+                                        <Grid>
+                                            <TimerIcon />
+                                        </Grid>
+                                        <Grid>
+                                            <Slider
+                                                value={
+                                                    typeof this.state.preinit_cooldown_max_duration === 'number'
+                                                        ? this.state.preinit_cooldown_max_duration
+                                                        : 0
                                                 }
-                                            }}
-                                            disabled={this.props.disabled}
-                                            slotProps={{
-                                                input: {
-                                                    step: 10,
-                                                    min: 0,
-                                                    max: MAX_PREINIT_COOLDOWN_DURATION,
-                                                    type: 'number',
-                                                },
-                                            }}
-                                        />
+                                                min={0}
+                                                max={MAX_PREINIT_COOLDOWN_DURATION}
+                                                onChange={this.handlePreinitCooldownSlider}
+                                                disabled={this.props.disabled}
+                                                valueLabelDisplay="auto"
+                                            />
+                                        </Grid>
+                                        <Grid>
+                                            <Input
+                                                value={this.state.preinit_cooldown_max_duration}
+                                                margin="dense"
+                                                endAdornment={<InputAdornment position="end">s</InputAdornment>}
+                                                onChange={this.handlePreinitCooldownInputChange}
+                                                onBlur={this.handlePreinitCooldownBlur}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        this.props.handleApi(
+                                                            '/preinitcooldownmaxduration',
+                                                            this.state,
+                                                            this.props.selected,
+                                                        );
+                                                    }
+                                                }}
+                                                disabled={this.props.disabled}
+                                                slotProps={{
+                                                    input: {
+                                                        step: 10,
+                                                        min: 0,
+                                                        max: MAX_PREINIT_COOLDOWN_DURATION,
+                                                        type: 'number',
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                </Grid>
+                                )}
                             </CardContent>
                         </Card>
                     </Grid>
@@ -661,11 +669,13 @@ export class FanTab extends React.Component {
                                         this.props.handleApi('/fanspeed', this.state, this.props.selected);
                                         this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
                                         this.props.handleApi('/fans/minimum', this.state, this.props.selected);
-                                        this.props.handleApi(
-                                            '/preinitcooldownmaxduration',
-                                            this.state,
-                                            this.props.selected,
-                                        );
+                                        if (supportsPreInitCooldown) {
+                                            this.props.handleApi(
+                                                '/preinitcooldownmaxduration',
+                                                this.state,
+                                                this.props.selected,
+                                            );
+                                        }
                                     }
                                 }}
                                 error={!this.state.password}
@@ -703,20 +713,22 @@ export class FanTab extends React.Component {
                             >
                                 {getMinerActionLabel('Apply Min Fans', this.props.selected)}
                             </Button>
-                            <Button
-                                onClick={() => {
-                                    this.props.handleApi(
-                                        '/preinitcooldownmaxduration',
-                                        this.state,
-                                        this.props.selected,
-                                    );
-                                }}
-                                variant="contained"
-                                color="primary"
-                                disabled={disabled}
-                            >
-                                {getMinerActionLabel('Apply Cooldown', this.props.selected)}
-                            </Button>
+                            {supportsPreInitCooldown && (
+                                <Button
+                                    onClick={() => {
+                                        this.props.handleApi(
+                                            '/preinitcooldownmaxduration',
+                                            this.state,
+                                            this.props.selected,
+                                        );
+                                    }}
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={disabled}
+                                >
+                                    {getMinerActionLabel('Apply Cooldown', this.props.selected)}
+                                </Button>
+                            )}
                         </TabFooter>
                     </Grid>
                 </Grid>
