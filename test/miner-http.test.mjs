@@ -14,6 +14,8 @@ let baseUrl;
 let fixtureDirectory;
 let firmwarePath;
 let failedRequests = 0;
+let apiDocument = null;
+const observedRequests = [];
 const firmware = Buffer.from([0, 1, 2, 127, 128, 254, 255]);
 
 before(async () => {
@@ -21,6 +23,20 @@ before(async () => {
     firmwarePath = path.join(fixtureDirectory, 'firmware.swu');
     await writeFile(firmwarePath, firmware);
     server = http.createServer(async (request, response) => {
+        observedRequests.push(`${request.method} ${request.url}`);
+        if (request.url === '/openapi.json') {
+            if (apiDocument) {
+                response.setHeader('content-type', 'application/json');
+                response.end(JSON.stringify(apiDocument));
+            } else {
+                response.writeHead(404).end('not found');
+            }
+            return;
+        }
+        if (request.url === '/not-advertised') {
+            response.writeHead(404).end('not found');
+            return;
+        }
         if (request.url === '/error') {
             failedRequests++;
             response.writeHead(500).end('error');
@@ -75,6 +91,61 @@ after(async () => {
 test('summary requests use the current timeout and retry API', async () => {
     const response = await minerRequest(`${baseUrl}/summary`, {timeout: {request: 2000}, retry: {limit: 0}});
     assert.deepEqual(JSON.parse(response.body), {ok: true});
+});
+
+test('write requests respect explicit method support and preserve fallback for undocumented paths', async () => {
+    apiDocument = {
+        openapi: '3.1.0',
+        info: {title: 'test miner', version: 'future'},
+        paths: {
+            '/settings': {post: {}},
+            '/json': {post: {}},
+            '/readonly': {get: {}},
+            '/miners/{id}/actions': {patch: {}},
+        },
+    };
+    const before = observedRequests.length;
+    const {body: accepted} = await minerRequest(`${baseUrl}/settings`, {
+        method: 'POST',
+        json: {param: true},
+        responseType: 'json',
+        retry: {limit: 0},
+    });
+    assert.deepEqual(accepted, {ok: true});
+
+    const {body: rejected} = await minerRequest(`${baseUrl}/readonly`, {
+        method: 'POST',
+        json: {param: true},
+        responseType: 'json',
+        retry: {limit: 0},
+    });
+    assert.equal(rejected.result, false);
+    assert.match(rejected.error.UnsupportedOperation, /POST \/readonly/);
+
+    await assert.rejects(
+        minerRequest(`${baseUrl}/not-advertised`, {
+            method: 'POST',
+            json: {param: true},
+            responseType: 'json',
+            retry: {limit: 0},
+        }),
+        {name: 'HTTPError'},
+    );
+
+    const {body: templated} = await minerRequest(`${baseUrl}/miners/rig-42/actions`, {
+        method: 'PATCH',
+        json: {param: true},
+        responseType: 'json',
+        retry: {limit: 0},
+    });
+    assert.deepEqual(templated, {ok: true});
+
+    assert.deepEqual(observedRequests.slice(before), [
+        'GET /openapi.json',
+        'POST /settings',
+        'POST /not-advertised',
+        'PATCH /miners/rig-42/actions',
+    ]);
 });
 
 test('commands preserve JSON request and response bodies', async () => {

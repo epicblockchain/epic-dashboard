@@ -7,63 +7,44 @@ import {
     getPerformancePresetLabel,
     parseOpenApiProfile,
     supportsApiOperation,
-    LEGACY_API_PROFILE,
 } from '../src/apiCompatibility.mjs';
 
-const api122 = parseOpenApiProfile({
-    info: {version: '1.22.5'},
-    paths: {'/summary': {get: {}}, '/tune': {post: {}}},
-});
-const api130 = parseOpenApiProfile({
-    info: {version: '1.30.0'},
-    paths: {
-        '/summary': {get: {}},
-        '/preinitcooldownmaxduration': {post: {}},
-    },
-});
-const api138 = parseOpenApiProfile({
-    info: {version: '1.38.3'},
-    paths: {
-        '/summary': {get: {}},
-        '/preinitcooldownmaxduration': {post: {}},
-        '/perpetualtune/errorthrottle': {post: {}},
-        '/tune/withpowerlimit': {post: {}},
-    },
+test('operation support follows advertised paths and methods without reading API version labels', () => {
+    const profile = parseOpenApiProfile({
+        info: {version: 'future-version'},
+        paths: {
+            '/summary': {get: {}},
+            '/miners/{minerId}/settings': {patch: {}},
+        },
+    });
+
+    assert.equal(supportsApiOperation(profile, '/summary', 'get'), true);
+    assert.equal(supportsApiOperation(profile, '/summary', 'post'), false);
+    assert.equal(supportsApiOperation(profile, '/miners/rig-42/settings', 'patch'), true);
+    assert.equal(supportsApiOperation(profile, '/unlisted-operation', 'post'), null);
+    assert.equal(supportsApiOperation(null, '/unlisted-operation', 'post'), null);
 });
 
-test('API operation support follows the advertised OpenAPI paths across versions', () => {
-    assert.equal(supportsApiOperation(api122, '/preinitcooldownmaxduration'), false);
-    assert.equal(supportsApiOperation(api122, '/perpetualtune/errorthrottle'), false);
-    assert.equal(supportsApiOperation(api130, '/preinitcooldownmaxduration'), true);
-    assert.equal(supportsApiOperation(api130, '/perpetualtune/errorthrottle'), false);
-    assert.equal(supportsApiOperation(api138, '/perpetualtune/errorthrottle'), true);
-    assert.equal(supportsApiOperation(api138, '/tune/withpowerlimit'), true);
-});
-
-test('legacy APIs without OpenAPI metadata skip endpoints absent from the 1.22 spec', () => {
-    assert.equal(supportsApiOperation(LEGACY_API_PROFILE, '/preinitcooldownmaxduration'), false);
-    assert.equal(supportsApiOperation(LEGACY_API_PROFILE, '/perpetualtune/errorthrottle'), false);
-    assert.equal(supportsApiOperation(LEGACY_API_PROFILE, '/tune'), null);
-    assert.equal(supportsApiOperation(null, '/perpetualtune/errorthrottle'), null);
-});
-
-test('OpenAPI profiles reject malformed responses and tolerate missing version labels', () => {
+test('OpenAPI profiles reject malformed documents without depending on info metadata', () => {
     assert.equal(parseOpenApiProfile(null), null);
     assert.equal(parseOpenApiProfile({paths: []}), null);
     assert.deepEqual(parseOpenApiProfile({paths: {'/summary': {get: {}}}}), {
-        version: null,
         paths: {'/summary': {get: {}}},
     });
 });
 
-test('API errors normalize legacy JSON strings and newer tagged response values', () => {
-    assert.equal(formatApiError('{"BadPassword":"Authentication failed"}'), 'Authentication failed');
-    assert.equal(formatApiError('BadPassword'), 'Authentication failed');
+test('API errors normalize arbitrary string, tagged, and message response shapes', () => {
+    assert.equal(formatApiError('{"BadPassword":"Authentication failed"}'), 'Bad Password: Authentication failed');
+    assert.equal(formatApiError('Unexpected device response'), 'Unexpected device response');
     assert.equal(
-        formatApiError({InvalidUrl: ''}),
-        'Invalid URL: this API operation is unsupported by this miner version',
+        formatApiError({code: 'InvalidNumberHashrateSplitConfig', message: 'Expected a number'}),
+        'Invalid Number Hashrate Split Config: Expected a number',
     );
-    assert.equal(formatApiError({InvalidNumberHashrateSplitConfig: 3}), 'InvalidNumberHashrateSplitConfig: 3');
+    assert.equal(formatApiError({InvalidUrl: ''}), 'Invalid Url');
+    assert.equal(
+        formatApiError({UnsupportedOperation: 'No change was sent.'}),
+        'Unsupported Operation: No change was sent.',
+    );
     assert.equal(formatApiError(null), 'Unknown API error');
 });
 
@@ -93,7 +74,13 @@ test('documented Tune Presets populate compatible performance choices and use /t
     });
 });
 
-test('legacy performance presets retain the /mode request', () => {
+test('presets absent or malformed in capabilities produce no performance actions', () => {
+    assert.deepEqual(getCommonPerformancePresets([{otherCapability: []}]), []);
+    assert.deepEqual(getCommonPerformancePresets([{'Tune Presets': [{clk: 'bad', voltage: 12000}]}]), []);
+    assert.equal(buildPerformancePresetAction({clk: 500, voltage: Number.NaN}), null);
+});
+
+test('alternate capability preset shapes remain supported without version checks', () => {
     const presets = getCommonPerformancePresets([{PresetsPowerLevels: {Balanced: [2500, 3000]}}]);
 
     assert.deepEqual(presets[1], {type: 'mode', mode: 'Balanced', power: 3000});

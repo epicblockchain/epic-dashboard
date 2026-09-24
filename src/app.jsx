@@ -13,13 +13,7 @@ import {Preferences} from './preferences.jsx';
 import {Support} from './support.jsx';
 import {Eula} from './eula.jsx';
 import {buildBoardEnableRequest} from './boardControl.mjs';
-import {
-    formatApiError,
-    getOptionalApiOperationName,
-    LEGACY_API_PROFILE,
-    parseOpenApiProfile,
-    supportsApiOperation,
-} from './apiCompatibility.mjs';
+import {formatApiError} from './apiCompatibility.mjs';
 import {
     getMinerModelGroups,
     getTuneCapableModels,
@@ -474,7 +468,6 @@ class App extends React.Component {
         this.defaultTableWrite = Promise.resolve();
         this.defaultTableWriteActive = false;
         this.pendingDefaultTable = null;
-        this.apiProfiles = new Map();
 
         this.setPage = this.setPage.bind(this);
         this.addMiner = this.addMiner.bind(this);
@@ -1178,18 +1171,6 @@ class App extends React.Component {
         for (const i of selected) {
             const promise = this.retryPromise(async () => {
                 try {
-                    const optionalOperation = getOptionalApiOperationName(api);
-                    if (optionalOperation) {
-                        const profile = await this.getApiProfile(miners[i].address);
-                        if (supportsApiOperation(profile, api) === false) {
-                            notify(
-                                'warning',
-                                `${miners[i].address}: ${optionalOperation} are not supported by this miner API. No change was sent.`,
-                            );
-                            return false;
-                        }
-                    }
-
                     if (slow_api) {
                         notify('info', `${miners[i].address}: ${msg}`, {
                             autoClose: api === '/test' ? (data.test !== 'Ft4' ? 220000 : 1000000) : 60000,
@@ -1234,7 +1215,7 @@ class App extends React.Component {
 
                     if (slow_api) toast.dismiss(i);
 
-                    if (body.result) {
+                    if (body?.result === true) {
                         notify('success', `${miners[i].address}: ${success}`);
 
                         if (api == '/reboot' || soft_reboot) {
@@ -1265,28 +1246,16 @@ class App extends React.Component {
                         }
                         return true;
                     } else {
-                        const apiError = formatApiError(body.error);
-                        const isOldFwErrorThrottleUnsupported =
-                            api === '/perpetualtune/errorthrottle' && apiError.toLowerCase().includes('invalid url');
-
-                        if (isOldFwErrorThrottleUnsupported) {
-                            notify(
-                                'warning',
-                                `${miners[i].address}: ${apiError} (this feature may require newer firmware)`,
-                            );
-                        } else {
-                            notify('error', `${miners[i].address}: ${apiError}`);
-                        }
+                        const apiError = formatApiError(body?.error ?? body);
+                        notify('error', `${miners[i].address}: ${apiError}`);
                         return false;
                     }
                 } catch (err) {
                     console.log(err);
-                    if (getOptionalApiOperationName(api) && err?.response?.statusCode === 404) {
-                        notify(
-                            'warning',
-                            `${miners[i].address}: ${getOptionalApiOperationName(api)} are not supported by this miner API. No change was sent.`,
-                        );
-                    }
+                    const statusCode = err?.response?.statusCode;
+                    const reason =
+                        statusCode === 404 ? `API operation ${api} was not found` : formatApiError(err?.message ?? err);
+                    notify(statusCode === 404 ? 'warning' : 'error', `${miners[i].address}: ${reason}`);
                     return false;
                 }
             });
@@ -1302,31 +1271,6 @@ class App extends React.Component {
             if (results.some((r) => r === false)) allSuccess = false;
         }
         return allSuccess;
-    }
-
-    async getApiProfile(address) {
-        if (this.apiProfiles.has(address)) return this.apiProfiles.get(address);
-
-        // Probe lazily: API versions can differ from summary.Software, and the full document is large per miner.
-        const profilePromise = (async () => {
-            try {
-                const {body} = await got(`http://${address}:4028/openapi.json`, {
-                    timeout: {request: 3000},
-                    retry: {limit: 0},
-                    responseType: 'json',
-                });
-                return parseOpenApiProfile(body);
-            } catch (error) {
-                if (error?.response?.statusCode === 404) return LEGACY_API_PROFILE;
-                return null;
-            }
-        })();
-
-        this.apiProfiles.set(address, profilePromise);
-        const profile = await profilePromise;
-        if (profile == null) this.apiProfiles.delete(address);
-        else this.apiProfiles.set(address, profile);
-        return profile;
     }
 
     handleFormApi(api, data, selected) {

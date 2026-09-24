@@ -1,39 +1,55 @@
-const optionalApiOperations = {
-    '/preinitcooldownmaxduration': 'Pre-init cooldown settings',
-    '/perpetualtune/errorthrottle': 'Perpetual Tune error throttle',
-};
-
-const legacyUnsupportedOperations = new Set(Object.keys(optionalApiOperations));
-
-export const LEGACY_API_PROFILE = Object.freeze({legacy: true, paths: Object.freeze({})});
-
-const knownApiErrors = {
-    MissingParam: 'Missing required parameter',
-    BadPassword: 'Authentication failed',
-    InvalidMethod: 'Invalid API method',
-    InvalidUrl: 'Invalid URL: this API operation is unsupported by this miner version',
-};
-
 export function parseOpenApiProfile(value) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
     if (!value.paths || typeof value.paths !== 'object' || Array.isArray(value.paths)) return null;
 
-    return {
-        version: typeof value.info?.version === 'string' ? value.info.version : null,
-        paths: value.paths,
-    };
+    return {paths: value.paths};
 }
 
-export function getOptionalApiOperationName(path) {
-    return optionalApiOperations[path] || null;
-}
+export function supportsApiOperation(profile, path, method = 'get') {
+    if (!profile || typeof profile !== 'object' || !profile.paths) return null;
 
-export function supportsApiOperation(profile, path, method = 'post') {
-    if (!profile || typeof profile !== 'object') return null;
-    if (profile.legacy) return legacyUnsupportedOperations.has(path) ? false : null;
+    const normalizedPath = normalizeApiPath(path);
+    const documentedPath = Object.hasOwn(profile.paths, normalizedPath)
+        ? normalizedPath
+        : Object.keys(profile.paths).find((candidate) => apiPathMatches(candidate, normalizedPath));
+    // A missing path can mean the document is incomplete. A documented path
+    // without the requested method is explicit evidence that the method is unsupported.
+    if (!documentedPath) return null;
 
-    const operation = profile.paths?.[path]?.[String(method).toLowerCase()];
+    const operation = profile.paths[documentedPath]?.[String(method).toLowerCase()];
     return Boolean(operation && typeof operation === 'object');
+}
+
+export function normalizeApiPath(path) {
+    const value = String(path || '');
+    if (!/^[a-z][a-z\d+.-]*:\/\//i.test(value)) {
+        return value.split('?')[0].replace(/\/$/, '') || '/';
+    }
+
+    try {
+        const pathname = new URL(value).pathname;
+        return pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname;
+    } catch {
+        return value.split('?')[0].replace(/\/$/, '') || '/';
+    }
+}
+
+function apiPathMatches(documentedPath, requestPath) {
+    const documented = normalizeApiPath(documentedPath);
+    if (documented === requestPath) return true;
+
+    const expression = documented
+        .split('/')
+        .map((segment) => (/^\{[^/]+\}$/.test(segment) ? '[^/]+' : segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+        .join('/');
+    return new RegExp(`^${expression}$`).test(requestPath);
+}
+
+function humanizeErrorCode(code) {
+    return String(code)
+        .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+        .replace(/[_-]+/g, ' ')
+        .trim();
 }
 
 function normalizeApiError(error) {
@@ -43,33 +59,47 @@ function normalizeApiError(error) {
         const value = error.trim();
         if (!value) return 'Unknown API error';
 
-        if (value.startsWith('{') && value.endsWith('}')) {
-            try {
-                return normalizeApiError(JSON.parse(value));
-            } catch {
-                // Preserve a server message when it is not a JSON object.
-            }
+        try {
+            const parsed = JSON.parse(value);
+            if (parsed !== value) return normalizeApiError(parsed);
+        } catch {
+            // Keep plain text errors intact.
         }
 
-        return knownApiErrors[value] || value;
+        return value;
     }
 
-    if (typeof error === 'object' && !Array.isArray(error)) {
+    if (Array.isArray(error)) {
+        const messages = error.map(normalizeApiError).filter(Boolean);
+        return messages.length ? messages.join('; ') : 'Unknown API error';
+    }
+
+    if (typeof error === 'object') {
         const entries = Object.entries(error);
-        if (entries.length === 1) {
-            const [code, detail] = entries[0];
-            const message = knownApiErrors[code] || code;
-            if (typeof detail === 'string' && detail.trim()) {
-                if (detail.trim() === message || detail.trim() === code) return message;
-                return `${message}: ${detail.trim()}`;
-            }
-            if (detail != null && typeof detail !== 'object' && detail !== '') {
-                return `${message}: ${String(detail)}`;
-            }
-            return message;
+        if (entries.length === 0) return 'Unknown API error';
+
+        const message = error.message ?? error.detail ?? error.description;
+        const code = error.code ?? error.type ?? error.name;
+        if (message != null || code != null) {
+            const readableMessage = message == null ? '' : normalizeApiError(message);
+            const readableCode = code == null ? '' : humanizeErrorCode(code);
+            if (!readableCode) return readableMessage || 'Unknown API error';
+            if (!readableMessage || readableMessage.toLowerCase() === readableCode.toLowerCase()) return readableCode;
+            return `${readableCode}: ${readableMessage}`;
         }
 
-        return JSON.stringify(error);
+        return entries
+            .map(([key, value]) => {
+                const readableKey = humanizeErrorCode(key);
+                if (value == null || value === '') return readableKey;
+                if (typeof value === 'string' && value.trim()) {
+                    if (value.trim().toLowerCase() === readableKey.toLowerCase()) return readableKey;
+                    return `${readableKey}: ${value.trim()}`;
+                }
+                if (typeof value === 'object') return `${readableKey}: ${normalizeApiError(value)}`;
+                return `${readableKey}: ${String(value)}`;
+            })
+            .join('; ');
     }
 
     return String(error);
@@ -80,9 +110,31 @@ export function formatApiError(error) {
 }
 
 export function getPerformancePresets(capabilities) {
-    if (!capabilities || typeof capabilities !== 'object') return [];
+    const tunePresets = capabilities?.['Tune Presets'];
+    if (Array.isArray(tunePresets)) {
+        return tunePresets
+            .filter(
+                (preset) =>
+                    preset &&
+                    typeof preset === 'object' &&
+                    preset.clk != null &&
+                    preset.voltage != null &&
+                    Number.isFinite(Number(preset.clk)) &&
+                    Number.isFinite(Number(preset.voltage)),
+            )
+            .map((preset) => ({
+                type: 'tune',
+                clk: Number(preset.clk),
+                voltage: Number(preset.voltage),
+                hashrate:
+                    preset.hashrate != null && Number.isFinite(Number(preset.hashrate))
+                        ? Number(preset.hashrate)
+                        : null,
+                power: preset.power != null && Number.isFinite(Number(preset.power)) ? Number(preset.power) : null,
+            }));
+    }
 
-    const powerLevels = capabilities.PresetsPowerLevels;
+    const powerLevels = capabilities?.PresetsPowerLevels;
     if (powerLevels && typeof powerLevels === 'object' && !Array.isArray(powerLevels)) {
         return Object.entries(powerLevels).flatMap(([mode, powers]) =>
             (Array.isArray(powers) ? powers : [powers])
@@ -91,34 +143,14 @@ export function getPerformancePresets(capabilities) {
         );
     }
 
-    const legacyPresets = capabilities.Presets;
-    if (legacyPresets && typeof legacyPresets === 'object' && !Array.isArray(legacyPresets)) {
-        return Object.values(legacyPresets)
+    const modePresets = capabilities?.Presets;
+    if (modePresets && typeof modePresets === 'object' && !Array.isArray(modePresets)) {
+        return Object.values(modePresets)
             .filter((mode) => typeof mode === 'string' && mode.trim())
             .map((mode) => ({type: 'mode', mode, power: null}));
     }
 
-    const tunePresets = capabilities['Tune Presets'];
-    if (!Array.isArray(tunePresets)) return [];
-
-    return tunePresets
-        .filter(
-            (preset) =>
-                preset &&
-                typeof preset === 'object' &&
-                preset.clk != null &&
-                preset.voltage != null &&
-                Number.isFinite(Number(preset.clk)) &&
-                Number.isFinite(Number(preset.voltage)),
-        )
-        .map((preset) => ({
-            type: 'tune',
-            clk: Number(preset.clk),
-            voltage: Number(preset.voltage),
-            hashrate:
-                preset.hashrate != null && Number.isFinite(Number(preset.hashrate)) ? Number(preset.hashrate) : null,
-            power: preset.power != null && Number.isFinite(Number(preset.power)) ? Number(preset.power) : null,
-        }));
+    return [];
 }
 
 function getPresetKey(preset) {

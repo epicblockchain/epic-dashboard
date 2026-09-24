@@ -1,5 +1,4 @@
 const {app, BrowserWindow, ipcMain, dialog, shell, screen} = require('electron');
-import got from 'got';
 import {createFirmwareUpload} from './firmwareUpload.mjs';
 import {formatApiError} from './apiCompatibility.mjs';
 import {minerRequest} from './minerHttp.mjs';
@@ -98,14 +97,15 @@ const createWindow = () => {
                     const upload = await createFirmwareUpload(api, data);
                     event.reply('form-post-reply', i, 'info', `${miners[i].address}: Updating in progress`);
 
-                    const {body} = await got.post(`http://${miners[i].address}:4028${api}`, {
+                    const {body} = await minerRequest(`http://${miners[i].address}:4028${api}`, {
                         ...upload,
+                        method: 'POST',
                         responseType: 'json',
                         timeout: {request: 600000},
                         retry: {limit: 0},
                     });
 
-                    if (body.result) {
+                    if (body?.result === true) {
                         mainWindow.webContents.send(
                             'form-result',
                             i,
@@ -117,11 +117,17 @@ const createWindow = () => {
                             'form-result',
                             i,
                             'error',
-                            `${miners[i].address}: ${formatApiError(body.error)}`,
+                            `${miners[i].address}: ${formatApiError(body?.error ?? body)}`,
                         );
                     }
                 } catch (err) {
                     console.log(err);
+                    mainWindow.webContents.send(
+                        'form-result',
+                        i,
+                        'error',
+                        `${miners[i].address}: ${formatApiError(err?.response?.body?.error ?? err?.message ?? err)}`,
+                    );
                 }
             })();
         }
