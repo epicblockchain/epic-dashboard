@@ -56,22 +56,27 @@ export function getSettingsTabs(activeModel, tuneCapableModels = []) {
         {value: 'home', label: 'Home'},
         {value: 'control', label: 'Miner Control'},
         {value: 'mining-config', label: 'Mining Config', requiresCap: true},
-        {value: 'performance', label: 'Performance'},
         {value: 'system', label: 'System'},
-        {value: 'cooling', label: 'Cooling', requiresCap: true},
     ];
 
     if (hasTuneSupport) {
-        tabs.push({value: 'tune', label: 'Tune'}, {value: 'perpetual-tune', label: 'Perpetual Tune'});
+        tabs.push({value: 'perpetual-tune', label: 'Perpetual Tune'});
     }
 
+    tabs.push({value: 'cooling', label: 'Cooling', requiresCap: true});
     tabs.push({value: 'board-control', label: 'Board Control'});
 
     if (hasTuneSupport) {
+        tabs.push({value: 'tune', label: 'Tune'});
+    }
+
+    tabs.push({value: 'performance', label: 'Performance'});
+
+    if (hasTuneSupport) {
         tabs.push(
+            {value: 'enable-boards-on-idle', label: 'Enable Boards on Idle'},
             {value: 'idle-on-connection-lost', label: 'Idle on Connection Lost'},
             {value: 'disable-board-on-fail', label: 'Disable Board on Fail'},
-            {value: 'enable-boards-on-idle', label: 'Enable Boards on Idle'},
             {value: 'license', label: 'License'},
         );
     }
@@ -87,7 +92,23 @@ export function getMinerModelGroups(models, minerData) {
     const modelNames = models instanceof Set ? Array.from(models) : Array.isArray(models) ? models : [];
     const modelGroups = new Set(modelNames.map((model) => normalizeMinerModelName(model)).filter(Boolean));
 
-    if (Array.isArray(minerData) && minerData.some((miner) => !normalizeMinerModelName(miner?.cap?.Model))) {
+    let hasUnclassifiedMiner = false;
+    if (Array.isArray(minerData)) {
+        for (const miner of minerData) {
+            const model = normalizeMinerModelName(miner?.cap?.Model);
+            if (!model) {
+                hasUnclassifiedMiner = true;
+                continue;
+            }
+
+            // Refreshes can start from a stale model list. Rebuild known groups from
+            // the current miner data so a refresh cannot strand valid miners under
+            // an empty or unrelated tab.
+            modelGroups.add(model);
+        }
+    }
+
+    if (hasUnclassifiedMiner) {
         modelGroups.add(UNKNOWN_MODEL);
     } else {
         modelGroups.delete(UNKNOWN_MODEL);

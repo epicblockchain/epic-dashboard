@@ -105,9 +105,23 @@ test('array capability displays keep tune tabs available for their miner model',
     assert.deepEqual(getTuneCapableModels(minerData), ['antminer s19j pro', 'antminer s19j pro+']);
 
     const tabs = getSettingsTabs('AntMiner S19j Pro', getTuneCapableModels(minerData));
-    assert.equal(
-        tabs.findIndex(({value}) => value === 'performance'),
-        3,
+    assert.deepEqual(
+        tabs.map(({value}) => value),
+        [
+            'home',
+            'control',
+            'mining-config',
+            'system',
+            'perpetual-tune',
+            'cooling',
+            'board-control',
+            'tune',
+            'performance',
+            'enable-boards-on-idle',
+            'idle-on-connection-lost',
+            'disable-board-on-fail',
+            'license',
+        ],
     );
     assert.ok(tabs.some(({value, label}) => value === 'perpetual-tune' && label === 'Perpetual Tune'));
     assert.ok(tabs.some(({value}) => value === 'tune'));
@@ -138,6 +152,18 @@ test('a single miner with malformed capabilities gets a readable table group and
     assert.deepEqual(getMinerModelGroups(['undefined', 'M50'], [{cap: {Model: 'M50'}}]), ['M50']);
     assert.equal(getMinerGroupName(' M50 '), 'M50');
     assert.notEqual(getMinerGroupName('undefined'), 'undefined');
+});
+
+test('refreshes rebuild model groups from capabilities already loaded on miners', () => {
+    const miners = [
+        {ip: '192.0.2.12', cap: {Model: 'AntMiner S19j Pro'}},
+        {ip: '192.0.2.13', cap: {Model: 'AntMiner S19j Pro'}},
+    ];
+
+    assert.deepEqual(getMinerModelGroups([UNKNOWN_MODEL], miners), ['AntMiner S19j Pro']);
+    assert.deepEqual(getMinerModelGroups([], miners), ['AntMiner S19j Pro']);
+    assert.deepEqual(getMinerModelGroups([], [...miners, {ip: '192.0.2.14'}]), ['AntMiner S19j Pro', UNKNOWN_MODEL]);
+    assert.deepEqual(getMinerModelGroups([], [{ip: '192.0.2.14'}, ...miners]), ['AntMiner S19j Pro', UNKNOWN_MODEL]);
 });
 
 test('target cells safely render missing or non-text API values', () => {
