@@ -28,6 +28,7 @@ import {
     ListItemButton,
     ListItemText,
     Button,
+    IconButton,
     List,
     Divider,
     Dialog,
@@ -50,6 +51,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
 import PermScanWifiIcon from '@mui/icons-material/PermScanWifi';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -1296,21 +1298,30 @@ class App extends React.Component {
                         &#x2715;
                     </button>
                 </div>
-                <Button
-                    onClick={() => this.toggleDrawer(!this.state.drawerOpen)}
-                    variant="contained"
-                    color="primary"
-                    className={this.state.drawerOpen ? 'menuBut menuButOpen' : 'menuBut'}
-                >
-                    <MenuIcon />
-                </Button>
                 <Drawer
                     variant="permanent"
                     className={this.state.drawerOpen ? 'drawer' : 'drawer drawerClose'}
                     classes={{paper: this.state.drawerOpen ? 'drawer' : 'drawer drawerClose'}}
                 >
                     <List>
-                        <ListItem className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'}>
+                        <ListItem className="drawerToggleRow" disablePadding>
+                            <Tooltip
+                                title={this.state.drawerOpen ? 'Collapse navigation' : 'Expand navigation'}
+                                placement="right"
+                                arrow
+                            >
+                                <IconButton
+                                    aria-label={this.state.drawerOpen ? 'Collapse navigation' : 'Expand navigation'}
+                                    aria-expanded={this.state.drawerOpen}
+                                    onClick={() => this.toggleDrawer(!this.state.drawerOpen)}
+                                    className="drawerToggle"
+                                    color="primary"
+                                >
+                                    {this.state.drawerOpen ? <ChevronLeftIcon /> : <MenuIcon />}
+                                </IconButton>
+                            </Tooltip>
+                        </ListItem>
+                        <ListItem className={this.state.drawerOpen ? 'logo logoOpen' : 'logo'} disablePadding>
                             <img src={logo} width="181px" />
                         </ListItem>
                         <Divider variant="middle" />
