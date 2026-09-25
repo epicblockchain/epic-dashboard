@@ -584,8 +584,9 @@ div.system-apply {
 .perpetual-tune-target-description {
     display: -webkit-box;
     overflow: hidden;
-    min-height: 28px;
+    height: 5.6em;
     margin-top: 1px !important;
+    line-height: 1.4 !important;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
 }
