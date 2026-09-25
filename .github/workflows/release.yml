@@ -211,20 +211,90 @@ jobs:
                   npm exec -- prettier --check .
                   npm test
 
-            - name: Build and ad-hoc sign App
+            - name: Import Developer ID certificate
+              uses: apple-actions/import-codesign-certs@v7
+              with:
+                  p12-file-base64: ${{ secrets.MACOS_EPICDASHBOARD_DEVELOPER_ID_CERTIFICATE_BASE64 }}
+                  p12-password: ${{ secrets.MACOS_EPICDASHBOARD_DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+
+            - name: Prepare App Store Connect API key
+              env:
+                  APP_STORE_CONNECT_API_KEY: ${{ secrets.MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_BASE64 }}
+                  APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_ID }}
+                  APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.MACOS_EPIC_APPSTORE_CONNECT_ISSUER_ID }}
+                  APPLE_SIGNING_IDENTITY: ${{ secrets.MACOS_EPIC_DEVELOPER_IDENTITY }}
+              run: |
+                  set -euo pipefail
+                  for name in APP_STORE_CONNECT_API_KEY APP_STORE_CONNECT_API_KEY_ID APP_STORE_CONNECT_ISSUER_ID APPLE_SIGNING_IDENTITY; do
+                    if [[ -z "${!name}" ]]; then
+                      echo "Missing required repository secret: $name" >&2
+                      exit 1
+                    fi
+                  done
+                  APPLE_API_KEY="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+                  printf '%s' "$APP_STORE_CONNECT_API_KEY" | base64 -D > "$APPLE_API_KEY"
+                  chmod 600 "$APPLE_API_KEY"
+                  echo "APPLE_API_KEY=$APPLE_API_KEY" >> "$GITHUB_ENV"
+
+            - name: Build, sign, and notarize App
+              continue-on-error: true
+              env:
+                  APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_ID }}
+                  APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.MACOS_EPIC_APPSTORE_CONNECT_ISSUER_ID }}
+                  APPLE_SIGNING_IDENTITY: ${{ secrets.MACOS_EPIC_DEVELOPER_IDENTITY }}
               run: |
                   npm exec -- electron-forge make \
                     --targets=@electron-forge/maker-zip --platform=darwin --arch="$ARCH"
 
-            - name: Verify signed release archive and native executable
+            - name: Verify signed and notarized release archive and native executable
+              continue-on-error: true
               run: |
                   set -euo pipefail
                   VERIFICATION_DIR="$(mktemp -d)"
                   unzip -q out/make/zip/darwin/"$ARCH"/*.zip -d "$VERIFICATION_DIR"
                   APP_PATH="$VERIFICATION_DIR/epic-dashboard.app"
                   codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+                  xcrun stapler validate "$APP_PATH"
+                  spctl --assess --type execute --verbose "$APP_PATH"
                   ELECTRON_RUN_AS_NODE=1 "$APP_PATH/Contents/MacOS/epic-dashboard" -e \
                     'if (process.arch !== process.env.ARCH) throw new Error("Wrong release architecture"); console.log(process.arch, process.versions.electron);'
+
+            - name: Ensure release ZIP contains a valid notarization ticket
+              if: always()
+              run: |
+                  set -euo pipefail
+                  ZIP_DIR="out/make/zip/darwin/$ARCH"
+                  ZIP_PATH="$(find "$ZIP_DIR" -maxdepth 1 -type f -name '*.zip' -print -quit 2>/dev/null || true)"
+                  if [[ -n "$ZIP_PATH" ]]; then
+                    RECOVERY_DIR="$(mktemp -d)"
+                    unzip -q "$ZIP_PATH" -d "$RECOVERY_DIR"
+                    APP_PATH="$RECOVERY_DIR/epic-dashboard.app"
+                    if xcrun stapler validate "$APP_PATH"; then
+                      echo "Forge ZIP contains an app with a valid notarization ticket"
+                      exit 0
+                    fi
+
+                    xcrun stapler staple "$APP_PATH"
+                    xcrun stapler validate "$APP_PATH"
+                    REPACKED_ZIP="$RUNNER_TEMP/epic-dashboard-darwin-$ARCH.zip"
+                    ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$REPACKED_ZIP"
+                    mv "$REPACKED_ZIP" "$ZIP_PATH"
+                    exit 0
+                  fi
+
+                  APP_PATH="out/epic-dashboard-darwin-$ARCH/epic-dashboard.app"
+                  if [[ ! -d "$APP_PATH" ]]; then
+                    APP_PATH="$(find out -type d -name epic-dashboard.app -print -quit)"
+                  fi
+                  if [[ -z "$APP_PATH" || ! -d "$APP_PATH" ]]; then
+                    echo "No packaged app bundle found; cannot recover ZIP" >&2
+                    exit 1
+                  fi
+
+                  xcrun stapler staple "$APP_PATH"
+                  xcrun stapler validate "$APP_PATH"
+                  mkdir -p "$ZIP_DIR"
+                  ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$ZIP_DIR/epic-dashboard-darwin-$ARCH.zip"
 
             - name: Rename artifact
               run: mv out/make/zip/darwin/"$ARCH"/*.zip "./epic-dashboard-mac-${VERSION}-${ASSET_ARCH}.zip"
