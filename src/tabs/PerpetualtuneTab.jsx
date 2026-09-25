@@ -140,6 +140,7 @@ export class PerpetualtuneTab extends React.Component {
         }
 
         const hasMinThrot = this.state.algo !== '';
+        const unit = this.state.algo === 'PowerTune' ? 'W' : 'TH/s';
 
         return (
             <div className="tab-body settings-tab perpetual-tune-tab">
@@ -235,7 +236,7 @@ export class PerpetualtuneTab extends React.Component {
                                                 value={this.state.num}
                                                 onChange={this.handleInputChange}
                                                 onBlur={this.handleInputBlur}
-                                                endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                                endAdornment={<InputAdornment position="end">{unit}</InputAdornment>}
                                                 style={{width: 90}}
                                                 slotProps={{
                                                     input: {
@@ -261,7 +262,9 @@ export class PerpetualtuneTab extends React.Component {
                                                     value={this.state.throttle}
                                                     onChange={this.handleThrotChange}
                                                     onBlur={this.handleThrotBlur}
-                                                    endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                                    endAdornment={
+                                                        <InputAdornment position="end">{unit}</InputAdornment>
+                                                    }
                                                     style={{width: 90}}
                                                     slotProps={{
                                                         input: {step: 1, min: 10, max: this.state.num, type: 'number'},
@@ -289,7 +292,9 @@ export class PerpetualtuneTab extends React.Component {
                                                     value={this.state.step}
                                                     onChange={this.handleStepChange}
                                                     onBlur={this.handleStepBlur}
-                                                    endAdornment={<InputAdornment position="end">TH/s</InputAdornment>}
+                                                    endAdornment={
+                                                        <InputAdornment position="end">{unit}</InputAdornment>
+                                                    }
                                                     style={{width: 90}}
                                                     slotProps={{
                                                         input: {
