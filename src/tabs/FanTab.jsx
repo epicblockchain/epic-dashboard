@@ -19,11 +19,17 @@ import WindPowerIcon from '@mui/icons-material/WindPower';
 import TimerIcon from '@mui/icons-material/Timer';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
+import './SystemTab.css';
 
 const MAX_FANS = 4;
 const MAX_PREINIT_COOLDOWN_DURATION = 600;
 
-import './SystemTab.css';
+function hasSelectionChanged(previousSelection = [], selection = []) {
+    return (
+        previousSelection.length !== selection.length ||
+        previousSelection.some((miner, index) => miner !== selection[index])
+    );
+}
 
 export class FanTab extends React.Component {
     constructor(props) {
@@ -66,52 +72,59 @@ export class FanTab extends React.Component {
         this.handlePreinitCooldownBlur = this.handlePreinitCooldownBlur.bind(this);
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidMount() {
+        this.syncSelectedMinerSettings();
+    }
+
+    componentDidUpdate(prevProps) {
         if (prevProps.sessionPass != this.props.sessionPass) {
             this.setState({password: this.props.sessionPass});
         }
-        if (prevProps.selected != this.props.selected) {
-            const data = this.props.data?.[this.props.selected[0]];
-            if (data && data.sum.Fans && data.sum.Misc) {
-                this.setState({speed: data.sum.Fans['Fans Speed']});
-                if (data.sum.Fans['Fan Mode']) {
-                    this.setState({autofan_enabled: true});
-                    if (data.sum.Fans['Fan Mode']['Auto']) {
-                        this.setState({
-                            autofan: true,
-                            target_temp: data.sum.Fans['Fan Mode']['Auto']['Target Temperature'],
-                            idle_speed: data.sum.Fans['Fan Mode']['Auto']['Idle Speed'],
-                        });
-                    }
-                }
-                if (data.sum.Misc['Critical Temp']) {
-                    this.setState({crit_temp_enabled: true, criticaltemp: data.sum.Misc['Critical Temp']});
-                    if (this.state.shutdowntemp > data.sum.Misc['Critical Temp'] - 5) {
-                        this.setState({shutdowntemp: data.sum.Misc['Critical Temp'] - 5});
-                    }
-                } else {
-                    this.setState({
-                        crit_temp_enabled: false,
-                        criticaltemp: 110,
-                    });
-                }
-                this.setState({shutdowntemp: data.sum.Misc['Shutdown Temp']});
-            } else {
-                this.setState({autofan_enabled: false, autofan: false, crit_temp_enabled: false, criticaltemp: 110});
-            }
-
-            if (data && data.sum.Fans) {
-                this.setState({min_working_fans: data.sum.Fans['Minimum Working Fans']});
-            } else {
-                this.setState({min_working_fans: 0});
-            }
-
-            if (data && data.sum) {
-                if (data.sum['PreInitCooldown Max Duration'] !== undefined) {
-                    this.setState({preinit_cooldown_max_duration: data.sum['PreInitCooldown Max Duration']});
-                }
-            }
+        if (hasSelectionChanged(prevProps.selected, this.props.selected)) {
+            this.syncSelectedMinerSettings();
         }
+    }
+
+    syncSelectedMinerSettings() {
+        const data = this.props.data?.[this.props.selected[0]];
+        const nextState = {};
+
+        if (data && data.sum?.Fans && data.sum?.Misc) {
+            const fans = data.sum.Fans;
+            const misc = data.sum.Misc;
+            const fanMode = fans['Fan Mode'];
+            const autoFan = fanMode?.Auto;
+            const criticalTemp = misc['Critical Temp'];
+
+            nextState.speed = fans['Fans Speed'];
+            nextState.autofan_enabled = Boolean(fanMode);
+            nextState.autofan = Boolean(autoFan);
+            if (autoFan) {
+                nextState.target_temp = autoFan['Target Temperature'];
+                nextState.idle_speed = autoFan['Idle Speed'];
+            }
+
+            nextState.crit_temp_enabled = Boolean(criticalTemp);
+            nextState.criticaltemp = criticalTemp || 110;
+            nextState.shutdowntemp = misc['Shutdown Temp'];
+        } else {
+            nextState.autofan_enabled = false;
+            nextState.autofan = false;
+            nextState.crit_temp_enabled = false;
+            nextState.criticaltemp = 110;
+        }
+
+        if (data?.sum?.Fans) {
+            nextState.min_working_fans = data.sum.Fans['Minimum Working Fans'];
+        } else {
+            nextState.min_working_fans = 0;
+        }
+
+        if (data?.sum?.['PreInitCooldown Max Duration'] !== undefined) {
+            nextState.preinit_cooldown_max_duration = data.sum['PreInitCooldown Max Duration'];
+        }
+
+        this.setState(nextState);
     }
 
     updateCheck(e) {
