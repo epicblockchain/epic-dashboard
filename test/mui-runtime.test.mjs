@@ -246,8 +246,8 @@ test('PerpetualTune keeps target, throttle and step limits and forwards algorith
         },
     );
     assert.deepEqual(numericInputs(tab), [
-        {step: 1, min: 20, max: 200, type: 'number'},
-        {step: 1, min: 10, max: 100, type: 'number'},
+        {step: 1, min: 21, max: 200, type: 'number'},
+        {step: 1, min: 10, max: 99, type: 'number'},
         {step: 1, min: 1, max: 80, type: 'number'},
     ]);
     for (const algorithm of ['BoardTune', 'ChipTune', 'PowerTune']) {
@@ -270,6 +270,86 @@ test('PerpetualTune keeps target, throttle and step limits and forwards algorith
     assert.equal(tab.state.desc, 'Fixture algorithm');
     assert.equal(tab.state.min, 10);
     assert.equal(tab.state.max, 200);
+});
+
+test('PowerTune uses watt defaults and requires at least a 100 W throttle step', () => {
+    const {tab} = instance(
+        PerpetualtuneTab,
+        {checked: true},
+        {
+            data: [
+                {
+                    cap: {
+                        PerpetualTune: {
+                            power: {
+                                algorithm: 'PowerTune',
+                                name: 'Power Tune',
+                                description: 'Power optimization',
+                                min: 1000,
+                                max: 4000,
+                            },
+                            chip: {
+                                algorithm: 'ChipTune',
+                                name: 'Chip Tune',
+                                description: 'Hashrate optimization',
+                                min: 60,
+                                max: 400,
+                            },
+                        },
+                    },
+                },
+            ],
+        },
+    );
+
+    tab.updateAlgorithm({
+        target: {value: 'PowerTune', name: 'Power Tune', id: 'Power optimization', min: '1000', max: '4000'},
+    });
+
+    assert.deepEqual(
+        {target: tab.state.num, throttle: tab.state.throttle, step: tab.state.step},
+        {target: 3000, throttle: 1000, step: 100},
+    );
+    assert.deepEqual(numericInputs(tab), [
+        {step: 100, min: 1100, max: 4000, type: 'number'},
+        {step: 100, min: 1000, max: 2900, type: 'number'},
+        {step: 100, min: 100, max: 2000, type: 'number'},
+    ]);
+
+    const markup = renderToStaticMarkup(tab.render());
+    assert.match(markup, /value="3000"/);
+    assert.equal((markup.match(/>W</g) || []).length, 3);
+    tab.state.algo = 'ChipTune';
+    assert.match(renderToStaticMarkup(tab.render()), /TH\/s/);
+});
+
+test('PerpetualTune clears a stale algorithm when the selected miner changes', () => {
+    const {tab} = instance(
+        PerpetualtuneTab,
+        {
+            checked: true,
+            algo: 'PowerTune',
+            name: 'Power Tune',
+            num: 1100,
+            throttle: 1000,
+            step: 100,
+            min: 1000,
+            max: 4000,
+        },
+        {
+            data: [
+                {cap: {PerpetualTune: [{algorithm: 'PowerTune'}]}},
+                {cap: {PerpetualTune: [{algorithm: 'ChipTune'}]}},
+            ],
+        },
+    );
+    const previousProps = {...tab.props};
+    tab.props = {...tab.props, selected: [1]};
+
+    tab.componentDidUpdate(previousProps, tab.state);
+
+    assert.equal(tab.state.algo, '');
+    assert.equal(tab.state.num, 0);
 });
 
 test('firmware selection retains its extension when React batches state updates', async () => {

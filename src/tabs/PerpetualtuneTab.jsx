@@ -7,6 +7,21 @@ import FormControl from '@mui/material/FormControl';
 import InfoIcon from '@mui/icons-material/Info';
 import {getMinerActionLabel, TabFooter, TabHeader} from './TabLayout.jsx';
 const MIN_THROTTLE = 10;
+const POWER_TUNE_ALGORITHM = 'PowerTune';
+const POWER_TUNE_MIN_THROTTLE = 1000;
+const POWER_TUNE_MIN_STEP = 100;
+const POWER_TUNE_DEFAULT_TARGET = 3000;
+const DEFAULT_THROTTLE_STEP = 5;
+
+function getThrottleLimits(algorithm) {
+    const isPowerTune = algorithm === POWER_TUNE_ALGORITHM;
+    return {
+        minThrottle: isPowerTune ? POWER_TUNE_MIN_THROTTLE : MIN_THROTTLE,
+        minStep: isPowerTune ? POWER_TUNE_MIN_STEP : 1,
+        defaultStep: isPowerTune ? POWER_TUNE_MIN_STEP : DEFAULT_THROTTLE_STEP,
+    };
+}
+
 export class PerpetualtuneTab extends React.Component {
     constructor(props) {
         super(props);
@@ -18,7 +33,7 @@ export class PerpetualtuneTab extends React.Component {
             desc: '',
             num: 0,
             throttle: MIN_THROTTLE,
-            step: 5,
+            step: DEFAULT_THROTTLE_STEP,
             min: 0,
             max: 0,
             password: this.props.sessionPass,
@@ -37,8 +52,35 @@ export class PerpetualtuneTab extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        const previousSelection = prevProps.selected || [];
+        const selection = this.props.selected || [];
+        const selectionChanged =
+            previousSelection.length !== selection.length ||
+            previousSelection.some((miner, index) => miner !== selection[index]);
+        const perpetualTune = this.props.data?.[selection[0]]?.cap?.PerpetualTune || {};
+        const algorithmAvailable = Object.values(perpetualTune).some(
+            (algorithm) => algorithm?.algorithm === this.state.algo,
+        );
+        const resetAlgorithm = selectionChanged || (this.state.algo && !algorithmAvailable);
+        const updates = {};
+
+        if (resetAlgorithm) {
+            Object.assign(updates, {
+                algo: '',
+                name: '',
+                desc: '',
+                num: 0,
+                throttle: MIN_THROTTLE,
+                step: DEFAULT_THROTTLE_STEP,
+                min: 0,
+                max: 0,
+            });
+        }
         if (prevProps.sessionPass != this.props.sessionPass) {
-            this.setState({password: this.props.sessionPass});
+            updates.password = this.props.sessionPass;
+        }
+        if (Object.keys(updates).length > 0) {
+            this.setState(updates);
         }
     }
 
@@ -51,17 +93,28 @@ export class PerpetualtuneTab extends React.Component {
     }
 
     updateAlgorithm(e) {
-        this.setState({algo: e.target.value});
-        this.setState({name: e.target.name});
-        this.setState({desc: e.target.id});
-        this.setState({min: Number(e.target.min)});
-        this.setState({max: Number(e.target.max)});
-        this.setState({num: Number(e.target.min)});
+        const algorithm = e.target.value;
+        const min = Number(e.target.min);
+        const max = Number(e.target.max);
+        const {minThrottle, minStep, defaultStep} = getThrottleLimits(algorithm);
+        const defaultTarget = algorithm === POWER_TUNE_ALGORITHM ? POWER_TUNE_DEFAULT_TARGET : min;
+        const num = Math.min(max, Math.max(min, defaultTarget));
+        this.setState({
+            algo: algorithm,
+            name: e.target.name,
+            desc: e.target.id,
+            min,
+            max,
+            num,
+            throttle: Math.min(minThrottle, num - minStep),
+            step: defaultStep,
+        });
     }
 
     equalityCheck() {
-        if (this.state.throttle > this.state.num) {
-            const newVal = Math.max(this.state.num, MIN_THROTTLE);
+        const {minThrottle, minStep} = getThrottleLimits(this.state.algo);
+        if (this.state.throttle > this.state.num - minStep) {
+            const newVal = Math.max(this.state.num - minStep, minThrottle);
             this.setState({throttle: newVal});
         }
     }
@@ -71,7 +124,11 @@ export class PerpetualtuneTab extends React.Component {
             this.setState({num: newVal});
             return;
         }
-        this.setState({num: Math.max(newVal[1], this.state.min ?? 60), throttle: newVal[0]});
+        const {minStep} = getThrottleLimits(this.state.algo);
+        this.setState({
+            num: Math.max(newVal[1], Number(this.state.min), newVal[0] + minStep),
+            throttle: newVal[0],
+        });
     }
 
     handleInputChange(e) {
@@ -87,21 +144,27 @@ export class PerpetualtuneTab extends React.Component {
     }
 
     handleInputBlur() {
-        if (this.state.num < this.state.min) this.setState({num: this.state.min});
+        const {minStep} = getThrottleLimits(this.state.algo);
+        const minTarget = Math.max(Number(this.state.min), Number(this.state.throttle) + minStep);
+        if (this.state.num < minTarget) this.setState({num: minTarget});
         else if (this.state.num > this.state.max) this.setState({num: this.state.max});
         this.equalityCheck();
     }
 
     handleThrotBlur() {
-        if (this.state.throttle < 10) this.setState({throttle: 10});
-        if (this.state.num < this.state.throttle) this.setState({throt: this.state.num});
-        this.equalityCheck();
+        const {minThrottle, minStep} = getThrottleLimits(this.state.algo);
+        const maxThrottle = Math.max(minThrottle, Number(this.state.num) - minStep);
+        const value = Number(this.state.throttle);
+        const throttle = Number.isFinite(value) ? value : minThrottle;
+        this.setState({throttle: Math.min(Math.max(throttle, minThrottle), maxThrottle)});
     }
 
     handleStepBlur() {
-        if (this.state.step < 1) this.setState({step: 1});
+        const {minStep} = getThrottleLimits(this.state.algo);
         const max = this.state.num - this.state.throttle;
-        if (this.state.step > max) this.setState({step: max});
+        const value = Number(this.state.step);
+        const step = Number.isFinite(value) ? value : minStep;
+        this.setState({step: Math.min(Math.max(step, minStep), Math.max(minStep, max))});
     }
 
     updatePassword(e) {
@@ -140,7 +203,9 @@ export class PerpetualtuneTab extends React.Component {
         }
 
         const hasMinThrot = this.state.algo !== '';
-        const unit = this.state.algo === 'PowerTune' ? 'W' : 'TH/s';
+        const {minThrottle, minStep} = getThrottleLimits(this.state.algo);
+        const unit = this.state.algo === POWER_TUNE_ALGORITHM ? 'W' : 'TH/s';
+        const minTarget = Math.max(Number(this.state.min), Number(this.state.throttle) + minStep);
 
         return (
             <div className="tab-body settings-tab perpetual-tune-tab">
@@ -218,8 +283,9 @@ export class PerpetualtuneTab extends React.Component {
                                 <div className="perpetual-tune-target-controls">
                                     <Slider
                                         value={hasMinThrot ? [this.state.throttle, this.state.num] : this.state.num}
-                                        min={hasMinThrot ? MIN_THROTTLE : Number(this.state.min)}
+                                        min={hasMinThrot ? minThrottle : Number(this.state.min)}
                                         max={Number(this.state.max)}
+                                        step={minStep}
                                         marks={marks}
                                         valueLabelDisplay="auto"
                                         valueLabelFormat={(x) => {
@@ -240,8 +306,8 @@ export class PerpetualtuneTab extends React.Component {
                                                 style={{width: 90}}
                                                 slotProps={{
                                                     input: {
-                                                        step: 1,
-                                                        min: hasMinThrot ? this.state.throttle : this.state.min,
+                                                        step: minStep,
+                                                        min: hasMinThrot ? minTarget : this.state.min,
                                                         max: this.state.max,
                                                         type: 'number',
                                                     },
@@ -267,7 +333,12 @@ export class PerpetualtuneTab extends React.Component {
                                                     }
                                                     style={{width: 90}}
                                                     slotProps={{
-                                                        input: {step: 1, min: 10, max: this.state.num, type: 'number'},
+                                                        input: {
+                                                            step: minStep,
+                                                            min: minThrottle,
+                                                            max: this.state.num - minStep,
+                                                            type: 'number',
+                                                        },
                                                     }}
                                                 />
                                                 <Typography
@@ -298,8 +369,8 @@ export class PerpetualtuneTab extends React.Component {
                                                     style={{width: 90}}
                                                     slotProps={{
                                                         input: {
-                                                            step: 1,
-                                                            min: 1,
+                                                            step: minStep,
+                                                            min: minStep,
                                                             max: this.state.num - this.state.throttle,
                                                             type: 'number',
                                                         },

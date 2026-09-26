@@ -546,8 +546,13 @@ div.system-apply {
     padding-top: 3px;
 }
 
+.perpetual-tune-tab.settings-tab:has(.settings-tab-footer) {
+    padding-bottom: 68px;
+}
+
 .perpetual-tune-layout {
     display: grid;
+    flex: 1 1 auto;
     grid-template-columns: minmax(180px, 0.7fr) minmax(220px, 0.9fr) minmax(320px, 1.4fr);
     min-height: 0;
 }
@@ -591,11 +596,18 @@ div.system-apply {
     -webkit-line-clamp: 4;
 }
 
+.perpetual-tune-target {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .perpetual-tune-target-controls {
     display: flex;
     align-items: center;
     gap: 24px;
-    margin-top: 4px;
+    margin-top: auto;
+    padding-top: 4px;
 }
 
 .perpetual-tune-target-controls .MuiSlider-root {
