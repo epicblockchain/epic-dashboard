@@ -654,18 +654,117 @@ div.system-apply {
     gap: 5px;
 }
 
-#table .cooling-tab .MuiGrid-container {
-    --Grid-rowSpacing: 5px !important;
-    --Grid-columnSpacing: 6px !important;
+.cooling-layout {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: minmax(0, 1.1fr) repeat(2, minmax(0, 1fr));
+    min-height: 0;
 }
 
-#table .cooling-tab .MuiCardContent-root,
-#table .cooling-tab .MuiCardContent-root:last-child {
-    padding: 6px 8px;
+.cooling-section {
+    min-width: 0;
+    padding: 2px 16px;
 }
 
-#table .cooling-tab .MuiCardContent-root > .MuiGrid-container > .MuiGrid-root > .MuiTypography-root {
-    line-height: 1.15;
+.cooling-section:first-child {
+    padding-left: 6px;
+}
+
+.cooling-section + .cooling-section {
+    border-left: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+.cooling-section .compact-section-title {
+    margin-bottom: 4px;
+}
+
+.cooling-mode-row,
+.cooling-mode-toggle {
+    display: flex;
+    align-items: center;
+}
+
+.cooling-mode-row {
+    min-height: 26px;
+    justify-content: space-between;
+}
+
+.cooling-mode-toggle {
+    gap: 4px;
+}
+
+.cooling-setting + .cooling-setting {
+    margin-top: 3px;
+}
+
+.cooling-control-label {
+    display: flex;
+    min-height: 16px;
+    align-items: center;
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.cooling-help-label {
+    width: fit-content;
+    gap: 3px;
+    cursor: help;
+}
+
+#table .cooling-tab .cooling-help-label .MuiSvgIcon-root {
+    width: 11px;
+    height: 11px;
+    font-size: 11px;
+}
+
+.cooling-control-row {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) 70px;
+    min-height: 28px;
+    align-items: center;
+    gap: 7px;
+}
+
+.cooling-control-row > .MuiSvgIcon-root {
+    font-size: 1.1rem;
+}
+
+#table .cooling-tab .cooling-control-row .MuiSlider-root {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+@media (max-width: 980px) {
+    .cooling-layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow-y: auto;
+    }
+
+    .cooling-section:nth-child(3) {
+        grid-column: 1 / -1;
+        border-top: 1px solid rgba(127, 127, 127, 0.25);
+        border-left: 0;
+        padding-top: 8px;
+    }
+}
+
+@media (max-width: 620px) {
+    .cooling-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cooling-section + .cooling-section {
+        border-top: 1px solid rgba(127, 127, 127, 0.25);
+        border-left: 0;
+        padding-top: 8px;
+    }
+
+    .cooling-section:nth-child(3) {
+        grid-column: auto;
+    }
 }
 
 /* Tune */

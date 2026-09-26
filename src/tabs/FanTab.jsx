@@ -1,17 +1,5 @@
 import * as React from 'react';
-import {
-    Button,
-    TextField,
-    Slider,
-    Input,
-    Typography,
-    Grid,
-    InputAdornment,
-    Switch,
-    Card,
-    CardContent,
-    Tooltip,
-} from '@mui/material';
+import {Button, TextField, Slider, Input, Typography, InputAdornment, Switch, Tooltip} from '@mui/material';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -263,488 +251,337 @@ export class FanTab extends React.Component {
                     title="Cooling"
                     description="Configure fan behavior, temperature limits, and cooldown safeguards."
                 />
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{
-                        alignItems: 'stretch',
-                    }}
-                >
-                    <Grid
-                        size={{
-                            xs: 12,
-                            md: 4,
-                        }}
-                    >
-                        <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                            <CardContent>
-                                <Grid container spacing={2}>
-                                    <Grid size={12}>
-                                        <Typography gutterBottom>Fan Speed</Typography>
-                                    </Grid>
-                                    {this.state.autofan_enabled ? (
-                                        <Grid size={12}>
-                                            <Typography variant="subtitle2" color="textSecondary">
-                                                AutoFan
-                                                <Switch
-                                                    size="small"
-                                                    color="primary"
-                                                    checked={this.state.autofan}
-                                                    onChange={this.updateCheck}
-                                                />
-                                            </Typography>
-                                        </Grid>
-                                    ) : (
-                                        <></>
-                                    )}
-                                    {this.state.autofan ? (
-                                        <Grid>
-                                            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                                Set the operating temperature of autofan
-                                            </Typography>
-                                            <Grid
-                                                container
-                                                spacing={2}
-                                                sx={{
-                                                    alignItems: 'center',
-                                                }}
-                                            >
-                                                <Grid>
-                                                    <DeviceThermostatIcon color="primary" />
-                                                </Grid>
-                                                <Grid>
-                                                    <Slider
-                                                        value={
-                                                            typeof this.state.target_temp === 'number'
-                                                                ? this.state.target_temp
-                                                                : 60
-                                                        }
-                                                        min={45}
-                                                        onChange={this.handleTargetTempSlider}
-                                                        disabled={this.props.disabled || this.state.lock}
-                                                    />
-                                                </Grid>
-                                                <Grid>
-                                                    <Input
-                                                        value={this.state.target_temp}
-                                                        margin="dense"
-                                                        endAdornment={
-                                                            <InputAdornment position="end">{'\u00b0C'}</InputAdornment>
-                                                        }
-                                                        onChange={this.handleTargetTempInputChange}
-                                                        onBlur={this.handleTargetTempInputBlur}
-                                                        disabled={this.props.disabled || this.state.lock}
-                                                        style={{width: '70px'}}
-                                                        slotProps={{
-                                                            input: {step: 5, min: 45, max: 100, type: 'number'},
-                                                        }}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                                Set the fan speed when Idling
-                                            </Typography>
-                                            <Grid
-                                                container
-                                                spacing={2}
-                                                sx={{
-                                                    alignItems: 'center',
-                                                }}
-                                            >
-                                                <Grid>
-                                                    <WindPowerIcon color="primary" />
-                                                </Grid>
-                                                <Grid>
-                                                    <Slider
-                                                        value={
-                                                            typeof this.state.idle_speed === 'number'
-                                                                ? this.state.idle_speed
-                                                                : 100
-                                                        }
-                                                        min={10}
-                                                        onChange={this.handleIdleSpeedSlider}
-                                                        disabled={this.props.disabled || this.state.lock}
-                                                    />
-                                                </Grid>
-                                                <Grid>
-                                                    <Input
-                                                        value={this.state.idle_speed}
-                                                        margin="dense"
-                                                        endAdornment={<InputAdornment position="end">%</InputAdornment>}
-                                                        onChange={this.handleIdleSpeedInputChange}
-                                                        onBlur={this.handleIdleSpeedInputBlur}
-                                                        disabled={this.props.disabled || this.state.lock}
-                                                        style={{width: '70px'}}
-                                                        slotProps={{
-                                                            input: {step: 10, min: 10, max: 100, type: 'number'},
-                                                        }}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    ) : (
-                                        <>
-                                            <Grid>
-                                                <WindPowerIcon />
-                                            </Grid>
-                                            <Grid>
-                                                <Slider
-                                                    value={typeof this.state.speed === 'number' ? this.state.speed : 1}
-                                                    min={1}
-                                                    onChange={this.handleSlider}
-                                                    disabled={this.props.disabled}
-                                                />
-                                            </Grid>
-                                            <Grid>
-                                                <Input
-                                                    value={this.state.speed}
-                                                    margin="dense"
-                                                    onChange={this.handleInputChange}
-                                                    onBlur={this.handleInputBlur}
-                                                    onKeyPress={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            this.props.handleApi(
-                                                                '/fanspeed',
-                                                                this.state,
-                                                                this.props.selected,
-                                                            );
-                                                        }
-                                                    }}
-                                                    disabled={this.props.disabled}
-                                                    slotProps={{
-                                                        input: {step: 10, min: 1, max: 100, type: 'number'},
-                                                    }}
-                                                />
-                                            </Grid>
-                                        </>
-                                    )}
-                                </Grid>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid
-                        size={{
-                            xs: 12,
-                            md: 4,
-                        }}
-                    >
-                        <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                            <CardContent>
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    sx={{
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Grid size={12}>
-                                        <Typography gutterBottom>Shutdown Temperature</Typography>
-                                    </Grid>
-                                    <Grid>
-                                        <ThermostatIcon />
-                                    </Grid>
-                                    <Grid>
+                <div className="cooling-layout">
+                    <section className="cooling-section">
+                        <Typography className="compact-section-title">Fan settings</Typography>
+                        {this.state.autofan_enabled && (
+                            <div className="cooling-mode-row">
+                                <Typography variant="body2">AutoFan</Typography>
+                                <div className="cooling-mode-toggle">
+                                    <Typography variant="caption">
+                                        {this.state.autofan ? 'Automatic' : 'Manual'}
+                                    </Typography>
+                                    <Switch
+                                        size="small"
+                                        color="primary"
+                                        checked={this.state.autofan}
+                                        onChange={this.updateCheck}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {this.state.autofan ? (
+                            <>
+                                <div className="cooling-setting">
+                                    <Typography className="cooling-control-label">Target temperature</Typography>
+                                    <div className="cooling-control-row">
+                                        <DeviceThermostatIcon color="primary" />
                                         <Slider
                                             value={
-                                                typeof this.state.shutdowntemp === 'number'
-                                                    ? this.state.shutdowntemp
-                                                    : 60
+                                                typeof this.state.target_temp === 'number' ? this.state.target_temp : 60
                                             }
-                                            min={60}
-                                            max={110}
-                                            onChange={this.handleShutdownTempSlider}
-                                            disabled={this.props.disabled}
+                                            min={45}
+                                            onChange={this.handleTargetTempSlider}
+                                            disabled={this.props.disabled || this.state.lock}
+                                            aria-label="AutoFan target temperature"
                                         />
-                                    </Grid>
-                                    <Grid>
                                         <Input
-                                            value={this.state.shutdowntemp}
+                                            value={this.state.target_temp}
                                             margin="dense"
-                                            onChange={this.handleShutdownTempInputChange}
-                                            onBlur={this.handleShutdownInputBlur}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    this.props.handleApi(
-                                                        '/shutdowntemp',
-                                                        this.state,
-                                                        this.props.selected,
-                                                    );
-                                                }
-                                            }}
-                                            disabled={this.props.disabled}
-                                            slotProps={{
-                                                input: {step: 5, min: 60, max: 110, type: 'number'},
-                                            }}
+                                            endAdornment={<InputAdornment position="end">{'\u00b0C'}</InputAdornment>}
+                                            onChange={this.handleTargetTempInputChange}
+                                            onBlur={this.handleTargetTempInputBlur}
+                                            disabled={this.props.disabled || this.state.lock}
+                                            style={{width: '70px'}}
+                                            slotProps={{input: {step: 5, min: 45, max: 100, type: 'number'}}}
                                         />
-                                    </Grid>
-                                </Grid>
-                                {this.state.crit_temp_enabled ? (
-                                    <Grid
-                                        container
-                                        spacing={2}
-                                        sx={{
-                                            alignItems: 'center',
-                                        }}
-                                    >
-                                        <Grid size={12}>
-                                            <Typography gutterBottom>Critical Temperature</Typography>
-                                        </Grid>
-                                        <Grid>
-                                            <ThermostatIcon />
-                                        </Grid>
-                                        <Grid>
-                                            <Slider
-                                                value={
-                                                    typeof this.state.criticaltemp === 'number'
-                                                        ? this.state.criticaltemp
-                                                        : 110
-                                                }
-                                                min={60}
-                                                max={110}
-                                                onChange={this.handleCritTempSlider}
-                                                disabled={this.props.disabled}
-                                            />
-                                        </Grid>
-                                        <Grid>
-                                            <Input
-                                                value={this.state.criticaltemp}
-                                                margin="dense"
-                                                onChange={this.handleCritTempInputChange}
-                                                onBlur={this.handleCritInputBlur}
-                                                onKeyPress={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        this.props.handleApi(
-                                                            '/critcaltemp',
-                                                            this.state,
-                                                            this.props.selected,
-                                                        );
-                                                    }
-                                                }}
-                                                disabled={this.props.disabled}
-                                                slotProps={{
-                                                    input: {step: 5, min: 60, max: 110, type: 'number'},
-                                                }}
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                ) : (
-                                    <></>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid
-                        size={{
-                            xs: 12,
-                            md: 4,
-                        }}
-                    >
-                        <Card style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                            <CardContent>
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    sx={{
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Grid size={12}>
-                                        <Typography gutterBottom>Minimum Working Fans</Typography>
-                                    </Grid>
-                                    <Grid>
-                                        <WarningIcon />
-                                    </Grid>
-                                    <Grid>
+                                    </div>
+                                </div>
+                                <div className="cooling-setting">
+                                    <Typography className="cooling-control-label">Idle fan speed</Typography>
+                                    <div className="cooling-control-row">
+                                        <WindPowerIcon color="primary" />
                                         <Slider
                                             value={
-                                                typeof this.state.min_working_fans === 'number'
-                                                    ? this.state.min_working_fans
-                                                    : 0
+                                                typeof this.state.idle_speed === 'number' ? this.state.idle_speed : 100
                                             }
-                                            min={0}
-                                            max={MAX_FANS}
-                                            onChange={this.handleMinWorkingFansSlider}
-                                            disabled={this.props.disabled}
-                                            valueLabelDisplay="auto"
-                                            marks
+                                            min={10}
+                                            onChange={this.handleIdleSpeedSlider}
+                                            disabled={this.props.disabled || this.state.lock}
+                                            aria-label="Idle fan speed"
                                         />
-                                    </Grid>
-                                    <Grid>
                                         <Input
-                                            value={this.state.min_working_fans}
+                                            value={this.state.idle_speed}
                                             margin="dense"
-                                            onChange={this.handleMinWorkingFansInputChange}
-                                            onBlur={this.handleMinWorkingFansBlur}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    this.props.handleApi(
-                                                        '/fans/minimum',
-                                                        this.state,
-                                                        this.props.selected,
-                                                    );
-                                                }
-                                            }}
-                                            disabled={this.props.disabled}
-                                            slotProps={{
-                                                input: {step: 1, min: 0, max: MAX_FANS, type: 'number'},
-                                            }}
+                                            endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                                            onChange={this.handleIdleSpeedInputChange}
+                                            onBlur={this.handleIdleSpeedInputBlur}
+                                            disabled={this.props.disabled || this.state.lock}
+                                            style={{width: '70px'}}
+                                            slotProps={{input: {step: 10, min: 10, max: 100, type: 'number'}}}
                                         />
-                                    </Grid>
-                                </Grid>
-                                {supportsPreInitCooldown && (
-                                    <Grid
-                                        container
-                                        spacing={2}
-                                        sx={{
-                                            alignItems: 'center',
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="cooling-setting">
+                                <Typography className="cooling-control-label">Fan speed</Typography>
+                                <div className="cooling-control-row">
+                                    <WindPowerIcon />
+                                    <Slider
+                                        value={typeof this.state.speed === 'number' ? this.state.speed : 1}
+                                        min={1}
+                                        onChange={this.handleSlider}
+                                        disabled={this.props.disabled}
+                                        aria-label="Fan speed"
+                                    />
+                                    <Input
+                                        value={this.state.speed}
+                                        margin="dense"
+                                        onChange={this.handleInputChange}
+                                        onBlur={this.handleInputBlur}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                                this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                                            }
                                         }}
-                                    >
-                                        <Grid size={12}>
-                                            <Tooltip
-                                                title="Sets the PreInitCooldown maximum duration in seconds. This is the maximum time the miner can spend in PreInitCooldown. If the max duration is reached, the miner will skip the initialization temperature checks and start mining. Default is 300 seconds. Setting to 0 means the PreInitCooldown state will last for at most 0 seconds."
-                                                arrow
-                                                placement="top"
-                                            >
-                                                <Typography
-                                                    gutterBottom
-                                                    style={{
-                                                        cursor: 'help',
-                                                        display: 'inline-flex',
-                                                        alignItems: 'center',
-                                                        gap: '4px',
-                                                    }}
-                                                >
-                                                    PreInit Cooldown Max Duration
-                                                    <InfoOutlinedIcon fontSize="small" />
-                                                </Typography>
-                                            </Tooltip>
-                                        </Grid>
-                                        <Grid>
-                                            <TimerIcon />
-                                        </Grid>
-                                        <Grid>
-                                            <Slider
-                                                value={
-                                                    typeof this.state.preinit_cooldown_max_duration === 'number'
-                                                        ? this.state.preinit_cooldown_max_duration
-                                                        : 0
-                                                }
-                                                min={0}
-                                                max={MAX_PREINIT_COOLDOWN_DURATION}
-                                                onChange={this.handlePreinitCooldownSlider}
-                                                disabled={this.props.disabled}
-                                                valueLabelDisplay="auto"
-                                            />
-                                        </Grid>
-                                        <Grid>
-                                            <Input
-                                                value={this.state.preinit_cooldown_max_duration}
-                                                margin="dense"
-                                                endAdornment={<InputAdornment position="end">s</InputAdornment>}
-                                                onChange={this.handlePreinitCooldownInputChange}
-                                                onBlur={this.handlePreinitCooldownBlur}
-                                                onKeyPress={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        this.props.handleApi(
-                                                            '/preinitcooldownmaxduration',
-                                                            this.state,
-                                                            this.props.selected,
-                                                        );
-                                                    }
-                                                }}
-                                                disabled={this.props.disabled}
-                                                slotProps={{
-                                                    input: {
-                                                        step: 10,
-                                                        min: 0,
-                                                        max: MAX_PREINIT_COOLDOWN_DURATION,
-                                                        type: 'number',
-                                                    },
-                                                }}
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid size={12}>
-                        <TabFooter className="multi-action-footer">
-                            <TextField
-                                value={this.state.password || ''}
-                                variant="outlined"
-                                label="Password"
-                                type="password"
-                                onChange={this.updatePassword}
-                                margin="dense"
-                                onKeyPress={(e) => {
-                                    if (e.key === 'Enter' && !disabled) {
-                                        this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                                        this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
-                                        this.props.handleApi('/fans/minimum', this.state, this.props.selected);
-                                        if (supportsPreInitCooldown) {
-                                            this.props.handleApi(
-                                                '/preinitcooldownmaxduration',
-                                                this.state,
-                                                this.props.selected,
-                                            );
+                                        disabled={this.props.disabled}
+                                        style={{width: '70px'}}
+                                        slotProps={{input: {step: 10, min: 1, max: 100, type: 'number'}}}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                    <section className="cooling-section">
+                        <Typography className="compact-section-title">Temperature limits</Typography>
+                        <div className="cooling-setting">
+                            <Typography className="cooling-control-label">Shutdown temperature</Typography>
+                            <div className="cooling-control-row">
+                                <ThermostatIcon />
+                                <Slider
+                                    value={typeof this.state.shutdowntemp === 'number' ? this.state.shutdowntemp : 60}
+                                    min={60}
+                                    max={110}
+                                    onChange={this.handleShutdownTempSlider}
+                                    disabled={this.props.disabled}
+                                    aria-label="Shutdown temperature"
+                                />
+                                <Input
+                                    value={this.state.shutdowntemp}
+                                    margin="dense"
+                                    endAdornment={<InputAdornment position="end">{'\u00b0C'}</InputAdornment>}
+                                    onChange={this.handleShutdownTempInputChange}
+                                    onBlur={this.handleShutdownInputBlur}
+                                    onKeyPress={(e) => {
+                                        if (e.key === 'Enter') {
+                                            this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
                                         }
-                                    }
-                                }}
-                                error={!this.state.password}
-                            />
-                            <Button
-                                onClick={() => {
-                                    this.props.handleApi('/fanspeed', this.state, this.props.selected);
-                                }}
-                                variant="contained"
-                                color="primary"
-                                disabled={disabled}
-                            >
-                                {getMinerActionLabel('Apply Fan', this.props.selected)}
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    if (this.state.crit_temp_enabled) {
-                                        this.props.handleApi('/criticaltemp', this.state, this.props.selected);
-                                    }
-                                    this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
-                                }}
-                                variant="contained"
-                                color="primary"
-                                disabled={disabled}
-                            >
-                                {getMinerActionLabel('Apply Temps', this.props.selected)}
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    this.props.handleApi('/fans/minimum', this.state, this.props.selected);
-                                }}
-                                variant="contained"
-                                color="primary"
-                                disabled={disabled}
-                            >
-                                {getMinerActionLabel('Apply Min Fans', this.props.selected)}
-                            </Button>
-                            {supportsPreInitCooldown && (
-                                <Button
-                                    onClick={() => {
-                                        this.props.handleApi(
-                                            '/preinitcooldownmaxduration',
-                                            this.state,
-                                            this.props.selected,
-                                        );
                                     }}
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={disabled}
+                                    disabled={this.props.disabled}
+                                    style={{width: '70px'}}
+                                    slotProps={{input: {step: 5, min: 60, max: 110, type: 'number'}}}
+                                />
+                            </div>
+                        </div>
+                        {this.state.crit_temp_enabled && (
+                            <div className="cooling-setting">
+                                <Typography className="cooling-control-label">Critical temperature</Typography>
+                                <div className="cooling-control-row">
+                                    <ThermostatIcon />
+                                    <Slider
+                                        value={
+                                            typeof this.state.criticaltemp === 'number' ? this.state.criticaltemp : 110
+                                        }
+                                        min={60}
+                                        max={110}
+                                        onChange={this.handleCritTempSlider}
+                                        disabled={this.props.disabled}
+                                        aria-label="Critical temperature"
+                                    />
+                                    <Input
+                                        value={this.state.criticaltemp}
+                                        margin="dense"
+                                        endAdornment={<InputAdornment position="end">{'\u00b0C'}</InputAdornment>}
+                                        onChange={this.handleCritTempInputChange}
+                                        onBlur={this.handleCritInputBlur}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                                this.props.handleApi('/criticaltemp', this.state, this.props.selected);
+                                            }
+                                        }}
+                                        disabled={this.props.disabled}
+                                        style={{width: '70px'}}
+                                        slotProps={{input: {step: 5, min: 60, max: 110, type: 'number'}}}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                    <section className="cooling-section">
+                        <Typography className="compact-section-title">Fan safeguards</Typography>
+                        <div className="cooling-setting">
+                            <Typography className="cooling-control-label">Minimum working fans</Typography>
+                            <div className="cooling-control-row">
+                                <WarningIcon />
+                                <Slider
+                                    value={
+                                        typeof this.state.min_working_fans === 'number'
+                                            ? this.state.min_working_fans
+                                            : 0
+                                    }
+                                    min={0}
+                                    max={MAX_FANS}
+                                    onChange={this.handleMinWorkingFansSlider}
+                                    disabled={this.props.disabled}
+                                    valueLabelDisplay="auto"
+                                    marks
+                                    aria-label="Minimum working fans"
+                                />
+                                <Input
+                                    value={this.state.min_working_fans}
+                                    margin="dense"
+                                    onChange={this.handleMinWorkingFansInputChange}
+                                    onBlur={this.handleMinWorkingFansBlur}
+                                    onKeyPress={(e) => {
+                                        if (e.key === 'Enter') {
+                                            this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                                        }
+                                    }}
+                                    disabled={this.props.disabled}
+                                    style={{width: '70px'}}
+                                    slotProps={{input: {step: 1, min: 0, max: MAX_FANS, type: 'number'}}}
+                                />
+                            </div>
+                        </div>
+                        {supportsPreInitCooldown && (
+                            <div className="cooling-setting">
+                                <Tooltip
+                                    title="Sets the PreInitCooldown maximum duration in seconds. This is the maximum time the miner can spend in PreInitCooldown. If the max duration is reached, the miner will skip the initialization temperature checks and start mining. Default is 300 seconds. Setting to 0 means the PreInitCooldown state will last for at most 0 seconds."
+                                    arrow
+                                    placement="top"
                                 >
-                                    {getMinerActionLabel('Apply Cooldown', this.props.selected)}
-                                </Button>
-                            )}
-                        </TabFooter>
-                    </Grid>
-                </Grid>
+                                    <span className="cooling-control-label cooling-help-label">
+                                        PreInit cooldown max duration
+                                        <InfoOutlinedIcon fontSize="small" />
+                                    </span>
+                                </Tooltip>
+                                <div className="cooling-control-row">
+                                    <TimerIcon />
+                                    <Slider
+                                        value={
+                                            typeof this.state.preinit_cooldown_max_duration === 'number'
+                                                ? this.state.preinit_cooldown_max_duration
+                                                : 0
+                                        }
+                                        min={0}
+                                        max={MAX_PREINIT_COOLDOWN_DURATION}
+                                        onChange={this.handlePreinitCooldownSlider}
+                                        disabled={this.props.disabled}
+                                        valueLabelDisplay="auto"
+                                        aria-label="PreInit cooldown max duration"
+                                    />
+                                    <Input
+                                        value={this.state.preinit_cooldown_max_duration}
+                                        margin="dense"
+                                        endAdornment={<InputAdornment position="end">s</InputAdornment>}
+                                        onChange={this.handlePreinitCooldownInputChange}
+                                        onBlur={this.handlePreinitCooldownBlur}
+                                        onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                                this.props.handleApi(
+                                                    '/preinitcooldownmaxduration',
+                                                    this.state,
+                                                    this.props.selected,
+                                                );
+                                            }
+                                        }}
+                                        disabled={this.props.disabled}
+                                        style={{width: '70px'}}
+                                        slotProps={{
+                                            input: {
+                                                step: 10,
+                                                min: 0,
+                                                max: MAX_PREINIT_COOLDOWN_DURATION,
+                                                type: 'number',
+                                            },
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                </div>
+                <TabFooter className="multi-action-footer">
+                    <TextField
+                        value={this.state.password || ''}
+                        variant="outlined"
+                        label="Password"
+                        type="password"
+                        onChange={this.updatePassword}
+                        margin="dense"
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter' && !disabled) {
+                                this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                                this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
+                                this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                                if (supportsPreInitCooldown) {
+                                    this.props.handleApi(
+                                        '/preinitcooldownmaxduration',
+                                        this.state,
+                                        this.props.selected,
+                                    );
+                                }
+                            }
+                        }}
+                        error={!this.state.password}
+                    />
+                    <Button
+                        onClick={() => {
+                            this.props.handleApi('/fanspeed', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={disabled}
+                    >
+                        {getMinerActionLabel('Apply Fan', this.props.selected)}
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            if (this.state.crit_temp_enabled) {
+                                this.props.handleApi('/criticaltemp', this.state, this.props.selected);
+                            }
+                            this.props.handleApi('/shutdowntemp', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={disabled}
+                    >
+                        {getMinerActionLabel('Apply Temps', this.props.selected)}
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            this.props.handleApi('/fans/minimum', this.state, this.props.selected);
+                        }}
+                        variant="contained"
+                        color="primary"
+                        disabled={disabled}
+                    >
+                        {getMinerActionLabel('Apply Min Fans', this.props.selected)}
+                    </Button>
+                    {supportsPreInitCooldown && (
+                        <Button
+                            onClick={() => {
+                                this.props.handleApi('/preinitcooldownmaxduration', this.state, this.props.selected);
+                            }}
+                            variant="contained"
+                            color="primary"
+                            disabled={disabled}
+                        >
+                            {getMinerActionLabel('Apply Cooldown', this.props.selected)}
+                        </Button>
+                    )}
+                </TabFooter>
             </div>
         );
     }

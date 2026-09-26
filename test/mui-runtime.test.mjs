@@ -9,7 +9,7 @@ import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
 const require = createRequire(import.meta.url);
-const {Grid, Input, TextField} = require('@mui/material');
+const {Input, TextField} = require('@mui/material');
 const dialogRequests = [];
 
 async function compileTab(name) {
@@ -206,9 +206,14 @@ test('cooling preserves numeric limits and fan-speed command submission', () => 
     assert.match(markup, /type="number"/);
     assert.match(markup, /max="100"/);
     assert.match(markup, /settings-tab-footer/);
-    const columns = elements(tab.render(), (element) => element.type === Grid && element.props.size?.xs === 12);
-    assert.equal(columns.length, 3);
-    assert.ok(columns.every((column) => column.props.size.md === 4));
+    const sections = elements(
+        tab.render(),
+        (element) => element.type === 'section' && element.props.className === 'cooling-section',
+    );
+    assert.deepEqual(
+        sections.map((section) => React.Children.toArray(section.props.children)[0].props.children),
+        ['Fan settings', 'Temperature limits', 'Fan safeguards'],
+    );
     const apply = elements(tab.render(), isApplyAction)[0];
     apply.props.onClick();
     assert.equal(requests[0].api, '/fanspeed');
