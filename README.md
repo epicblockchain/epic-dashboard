@@ -4,11 +4,11 @@ Please read COPYING and EULA before proceeding
 
 ## Getting started from a binary
 
-Download the appropriate zip/installer file for the OS you would like to run the program on.
+Download the installer or package for your operating system from the [releases page](https://github.com/epicblockchain/epic-dashboard/releases/). On macOS, use the universal DMG for either Intel or Apple silicon.
 
-Supported release targets are Windows x64 (Windows 10 or later), Linux x64/ARM64, and macOS x64/ARM64 (macOS 13 or later). Windows ia32 and Linux armv7l packages are no longer built.
+Supported release targets are Windows x64 (Windows 10 or later), Linux x64/ARM64, and macOS as a single universal DMG for Intel and Apple silicon (macOS 13 or later). Windows ia32 and Linux armv7l packages are no longer built.
 
-macOS releases are ad-hoc signed without an Apple Developer account. See [macOS releases](docs/macos.md) for architecture selection and download approval.
+macOS releases use a signed and notarized universal DMG for Intel and Apple silicon. See [macOS releases](docs/macos.md) for signing setup and installation instructions.
 
 ## Getting started from source
 
@@ -57,13 +57,13 @@ make rpm64
 make win64
 ```
 
-Build both signed macOS ZIPs on a Mac:
+For local testing on a Mac, build separate Intel and Apple silicon ZIPs:
 
 ```
 make mac
 ```
 
-macOS signing requires a Mac build host; `make all` cannot build signed macOS releases on Linux. To build a specific target, use the corresponding Makefile target.
+Local macOS builds use ad-hoc signing unless [Developer ID signing and notarization](docs/macos.md) are configured. The release workflow packages both architectures into one signed and notarized universal DMG. macOS builds require a Mac build host; `make all` cannot build macOS packages on Linux. To build a specific target, use the corresponding Makefile target.
 
 # Usage
 

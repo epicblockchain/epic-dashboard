@@ -50,12 +50,19 @@ test('local macOS builds use ad-hoc signing when release credentials are absent'
     assert.equal(forge.packagerConfig.osxNotarize, undefined);
 });
 
-test('macOS releases build on native Mac runners with Node 22 and verify the actual uploaded ZIP', async () => {
+test('macOS releases build a universal DMG with Node 22 and verify its bundled app', async () => {
     const workflow = await readFile(new URL('../.github/workflows/release.yml', import.meta.url), 'utf8');
     const forgeConfig = await readFile(new URL('../forge.config.cjs', import.meta.url), 'utf8');
     const mac = workflow.split('    build-mac:')[1].split('    create-release:')[0];
-    assert.match(mac, /arch: x64\s+runner: macos-15-intel/);
-    assert.match(mac, /arch: arm64\s+runner: macos-15\s+asset_arch: ARM64/);
+    assert.match(mac, /runs-on: macos-15/);
+    assert.match(mac, /ARCH: universal/);
+    assert.doesNotMatch(mac, /matrix\./);
+    assert.match(mac, /hdiutil create/);
+    assert.match(mac, /notarytool submit "\$DMG_PATH"/);
+    assert.match(mac, /hdiutil attach "\$DMG_PATH" -readonly/);
+    assert.match(mac, /lipo -archs/);
+    assert.match(mac, /BINARY_ARCHS.*x86_64.*BINARY_ARCHS.*arm64/);
+    assert.match(mac, /files: .*?-universal\.dmg/);
     assert.match(mac, /node-version: '22'/);
     assert.match(mac, /Build, sign, and notarize App/);
     assert.match(mac, /unzip -q out\/make\/zip\/darwin/);

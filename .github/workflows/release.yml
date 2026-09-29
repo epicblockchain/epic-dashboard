@@ -172,23 +172,12 @@ jobs:
                   fail_on_unmatched_files: true
 
     build-mac:
-        name: Build macOS ${{ matrix.arch }}
+        name: Build macOS universal
         needs: [prepare, create-release]
-        runs-on: ${{ matrix.runner }}
-        strategy:
-            fail-fast: false
-            matrix:
-                include:
-                    - arch: x64
-                      runner: macos-15-intel
-                      asset_arch: x64
-                    - arch: arm64
-                      runner: macos-15
-                      asset_arch: ARM64
+        runs-on: macos-15
         env:
             VERSION: ${{ needs.prepare.outputs.version }}
-            ARCH: ${{ matrix.arch }}
-            ASSET_ARCH: ${{ matrix.asset_arch }}
+            ARCH: universal
         steps:
             - name: Checkout Code
               uses: actions/checkout@v6
@@ -246,19 +235,6 @@ jobs:
                   npm exec -- electron-forge make \
                     --targets=@electron-forge/maker-zip --platform=darwin --arch="$ARCH"
 
-            - name: Verify signed and notarized release archive and native executable
-              continue-on-error: true
-              run: |
-                  set -euo pipefail
-                  VERIFICATION_DIR="$(mktemp -d)"
-                  unzip -q out/make/zip/darwin/"$ARCH"/*.zip -d "$VERIFICATION_DIR"
-                  APP_PATH="$VERIFICATION_DIR/epic-dashboard.app"
-                  codesign --verify --deep --strict --verbose=2 "$APP_PATH"
-                  xcrun stapler validate "$APP_PATH"
-                  spctl --assess --type execute --verbose "$APP_PATH"
-                  ELECTRON_RUN_AS_NODE=1 "$APP_PATH/Contents/MacOS/epic-dashboard" -e \
-                    'if (process.arch !== process.env.ARCH) throw new Error("Wrong release architecture"); console.log(process.arch, process.versions.electron);'
-
             - name: Ensure release ZIP contains a valid notarization ticket
               if: always()
               run: |
@@ -296,8 +272,48 @@ jobs:
                   mkdir -p "$ZIP_DIR"
                   ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$ZIP_DIR/epic-dashboard-darwin-$ARCH.zip"
 
-            - name: Rename artifact
-              run: mv out/make/zip/darwin/"$ARCH"/*.zip "./epic-dashboard-mac-${VERSION}-${ASSET_ARCH}.zip"
+            - name: Create, sign, and notarize universal DMG
+              env:
+                  APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.MACOS_EPICDASHBOARD_APPSTORE_CONNECT_API_KEY_ID }}
+                  APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.MACOS_EPIC_APPSTORE_CONNECT_ISSUER_ID }}
+                  APPLE_SIGNING_IDENTITY: ${{ secrets.MACOS_EPIC_DEVELOPER_IDENTITY }}
+              run: |
+                  set -euo pipefail
+                  DMG_ROOT="$(mktemp -d)"
+                  unzip -q out/make/zip/darwin/"$ARCH"/*.zip -d "$DMG_ROOT"
+                  ln -s /Applications "$DMG_ROOT/Applications"
+                  DMG_PATH="./epic-dashboard-mac-${VERSION}-universal.dmg"
+                  hdiutil create -volname "ePIC Dashboard" -srcfolder "$DMG_ROOT" -ov -format UDZO "$DMG_PATH"
+                  codesign --force --timestamp --sign "$APPLE_SIGNING_IDENTITY" "$DMG_PATH"
+                  xcrun notarytool submit "$DMG_PATH" \
+                    --key "$APPLE_API_KEY" \
+                    --key-id "$APP_STORE_CONNECT_API_KEY_ID" \
+                    --issuer "$APP_STORE_CONNECT_ISSUER_ID" --wait
+                  xcrun stapler staple "$DMG_PATH"
+                  xcrun stapler validate "$DMG_PATH"
+
+            - name: Verify final DMG and universal app
+              run: |
+                  set -euo pipefail
+                  DMG_PATH="./epic-dashboard-mac-${VERSION}-universal.dmg"
+                  codesign --verify --strict --verbose=2 "$DMG_PATH"
+                  MOUNT_DIR="$(mktemp -d)"
+                  hdiutil attach "$DMG_PATH" -readonly -nobrowse -mountpoint "$MOUNT_DIR"
+                  trap 'hdiutil detach "$MOUNT_DIR"' EXIT
+                  APP_PATH="$MOUNT_DIR/epic-dashboard.app"
+                  codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+                  xcrun stapler validate "$APP_PATH"
+                  spctl --assess --type execute --verbose "$APP_PATH"
+                  for BINARY in "$APP_PATH/Contents/MacOS/epic-dashboard" \
+                    "$APP_PATH/Contents/Frameworks/Electron Framework.framework/Versions/A/Electron Framework"; do
+                    BINARY_ARCHS=" $(lipo -archs "$BINARY") "
+                    [[ "$BINARY_ARCHS" == *" x86_64 "* && "$BINARY_ARCHS" == *" arm64 "* ]] || {
+                      echo "Missing universal architectures in $BINARY: $BINARY_ARCHS" >&2
+                      exit 1
+                    }
+                  done
+                  ELECTRON_RUN_AS_NODE=1 "$APP_PATH/Contents/MacOS/epic-dashboard" -e \
+                    'if (process.arch !== "arm64") throw new Error("Expected native Apple Silicon execution"); console.log(process.arch, process.versions.electron);'
 
             - name: Upload release asset
               uses: softprops/action-gh-release@v2
@@ -305,7 +321,7 @@ jobs:
                   repository: epicblockchain/epic-dashboard
                   token: ${{ github.token }}
                   tag_name: ${{ needs.prepare.outputs.release_tag }}
-                  files: ./epic-dashboard-mac-${{ needs.prepare.outputs.version }}-${{ matrix.asset_arch }}.zip
+                  files: ./epic-dashboard-mac-${{ needs.prepare.outputs.version }}-universal.dmg
                   fail_on_unmatched_files: true
 
     create-release:

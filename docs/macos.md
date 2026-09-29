@@ -1,6 +1,8 @@
 # macOS releases
 
-The public release workflow builds macOS releases on native runners for Intel (`x64`) and Apple silicon (`arm64`). It signs each app with the Developer ID Application certificate, enables hardened runtime, submits it to Apple's notary service, and validates the stapled ticket before uploading the ZIP to the GitHub release. If Forge fails after producing an app bundle but before creating its ZIP, the workflow staples and validates the app, then creates the ZIP. Before upload, recovery validates the ticket in an existing ZIP or staples and validates the app before repackaging it. Build or verification errors do not block upload when recovery confirms a valid notarization ticket.
+The public release workflow builds one universal DMG on an Apple silicon runner. The app contains native Intel (`x64`) and Apple silicon (`arm64`) executables. It signs the app with the Developer ID Application certificate, enables hardened runtime, submits it to Apple's notary service, and validates the stapled ticket. An intermediate ZIP supports recovery if Forge fails after notarization. The workflow then creates, signs, and notarizes the DMG, mounts it, and verifies the bundled app and both executable architectures before upload. Final DMG verification failures block publication.
+
+## Signing credentials
 
 Add these GitHub Actions repository secrets for the release workflow:
 
@@ -15,8 +17,12 @@ The Apple Developer Program membership, Developer ID Application certificate, an
 
 For local notarization, you can store App Store Connect credentials in a `notarytool` Keychain profile instead of exporting API key variables. First save and validate the profile with `xcrun notarytool store-credentials`. Then set `APPLE_KEYCHAIN_PROFILE` to that profile name and `APPLE_SIGNING_IDENTITY` to the exact Developer ID Application identity installed in your Keychain. Builds without notarization credentials continue to use ad-hoc signing. Apple describes the notarization flow and the required Developer ID signature and hardened runtime in its [notarization documentation](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
 
-On a Mac, `make mac` builds and signs both architectures. Signing macOS releases on Linux is not supported.
+## Local builds
 
-Choose the ARM64 ZIP on Apple silicon, or the x64 ZIP on an Intel Mac. The x64 app also runs through Rosetta on Apple silicon, but performance should be checked against the previous release rather than assuming every regression is caused by translation.
+On a Mac, `make mac` creates separate Intel and Apple silicon ZIPs for local testing. These builds use ad-hoc signing by default, or Developer ID signing and notarization when the credentials above are configured. The release workflow creates the universal DMG. macOS packaging on Linux is not supported.
+
+## Installation
+
+Download `epic-dashboard-mac-<version>-universal.dmg` on either Apple silicon or Intel, open it, and drag the app into Applications. macOS selects the native executable for the machine.
 
 The Node 22 CI toolchain is separate from the Electron runtime shipped in the app. Release 4.10.0 shipped Electron 22.0.2; release 4.11.0 ships Electron 44.3.0, alongside React, MUI, table, and other dependency upgrades. Ad-hoc signing fixes invalid bundle signatures, not runtime performance regressions.
